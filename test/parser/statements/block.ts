@@ -4,6 +4,10 @@ import { parseSource } from '../../../src/parser/core';
 
 describe('Statements - Block', () => {
   for (const [source, ctx] of [
+    [`{ let {x} }`, Context.OptionsDisableWebCompat],
+    [`{ let {} }`, Context.OptionsDisableWebCompat],
+    [`{ let [] }`, Context.OptionsDisableWebCompat],
+
     [`{ function f(){} function f(){} }`, Context.OptionsDisableWebCompat],
     [`{ async function f(){} function f(){} }`, Context.OptionsDisableWebCompat],
     [`{ async function f(){} async function f(){} }`, Context.OptionsDisableWebCompat],

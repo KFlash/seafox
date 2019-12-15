@@ -43,7 +43,7 @@ export function parseModuleItemListAndDirectives(
 
   if (context & Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
-      const { start, line, column, tokenRaw, isUnicodeEscape, tokenValue } = parser;
+      const { start, line, column, isUnicodeEscape, tokenValue } = parser;
       let expression = parseLiteral(parser, context);
       if (parser.token !== Token.Semicolon) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);

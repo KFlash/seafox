@@ -3,7 +3,78 @@ import * as t from 'assert';
 import { parseSource } from '../../../src/parser/core';
 
 describe('Statements - Throw', () => {
+  for (const [source, ctx] of [
+    [
+      `throw
+    x;`,
+      Context.Empty
+    ]
+  ]) {
+    it(source as string, () => {
+      t.throws(() => {
+        parseSource(source as string, undefined, ctx as Context);
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
+    [
+      `throw /(?=[^\\x4f-\\xF5(-)])/imy`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ThrowStatement',
+            argument: {
+              type: 'Literal',
+              value: /(?=[^\x4f-\xF5(-)])/imy,
+              regex: {
+                pattern: '(?=[^\\x4f-\\xF5(-)])',
+                flags: 'imy'
+              },
+              start: 6,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 30,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 30
+          }
+        }
+      }
+    ],
     [
       `function f() { do throw pass
         while(x);

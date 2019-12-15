@@ -73,17 +73,55 @@ export const enum Errors {
   CantAssignToInOfForLoop,
   InvalidBindingDestruct,
   InvalidArrowDestructLHS,
-  InvalidLHSAsyncArrow
+  InvalidLHSAsyncArrow,
+  InvalidAssignmentTarget,
+  InvalidAsyncArrow,
+  UncompleteArrow,
+  InvalidExponentationLHS,
+  StrictDelete,
+  InvalidLineBreak,
+  AsyncFunctionInSingleStatementContext,
+  UnknownLabel,
+  IllegalContinue,
+  StrictFunction,
+  SloppyFunction,
+  ClassForbiddenAsStatement,
+  InvalidBreak
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.StrictFunction]:
+    'In strict mode code or without web compability enabled, functions can only be declared at top level or inside a block',
+  [Errors.SloppyFunction]:
+    'In non-strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement',
+  [Errors.ClassForbiddenAsStatement]: "Class declaration can't appear in single-statement context",
+  [Errors.UnknownLabel]: "Undefined label '%0'",
+  [Errors.IllegalContinue]: 'Illegal continue statement',
+  [Errors.UnexpectedStrictReserved]: 'Unexpected strict mode reserved word',
+  [Errors.StrictEvalArguments]: 'Unexpected eval or arguments in strict mode',
+  [Errors.KeywordNotId]: 'Invalid keyword',
+  [Errors.InvalidLetConstBinding]: "'A lexical declaration can't define a 'let' binding",
+  [Errors.AwaitOutsideAsync]: 'Await is only valid in async functions',
+  [Errors.DisallowedInContext]: "'%0' may not be used as an identifier in this context",
+  [Errors.CantAssignToInOfForLoop]: 'Invalid left-hand side in for-%0',
+  [Errors.DuplicateProto]: 'Property name __proto__ appears more than once in object literal',
+  [Errors.AsyncFunctionInSingleStatementContext]:
+    'Async functions can only be declared at the top level or inside a block',
   [Errors.Unexpected]: 'Unexpected token',
-  [Errors.InvalidLHSAsyncArrow]: 'InvalidLHSAsyncArrow',
-  [Errors.InvalidArrowDestructLHS]: 'InvalidArrowDestructLHS',
-  [Errors.InvalidBindingDestruct]: 'Unexpected token',
+  [Errors.InvalidLineBreak]: "No line break is allowed after '=>'",
+  [Errors.InvalidBreak]: 'Illegal break statement',
+  [Errors.InvalidExponentationLHS]:
+    'Unary expressions as the left operand of an exponentation expression must be disambiguated with parentheses',
+  [Errors.StrictDelete]: 'Calling delete on expression not allowed in strict mode',
+  [Errors.UncompleteArrow]: "Expected '=>'",
+  [Errors.InvalidAssignmentTarget]: '`=>` is an invalid assignment target',
+  [Errors.InvalidAsyncArrow]: 'Async arrow can not be followed by new expression',
+  [Errors.InvalidLHSAsyncArrow]: 'Invalid left-hand side in async arrow',
+  [Errors.InvalidArrowDestructLHS]: 'The left-hand side of the arrow can only be destructed through assignment',
+  [Errors.InvalidBindingDestruct]: 'The binding declaration is not destructible',
   [Errors.InvalidPatternTail]: 'Pattern can not have a tail',
   [Errors.InvalidDestructuringTarget]: 'Invalid destructuring assignment target',
   [Errors.InvalidTernaryYield]: 'Can not have a `yield` expression on the left side of a ternary',

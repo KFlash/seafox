@@ -13,7 +13,21 @@ describe('Statements - If', () => {
     [`if (x) {} else var foo = 1; let foo = 1;`, Context.OptionsDisableWebCompat],
     [`if (x) var foo = 1; else {} let foo = 1;`, Context.Empty],
     [`if (x) {} else if (y) {} else var foo = 1; let foo = 1;`, Context.Empty],
-    [`if (x) { if (y) var foo = 1; } let foo = 1;`, Context.Empty]
+    [`if (x) { if (y) var foo = 1; } let foo = 1;`, Context.Empty],
+    ['if (true) class C {} else class D {}', Context.OptionsDisableWebCompat],
+    ['if true;', Context.Empty],
+    ['if(!(1))', Context.Empty],
+    ['if(!(true))', Context.Empty],
+    ['if(!("A"))', Context.Empty],
+    ['if (x); else foo: bar: function f(){}', Context.OptionsDisableWebCompat],
+    ['if (false) ; else function* g() {  }', Context.OptionsDisableWebCompat],
+    ['if (true) let x; else let y;', Context.Empty],
+    ['if (false) ; else class C {}', Context.OptionsDisableWebCompat],
+    ['"use strict"; if (true) function f() {  } else function _f() {}', Context.OptionsDisableWebCompat],
+    ['"use strict"; if (true) function f() {  } else function _f() {}', Context.Empty],
+    ['if (true) const x = null;', Context.Empty],
+    ['if();', Context.Empty],
+    ['if (1) let x = 10;', Context.Empty]
   ]) {
     it(source as string, () => {
       t.throws(() => {

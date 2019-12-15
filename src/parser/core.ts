@@ -4,7 +4,7 @@ import * as ESTree from './estree';
 import { skipHashBang } from '../scanner/comments';
 import { parseModuleItemListAndDirectives } from './module';
 import { parseStatementList } from './statements';
-import { Context, Flags, ParserState, DestructuringKind, AssignmentKind } from './common';
+import { Context, Flags, ParserState, DestructuringKind } from './common';
 import { ScopeState, createScope } from './scope';
 
 /**
@@ -59,7 +59,7 @@ export function create(source: string): ParserState {
     tokenRaw: '',
     tokenRegExp: undefined,
     lastChar: 0,
-    assignable: AssignmentKind.Assignable,
+    assignable: 1,
     destructible: DestructuringKind.None
   };
 }

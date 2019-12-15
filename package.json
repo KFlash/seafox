@@ -46,7 +46,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "lint": "eslint \"{src,test,scripts}/**/*.{ts,js}\"",
+    "fuzz": "eslump ./test/fuzz/grumpy.js .fuzz-output/",
+    "lint": "eslint \"{src,test,scripts}/**/*.{ts,js}\" --fix",
     "prettier": "node ./scripts/prettier.js write-changed",
     "prettier-all": "node ./scripts/prettier.js write",
     "bundle": "cross-env rimraf dist && node scripts/bundle.js",
@@ -99,5 +100,8 @@
   },
   "engines": {
     "node": ">=6.0.0"
+  },
+  "dependencies": {
+    "eslump": "^2.0.0"
   }
 }

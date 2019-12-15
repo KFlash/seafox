@@ -35,7 +35,11 @@ export const enum Context {
  */
 export const enum Flags {
   Empty = 0,
-  HasConstructor = 1 << 0
+  HasConstructor = 1 << 0,
+  Destructible = 1 << 3,
+  AssignableDestruct = 1 << 4,
+  CannotDestruct = 1 << 5,
+  MustDestruct = 1 << 6
 }
 
 export const enum Origin {
@@ -96,25 +100,16 @@ export const enum BindingKind {
 }
 
 /**
- * Masks to track the assignment kind
- */
-export const enum AssignmentKind {
-  None = 0,
-  Assignable = 1 << 0,
-  CannotAssign = 1 << 1
-}
-
-/**
  * Masks to track the destructuring kind
  */
 export const enum DestructuringKind {
   None = 0,
-  HasToDestruct = 1 << 3,
+  MustDestruct = 1 << 3,
   // "Cannot" rather than "can" so that this flag can be ORed together across
   // multiple characters.
   CannotDestruct = 1 << 4,
   // Only destructible if assignable
-  Assignable = 1 << 5,
+  AssignableDestruct = 1 << 5,
   // `__proto__` is a special case and only valid to parse if destructible
   SeenProto = 1 << 6
 }
@@ -143,8 +138,8 @@ export interface ParserState {
   newLine: 0 | 1;
   tokenValue: any;
   tokenRaw: string;
-  assignable: AssignmentKind;
-  destructible: DestructuringKind | AssignmentKind;
+  assignable: 0 | 1;
+  destructible: DestructuringKind;
   tokenRegExp: void | {
     pattern: string;
     flags: string;
@@ -212,6 +207,7 @@ export function parseStatementWithLabelSet(t: Token, label: any, labels: any, ne
   if (isIterationStatement(t)) {
     labels.iterationLabels = nestedLabels;
   }
+  return nestedLabels;
 }
 
 export function isIterationStatement(t: Token): boolean {
@@ -250,23 +246,24 @@ export interface Label {
   iterationLabels: string[];
   parentLabels: any;
 }
-export function validateContinueLabel(_parser: ParserState, labels: Label, label: string): void {
-  let found: 0 | 1 = 0;
 
-  while (labels) {
+export function validateContinueLabel(parser: ParserState, labels: Label, label: string): void {
+  let found: 0 | 1 = 0;
+  let iterationLabel: any;
+  l: while (labels) {
     if (labels.iterationLabels) {
-      for (let i = 0; i < labels.iterationLabels.length; i++) {
-        if (labels.iterationLabels[i] === label) {
+      iterationLabel = labels.iterationLabels;
+      for (let i = 0; i < iterationLabel.length; i++) {
+        if (iterationLabel[i] === label) {
           found = 1;
-          break;
+          break l;
         }
-        //  report(parser, Errors.Unexpected);
       }
     }
     labels = labels.parentLabels;
   }
   if (found === 0) {
-    //report(parser, Errors.Unexpected);
+    report(parser, Errors.UnknownLabel, label);
   }
 }
 

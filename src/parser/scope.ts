@@ -214,9 +214,7 @@ export function addVarName(
     }
     if (value & (BindingKind.CatchIdentifier | BindingKind.CatchPattern)) {
       if (
-        (value & BindingKind.CatchIdentifier) === 0 ||
-        context & Context.OptionsDisableWebCompat ||
-        context & Context.Strict
+        context & (Context.Strict | Context.OptionsDisableWebCompat) || (value & BindingKind.CatchIdentifier) === 0
       ) {
         report(parser, Errors.DuplicateBinding, name);
       }

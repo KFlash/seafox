@@ -8,7 +8,7 @@ describe('Declarations - Const', () => {
     [`const x = a; function x(){};`, Context.Empty],
     [`const x = a; const x = b;`, Context.OptionsDisableWebCompat],
     [`const x = a; function x(){};`, Context.OptionsDisableWebCompat],
-    //[`const x; { let x; var y; }`, Context.Empty],
+    [`const x; { let x; var y; }`, Context.Empty],
     [`const const;`, Context.Empty],
     [`const let`, Context.Empty],
     [`const []`, Context.Empty],
@@ -23,9 +23,9 @@ describe('Declarations - Const', () => {
     [`for (const {x} = a, y in obj);`, Context.Empty],
     [`for (const {x:y=z});`, Context.Empty],
     [`for (const {x,,} of obj);`, Context.Empty],
-    // [`const [...foo,] = obj;`, Context.Empty],
-    // [`const [...foo, bar] = obj;`, Context.Empty],
-    // [`const [...bar = foo] = obj;`, Context.Empty],
+    [`const [...foo,] = obj;`, Context.Empty],
+    [`const [...foo, bar] = obj;`, Context.Empty],
+    [`const [...bar = foo] = obj;`, Context.Empty],
     [`const [.x] = obj;`, Context.Empty],
     [`const {[x]} = z;`, Context.Empty],
     [`const {,,} = obj;`, Context.Empty],
@@ -63,7 +63,101 @@ describe('Declarations - Const', () => {
     [`const {x:c, y:c} = {};`, Context.OptionsDisableWebCompat],
     [`const a = 0, a = 1;`, Context.OptionsDisableWebCompat],
     [`const {a:a, a:a} = {};`, Context.OptionsDisableWebCompat],
-    [`const a = 1; const a = 2`, Context.OptionsDisableWebCompat]
+    [`const a = 1; const a = 2`, Context.OptionsDisableWebCompat],
+    ['const {foo,,} = x;', Context.Empty],
+    ['const [.x] = obj;', Context.Empty],
+    ['const [..x] = obj;', Context.Empty],
+    ['const [...] = obj;', Context.Empty],
+    ['const [... ...foo] = obj;', Context.Empty],
+    ['const [...[a, b],,] = obj;', Context.Empty],
+    ['const [...foo,] = obj;', Context.Empty],
+    ['for (const {};;);', Context.Empty],
+    ['const {};', Context.Empty],
+    ['const foo;', Context.Empty],
+    [`do const x = 1; while (false)`, Context.Empty],
+    ['while (false) const x = 1;', Context.Empty],
+    ['label: const x;', Context.Empty],
+    ['while (false) const x;', Context.Empty],
+    ['const [...x = []] = [];', Context.Empty],
+    ['const [...[x], y] = [1, 2, 3];', Context.Empty],
+    ['const x, y = 1;', Context.Empty],
+    ['do const x = 1; while (false)', Context.Empty],
+    ['const [...{ x }, y] = [1, 2, 3];', Context.Empty],
+    ['const [...x, y] = [1, 2, 3];', Context.Empty],
+    // Babylon PR: https://github.com/babel/babylon/pull/195
+    // ['const { foo: enum } = bar();', Context.Empty],
+    //  ['function foo({ bar: enum }) {}', Context.Empty],
+    ['const foo', Context.Empty],
+    ['const foo, bar;', Context.Empty],
+    ['const foo, bar', Context.Empty],
+    ['const\nfoo', Context.Empty],
+    ['const\nfoo()', Context.Empty],
+    ['const [foo] = arr, bar;', Context.Empty],
+    ['const foo, [bar] = arr2;', Context.Empty],
+    ['const [foo];', Context.Empty],
+    ['const [foo = x];', Context.Empty],
+    ['const [foo], bar;', Context.Empty],
+    ['const foo, [bar];', Context.Empty],
+    ['const [foo:bar] = obj;', Context.Empty],
+    ['const [...foo, bar] = obj;', Context.Empty],
+    ['const [...foo,] = obj;', Context.Empty],
+    ['const [...foo,,] = obj;', Context.Empty],
+    ['const [...[foo + bar]] = obj;', Context.Empty],
+    ['const [...[foo, bar],] = obj;', Context.Empty],
+    ['const [...[foo, bar],,] = obj;', Context.Empty],
+    ['const [...bar = foo] = obj;', Context.Empty],
+    ['const [... ...foo] = obj;', Context.Empty],
+    ['const [...] = obj;', Context.Empty],
+    ['const const', Context.Empty],
+    ['const', Context.Empty],
+    ['const a = 2,', Context.Empty],
+    ['const [...,] = obj;', Context.Empty],
+    ['const [.x] = obj;', Context.Empty],
+    ['const [..x] = obj;', Context.Empty],
+    ['const {,} = obj;', Context.Empty],
+    ['const {,,} = obj;', Context.Empty],
+    ['const {x,,} = obj;', Context.Empty],
+    ['const {,x} = obj;', Context.Empty],
+    ['const {,,x} = obj;', Context.Empty],
+    ['const {x,, y} = obj;', Context.Empty],
+    ['const {x} = a, obj;', Context.Empty],
+    ['const x, {y} = obj;', Context.Empty],
+    ['const {x};', Context.Empty],
+    ['const {x}, {y} = z;', Context.Empty],
+    ['const x, {y};', Context.Empty],
+    ['const {x}, y;', Context.Empty],
+    ['const x = y, {z};', Context.Empty],
+    ['const let = 1;', Context.Strict],
+    ['let let = 1;', Context.Strict],
+    ['const {x=y};', Context.Empty],
+    ['const {x:y=z};', Context.Empty],
+    ['const {x:y=z} = obj, {a:b=c};', Context.Empty],
+    ['const {a:=c} = z;', Context.Empty],
+    ['const {[x] = y} = z;', Context.Empty],
+    ['const {[x]: y};', Context.Empty],
+    ['const {[x]} = z;', Context.Empty],
+    ['const {[x] = y} = z;', Context.Empty],
+    ['const {[x]: y = z};', Context.Empty],
+    ['const {...[a]} = x', Context.OptionsDisableWebCompat],
+    ['const {...{a}} = x', Context.OptionsDisableWebCompat],
+    ['const {...[a]} = x', Context.Empty],
+    ['const {...{a}} = x', Context.Empty],
+    ['const {...a=b} = x', Context.Empty],
+    ['const {...a+b} = x', Context.Empty],
+    ['const [(x)] = []', Context.Empty],
+    ['const a, [...x] = y', Context.Empty],
+    ['const foo;', Context.Module],
+    ['const foo, bar = x;', Context.Empty],
+    ['const [a)] = [];', Context.Empty],
+    ['const [[(a)], ((((((([b])))))))] = [[],[]];', Context.Empty],
+    ['const [a--] = [];', Context.Empty],
+    ['const [++a] = [];', Context.Empty],
+    ['const [1, a] = [];', Context.Empty],
+    ['const [...a, b] = [];', Context.Empty],
+    ['const foo =x, bar;', Context.Empty],
+    ['const foo, bar;', Context.Module]
+    //['const [a, let, b] = [1, 2, 3];', Context.Empty],
+    //['const {let} = 1;', Context.Empty]
   ]) {
     it(source as string, () => {
       t.throws(() => {
@@ -73,6 +167,1018 @@ describe('Declarations - Const', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `for (const {x : y, z, a : b = c} in obj);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 40,
+              end: 41,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 40
+                },
+                end: {
+                  line: 1,
+                  column: 41
+                }
+              }
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 12,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 16,
+                          end: 17,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 16
+                            },
+                            end: {
+                              line: 1,
+                              column: 17
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 12,
+                        end: 17,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 17
+                          }
+                        }
+                      },
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 19,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 19
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 19,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 19
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 19,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 22,
+                          end: 23,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 22
+                            },
+                            end: {
+                              line: 1,
+                              column: 23
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'b',
+                            start: 26,
+                            end: 27,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 26
+                              },
+                              end: {
+                                line: 1,
+                                column: 27
+                              }
+                            }
+                          },
+                          right: {
+                            type: 'Identifier',
+                            name: 'c',
+                            start: 30,
+                            end: 31,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 30
+                              },
+                              end: {
+                                line: 1,
+                                column: 31
+                              }
+                            }
+                          },
+                          start: 26,
+                          end: 31,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 26
+                            },
+                            end: {
+                              line: 1,
+                              column: 31
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 22,
+                        end: 31,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 22
+                          },
+                          end: {
+                            line: 1,
+                            column: 31
+                          }
+                        }
+                      }
+                    ],
+                    start: 11,
+                    end: 32,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 32
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 32,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 32
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj',
+              start: 36,
+              end: 39,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 36
+                },
+                end: {
+                  line: 1,
+                  column: 39
+                }
+              }
+            },
+            start: 0,
+            end: 41,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 41
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 41,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 41
+          }
+        }
+      }
+    ],
+    [
+      `const {
+      [({ ...rest }) => {
+        let { ...b } = {};
+      }]: a,
+      [({ ...d } = {})]: c,
+    } = {};`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ObjectExpression',
+                  properties: [],
+                  start: 110,
+                  end: 112,
+                  loc: {
+                    start: {
+                      line: 6,
+                      column: 8
+                    },
+                    end: {
+                      line: 6,
+                      column: 10
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'ArrowFunctionExpression',
+                        body: {
+                          type: 'BlockStatement',
+                          body: [
+                            {
+                              type: 'VariableDeclaration',
+                              kind: 'let',
+                              declarations: [
+                                {
+                                  type: 'VariableDeclarator',
+                                  init: {
+                                    type: 'ObjectExpression',
+                                    properties: [],
+                                    start: 57,
+                                    end: 59,
+                                    loc: {
+                                      start: {
+                                        line: 3,
+                                        column: 23
+                                      },
+                                      end: {
+                                        line: 3,
+                                        column: 25
+                                      }
+                                    }
+                                  },
+                                  id: {
+                                    type: 'ObjectPattern',
+                                    properties: [
+                                      {
+                                        type: 'RestElement',
+                                        argument: {
+                                          type: 'Identifier',
+                                          name: 'b',
+                                          start: 51,
+                                          end: 52,
+                                          loc: {
+                                            start: {
+                                              line: 3,
+                                              column: 17
+                                            },
+                                            end: {
+                                              line: 3,
+                                              column: 18
+                                            }
+                                          }
+                                        },
+                                        start: 48,
+                                        end: 52,
+                                        loc: {
+                                          start: {
+                                            line: 3,
+                                            column: 14
+                                          },
+                                          end: {
+                                            line: 3,
+                                            column: 18
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    start: 46,
+                                    end: 54,
+                                    loc: {
+                                      start: {
+                                        line: 3,
+                                        column: 12
+                                      },
+                                      end: {
+                                        line: 3,
+                                        column: 20
+                                      }
+                                    }
+                                  },
+                                  start: 46,
+                                  end: 59,
+                                  loc: {
+                                    start: {
+                                      line: 3,
+                                      column: 12
+                                    },
+                                    end: {
+                                      line: 3,
+                                      column: 25
+                                    }
+                                  }
+                                }
+                              ],
+                              start: 42,
+                              end: 60,
+                              loc: {
+                                start: {
+                                  line: 3,
+                                  column: 8
+                                },
+                                end: {
+                                  line: 3,
+                                  column: 26
+                                }
+                              }
+                            }
+                          ],
+                          start: 32,
+                          end: 68,
+                          loc: {
+                            start: {
+                              line: 2,
+                              column: 24
+                            },
+                            end: {
+                              line: 4,
+                              column: 7
+                            }
+                          }
+                        },
+                        params: [
+                          {
+                            type: 'ObjectPattern',
+                            properties: [
+                              {
+                                type: 'RestElement',
+                                argument: {
+                                  type: 'Identifier',
+                                  name: 'rest',
+                                  start: 21,
+                                  end: 25,
+                                  loc: {
+                                    start: {
+                                      line: 2,
+                                      column: 13
+                                    },
+                                    end: {
+                                      line: 2,
+                                      column: 17
+                                    }
+                                  }
+                                },
+                                start: 18,
+                                end: 25,
+                                loc: {
+                                  start: {
+                                    line: 2,
+                                    column: 10
+                                  },
+                                  end: {
+                                    line: 2,
+                                    column: 17
+                                  }
+                                }
+                              }
+                            ],
+                            start: 16,
+                            end: 27,
+                            loc: {
+                              start: {
+                                line: 2,
+                                column: 8
+                              },
+                              end: {
+                                line: 2,
+                                column: 19
+                              }
+                            }
+                          }
+                        ],
+                        async: false,
+                        expression: false,
+                        start: 15,
+                        end: 68,
+                        loc: {
+                          start: {
+                            line: 2,
+                            column: 7
+                          },
+                          end: {
+                            line: 4,
+                            column: 7
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 71,
+                        end: 72,
+                        loc: {
+                          start: {
+                            line: 4,
+                            column: 10
+                          },
+                          end: {
+                            line: 4,
+                            column: 11
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: true,
+                      method: false,
+                      shorthand: false,
+                      start: 14,
+                      end: 72,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 6
+                        },
+                        end: {
+                          line: 4,
+                          column: 11
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'AssignmentExpression',
+                        left: {
+                          type: 'ObjectPattern',
+                          properties: [
+                            {
+                              type: 'RestElement',
+                              argument: {
+                                type: 'Identifier',
+                                name: 'd',
+                                start: 87,
+                                end: 88,
+                                loc: {
+                                  start: {
+                                    line: 5,
+                                    column: 13
+                                  },
+                                  end: {
+                                    line: 5,
+                                    column: 14
+                                  }
+                                }
+                              },
+                              start: 84,
+                              end: 88,
+                              loc: {
+                                start: {
+                                  line: 5,
+                                  column: 10
+                                },
+                                end: {
+                                  line: 5,
+                                  column: 14
+                                }
+                              }
+                            }
+                          ],
+                          start: 82,
+                          end: 90,
+                          loc: {
+                            start: {
+                              line: 5,
+                              column: 8
+                            },
+                            end: {
+                              line: 5,
+                              column: 16
+                            }
+                          }
+                        },
+                        operator: '=',
+                        right: {
+                          type: 'ObjectExpression',
+                          properties: [],
+                          start: 93,
+                          end: 95,
+                          loc: {
+                            start: {
+                              line: 5,
+                              column: 19
+                            },
+                            end: {
+                              line: 5,
+                              column: 21
+                            }
+                          }
+                        },
+                        start: 82,
+                        end: 95,
+                        loc: {
+                          start: {
+                            line: 5,
+                            column: 8
+                          },
+                          end: {
+                            line: 5,
+                            column: 21
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'c',
+                        start: 99,
+                        end: 100,
+                        loc: {
+                          start: {
+                            line: 5,
+                            column: 25
+                          },
+                          end: {
+                            line: 5,
+                            column: 26
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: true,
+                      method: false,
+                      shorthand: false,
+                      start: 80,
+                      end: 100,
+                      loc: {
+                        start: {
+                          line: 5,
+                          column: 6
+                        },
+                        end: {
+                          line: 5,
+                          column: 26
+                        }
+                      }
+                    }
+                  ],
+                  start: 6,
+                  end: 107,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 6,
+                      column: 5
+                    }
+                  }
+                },
+                start: 6,
+                end: 112,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 6,
+                    column: 10
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 113,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 6,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 113,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 6,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `const { a: { ...bar }, b: { ...baz }, ...foo } = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 49,
+                  end: 52,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 49
+                    },
+                    end: {
+                      line: 1,
+                      column: 52
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'ObjectPattern',
+                        properties: [
+                          {
+                            type: 'RestElement',
+                            argument: {
+                              type: 'Identifier',
+                              name: 'bar',
+                              start: 16,
+                              end: 19,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 19
+                                }
+                              }
+                            },
+                            start: 13,
+                            end: 19,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 13
+                              },
+                              end: {
+                                line: 1,
+                                column: 19
+                              }
+                            }
+                          }
+                        ],
+                        start: 11,
+                        end: 21,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 21
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 8,
+                      end: 21,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 21
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'b',
+                        start: 23,
+                        end: 24,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 23
+                          },
+                          end: {
+                            line: 1,
+                            column: 24
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'ObjectPattern',
+                        properties: [
+                          {
+                            type: 'RestElement',
+                            argument: {
+                              type: 'Identifier',
+                              name: 'baz',
+                              start: 31,
+                              end: 34,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 31
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 34
+                                }
+                              }
+                            },
+                            start: 28,
+                            end: 34,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 28
+                              },
+                              end: {
+                                line: 1,
+                                column: 34
+                              }
+                            }
+                          }
+                        ],
+                        start: 26,
+                        end: 36,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 26
+                          },
+                          end: {
+                            line: 1,
+                            column: 36
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 23,
+                      end: 36,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 36
+                        }
+                      }
+                    },
+                    {
+                      type: 'RestElement',
+                      argument: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 41,
+                        end: 44,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 41
+                          },
+                          end: {
+                            line: 1,
+                            column: 44
+                          }
+                        }
+                      },
+                      start: 38,
+                      end: 44,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 38
+                        },
+                        end: {
+                          line: 1,
+                          column: 44
+                        }
+                      }
+                    }
+                  ],
+                  start: 6,
+                  end: 46,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 46
+                    }
+                  }
+                },
+                start: 6,
+                end: 52,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 52
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 53,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 53
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 53,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 53
+          }
+        }
+      }
+    ],
     [
       `const [a=[...b], ...c] = obj;`,
       Context.OptionsNext | Context.OptionsLoc,

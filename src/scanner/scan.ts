@@ -31,6 +31,8 @@ export function scan(
   let char: number | null;
   let index: number | null;
 
+  let token: Token = Token.EOF;
+
   while (parser.index < length) {
     char = source.charCodeAt(parser.index);
 
@@ -39,8 +41,7 @@ export function scan(
 
     if (char > 0x7e) {
       if ((char & ~1) === Chars.LineSeparator) {
-        parser.index++;
-        parser.offset = parser.index;
+        parser.offset = ++parser.index;
         parser.newLine = 1;
         parser.lineBase++;
         lastIsCR = 0;
@@ -55,7 +56,7 @@ export function scan(
       return scanMaybeIdentifier(parser, context, source, char);
     }
 
-    const token = firstCharKinds[char];
+    token = firstCharKinds[char];
 
     switch (token) {
       case Token.RightBrace:
@@ -105,15 +106,16 @@ export function scan(
         if (parser.index + 1 < length) {
           char = source.charCodeAt(++parser.index);
           switch (CharKinds[char]) {
-            case Token.Underscore:
-            case Token.NumericLiteral:
-              return scanImplicitOctalDigits(parser, context, source, char);
             case Token.HexDigits:
               return scanHexDigits(parser, source);
             case Token.BinaryDigits:
               return scanBinaryDigits(parser, source);
             case Token.OctalDigits:
               return scanOctalDigits(parser, source);
+            case Token.NumericLiteral:
+            case Token.Underscore:
+              return scanImplicitOctalDigits(parser, context, source, char);
+            default: // ignore
           }
         }
 
@@ -199,15 +201,13 @@ export function scan(
 
       // `<`, `<=`, `<<`, `<<=`, `</`, `<!--`
       case Token.LessThan:
-        index = parser.index += 1;
-        char = source.charCodeAt(index);
+        char = source.charCodeAt(++parser.index);
 
         if (char === Chars.LessThan) {
-          if (source.charCodeAt(++index) === Chars.EqualSign) {
-            parser.index += 2;
+          if (source.charCodeAt(++parser.index) === Chars.EqualSign) {
+            parser.index++;
             return Token.ShiftLeftAssign;
           }
-          parser.index += 1;
           return Token.ShiftLeft;
         }
         if (char === Chars.EqualSign) {
@@ -216,36 +216,33 @@ export function scan(
         }
         if (char === Chars.Exclamation) {
           if (
-            index < length &&
-            source.charCodeAt(index + 2) === Chars.Hyphen &&
-            source.charCodeAt(index + 1) === Chars.Hyphen
+            parser.index < length &&
+            source.charCodeAt(parser.index + 2) === Chars.Hyphen &&
+            source.charCodeAt(parser.index + 1) === Chars.Hyphen
           ) {
-            parser.index = skipSingleHTMLComment(parser, context, source, index + 1);
+            parser.index = skipSingleHTMLComment(parser, context, source, parser.index + 1);
             continue;
           }
         }
-        parser.index = index;
+
         return Token.LessThan;
 
       // `-`, `--`, `-=`, `-->`
       case Token.Subtract:
-        index = parser.index;
-
-        char = source.charCodeAt(index + 1);
+        char = source.charCodeAt(++parser.index);
         if (char === Chars.Hyphen) {
-          if (source.charCodeAt(index + 2) === Chars.GreaterThan && (lineStart || parser.newLine)) {
-            parser.index = skipSingleHTMLComment(parser, context, source, index);
+          if (source.charCodeAt(parser.index + 1) === Chars.GreaterThan && (lineStart || parser.newLine)) {
+            parser.index = skipSingleHTMLComment(parser, context, source, parser.index);
             continue;
           }
-          parser.index = index + 2;
+          parser.index++;
           return Token.Decrement;
         }
 
         if (char === Chars.EqualSign) {
-          parser.index += 2;
+          parser.index++;
           return Token.SubtractAssign;
         }
-        parser.index++;
         return Token.Subtract;
 
       // `!`, `!=`, `!==`

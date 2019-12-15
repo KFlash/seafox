@@ -4845,19 +4845,7 @@ describe('Expressions - Class', () => {
             },
             superClass: {
               type: 'Literal',
-              value: 1.2,
-              start: 16,
-              end: 19,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 16
-                },
-                end: {
-                  line: 1,
-                  column: 19
-                }
-              }
+              value: 1.2
             },
             body: {
               type: 'ClassBody',
@@ -4970,19 +4958,7 @@ describe('Expressions - Class', () => {
               type: 'ImportExpression',
               source: {
                 type: 'Literal',
-                value: 'x',
-                start: 23,
-                end: 26,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 23
-                  },
-                  end: {
-                    line: 1,
-                    column: 26
-                  }
-                }
+                value: 'x'
               }
             },
             body: {
@@ -6038,19 +6014,7 @@ describe('Expressions - Class', () => {
                   computed: false,
                   key: {
                     type: 'Literal',
-                    value: '',
-                    start: 10,
-                    end: 12,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 10
-                      },
-                      end: {
-                        line: 1,
-                        column: 12
-                      }
-                    }
+                    value: ''
                   },
                   value: {
                     type: 'FunctionExpression',
@@ -6461,19 +6425,7 @@ describe('Expressions - Class', () => {
                   computed: false,
                   key: {
                     type: 'Literal',
-                    value: 'foo',
-                    start: 9,
-                    end: 14,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 9
-                      },
-                      end: {
-                        line: 1,
-                        column: 14
-                      }
-                    }
+                    value: 'foo'
                   },
                   value: {
                     type: 'FunctionExpression',
@@ -6517,19 +6469,7 @@ describe('Expressions - Class', () => {
                   computed: false,
                   key: {
                     type: 'Literal',
-                    value: 555,
-                    start: 15,
-                    end: 18,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 15
-                      },
-                      end: {
-                        line: 1,
-                        column: 18
-                      }
-                    }
+                    value: 555
                   },
                   value: {
                     type: 'FunctionExpression',

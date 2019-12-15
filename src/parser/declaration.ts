@@ -20,7 +20,6 @@ import {
   Context,
   ParserState,
   consumeSemicolon,
-  consumeOpt,
   setLoc,
   FunctionFlag,
   optionalBit,
@@ -192,7 +191,7 @@ export function parseVariableStatementOrLexicalDeclaration(
   return context & Context.OptionsLoc
     ? {
         type: 'VariableDeclaration',
-        kind: kind & BindingKind.Let ? 'let' : kind & BindingKind.Const ? 'const' : 'var',
+        kind: kind & BindingKind.Const ? 'const' : 'var',
         declarations,
         start,
         end: parser.endIndex,
@@ -200,7 +199,7 @@ export function parseVariableStatementOrLexicalDeclaration(
       }
     : {
         type: 'VariableDeclaration',
-        kind: kind & BindingKind.Let ? 'let' : kind & BindingKind.Const ? 'const' : 'var',
+        kind: kind & BindingKind.Const ? 'const' : 'var',
         declarations
       };
 }
@@ -232,8 +231,8 @@ export function parseVariableDeclarationListAndDeclarator(
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context);
     } else if (
-      (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
-      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
+      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf &&
+      (kind & BindingKind.Const || (token & Token.IsPatternStart) === Token.IsPatternStart)
     ) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
@@ -257,7 +256,7 @@ export function parseVariableDeclarationListAndDeclarator(
 
     if (parser.token !== Token.Comma) break;
 
-    consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1);
+    nextToken(parser, context, /* allowRegExp */ 1);
   }
 
   return list;

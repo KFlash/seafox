@@ -1,7 +1,7 @@
-import { CharTypes, CharFlags } from './charClassifier';
+import { isIdentifierPart } from './charClassifier';
 import { ParserState, Context } from '../parser/common';
 import { Token, descKeywordTable } from '../token';
-import { isIdentifierPart } from './charClassifier';
+
 import { Chars } from '../chars';
 import { unicodeLookup } from './unicode';
 import { fromCodePoint, toHex } from './common';
@@ -19,7 +19,7 @@ export function scanIdentifier(
   if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, maybeKeyword);
   parser.tokenValue = value;
   const token: Token | undefined = descKeywordTable[value];
-  return token === undefined ? Token.Identifier : token;
+  return token === void 0 ? Token.Identifier : token;
 }
 
 export function scanIdentifierSlowPath(
@@ -116,8 +116,6 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
 
   // \uNNNN
 
-  // Note: This can also be done without the 'for' loop, but there isn't much to gain from it.
-  // Example: 'code = (char << 12) | (ch2 << 8) | (ch3 << 4) | ch4;'
   let i = 0;
   for (i = 0; i < 4; i++) {
     const digit = toHex(source.charCodeAt(parser.index));

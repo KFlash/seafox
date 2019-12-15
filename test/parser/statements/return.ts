@@ -1,7 +1,18 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseSource } from '../../../src/parser/core';
-describe('Statements - For of', () => {
+describe('Statements - Return', () => {
+  for (const [source, ctx] of [
+    ['return', Context.Empty],
+    ['() => return', Context.Empty],
+    ['*() => {return}', Context.Empty]
+  ]) {
+    it(source as string, () => {
+      t.throws(() => {
+        parseSource(source as string, undefined, ctx as Context);
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
     [
       `for (const a of b);`,

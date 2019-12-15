@@ -1,6 +1,5 @@
 // Unicode v. 12 support
 // tslint:disable
-
 export const unicodeLookup = ((compressed, lookup) => {
   const result = new Uint32Array(139264);
   let index = 0;

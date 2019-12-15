@@ -4,6 +4,167 @@ import { parseSource } from '../../../src/parser/core';
 
 describe('Declarations - Let', () => {
   for (const [source, ctx] of [
+    //['const [a, let, b] = [1, 2, 3];', Context.Empty],
+    ['for(let let in { }) { };', Context.Empty],
+    ['let [foo:bar] = obj;', Context.Empty],
+    ['let [...] = obj;', Context.Empty],
+    ['let [.x] = obj;', Context.Empty],
+    ['let {x}, y;', Context.Empty],
+    ['let {x,, y} = obj;', Context.Empty],
+    ['let a, );', Context.Empty],
+    ['let ...a = 1;', Context.Empty],
+    ['let a, ...b = 1;', Context.Empty],
+    ['let [a];', Context.Empty],
+    ['let let;', Context.Empty],
+    ['let let x;', Context.Empty],
+    ['if (1) let x = 10;', Context.Empty],
+    ['let [a + 1] = [];', Context.Empty],
+    ['let a; [a--] = [];', Context.Empty],
+    ['let a; [1, a] = [];', Context.Empty],
+    ['let [...a, b] = [];', Context.Empty],
+    ['let a; [...a = 1] = [];', Context.Empty],
+    ['let a; [((a)] = [];', Context.Empty],
+    ['let\neval(foo)', Context.Empty],
+    ['let eval(foo)', Context.Empty],
+    ['let [((a)] = [];', Context.Empty],
+    ['function foo() { return {}; }; let [foo().x] = [];', Context.Empty],
+    ['function foo() { return {}; }; [foo()] = [];', Context.Empty],
+    ['let {a:=c} = z;', Context.Empty],
+    ['let {x:y=z}, {a:b=c} = obj;', Context.Empty],
+    ['let {x:y=z};', Context.Empty],
+    ['let b = async () => []; for (a in await b());', Context.Empty],
+    ['let x = y, {z};', Context.Empty],
+    ['let x, {y};', Context.Empty],
+    ['let {[Symbol.iterator]: a} of []', Context.Empty],
+    ['let {0: a} of []', Context.Empty],
+    ['(let {"a": a = 1} of [])', Context.Empty],
+    ['let {0: a = 1} of []', Context.Empty],
+    ['for (let [let];;;) {}', Context.Empty],
+    ['for (let x, y, z, let = 1;;;) {}', Context.Empty],
+    ['let x,;', Context.Empty],
+    ['let await 0', Context.Empty],
+    ['"use strict"; const let = 1;', Context.Empty],
+    // ['"use strict"; let { let } = {};', Context.Empty],
+    // ['"use strict"; const { let } = {};', Context.Empty],
+    ['"use strict"; let [let] = [];', Context.Empty],
+    //['"use strict"; const [let] = [];', Context.Empty],
+    ['let {x};', Context.Empty],
+    ['let [x()] = x', Context.Empty],
+    ['let [x().foo] = x', Context.Empty],
+    ['let [...a,] = 0', Context.Empty],
+    ['let [(x)] = x', Context.Empty],
+    ['let [(x().foo)] = x', Context.Empty],
+    ['[x()] = x', Context.Empty],
+    ['let a; [((a)] = [];', Context.Empty],
+    ['let [a)] = [];', Context.Empty],
+    ['let a; [a)] = [];', Context.Empty],
+    ['let [((((a)))), b] = [];', Context.Empty],
+    ['let [...a = 1] = [];', Context.Empty],
+    ['let a; [...a = 1] = [];', Context.Empty],
+    ['let a; [...a,] = [];', Context.Empty],
+    ['let arguments.length', Context.Empty],
+    ['let [...a, ...b] = [];', Context.Empty],
+    ['let [1, a] = [];', Context.Empty],
+    ['let [1] = [];', Context.Empty],
+    ['let [a--] = [];', Context.Empty],
+    ['let [a + 1] = [];', Context.Empty],
+    ['let [++a] = [];', Context.Empty],
+    ['let a; [++a] = [];', Context.Empty],
+    ['([x()]) => x', Context.Empty],
+    ['([x().foo]) => x', Context.Empty],
+    ['([(x)]) => x', Context.Empty],
+    ['([(x().foo)]) => x', Context.Empty],
+    ['let {[x]} = z;', Context.Empty],
+    ['let {[x]};', Context.Empty],
+    ['let {[x]: y};', Context.Empty],
+    ['let x = {y=z}', Context.Empty],
+    ['let x = {y=z} => d', Context.Empty],
+    ['let {[x]: y = z};', Context.Empty],
+    ['let {...let} = {a: 1, b: 2};', Context.Empty],
+    ['let [[(a)], ((((((([b])))))))] = [[],[]];', Context.Empty],
+    ['let a, b; [...a, b] = [];', Context.Empty],
+    ['let [((a)] = [];', Context.Empty],
+    ['for (;false;) let x = 1;', Context.Empty],
+    ['do let x; while (false)', Context.Empty],
+    ['if (true) {} else let x;', Context.Empty],
+    ['if (true) let x;', Context.Empty],
+    ['label: let x;', Context.Empty],
+    ['while (false) let x;', Context.Empty],
+    ['let {a: o.a} = obj;', Context.Empty],
+    ['let default', Context.Empty],
+    ['let test = 2, let = 1;', Context.Empty],
+    ['do let x = 1; while (false)', Context.Empty],
+    ['if (true) {} else let x = 1;', Context.Empty],
+    ['if (true) let x = 1;', Context.Empty],
+    ['do let x; while (false)', Context.Empty],
+    ['let [...x = []] = [];', Context.Empty],
+    ['if (true) {} else let x;', Context.Empty],
+    ['let {...{}} = {};', Context.Empty],
+    ['let [...[ x ] = []] = [];', Context.Empty],
+    ['let [...[ x ] = []] = [];', Context.Empty],
+    ['let [...{ x } = []] = [];', Context.Empty],
+    //['let\nlet', Context.Empty],
+    ['do let [x] = 0; while (false);', Context.Empty],
+    ['if (x) let [x] = y; else x;', Context.Empty],
+    ['do let [] while (a);', Context.Empty],
+    ['let [...x, y] = [1, 2, 3];', Context.Empty],
+    ['let [...{ x }, y] = [1, 2, 3];', Context.Empty],
+    ['let [...x = []] = [];', Context.Empty],
+    ['let\nyield 0', Context.Empty],
+    ['let { ...x, y, z } = obj;', Context.Empty],
+    ['let { x, ...y, ...z } = obj;', Context.Empty],
+    ['let let', Context.Empty],
+    ['for (let\nfoo();;);', Context.Empty],
+    ['for (let foo);', Context.Empty],
+    //['while (true) let: continue let;', Context.Strict],
+    // ['if (x) let: y;', Context.Strict],
+    ['for (let foo, bar);', Context.Empty],
+    ['for (let foo = bar);', Context.Empty],
+    ['for (let foo = bar, zoo = boo);', Context.Empty],
+    ['for (let\nfoo);', Context.Empty],
+    ['for (let\nfoo());', Context.Empty],
+    ['for (let foo, bar in x);', Context.Empty],
+    ['for (let foo = bar in x);', Context.Empty],
+    //['let { let } = {};', Context.Empty],
+    //['const { let } = {};', Context.Empty],
+    //['let [let] = [];', Context.Empty],
+    //['const [let] = [];', Context.Empty],
+    ['for (let foo = bar, zoo = boo in x);', Context.Empty],
+    ['for (let\nfoo() in x);', Context.Empty],
+    ['for (let foo = bar, zoo = boo of x);', Context.Empty],
+    ['for (let [foo];;);', Context.Empty],
+    ['for (let [foo = x];;);', Context.Empty],
+    ['for (let [foo], bar;;);', Context.Empty],
+    // ['for (let [...foo,,] = obj;;);', Context.Empty],
+    ['for (let {x,,} = obj;;);', Context.Empty],
+    ['for (let {,x} = obj;;);', Context.Empty],
+    ['for (let {[x]} = z;;);', Context.Empty],
+    ['for (let {[x]};;);', Context.Empty],
+    ['for (let [] = x);', Context.Empty],
+    ['for (let [foo,,bar] = arr);', Context.Empty],
+    ['for (let [foo], bar);', Context.Empty],
+    ['for (let [...,] = obj);', Context.Empty],
+    ['for (let {x} = a, {y} = obj);', Context.Empty],
+    ['for (let {x} = a, y = obj);', Context.Empty],
+    ['for (let {x = y, z = a} = obj);', Context.Empty],
+    ['for (let {x : y} = obj);', Context.Empty],
+    ['for (let {x : y, z} = obj);', Context.Empty],
+    ['for (let {x, y : z} = obj);', Context.Empty],
+    ['for (let {x}, y);', Context.Empty],
+    ['for (let {x}, {y} in z);', Context.Empty],
+    ['for (let {x}, y);', Context.Empty],
+    ['let {...{a,b}} = foo', Context.Empty],
+    ['let {...obj1,} = foo', Context.Empty],
+    ['let {...obj1,a} = foo', Context.Empty],
+    ['let {...obj1,...obj2} = foo', Context.Empty],
+    ['let {...(obj)} = foo', Context.Empty],
+    ['let {...(a,b)} = foo', Context.Empty],
+    ['let {...{a,b}} = foo', Context.Empty],
+    ['let {...[a,b]} = foo', Context.Empty],
+    ['let: foo', Context.Strict],
+    ['"use strict"; let, let, let, let', Context.Empty],
+    ['"use strict"; let(100)', Context.Empty],
+    ['"use strict"; let: 34', Context.Empty],
     [`for (a in b) let {x} = y`, Context.OptionsDisableWebCompat],
     [`if (a) let {x} = y`, Context.OptionsDisableWebCompat],
     [`if (a) let [x]`, Context.OptionsDisableWebCompat],
@@ -85,7 +246,7 @@ describe('Declarations - Let', () => {
     [`for (let let in {}) {}`, Context.OptionsDisableWebCompat],
     [`for (let let of []) {}`, Context.OptionsDisableWebCompat],
     [`const let = 1`, Context.OptionsDisableWebCompat],
-    //[`for (const let in {}) {}`, Context.OptionsDisableWebCompat],
+    [`for (const let in {}) {}`, Context.OptionsDisableWebCompat],
     // [`for (const [let] of []) {}`, Context.OptionsDisableWebCompat],
     [`let test = 2, let = 1;`, Context.OptionsDisableWebCompat],
     [`let let;`, Context.OptionsDisableWebCompat],
@@ -101,31 +262,11 @@ describe('Declarations - Let', () => {
       Context.OptionsDisableWebCompat
     ],
     [`let x = ...y;`, Context.OptionsDisableWebCompat],
-
-    // [`let {...(a,b)} = foo`, Context.OptionsDisableWebCompat],
-    // ['let {...(a,b)} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...[a,b]} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...{a,b}} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...{a,b}} = foo', Context.Empty],
-    // ['let {...(obj)} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...(a,b)} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...[a,b]} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...{a,b}} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...(obj)} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...(a,b)} = foo', Context.OptionsDisableWebCompat],
-    // ['let {...(a,b)} = foo', Context.Empty],
-    // ['let {...[a,b]} = foo', Context.Empty],
-    // ['let {...{a,b}} = foo', Context.Empty],
-    // ['let {...(obj)} = foo', Context.Empty],
-    // ['let {...(a,b)} = foo', Context.Empty],
-    // ['let {...[a,b]} = foo', Context.Empty],
-    // ['let {...{a,b}} = foo', Context.Empty],
-    //    ['let {...(obj)} = foo', Context.Empty],
-
+    ['let {...{a,b}} = foo', Context.Empty],
+    ['let {...(obj)} = foo', Context.Empty],
     ['let {[a]: x, b: x} = obj', Context.Empty],
     ['for (let foo,)', Context.Empty],
     ['for (a in b) let [x] = y', Context.Empty],
-
     ['let p/', Context.Empty],
     //    [`let
     //    []`, Context.Empty],
@@ -177,8 +318,919 @@ describe('Declarations - Let', () => {
 
   for (const [source, ctx, expected] of [
     [
+      '"use strict"; const { [eval]: []} = a;',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 36,
+                  end: 37,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 36
+                    },
+                    end: {
+                      line: 1,
+                      column: 37
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'eval',
+                        start: 23,
+                        end: 27,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 23
+                          },
+                          end: {
+                            line: 1,
+                            column: 27
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'ArrayPattern',
+                        elements: [],
+                        start: 30,
+                        end: 32,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 30
+                          },
+                          end: {
+                            line: 1,
+                            column: 32
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: true,
+                      method: false,
+                      shorthand: false,
+                      start: 22,
+                      end: 32,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 22
+                        },
+                        end: {
+                          line: 1,
+                          column: 32
+                        }
+                      }
+                    }
+                  ],
+                  start: 20,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 20
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                },
+                start: 20,
+                end: 37,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 20
+                  },
+                  end: {
+                    line: 1,
+                    column: 37
+                  }
+                }
+              }
+            ],
+            start: 14,
+            end: 38,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 38
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 38,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 38
+          }
+        }
+      }
+    ],
+    [
+      'const { [eval]: []} = a;',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'a'
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      kind: 'init',
+                      key: {
+                        type: 'Identifier',
+                        name: 'eval'
+                      },
+                      computed: true,
+                      value: {
+                        type: 'ArrayPattern',
+                        elements: []
+                      },
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      'const [foo] = x, [bar] = y;',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 7,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    }
+                  ],
+                  start: 6,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                start: 6,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'y',
+                  start: 25,
+                  end: 26,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 25
+                    },
+                    end: {
+                      line: 1,
+                      column: 26
+                    }
+                  }
+                },
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'bar',
+                      start: 18,
+                      end: 21,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 18
+                        },
+                        end: {
+                          line: 1,
+                          column: 21
+                        }
+                      }
+                    }
+                  ],
+                  start: 17,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 17
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                },
+                start: 17,
+                end: 26,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 26
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 27,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 27
+          }
+        }
+      }
+    ],
+    [
+      `const {foo:a,bar:b} = x;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 22,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 7,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 11,
+                        end: 12,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 12
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 7,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar',
+                        start: 13,
+                        end: 16,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 13
+                          },
+                          end: {
+                            line: 1,
+                            column: 16
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'b',
+                        start: 17,
+                        end: 18,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 17
+                          },
+                          end: {
+                            line: 1,
+                            column: 18
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 13,
+                      end: 18,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 18
+                        }
+                      }
+                    }
+                  ],
+                  start: 6,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                start: 6,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 24,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 24
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 24,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 24
+          }
+        }
+      }
+    ],
+    [
+      `for (const [,,] of x);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForOfStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 21,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 21
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [null, null],
+                    start: 11,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 19,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            await: false,
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      `for (const {a, [x]: y} in obj);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 30,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 30
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 12,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 12,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 16,
+                          end: 17,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 16
+                            },
+                            end: {
+                              line: 1,
+                              column: 17
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 20,
+                          end: 21,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 20
+                            },
+                            end: {
+                              line: 1,
+                              column: 21
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: true,
+                        method: false,
+                        shorthand: false,
+                        start: 15,
+                        end: 21,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 21
+                          }
+                        }
+                      }
+                    ],
+                    start: 11,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj',
+              start: 26,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 26
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
       `let a; ({a:a, a:a} = {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -417,7 +1469,7 @@ describe('Declarations - Let', () => {
     [
       `let q
       /d/`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -524,7 +1576,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `foo: let: y;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -639,7 +1691,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `_ => { let: foo; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -791,7 +1843,7 @@ describe('Declarations - Let', () => {
     [
       `let
             {x} = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -931,7 +1983,7 @@ describe('Declarations - Let', () => {
     [
       `let {x}
               = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -1070,7 +2122,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x} = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1209,7 +2261,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1296,7 +2348,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let foo = bar`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1383,7 +2435,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `{ let x } var x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1659,9 +2711,1959 @@ describe('Declarations - Let', () => {
         }
       }
     ],
+
+    [
+      `let foo, [bar] = arr2;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 4,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                start: 4,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'arr2',
+                  start: 17,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 17
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                },
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'bar',
+                      start: 10,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    }
+                  ],
+                  start: 9,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                start: 9,
+                end: 21,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 21
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      `let [foo,] = arr;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'arr',
+                  start: 13,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 5,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                start: 4,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `let [a=[...b], ...c] = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 23,
+                  end: 26,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 23
+                    },
+                    end: {
+                      line: 1,
+                      column: 26
+                    }
+                  }
+                },
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      right: {
+                        type: 'ArrayExpression',
+                        elements: [
+                          {
+                            type: 'SpreadElement',
+                            argument: {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 11,
+                              end: 12,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 11
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 12
+                                }
+                              }
+                            },
+                            start: 8,
+                            end: 12,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 8
+                              },
+                              end: {
+                                line: 1,
+                                column: 12
+                              }
+                            }
+                          }
+                        ],
+                        start: 7,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      start: 5,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    {
+                      type: 'RestElement',
+                      argument: {
+                        type: 'Identifier',
+                        name: 'c',
+                        start: 18,
+                        end: 19,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 18
+                          },
+                          end: {
+                            line: 1,
+                            column: 19
+                          }
+                        }
+                      },
+                      start: 15,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 4,
+                end: 26,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 26
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 27,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 27
+          }
+        }
+      }
+    ],
+    [
+      `let {x = y, z = a} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 21,
+                  end: 24,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 24
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 5,
+                          end: 6,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 5
+                            },
+                            end: {
+                              line: 1,
+                              column: 6
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 9,
+                          end: 10,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 9
+                            },
+                            end: {
+                              line: 1,
+                              column: 10
+                            }
+                          }
+                        },
+                        start: 5,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 5,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 12,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 16,
+                          end: 17,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 16
+                            },
+                            end: {
+                              line: 1,
+                              column: 17
+                            }
+                          }
+                        },
+                        start: 12,
+                        end: 17,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 17
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 12,
+                      end: 17,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 17
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                start: 4,
+                end: 24,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 24
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      `let {x : y, z : a} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 21,
+                  end: 24,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 24
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 9,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 9
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 5,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 16,
+                        end: 17,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 16
+                          },
+                          end: {
+                            line: 1,
+                            column: 17
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 12,
+                      end: 17,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 17
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                start: 4,
+                end: 24,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 24
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      `let {x = y, z} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 17,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 17
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 5,
+                          end: 6,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 5
+                            },
+                            end: {
+                              line: 1,
+                              column: 6
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 9,
+                          end: 10,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 9
+                            },
+                            end: {
+                              line: 1,
+                              column: 10
+                            }
+                          }
+                        },
+                        start: 5,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 5,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                start: 4,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `let {x : y, z} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 17,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 17
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 9,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 9
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 5,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                start: 4,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `let {x, y} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 13,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 5,
+                      end: 6,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 6
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                start: 4,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `let {a, [x]: y} = a;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 18,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 5,
+                      end: 6,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 6
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 9,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 9
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 13,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 13
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: true,
+                      method: false,
+                      shorthand: false,
+                      start: 8,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                start: 4,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
+    [
+      `let {x : y} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 14,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 9,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 9
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 5,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                start: 4,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
+      `let {x} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 10,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 5,
+                      end: 6,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 6
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                start: 4,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
     [
       `(function let() { })`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1748,7 +4750,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let++;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1818,7 +4820,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let(100)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1906,7 +4908,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let f = /* before */async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }/* after */;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2060,7 +5062,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [{ a }, { b }, { c = "" }] = [a, b, c];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2432,7 +5434,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [ , , ...x] = [1, 2, 3, 4, 5];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2635,7 +5637,7 @@ describe('Declarations - Let', () => {
 
     [
       `let arrow = () => {};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2740,7 +5742,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [[x]] = [null];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2878,7 +5880,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [arrow = () => {}] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3032,7 +6034,7 @@ describe('Declarations - Let', () => {
 
     [
       `let a, b; [((((a)))), b] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3232,7 +6234,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let a; [,,a] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3386,7 +6388,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [x, ...[foo, bar]] = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3555,7 +6557,7 @@ describe('Declarations - Let', () => {
 
     [
       `let {[x]: y} = z;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3694,7 +6696,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [foo=a, bar] = arr;;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3877,7 +6879,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let {[x]: y = z} of obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4080,7 +7082,7 @@ describe('Declarations - Let', () => {
 
     [
       `[x = true] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4213,7 +7215,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [foo=a] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4348,7 +7350,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let;;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4419,7 +7421,7 @@ describe('Declarations - Let', () => {
 
     [
       `_ => { let: foo; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4570,7 +7572,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let {x, y : z} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4791,7 +7793,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let a; [a, a] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4959,7 +7961,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let x = 1; x = 2;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5109,7 +8111,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let { x : x0 = 0, y : { z : z1 = 1 }, x : x1 = 5} = o;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5495,7 +8497,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `var foo, let;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5599,7 +8601,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `try { } catch (let) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5700,7 +8702,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `function let() { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5772,7 +8774,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `function foo(let) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5861,7 +8863,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5914,7 +8916,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let = 1; let < 1; let++) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6096,7 +9098,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let in {}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6181,7 +9183,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (var let = 1; let < 1; let++) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6380,7 +9382,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (var [let] = 1; let < 1; let++) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6596,7 +9598,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let.let = foo`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6715,7 +9717,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let test262id8;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6787,7 +9789,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let a1; [a1] = [1]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6956,7 +9958,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [...rest2] = [1, 2, 3, 4, 5];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7156,7 +10158,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [a4, b4, c4, ...rest4] = [1, 2, 3];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7372,7 +10374,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let a1; [[a1]] = [[1]];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7575,7 +10577,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let x = class x {};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7694,7 +10696,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [{ a }, { b }, { c = "" }] = [a, b, c];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8066,7 +11068,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [{ x }] = [x];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8239,7 +11241,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [[x]] = [null];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8377,7 +11379,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [{ x, y, z } = { x: 44, y: 55, z: 66 }] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8820,7 +11822,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [,] = function* g() { first += 1;  second += 1; };`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9068,7 +12070,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let { arrow = () => {} } = {};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9256,7 +12258,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `function foo() { var let = 1, test = 2; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9441,7 +12443,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [{ x }] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9597,7 +12599,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [...x] = [1, 2, 3];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9765,7 +12767,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [[a]] = [[]];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9903,7 +12905,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [[[...a]]] = [[[]]];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10090,7 +13092,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {} = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10177,7 +13179,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let _a = 5;\n`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         body: [
           {
@@ -10264,7 +13266,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {a:{}} = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10403,7 +13405,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let x = 5, a = 6, z = 7;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10584,7 +13586,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let x = /* bef */5 + 3/* aft */;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10703,7 +13705,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {a,b=0,c:d,e:f=0,[g]:[h]}=0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11125,7 +14127,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [a,,]=0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11230,7 +14232,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [{a}] = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11386,7 +14388,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [[[...a]]] = [[[]]];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11573,7 +14575,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let foo, bar;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11677,7 +14679,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [foo] = arr, [bar] = arr2;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11845,7 +14847,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [foo] = arr, bar = arr2;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11996,7 +14998,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [foo=a] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12131,7 +15133,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [foo, bar=b] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12282,7 +15284,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [foo, ...bar] = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12417,7 +15419,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [...[foo, bar]] = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12569,7 +15571,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x} = a, {y} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12807,7 +15809,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let x, {y} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12978,7 +15980,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x, y = z} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13199,7 +16201,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x : y = z} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13369,7 +16371,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let foo = bar;;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13488,7 +16490,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [foo] = arr;;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13624,7 +16626,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [...[foo, bar]] = obj;;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13808,7 +16810,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let x = ({y=z}=e) => d`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14044,7 +17046,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let {[x]: y} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14214,7 +17216,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let { w = a(), x = b(), y = c(), z = d() } = { w: null, x: 0, y: false, z: "" };`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14907,7 +17909,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let {[x]: y = z} of obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15109,7 +18111,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [,] = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15196,7 +18198,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (;let;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15266,7 +18268,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `_ => { let: foo; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15417,7 +18419,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let {x, y : z} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15638,7 +18640,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [foo, bar=b] of arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15821,7 +18823,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [...[foo, bar]] of obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16005,7 +19007,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [a=[...b], ...c] of obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16235,7 +19237,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let [x, ...[foo, bar]] in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16434,7 +19436,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `for (let {x = y, z = a} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16717,7 +19719,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [...foo] = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16836,7 +19838,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x} = a, y = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17022,7 +20024,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let a, [...x] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17173,7 +20175,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {...x} = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17292,7 +20294,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `var [let] = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17396,7 +20398,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `var {let} = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17535,7 +20537,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let.foo;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17622,7 +20624,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let();`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17693,7 +20695,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let [x, ...[foo, bar]] = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17861,7 +20863,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x,} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18000,7 +21002,7 @@ describe('Declarations - Let', () => {
     ],
     [
       `let {x} = a, {y} = obj;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',

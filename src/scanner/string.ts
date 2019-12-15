@@ -89,9 +89,6 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
 
       // \uNNNN
 
-      // Note: This can also be done without the 'for' loop, but there isn't much to gain from it.
-      // Example: 'code = (char << 12) | (ch2 << 8) | (ch3 << 4) | ch4;'
-
       let i = 0;
       for (i = 0; i < 4; i++) {
         const digit = toHex(source.charCodeAt(parser.index++));

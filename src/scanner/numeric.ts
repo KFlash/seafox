@@ -18,7 +18,8 @@ export function scanNumber(parser: ParserState, source: string, char: number, sk
 
     if (
       digit >= 0 &&
-      (char !== Chars.Period && (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) === 0)
+      char !== Chars.Period &&
+      (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) === 0
     ) {
       // Most numbers are pure decimal integers without fractional component
       // or exponential notation - handle that with optimized code
@@ -35,10 +36,10 @@ export function scanNumber(parser: ParserState, source: string, char: number, sk
 
   // Consume the decimal dot
   if (char === Chars.Period) {
-    char = parser.source.charCodeAt(++parser.index);
+    char = source.charCodeAt(++parser.index);
     if (char === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
     while (char >= Chars.Zero && char <= Chars.Nine) {
-      char = parser.source.charCodeAt(++parser.index);
+      char = source.charCodeAt(++parser.index);
     }
   }
 
@@ -58,7 +59,7 @@ export function scanNumber(parser: ParserState, source: string, char: number, sk
 }
 
 export function scanSignedInteger(parser: ParserState, source: string): number {
-  let char = parser.source.charCodeAt(++parser.index);
+  let char = source.charCodeAt(++parser.index);
 
   // '-', '+'
   if (char === Chars.Hyphen || char === Chars.Plus) {
@@ -80,10 +81,11 @@ export function scanSignedInteger(parser: ParserState, source: string): number {
 
 export function skipNumericSeparator(parser: ParserState, source: string, char: number): Token {
   let start = parser.start;
-  let value = '';
-  value = scanDecimalDigitsOrSeparator(parser, source, char, start);
+  let value = scanDecimalDigitsOrSeparator(parser, source, char, start);
+
   start = parser.index;
-  char = parser.source.charCodeAt(start);
+
+  char = source.charCodeAt(start);
 
   if (char === Chars.Period) {
     char = source.charCodeAt(++parser.index);
@@ -92,7 +94,7 @@ export function skipNumericSeparator(parser: ParserState, source: string, char: 
 
     value += scanDecimalDigitsOrSeparator(parser, source, char, start);
     start = parser.index;
-    char = parser.source.charCodeAt(start);
+    char = source.charCodeAt(start);
   }
 
   // Consume any exponential notation
@@ -109,8 +111,7 @@ export function skipNumericSeparator(parser: ParserState, source: string, char: 
 
     // Consume exponential digits
 
-    value +=
-      parser.source.substring(start, parser.index) + scanDecimalDigitsOrSeparator(parser, source, char, parser.index);
+    value += source.substring(start, parser.index) + scanDecimalDigitsOrSeparator(parser, source, char, parser.index);
   }
 
   parser.tokenValue = parseFloat(value);
@@ -135,15 +136,16 @@ export function scanDecimalDigitsOrSeparator(parser: ParserState, source: string
 
   if (allowSeparator === 1) report(parser, Errors.TrailingNumericSeparator);
 
-  return value + parser.source.substring(start, parser.index);
+  return value + source.substring(start, parser.index);
 }
 
 export function scanNumberAfterDecimalPoint(parser: ParserState, source: string, char: number): Token {
+  if (char === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
+
   let value: string | number = 0;
 
-  if (char === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
   while (char >= Chars.Zero && char <= Chars.Nine) {
-    char = parser.source.charCodeAt(++parser.index);
+    char = source.charCodeAt(++parser.index);
   }
 
   if ((char | 32) === Chars.LowerE) char = scanSignedInteger(parser, source);
@@ -208,13 +210,13 @@ export function scanOctalDigits(parser: ParserState, source: string): Token {
     if (char === Chars.Underscore) {
       if (allowSeparator === 0) report(parser, Errors.ContinuousNumericSeparator);
       allowSeparator = 0;
-      char = parser.source.charCodeAt(++parser.index);
+      char = source.charCodeAt(++parser.index);
       continue;
     }
 
     allowSeparator = 1;
     value = value * 8 + (char - Chars.Zero);
-    char = parser.source.charCodeAt(++parser.index);
+    char = source.charCodeAt(++parser.index);
   }
 
   if (allowSeparator === 0) report(parser, Errors.TrailingNumericSeparator);
@@ -302,12 +304,12 @@ export function scanBinaryDigits(parser: ParserState, source: string): Token {
     if (char === Chars.Underscore) {
       if (allowSeparator === 0) report(parser, Errors.ContinuousNumericSeparator);
       allowSeparator = 0;
-      char = parser.source.charCodeAt(++parser.index);
+      char = source.charCodeAt(++parser.index);
       continue;
     }
     allowSeparator = 1;
     value = value * 2 + (char - Chars.Zero);
-    char = parser.source.charCodeAt(++parser.index);
+    char = source.charCodeAt(++parser.index);
   }
 
   if (allowSeparator === 0) report(parser, Errors.TrailingNumericSeparator);

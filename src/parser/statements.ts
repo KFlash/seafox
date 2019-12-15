@@ -2,6 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
+import { ScopeState, newScope, ScopeKind, createArrowHeadParsingScope } from './scope';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -27,7 +28,6 @@ import {
   parseObjectLiteralOrPattern,
   parseArrayExpressionOrPattern,
   parseLeftHandSideExpression,
-  parseImportExpression,
   parseAndClassifyIdentifier,
   parseBindingPattern
 } from './expressions';
@@ -47,10 +47,9 @@ import {
   parseStatementWithLabelSet,
   isExactlyStrictDirective,
   FunctionFlag,
-  AssignmentKind,
-  DestructuringKind
+  DestructuringKind,
+  Flags
 } from './common';
-import { ScopeState, newScope, addVarOrBlock, ScopeKind, createArrowHeadParsingScope } from './scope';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
   const statements: any[] = [];
@@ -144,44 +143,63 @@ export function parseStatement(
   nestedLabels: any,
   allowFuncDecl: 0 | 1
 ): any {
-  const { start, line, column } = parser;
+  // Statement ::
+  //   Block
+  //   VariableStatement
+  //   EmptyStatement
+  //   ExpressionStatement
+  //   IfStatement
+  //   IterationStatement
+  //   ContinueStatement
+  //   BreakStatement
+  //   ReturnStatement
+  //   WithStatement
+  //   LabelledStatement
+  //   SwitchStatement
+  //   ThrowStatement
+  //   TryStatement
+  //   DebuggerStatement
 
   switch (parser.token) {
     case Token.VarKeyword:
       return parseVariableStatementOrLexicalDeclaration(parser, context, scope, BindingKind.Variable, Origin.None);
     case Token.LeftBrace:
-      return parseBlock(parser, context, newScope(scope, ScopeKind.Block), labels);
+      return parseBlock(parser, context, newScope(scope, ScopeKind.Block), labels, nestedLabels);
     case Token.Semicolon:
-      return parseEmptyStatement(parser, context, start, line, column);
+      return parseEmptyStatement(parser, context);
     case Token.ReturnKeyword:
-      return parseReturnStatement(parser, context, start, line, column);
+      return parseReturnStatement(parser, context);
     case Token.ForKeyword:
-      return parseForStatement(parser, context, scope, labels, start, line, column);
+      return parseForStatement(parser, context, scope, labels);
     case Token.DoKeyword:
-      return parseDoWhileStatement(parser, context, scope, labels, start, line, column);
+      return parseDoWhileStatement(parser, context, scope, labels, nestedLabels);
     case Token.WhileKeyword:
-      return parseWhileStatement(parser, context, scope, labels, start, line, column);
+      return parseWhileStatement(parser, context, scope, labels, nestedLabels);
     case Token.SwitchKeyword:
-      return parseSwitchStatement(parser, context, scope, labels, start, line, column);
+      return parseSwitchStatement(parser, context, scope, labels, nestedLabels);
     case Token.ThrowKeyword:
-      return parseThrowStatement(parser, context, start, line, column);
+      return parseThrowStatement(parser, context);
     case Token.BreakKeyword:
-      return parseBreakStatement(parser, context, labels, start, line, column);
+      return parseBreakStatement(parser, context, labels);
     case Token.ContinueKeyword:
-      return parseContinueStatement(parser, context, labels, start, line, column);
+      return parseContinueStatement(parser, context, labels);
     case Token.TryKeyword:
-      return parseTryStatement(parser, context, scope, labels, start, line, column);
+      return parseTryStatement(parser, context, scope, labels);
     case Token.IfKeyword:
-      return parseIfStatement(parser, context, scope, labels, start, line, column);
+      return parseIfStatement(parser, context, scope, labels);
     case Token.WithKeyword:
-      return parseWithStatement(parser, context, scope, labels, nestedLabels, start, line, column);
+      return parseWithStatement(parser, context, scope, labels, nestedLabels);
     case Token.DebuggerKeyword:
-      return parseDebuggerStatement(parser, context, start, line, column);
+      return parseDebuggerStatement(parser, context);
     case Token.AsyncKeyword:
       return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 0);
     case Token.FunctionKeyword:
+      report(
+        parser,
+        context & (Context.OptionsDisableWebCompat | Context.Strict) ? Errors.StrictFunction : Errors.SloppyFunction
+      );
     case Token.ClassKeyword:
-      report(parser, Errors.Unexpected);
+      report(parser, Errors.ClassForbiddenAsStatement);
     default:
       return parseExpressionOrLabelledStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl);
   }
@@ -202,18 +220,22 @@ export function parseLabelledStatement(
   line: number,
   column: number
 ): ESTree.LabeledStatement {
+  // ExpressionStatement | LabelledStatement ::
+  //   Expression ';'
+  //   Identifier ':' Statement
+  //
+  // ExpressionStatement[Yield] :
+  //   [lookahead notin {{, function, class, let [}] Expression[In, ?Yield] ;
+
   labels = addLabel(parser, value, labels, nestedLabels);
 
   nextToken(parser, context, /* allowRegExp */ 1); // skip: ':'
 
-  parseStatementWithLabelSet(parser.token, value, labels, nestedLabels);
+  nestedLabels = parseStatementWithLabelSet(parser.token, value, labels, nestedLabels);
 
   const body =
-    //allowFuncDecl &&
-    context & Context.Strict ||
     // Disallow if web compability is off
-    context & Context.OptionsDisableWebCompat ||
-    parser.token !== Token.FunctionKeyword
+    context & (Context.OptionsDisableWebCompat | Context.Strict) || parser.token !== Token.FunctionKeyword
       ? parseStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl)
       : parseFunctionDeclaration(parser, context, scope, FunctionFlag.IsDeclaration, origin);
 
@@ -297,8 +319,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
   if (!asyncNewLine) {
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
-      //      if (!allowFuncDecl) report(parser, Errors.AsyncFunctionInSingleStatementContext);
-      if (!allowFuncDecl) report(parser, Errors.Unexpected);
+      if (!allowFuncDecl) report(parser, Errors.AsyncFunctionInSingleStatementContext);
       return parseFunctionDeclarationRest(
         parser,
         context,
@@ -356,7 +377,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
         column
       );
     }
-    parser.assignable = AssignmentKind.Assignable;
+    parser.assignable = 1;
   }
 
   expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
@@ -365,7 +386,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 
-  parser.assignable = AssignmentKind.Assignable;
+  parser.assignable = 1;
 
   return parseExpressionStatement(parser, context, expr, start, line, column);
 }
@@ -374,7 +395,8 @@ export function parseBlock(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any
+  labels: any,
+  nestedLabels: any
 ): ESTree.BlockStatement {
   const { start, line, column } = parser;
 
@@ -383,7 +405,7 @@ export function parseBlock(
   const body: ESTree.Statement[] = [];
 
   while (parser.token !== Token.RightBrace) {
-    body.push(parseStatementListItem(parser, context, scope, Origin.BlockStatement, labels, null));
+    body.push(parseStatementListItem(parser, context, scope, Origin.BlockStatement, labels, nestedLabels));
   }
 
   consume(parser, context, Token.RightBrace, /* allowRegExp */ 1);
@@ -401,13 +423,8 @@ export function parseBlock(
         body
       };
 }
-export function parseEmptyStatement(
-  parser: ParserState,
-  context: Context,
-  start: number,
-  line: number,
-  column: number
-): ESTree.EmptyStatement {
+export function parseEmptyStatement(parser: ParserState, context: Context): ESTree.EmptyStatement {
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   return context & Context.OptionsLoc
     ? {
@@ -420,15 +437,9 @@ export function parseEmptyStatement(
         type: 'EmptyStatement'
       };
 }
-export function parseReturnStatement(
-  parser: ParserState,
-  context: Context,
-  start: number,
-  line: number,
-  column: number
-): ESTree.ReturnStatement {
-  // if ((context & Context.OptionsGlobalReturn) < 1 && context & Context.InGlobal) report(parser, Errors.Unexpected); // IllegalReturn);
-
+export function parseReturnStatement(parser: ParserState, context: Context): ESTree.ReturnStatement {
+  if ((context & Context.OptionsGlobalReturn) < 1 && context & Context.InGlobal) report(parser, Errors.Unexpected); // IllegalReturn);
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   const argument =
     parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context);
@@ -483,9 +494,9 @@ export function parseForStatementWithVariableDeclarations(
       init = parseMemberExpression(parser, context, init, 0, 0, start, line, column);
       isLet = true;
     }
-    parser.assignable = AssignmentKind.Assignable;
+    parser.assignable = 1;
   } else {
-    parser.assignable = AssignmentKind.Assignable;
+    parser.assignable = 1;
     kind = token === Token.VarKeyword ? BindingKind.Variable : BindingKind.Const;
   }
 
@@ -563,7 +574,9 @@ export function parseForStatementWithVariableDeclarations(
                 line,
                 column
               );
+        if (parser.destructible & DestructuringKind.CannotDestruct) report(parser, Errors.InvalidBindingDestruct);
 
+        if (parser.destructible & DestructuringKind.AssignableDestruct) report(parser, Errors.InvalidBindingDestruct);
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -643,7 +656,7 @@ export function parseForStatementWithVariableDeclarations(
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-    const body = parseStatement(parser, context, scope, origin, labels, null, 0);
+    const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
     return context & Context.OptionsLoc
       ? {
@@ -670,7 +683,7 @@ export function parseForStatementWithVariableDeclarations(
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-    const body = parseStatement(parser, context, scope, origin, labels, null, 0);
+    const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
     return context & Context.OptionsLoc
       ? {
@@ -713,7 +726,7 @@ export function parseForStatementWithVariableDeclarations(
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-  const body = parseStatement(parser, context, scope, origin, labels, null, 0);
+  const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
   return context & Context.OptionsLoc
     ? {
@@ -739,11 +752,9 @@ export function parseForStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  curStart: number,
-  curLine: number,
-  curColumn: number
+  labels: any
 ): ESTree.ForStatement | ESTree.ForInStatement | ESTree.ForOfStatement {
+  const { start: curStart, line: curLine, column: curColumn } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
 
   const forAwait =
@@ -759,7 +770,7 @@ export function parseForStatement(
   let right;
   const origin = Origin.ForStatement;
   const kind: BindingKind = BindingKind.Empty;
-  let destructible: AssignmentKind | DestructuringKind = 0;
+  let destructible: Flags | DestructuringKind = 0;
   const { token, start, line, column } = parser;
 
   if ((token & Token.isVarDecl) !== 0) {
@@ -777,12 +788,23 @@ export function parseForStatement(
   if (token === Token.Semicolon) {
     if (forAwait) report(parser, Errors.Unexpected);
   } else if ((token & Token.IsPatternStart) === Token.IsPatternStart) {
+    init =
+      token === Token.LeftBrace
+        ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column)
+        : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column);
+
+    destructible = parser.destructible;
+
+    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & DestructuringKind.SeenProto) {
+      report(parser, Errors.DuplicateProto);
+    }
+
+    parser.assignable = destructible & DestructuringKind.CannotDestruct ? 0 : 1;
+
     init = parseMemberExpression(
       parser,
       context | Context.DisallowIn,
-      token === Token.LeftBrace
-        ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column)
-        : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column),
+      init,
       0,
       0,
       parser.start,
@@ -790,21 +812,13 @@ export function parseForStatement(
       parser.column
     );
     destructible = parser.destructible;
-
-    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & DestructuringKind.SeenProto) {
-      report(parser, Errors.DuplicateProto);
-    }
-
-    parser.assignable =
-      destructible & DestructuringKind.CannotDestruct ? AssignmentKind.CannotAssign : AssignmentKind.Assignable;
   } else {
     init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, /* allowLHS */ 1, 1);
   }
   if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
     reinterpretToPattern(parser, init);
     if (parser.token === Token.OfKeyword) {
-      if (parser.assignable & AssignmentKind.CannotAssign)
-        report(parser, Errors.CantAssignToInOfForLoop, forAwait ? 'await' : 'of');
+      if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, forAwait ? 'await' : 'of');
 
       nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -812,7 +826,7 @@ export function parseForStatement(
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-      const body = parseStatement(parser, context, scope, origin, labels, null, 0);
+      const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
       return context & Context.OptionsLoc
         ? {
@@ -834,7 +848,7 @@ export function parseForStatement(
           };
     }
 
-    if (parser.assignable & AssignmentKind.CannotAssign) report(parser, Errors.CantAssignToInOfForLoop, 'in');
+    if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -842,7 +856,7 @@ export function parseForStatement(
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-    const body = parseStatement(parser, context, scope, origin, labels, null, 0);
+    const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
     return context & Context.OptionsLoc
       ? {
@@ -861,6 +875,13 @@ export function parseForStatement(
           right
         };
   }
+
+  if (forAwait) report(parser, Errors.Unexpected);
+
+  if (destructible & DestructuringKind.MustDestruct && parser.token !== Token.Assign) {
+    report(parser, Errors.CantAssignToInOfForLoop, 'loop');
+  }
+
   init = parseAssignmentExpression(
     parser,
     context | Context.DisallowIn,
@@ -885,7 +906,7 @@ export function parseForStatement(
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-  const body = parseStatement(parser, context, scope, origin, labels, null, 0);
+  const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
   return context & Context.OptionsLoc
     ? {
@@ -912,18 +933,17 @@ export function parseDoWhileStatement(
   context: Context,
   scope: ScopeState,
   labels: any,
-  start: number,
-  line: number,
-  column: number
+  nestedLabel: any
 ): ESTree.DoWhileStatement {
   // DoStatement ::
   //   'do' Statement 'while' '(' Expression ')' ';'
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
-  const body = parseStatement(parser, context, scope, Origin.None, labels, null, 0);
+  const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabel, 0);
   consume(parser, context, Token.WhileKeyword, /* allowRegExp */ 0);
-  consume(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, Token.LeftParen, /* allowRegExp */ 1);
+  consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
   const test = parseExpressions(parser, context);
-  consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
+  consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   // Allow do-statements to be terminated with and without
   // semi-colons. This allows code such as 'do;while(0)return' to
   // parse, which would not be the case if we had used the
@@ -951,17 +971,16 @@ export function parseWhileStatement(
   context: Context,
   scope: ScopeState,
   labels: any,
-  start: number,
-  line: number,
-  column: number
+  nestedLabels: any
 ): ESTree.WhileStatement {
   // WhileStatement ::
   //   'while' '(' Expression ')' Statement
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
   const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
-  const body = parseStatement(parser, context, scope, Origin.None, labels, null, 0);
+  const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabels, 0);
 
   return context & Context.OptionsLoc
     ? {
@@ -984,15 +1003,14 @@ export function parseSwitchStatement(
   context: Context,
   scope: ScopeState,
   labels: any,
-  start: number,
-  line: number,
-  column: number
+  nestedLabels: any
 ): ESTree.SwitchStatement {
   // SwitchStatement ::
   //   'switch' '(' Expression ')' '{' CaseClause* '}'
   // CaseClause ::
   //   'case' Expression ':' StatementList
   //   'default' ':' StatementList
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
@@ -1025,7 +1043,9 @@ export function parseSwitchStatement(
       parser.token !== Token.RightBrace &&
       parser.token !== Token.DefaultKeyword
     ) {
-      consequent.push(parseStatementListItem(parser, context, scope, Origin.BlockStatement, labels, null));
+      consequent.push(
+        parseStatementListItem(parser, context | Context.InSwitch, scope, Origin.BlockStatement, labels, nestedLabels)
+      );
     }
 
     cases.push(
@@ -1068,16 +1088,13 @@ export function parseIfStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  start: number,
-  line: number,
-  column: number
+  labels: any
 ): ESTree.IfStatement {
   // IfStatement ::
   //   'if' '(' Expression ')' Statement ('else' Statement)?
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  parser.assignable = AssignmentKind.Assignable;
   const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
@@ -1117,9 +1134,8 @@ export function parseConsequentOrAlternative(
   scope: ScopeState,
   labels: any
 ): any {
-  return context & Context.Strict ||
-    // Disallow if web compability is off
-    context & Context.OptionsDisableWebCompat ||
+  // Disallow if web compability is off
+  return context & ((context & Context.Strict) | Context.OptionsDisableWebCompat) ||
     parser.token !== Token.FunctionKeyword
     ? parseStatement(parser, context, scope, Origin.None, labels, null, 0)
     : parseFunctionDeclaration(
@@ -1131,16 +1147,10 @@ export function parseConsequentOrAlternative(
       );
 }
 
-export function parseThrowStatement(
-  parser: ParserState,
-  context: Context,
-  start: number,
-  line: number,
-  column: number
-): ESTree.ThrowStatement {
+export function parseThrowStatement(parser: ParserState, context: Context): ESTree.ThrowStatement {
   // ThrowStatement ::
   //   'throw' Expression ';'
-
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
 
   if (parser.newLine !== 0) report(parser, Errors.NewlineAfterThrow);
@@ -1163,33 +1173,31 @@ export function parseThrowStatement(
       };
 }
 
-export function parseBreakStatement(
-  parser: ParserState,
-  context: Context,
-  labels: any,
-  start: number,
-  line: number,
-  column: number
-): ESTree.BreakStatement {
-  nextToken(parser, context, /* allowRegExp */ 0);
+export function parseBreakStatement(parser: ParserState, context: Context, labels: any): ESTree.BreakStatement {
+  const { start: curStart, line: curLine, column: curColumn } = parser;
+
+  nextToken(parser, context, /* allowRegExp */ 1);
   let label: ESTree.Identifier | null = null;
   if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) === 0) {
     const { tokenValue, start, line, column } = parser;
     nextToken(parser, context, /* allowRegExp */ 1);
     label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
     if (!validateBreakLabel(parser, labels, tokenValue)) {
-      //  report(parser, Errors.Unexpected);
+      report(parser, Errors.UnknownLabel, tokenValue);
     }
+  } else if ((context & (Context.InSwitch | Context.InIteration)) === 0) {
+    report(parser, Errors.InvalidBreak);
   }
+
   consumeSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
         type: 'BreakStatement',
         label,
-        start,
+        start: curStart,
         end: parser.endIndex,
-        loc: setLoc(parser, line, column)
+        loc: setLoc(parser, curLine, curColumn)
       }
     : {
         type: 'BreakStatement',
@@ -1197,18 +1205,12 @@ export function parseBreakStatement(
       };
 }
 
-export function parseContinueStatement(
-  parser: ParserState,
-  context: Context,
-  labels: any,
-  curStart: number,
-  curLine: number,
-  curColumn: number
-): ESTree.ContinueStatement {
+export function parseContinueStatement(parser: ParserState, context: Context, labels: any): ESTree.ContinueStatement {
   // ContinueStatement ::
   //   'continue' Identifier? ';'
-
-  nextToken(parser, context, /* allowRegExp */ 0);
+  if ((context & Context.InIteration) < 1) report(parser, Errors.IllegalContinue);
+  const { start: curStart, line: curLine, column: curColumn } = parser;
+  nextToken(parser, context, /* allowRegExp */ 1);
 
   let label: ESTree.Identifier | null = null;
   if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) === 0) {
@@ -1237,10 +1239,7 @@ export function parseTryStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  start: number,
-  line: number,
-  column: number
+  labels: any
 ): ESTree.TryStatement {
   // TryStatement ::
   //   'try' Block Catch
@@ -1252,10 +1251,10 @@ export function parseTryStatement(
   //
   // Finally ::
   //   'finally' Block
-
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const block = parseBlock(parser, context, newScope(scope, ScopeKind.TryStatement), labels);
+  const block = parseBlock(parser, context, newScope(scope, ScopeKind.TryStatement), labels, null);
 
   let handler: ESTree.CatchClause | null = null;
 
@@ -1284,7 +1283,7 @@ export function parseTryStatement(
       additionalScope = newScope(scope, ScopeKind.CatchBlock);
     }
 
-    const body = parseBlock(parser, context, additionalScope, labels);
+    const body = parseBlock(parser, context, additionalScope, labels, null);
 
     handler =
       context & Context.OptionsLoc
@@ -1304,7 +1303,7 @@ export function parseTryStatement(
   }
 
   const finalizer: ESTree.BlockStatement | null = consumeOpt(parser, context, Token.FinallyKeyword, /* allowRegExp */ 0)
-    ? parseBlock(parser, context, newScope(scope, ScopeKind.CatchStatement), labels)
+    ? parseBlock(parser, context, newScope(scope, ScopeKind.CatchStatement), labels, null)
     : null;
 
   if (!handler && !finalizer) {
@@ -1334,13 +1333,11 @@ export function parseWithStatement(
   context: Context,
   scope: ScopeState,
   labels: any,
-  nestedLabels: any,
-  start: number,
-  line: number,
-  column: number
+  nestedLabels: any
 ): ESTree.WithStatement {
   // WithStatement ::
   //   'with' '(' Expression ')' Statement
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
 
   if (context & Context.Strict) report(parser, Errors.StrictWith);
@@ -1369,13 +1366,8 @@ export function parseWithStatement(
       };
 }
 
-export function parseDebuggerStatement(
-  parser: ParserState,
-  context: Context,
-  start: number,
-  line: number,
-  column: number
-): ESTree.DebuggerStatement {
+export function parseDebuggerStatement(parser: ParserState, context: Context): ESTree.DebuggerStatement {
+  const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   consumeSemicolon(parser, context);
 
@@ -1400,7 +1392,8 @@ export function parseLetIdentOrVarDeclarationStatement(
   origin: Origin
 ): ESTree.VariableDeclaration | ESTree.LabeledStatement | ESTree.ExpressionStatement {
   const { token, tokenValue, start, line, column } = parser;
-  let expr: any = parseIdentifier(parser, context);
+  let expr: any;
+  nextToken(parser, context, /* allowRegExp */ 0);
 
   if (parser.token & (Token.IsIdentifier | Token.IsPatternStart)) {
     /* VariableDeclarations ::
@@ -1433,9 +1426,11 @@ export function parseLetIdentOrVarDeclarationStatement(
         };
   }
 
-  parser.assignable = AssignmentKind.Assignable;
+  parser.assignable = 1;
 
   if (context & Context.Strict) report(parser, Errors.Unexpected);
+
+  expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
   if (parser.token === Token.Colon) {
     return parseLabelledStatement(
@@ -1456,7 +1451,16 @@ export function parseLetIdentOrVarDeclarationStatement(
   }
 
   if (parser.token === Token.Arrow) {
-    // TODO!
+    expr = parseArrowFunctionExpression(
+      parser,
+      context,
+      createArrowHeadParsingScope(parser, context, tokenValue),
+      [expr],
+      /* isAsync */ 0,
+      start,
+      line,
+      column
+    );
   } else {
     expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 

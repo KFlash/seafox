@@ -29,6 +29,8 @@ describe('Expressions - Arrow', () => {
     ['a => let {a}', Context.OptionsDisableWebCompat],
     ['async a => let {a}', Context.OptionsDisableWebCompat],
     ['([a,b,c]) => { const c = x; }', Context.Empty],
+    ['let => { let let }', Context.Empty],
+    ['const let => { let }', Context.Empty],
     ['(a, a) => {}', Context.Empty],
     ['(a, b, a) => {}', Context.Empty],
     ['(b, a, a) => {}', Context.Empty],
@@ -136,6 +138,317 @@ describe('Expressions - Arrow', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `let => { function x() {} }`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [
+                  {
+                    type: 'FunctionDeclaration',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 22,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 22
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 18,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 18
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    start: 9,
+                    end: 24,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 24
+                      }
+                    }
+                  }
+                ],
+                start: 7,
+                end: 26,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 26
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'let',
+                  start: 0,
+                  end: 3,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 3
+                    }
+                  }
+                }
+              ],
+              async: false,
+              expression: false,
+              start: 0,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
+    [
+      `let, let => { function x() {} }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'SequenceExpression',
+              expressions: [
+                {
+                  type: 'Identifier',
+                  name: 'let',
+                  start: 0,
+                  end: 3,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 3
+                    }
+                  }
+                },
+                {
+                  type: 'ArrowFunctionExpression',
+                  body: {
+                    type: 'BlockStatement',
+                    body: [
+                      {
+                        type: 'FunctionDeclaration',
+                        params: [],
+                        body: {
+                          type: 'BlockStatement',
+                          body: [],
+                          start: 27,
+                          end: 29,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 27
+                            },
+                            end: {
+                              line: 1,
+                              column: 29
+                            }
+                          }
+                        },
+                        async: false,
+                        generator: false,
+                        id: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 23,
+                          end: 24,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 23
+                            },
+                            end: {
+                              line: 1,
+                              column: 24
+                            }
+                          }
+                        },
+                        start: 14,
+                        end: 29,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 14
+                          },
+                          end: {
+                            line: 1,
+                            column: 29
+                          }
+                        }
+                      }
+                    ],
+                    start: 12,
+                    end: 31,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 31
+                      }
+                    }
+                  },
+                  params: [
+                    {
+                      type: 'Identifier',
+                      name: 'let',
+                      start: 5,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    }
+                  ],
+                  async: false,
+                  expression: false,
+                  start: 5,
+                  end: 31,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 31
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
     [
       `(x) => { function x() {} }`,
       Context.OptionsNext | Context.OptionsLoc,

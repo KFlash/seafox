@@ -3,7 +3,25 @@ import * as t from 'assert';
 import { parseSource } from '../../../src/parser/core';
 
 describe('Statements - While', () => {
-  for (const [source, ctx] of [['while (x) var foo = 1; let foo = 1;', Context.OptionsDisableWebCompat]]) {
+  for (const [source, ctx] of [
+    ['while (x) var foo = 1; let foo = 1;', Context.OptionsDisableWebCompat],
+    ['while 1 break;', Context.OptionsDisableWebCompat],
+    ['while "hood" break;', Context.OptionsDisableWebCompat],
+    ['while (false) function f() {}', Context.OptionsDisableWebCompat],
+    ['while (false) let x = 1;', Context.Empty],
+    ['while 1 break;', Context.Empty],
+    [`while '' break;`, Context.Empty],
+    [`while '' break;`, Context.Empty],
+    ['while(0) !function(){ break; };', Context.OptionsDisableWebCompat],
+    ['while(0) { function f(){ break; } }', Context.Strict],
+    ['while (false) label1: label2: function f() {}', Context.OptionsDisableWebCompat],
+    ['while (false) async function f() {}', Context.OptionsDisableWebCompat],
+    ['while (false) const x = null;', Context.Empty],
+    ['while (false) function* g() {}', Context.OptionsDisableWebCompat],
+    ['while true break;', Context.Empty],
+    ['while({1}){ break ; };', Context.Empty],
+    ['while({1}){ break ; };', Context.Empty]
+  ]) {
     it(source as string, () => {
       t.throws(() => {
         parseSource(source as string, undefined, ctx as Context);

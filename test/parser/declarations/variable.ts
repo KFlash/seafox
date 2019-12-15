@@ -77,18 +77,132 @@ describe('Declarations - Variable', () => {
     [`var {};`, Context.Empty],
     [`var {};`, Context.Empty],
     [`var {};`, Context.Empty],
-
     [`var foo = 1; let foo = 1;`, Context.Empty],
     [`var foo = 1; const foo = 1;`, Context.Empty],
-
     [`var [foo] = [1]; let foo = 1;`, Context.Empty],
     [`var [{ bar: [foo] }] = x; let {foo} = 1;`, Context.Empty],
     [`{ var foo = 1; } let foo = 1;`, Context.Empty],
     [`var foo = 1; function x() {} let foo = 1;`, Context.Empty],
     [`var [...foo] = x; let foo = 1;`, Context.Empty],
-
     [`var foo = 1; let foo = 1;`, Context.OptionsDisableWebCompat],
     [`var x = a; const x = b;`, Context.Empty],
+    [`function var() { }`, Context.Empty],
+    //[`function a({var}) { }`, Context.Empty],
+    //[`(function a([{var}]) { })`, Context.Empty],
+    //[`(function a({ hello: {var}}) { })`, Context.Empty],
+    [`(function a({ 0: [var]}) { })`, Context.Empty],
+    [`class var { }`, Context.Empty],
+    [`var [...[ x ] = []] = [];`, Context.Empty],
+    [`var [...{ x } = []] = [];`, Context.Empty],
+    [`var [...x, y] = [1, 2, 3];`, Context.Empty],
+    [`var [...{ x }, y] = [1, 2, 3];`, Context.Empty],
+    ['var a.b;', Context.Empty],
+    ['var [];', Context.Empty],
+    ['var [a];', Context.Empty],
+    ['var { key: bar/x } = {}', Context.Empty],
+    ['var { key: await /foo/g } = {}', Context.Empty],
+    ['var { key: bar + x } = {}', Context.Empty],
+    ['var { "foo": 123 } = {}', Context.Empty],
+    ['var t4 = ++await 1;', Context.Empty],
+    ['var t5 = --await 1;', Context.Empty],
+    ['var {  ...y, ...y } = {}', Context.Empty],
+    ['var { foo: true / false } = {}', Context.Empty],
+    ['var { *static() {} } = {}', Context.Empty],
+    ['var { static(){} } = {}', Context.Empty],
+    ['var { foo: 1, set bar(v) {} } = {}', Context.Empty],
+    ['var {  get yield() { }  } = {}', Context.Empty],
+    ['var { set foo(_) {}, set foo(v) {} } = {}', Context.Empty],
+    ['var { foo: 1, get "foo"() {} } = {}', Context.Empty],
+    ['var { async *method({ w: [x, y, z] = [4, 5, 6] } = {}) {} } = {}', Context.Empty],
+    ['var { async *method([[,] = g()]) {} } = {}', Context.Empty],
+    ['var { true : 1 } = {}', Context.Empty],
+    ['var { set: 1, set: 2 } = {}', Context.Empty],
+    ['var { foo: 1, "foo": 2 } = {}', Context.Empty],
+    ['var [a--] = [];', Context.Empty],
+    ['var [a + 1] = [];', Context.Empty],
+    ['var [++a] = [];', Context.Empty],
+    ['var {...x = 1} = {}', Context.Empty],
+    ['var [a a, b] = c;', Context.Empty],
+    ['var [a, b', Context.Empty],
+    ['var [a, ...rest, b] = c;', Context.Empty],
+    ['var a; [a--] = [];', Context.Empty],
+    ['var a; [++a] = [];', Context.Empty],
+    ['var [1] = [];', Context.Empty],
+    ['var [1, a] = [];', Context.Empty],
+    ['var a; [1, a] = [];', Context.Empty],
+    ['var [...a, ...b] = [];', Context.Empty],
+    ['var a, b; [...a, ...b] = [];', Context.Empty],
+    ['var a, b; [...a, b] = [];', Context.Empty],
+    ['var a; [...a = 1] = [];', Context.Empty],
+    ['var [...a = 1] = [];', Context.Empty],
+    ['var [((a)] = [];', Context.Empty],
+    ['var a; [((a)] = []', Context.Empty],
+    ['var {...a.b} = 0', Context.Empty],
+    ['var [a)] = [];', Context.Empty],
+    ['var a; [a)] = [];', Context.Empty],
+    ['var {...[]} = {}', Context.Empty],
+    ['var {...{z}} = { z: 1};', Context.Empty],
+    ['var { ...{ x = 5 } } = {x : 1};', Context.Empty],
+    ['var { ...{x =5 } } = {x : 1}; console.log(x);', Context.Empty],
+    ['var [((((a)))), b] = [];', Context.Empty],
+    ['var [[(a)], ((((((([b])))))))] = [[],[]];', Context.Empty],
+    ['var a; [([a])] = [[]];"); }', Context.Empty],
+    ['var 𫠞_ = 12;}', Context.Empty],
+    ['var _𖫵 = 11;', Context.Empty],
+    ['var a, b; [([a]), (((([b]))))] = [[], []];', Context.Empty],
+    ['var a, b; [({a}), (((({b}))))] = [{}, {}];', Context.Empty],
+    ['var a, b; ({a:({a}), b:((({b})))} = {a:{}, b:{}} );', Context.Empty],
+    ['function foo() { return {}; }; var [foo()] = [];', Context.Empty],
+    ['function foo() { return {}; }; var [foo().x] = [];', Context.Empty],
+    ['class foo { method() { var [super()] = []; } }', Context.Empty],
+    ['var {foo}', Context.Empty],
+    ['var {foo=a}', Context.Empty],
+    ['var {foo:a}', Context.Empty],
+    ['var {foo:a=b}', Context.Empty],
+    ['var {foo}, bar', Context.Empty],
+    ['var foo, {bar}', Context.Empty],
+    ['var\nfoo()', Context.Empty],
+    ['var [foo];', Context.Empty],
+    ['var [foo = x];', Context.Empty],
+    ['var [foo], bar;', Context.Empty],
+    ['var foo, [bar];', Context.Empty],
+    ['var [foo:bar] = obj;', Context.Empty],
+    ['var [...foo, bar] = obj;', Context.Empty],
+    ['var [...foo,] = obj;', Context.Empty],
+    ['var [...foo,,] = obj;', Context.Empty],
+    ['const var = 1;', Context.Empty],
+    ['var [...[foo, bar],,] = obj;', Context.Empty],
+    ['var [..x] = obj;', Context.Empty],
+    ['var [.x] = obj;', Context.Empty],
+    ['var {foo};', Context.Empty],
+    ['var [.x] = obj;', Context.Empty],
+    ['var {,} = x;', Context.Empty],
+    ['var {foo,,} = x;', Context.Empty],
+    [' var {,foo} = x; ', Context.Empty],
+    ['var {,,foo} = x;', Context.Empty],
+    ['var {foo,,bar} = x;', Context.Empty],
+    ['var\nfoo()', Context.Empty],
+    ['var [foo = x];', Context.Empty],
+    ['var [foo], bar;', Context.Empty],
+    ['var foo, [bar];', Context.Empty],
+    ['var [foo:bar] = obj;', Context.Empty],
+    ['var [...foo, bar] = obj;', Context.Empty],
+    ['var [...foo,] = obj;', Context.Empty],
+    ['var [...foo,,] = obj;', Context.Empty],
+    ['var [...[foo, bar],] = obj;', Context.Empty],
+    ['var [...[foo, bar],,] = obj;', Context.Empty],
+    ['var [... ...foo] = obj;', Context.Empty],
+    ['var [...bar = foo] = obj;', Context.Empty],
+    ['var [.x] = obj;', Context.Empty],
+    ['var [..x] = obj;', Context.Empty],
+    ['var {,} = obj;', Context.Empty],
+    ['var {,,} = obj;', Context.Empty],
+    ['var {,x} = obj;', Context.Empty],
+    ['var {,,x} = obj;', Context.Empty],
+    ['var {x,, y} = obj;', Context.Empty],
+    ['var {x,, y} = obj;', Context.Empty],
+    ['var {x};', Context.Empty],
+    ['var {x}, {y} = z;', Context.Empty],
     [`var [foo];`, Context.Empty],
     [`var [foo], bar;`, Context.Empty],
     [`var {x:y=z} = obj, {a:b=c};`, Context.Empty],
@@ -113,6 +227,197 @@ describe('Declarations - Variable', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `var [{ ["x"]: o = /((?=)|[-]|\\o*?|[-]|^)/gi }] = x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 49,
+                  end: 50,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 49
+                    },
+                    end: {
+                      line: 1,
+                      column: 50
+                    }
+                  }
+                },
+                id: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'ObjectPattern',
+                      properties: [
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Literal',
+                            value: 'x',
+                            start: 8,
+                            end: 11,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 8
+                              },
+                              end: {
+                                line: 1,
+                                column: 11
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'AssignmentPattern',
+                            left: {
+                              type: 'Identifier',
+                              name: 'o',
+                              start: 14,
+                              end: 15,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 14
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 15
+                                }
+                              }
+                            },
+                            right: {
+                              type: 'Literal',
+                              value: /((?=)|[-]|\o*?|[-]|^)/gi,
+                              regex: {
+                                pattern: '((?=)|[-]|\\o*?|[-]|^)',
+                                flags: 'gi'
+                              },
+                              start: 18,
+                              end: 43,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 18
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 43
+                                }
+                              }
+                            },
+                            start: 14,
+                            end: 43,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 14
+                              },
+                              end: {
+                                line: 1,
+                                column: 43
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: true,
+                          method: false,
+                          shorthand: false,
+                          start: 7,
+                          end: 43,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 7
+                            },
+                            end: {
+                              line: 1,
+                              column: 43
+                            }
+                          }
+                        }
+                      ],
+                      start: 5,
+                      end: 45,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 45
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 46,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 46
+                    }
+                  }
+                },
+                start: 4,
+                end: 50,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 50
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 50,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 50
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 50,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 50
+          }
+        }
+      }
+    ],
     [
       `var x; (true ? { x = true } = {} : { x = false } = {})`,
       Context.OptionsNext | Context.OptionsLoc,

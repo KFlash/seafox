@@ -144,7 +144,10 @@ describe('Statements - Try', () => {
     ['try {} catch (x) { let x }', Context.OptionsDisableWebCompat],
     ['let e; try {} catch (e) { let e; }', Context.OptionsDisableWebCompat],
     ['try {} catch (x) { { let x } ', Context.Empty],
-    ['try {} catch (x) { let x }', Context.Empty]
+    ['try {} catch (x) { let x }', Context.Empty],
+    ['try {}', Context.Empty],
+    ['try ', Context.Empty],
+    ['try {', Context.Empty]
   ]) {
     it(source as string, () => {
       t.throws(() => {
