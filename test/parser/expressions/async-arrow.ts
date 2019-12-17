@@ -70,6 +70,213 @@ describe('Expressions - Async arrow', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `async, async`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'SequenceExpression',
+              expressions: [
+                {
+                  type: 'Identifier',
+                  name: 'async',
+                  start: 0,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'async',
+                  start: 7,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `async foo => x, async`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'SequenceExpression',
+              expressions: [
+                {
+                  type: 'ArrowFunctionExpression',
+                  body: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 13,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  params: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 6,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    }
+                  ],
+                  async: true,
+                  expression: true,
+                  start: 0,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'async',
+                  start: 16,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
       `async (x) => { function x() {} }`,
       Context.OptionsNext | Context.OptionsLoc,
       {

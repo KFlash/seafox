@@ -23,7 +23,11 @@ describe('Expressions - Assign', () => {
     ['x, {a: {a: 1} = []};', Context.OptionsDisableWebCompat],
     ['x, [foo + y, bar] = doo;', Context.OptionsDisableWebCompat],
     ['({x:y} += x)', Context.OptionsDisableWebCompat],
-    ['(...{a: b}.c = [])', Context.OptionsDisableWebCompat]
+    ['(...{a: b}.c = [])', Context.OptionsDisableWebCompat],
+    ['switch(y&[]=y){}', Context.OptionsDisableWebCompat],
+    ['[(a = 0)] = 1', Context.OptionsDisableWebCompat],
+    ['y/[]=x', Context.OptionsDisableWebCompat],
+    ['x in [2=y]', Context.OptionsDisableWebCompat]
   ]) {
     it(source as string, () => {
       t.throws(() => {

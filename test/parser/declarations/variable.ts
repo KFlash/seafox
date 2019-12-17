@@ -228,6 +228,158 @@ describe('Declarations - Variable', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `var x = a; var x = b;`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 19,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 15,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                start: 15,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 15
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 11,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 11
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
       `var [{ ["x"]: o = /((?=)|[-]|\\o*?|[-]|^)/gi }] = x`,
       Context.OptionsNext | Context.OptionsLoc,
       {

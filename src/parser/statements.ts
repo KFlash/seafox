@@ -503,7 +503,6 @@ export function parseForStatementWithVariableDeclarations(
   }
 
   if (kind & (BindingKind.Variable | BindingKind.Let | BindingKind.Const)) {
-
     const declarations: any[] = [];
 
     let bindingCount = 0;
@@ -1144,8 +1143,7 @@ export function parseConsequentOrAlternative(
   labels: any
 ): any {
   // Disallow if web compability is off
-  return context & (Context.Strict | Context.OptionsDisableWebCompat) ||
-    parser.token !== Token.FunctionKeyword
+  return context & (Context.Strict | Context.OptionsDisableWebCompat) || parser.token !== Token.FunctionKeyword
     ? parseStatement(parser, context, scope, Origin.None, labels, null, 0)
     : parseFunctionDeclaration(
         parser,

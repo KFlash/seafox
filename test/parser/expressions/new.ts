@@ -4,15 +4,15 @@ import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - New', () => {
   for (const arg of [
-    // 'function *f(){ new yield x }',
+    'function *f(){ new yield x }',
     // `let x = delete async
     // (x) => x`,
     // 'delete async () => x',
-    // 'new ()=>{}',
+    'new ()=>{}',
     // 'function *f(){ new yield }',
     'new async => x',
     // 'delete async() => foo',
-    // 'delete () => foo',
+    'delete () => foo',
     '_ => _ => _ => _ => new.target',
     '_ => new.target',
     'new.target',

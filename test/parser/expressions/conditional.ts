@@ -1067,6 +1067,106 @@ describe('Expressions - Conditional', () => {
       }
     ],
     [
+      `x?.4:6`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'Identifier',
+                name: 'x',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              consequent: {
+                type: 'Literal',
+                value: 0.4,
+                start: 2,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              alternate: {
+                type: 'Literal',
+                value: 6,
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            start: 0,
+            end: 6,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 6
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 6,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 6
+          }
+        }
+      }
+    ],
+    [
       `x && y ? 1 : 2`,
       Context.OptionsNext | Context.OptionsLoc,
       {

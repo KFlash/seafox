@@ -10267,6 +10267,206 @@ describe('Statements - Try', () => {
       }
     ],
     [
+      `try {} catch (e) { for (let e = 1;;) {} }`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [],
+              start: 4,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'Identifier',
+                name: 'e',
+                start: 14,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [
+                  {
+                    type: 'ForStatement',
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 37,
+                      end: 39,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 37
+                        },
+                        end: {
+                          line: 1,
+                          column: 39
+                        }
+                      }
+                    },
+                    init: {
+                      type: 'VariableDeclaration',
+                      kind: 'let',
+                      declarations: [
+                        {
+                          type: 'VariableDeclarator',
+                          init: {
+                            type: 'Literal',
+                            value: 1,
+                            start: 32,
+                            end: 33,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 32
+                              },
+                              end: {
+                                line: 1,
+                                column: 33
+                              }
+                            }
+                          },
+                          id: {
+                            type: 'Identifier',
+                            name: 'e',
+                            start: 28,
+                            end: 29,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 28
+                              },
+                              end: {
+                                line: 1,
+                                column: 29
+                              }
+                            }
+                          },
+                          start: 28,
+                          end: 33,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 28
+                            },
+                            end: {
+                              line: 1,
+                              column: 33
+                            }
+                          }
+                        }
+                      ],
+                      start: 24,
+                      end: 33,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 24
+                        },
+                        end: {
+                          line: 1,
+                          column: 33
+                        }
+                      }
+                    },
+                    test: null,
+                    update: null,
+                    start: 19,
+                    end: 39,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 39
+                      }
+                    }
+                  }
+                ],
+                start: 17,
+                end: 41,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 41
+                  }
+                }
+              },
+              start: 7,
+              end: 41,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 41
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 41,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 41
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 41,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 41
+          }
+        }
+      }
+    ],
+    [
       `try {} catch ([a,b,c]) { }`,
       Context.OptionsNext | Context.OptionsLoc,
       {
