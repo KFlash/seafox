@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Statements - Try', () => {
   for (const declaration of [
@@ -26,31 +26,31 @@ describe('Statements - Try', () => {
   ]) {
     it(`try { throw 0; } catch(e) { ${declaration} } `, () => {
       t.throws(() => {
-        parseSource(`try { throw 0; } catch(e) { ${declaration} } `, undefined, Context.Empty);
+        parseScript(`try { throw 0; } catch(e) { ${declaration} } `);
       });
     });
 
     it(`try { throw 0; } catch({e}) { ${declaration} }`, () => {
       t.throws(() => {
-        parseSource(`try { throw 0; } catch({e}) { ${declaration} }`, undefined, Context.Empty);
+        parseScript(`try { throw 0; } catch({e}) { ${declaration} }`);
       });
     });
 
     it(`try { throw 0; } catch(e) { ${declaration} }`, () => {
       t.throws(() => {
-        parseSource(`try { throw 0; } catch(e) { ${declaration} }`, undefined, Context.Empty);
+        parseScript(`try { throw 0; } catch(e) { ${declaration} }`);
       });
     });
 
     it(`try { throw 0; } catch(e) { (()=>{${declaration}})(); }`, () => {
       t.doesNotThrow(() => {
-        parseSource(`try { throw 0; } catch(e) { (()=>{${declaration}})(); }`, undefined, Context.Empty);
+        parseScript(`try { throw 0; } catch(e) { (()=>{${declaration}})(); }`);
       });
     });
 
     it(`try { throw 0; } catch(e) { (function(){${declaration}})(); }`, () => {
       t.doesNotThrow(() => {
-        parseSource(`try { throw 0; } catch(e) { (function(){${declaration}})(); }`, undefined, Context.Empty);
+        parseScript(`try { throw 0; } catch(e) { (function(){${declaration}})(); }`);
       });
     });
   }
@@ -151,7 +151,11 @@ describe('Statements - Try', () => {
   ]) {
     it(source as string, () => {
       t.throws(() => {
-        parseSource(source as string, undefined, ctx as Context);
+        parseScript(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
+          module: ((ctx as any) & Context.Module) !== 0
+        });
       });
     });
   }
@@ -12335,7 +12339,10 @@ describe('Statements - Try', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

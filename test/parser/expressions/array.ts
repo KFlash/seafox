@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Array', () => {
   for (const arg of [
@@ -124,9 +124,9 @@ describe('Expressions - Array', () => {
     '([a], ...bcd = (x))',
     '([(({a.b.c[d]}), ({b = c / 2}))])',
     '([(({a[d]}), ({b = c / 2}))])',
-    // '([(({a}), ({b = c / 2}))])',
+    '([(({a}), ({b = c / 2}))])',
     '[..., ...]',
-    // '[ (...a)]',
+    '[ (...a)]',
     '[true = x]',
     '[this] = x',
     '[false] = x',
@@ -215,7 +215,7 @@ describe('Expressions - Array', () => {
     '"use strict"; [implements]',
     'x, [foo + y, bar] = doo;',
     '[...{a: true} = c]',
-    // '[[[a.b =[{ x: x.b }]]]] = ([{ a = b / 2}])',
+    '[[[a.b =[{ x: x.b }]]]] = ([{ a = b / 2}])',
     '[[[a.b =[{ x: x.b = 123 }]a(b=c)]]]',
     '[(a.b.c.d = e) = ()]',
     'function foo() { [(a.b.c.d = e) = ()]}',
@@ -229,7 +229,7 @@ describe('Expressions - Array', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -29271,7 +29271,10 @@ describe('Expressions - Array', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

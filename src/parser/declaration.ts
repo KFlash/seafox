@@ -2,6 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
+import { ScopeState, newScope, ScopeKind, addVarName, addBlockName } from './scope';
 import {
   parseFunctionDeclarationOrExpressionRest,
   parseClassDeclarationOrExpressionRest,
@@ -15,7 +16,6 @@ import {
   parseExpression,
   parseIdentifier
 } from './expressions';
-import { ScopeState, newScope, createScope, ScopeKind, addVarName, addBlockName } from './scope';
 import {
   Context,
   ParserState,
@@ -78,7 +78,10 @@ export function parseFunctionDeclarationRest(
   let firstRestricted: Token | undefined;
 
   // Create a new function scope
-  let innerScope = createScope();
+  let innerScope: ScopeState = {
+    parent: void 0,
+    type: ScopeKind.Block
+  };
 
   if (parser.token === Token.LeftParen) {
     if (flags & FunctionFlag.RequireIdentifier) report(parser, Errors.DeclNoName, 'Function');
@@ -142,7 +145,10 @@ export function parseClassDeclaration(
 
   let id: ESTree.Expression | null = null;
 
-  if (parser.token & Token.IsIdentifier && parser.token !== Token.ExtendsKeyword) {
+  if (
+    parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
+    parser.token !== Token.ExtendsKeyword
+  ) {
     if (isStrictReservedWord(parser, context, parser.token)) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
@@ -152,7 +158,7 @@ export function parseClassDeclaration(
 
     id = parseIdentifier(parser, context);
   } else {
-    //  report(parser, Errors.DeclNoName, 'Class');
+    report(parser, Errors.DeclNoName, 'Class');
   }
 
   return parseClassDeclarationOrExpressionRest(
@@ -219,13 +225,13 @@ export function parseVariableDeclarationListAndDeclarator(
   kind: BindingKind,
   origin: Origin
 ): ESTree.VariableDeclarator[] {
-  const list: any[] = [];
+  const list: ESTree.VariableDeclarator[] = [];
 
   while (parser.token !== Token.Comma) {
     const { start, line, column, token } = parser;
 
     const id = parseBindingPattern(parser, context, scope, kind, origin);
-    let init: any = null;
+    let init: ESTree.Expression | null = null;
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);

@@ -258,6 +258,7 @@ export function parseLabelledStatement(
 export function parseImportCallOrForbidImport(parser: ParserState, context: Context): any {
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
+
   switch (parser.token) {
     case Token.LeftParen:
       return parseImportCallDeclaration(parser, context, start, line, column);
@@ -316,10 +317,10 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 
   const asyncNewLine = parser.newLine;
 
-  if (!asyncNewLine) {
+  if (asyncNewLine === 0) {
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
-      if (!allowFuncDecl) report(parser, Errors.AsyncFunctionInSingleStatementContext);
+      if (allowFuncDecl === 0) report(parser, Errors.AsyncFunctionInSingleStatementContext);
       return parseFunctionDeclarationRest(
         parser,
         context,
@@ -437,8 +438,9 @@ export function parseEmptyStatement(parser: ParserState, context: Context): ESTr
         type: 'EmptyStatement'
       };
 }
+
 export function parseReturnStatement(parser: ParserState, context: Context): ESTree.ReturnStatement {
-  if ((context & Context.OptionsGlobalReturn) < 1 && context & Context.InGlobal) report(parser, Errors.Unexpected); // IllegalReturn);
+  if (context & Context.InGlobal && (context & Context.OptionsGlobalReturn) === 0) report(parser, Errors.Unexpected); // IllegalReturn);
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   const argument =
@@ -483,7 +485,7 @@ export function parseForStatementWithVariableDeclarations(
   if (token === Token.LetKeyword) {
     if ((parser.token & (Token.IsIdentifier | Token.Keyword | Token.FutureReserved | Token.IsPatternStart)) !== 0) {
       if (parser.token === Token.InKeyword) {
-        //if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
+        if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
         init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
       } else {
         kind = BindingKind.Let;
@@ -501,7 +503,6 @@ export function parseForStatementWithVariableDeclarations(
   }
 
   if (kind & (BindingKind.Variable | BindingKind.Let | BindingKind.Const)) {
-    //context = context | Context.DisallowIn;
 
     const declarations: any[] = [];
 
@@ -770,7 +771,7 @@ export function parseForStatement(
   let right;
   const origin = Origin.ForStatement;
   const kind: BindingKind = BindingKind.Empty;
-  let destructible: Flags | DestructuringKind = 0;
+  let destructible: DestructuringKind = DestructuringKind.None;
   const { token, start, line, column } = parser;
 
   if ((token & Token.isVarDecl) !== 0) {
@@ -937,13 +938,21 @@ export function parseDoWhileStatement(
 ): ESTree.DoWhileStatement {
   // DoStatement ::
   //   'do' Statement 'while' '(' Expression ')' ';'
+
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 1);
+
   const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabel, 0);
+
   consume(parser, context, Token.WhileKeyword, /* allowRegExp */ 0);
+
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
+
   const test = parseExpressions(parser, context);
+
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
+
   // Allow do-statements to be terminated with and without
   // semi-colons. This allows code such as 'do;while(0)return' to
   // parse, which would not be the case if we had used the
@@ -1135,7 +1144,7 @@ export function parseConsequentOrAlternative(
   labels: any
 ): any {
   // Disallow if web compability is off
-  return context & ((context & Context.Strict) | Context.OptionsDisableWebCompat) ||
+  return context & (Context.Strict | Context.OptionsDisableWebCompat) ||
     parser.token !== Token.FunctionKeyword
     ? parseStatement(parser, context, scope, Origin.None, labels, null, 0)
     : parseFunctionDeclaration(
@@ -1208,7 +1217,7 @@ export function parseBreakStatement(parser: ParserState, context: Context, label
 export function parseContinueStatement(parser: ParserState, context: Context, labels: any): ESTree.ContinueStatement {
   // ContinueStatement ::
   //   'continue' Identifier? ';'
-  if ((context & Context.InIteration) < 1) report(parser, Errors.IllegalContinue);
+  if ((context & Context.InIteration) === 0) report(parser, Errors.IllegalContinue);
   const { start: curStart, line: curLine, column: curColumn } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
 

@@ -1,9 +1,718 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Statements - Labeled', () => {
+  for (const [source, ctx] of [
+    ['bar: foo: ding: foo: x', Context.OptionsDisableWebCompat],
+    ['foo: foo: x', Context.OptionsDisableWebCompat],
+    //['do async \n () => x; while(y)', Context.Empty],
+    //['do async () \n => x; while(y)', Context.Empty],
+    ['do let x = 1; while (false)', Context.Empty],
+    ['do x, y while (z)', Context.Empty],
+    ['await: { async function f(){ break await; } }', Context.Empty],
+    ['await: { function *f(){ break await; } }', Context.Empty],
+    //['function *f(){ await: x; }', Context.Module],
+    //['async function f(){ await: x; }', Context.Empty],
+    ['do foo while (bar);', Context.Empty],
+    ['do ()=>x while(c)', Context.Empty],
+    [
+      `do
+    a
+    b
+  while(c);`,
+      Context.Empty
+    ],
+    ['do let {} = y', Context.Empty],
+    ['do debugger while(x) x', Context.Empty],
+    ['do x: function s(){}while(y)', Context.OptionsDisableWebCompat],
+    [
+      `do throw function (v, h) {
+      "use strict"
+    } while ((""))`,
+      Context.Empty
+    ]
+  ]) {
+    it(source as string, () => {
+      t.throws(() => {
+        parseScript(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
+          module: ((ctx as any) & Context.Module) !== 0
+        });
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
+    [
+      `yield: x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'LabeledStatement',
+            label: {
+              type: 'Identifier',
+              name: 'yield',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'Identifier',
+                name: 'x',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              start: 7,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      `await: x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'LabeledStatement',
+            label: {
+              type: 'Identifier',
+              name: 'await',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'Identifier',
+                name: 'x',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              start: 7,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      `foo: bar;`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'LabeledStatement',
+            label: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 0,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'Identifier',
+                name: 'bar',
+                start: 5,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              start: 5,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      `debugger`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'DebuggerStatement',
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      `function w(casecase){y:j:function casecase(){}}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'Identifier',
+                name: 'casecase',
+                start: 11,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'LabeledStatement',
+                  label: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 21,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 21
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  body: {
+                    type: 'LabeledStatement',
+                    label: {
+                      type: 'Identifier',
+                      name: 'j',
+                      start: 23,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    body: {
+                      type: 'FunctionDeclaration',
+                      params: [],
+                      body: {
+                        type: 'BlockStatement',
+                        body: [],
+                        start: 44,
+                        end: 46,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 44
+                          },
+                          end: {
+                            line: 1,
+                            column: 46
+                          }
+                        }
+                      },
+                      async: false,
+                      generator: false,
+                      id: {
+                        type: 'Identifier',
+                        name: 'casecase',
+                        start: 34,
+                        end: 42,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 34
+                          },
+                          end: {
+                            line: 1,
+                            column: 42
+                          }
+                        }
+                      },
+                      start: 25,
+                      end: 46,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 25
+                        },
+                        end: {
+                          line: 1,
+                          column: 46
+                        }
+                      }
+                    },
+                    start: 23,
+                    end: 46,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 46
+                      }
+                    }
+                  },
+                  start: 21,
+                  end: 46,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 46
+                    }
+                  }
+                }
+              ],
+              start: 20,
+              end: 47,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 20
+                },
+                end: {
+                  line: 1,
+                  column: 47
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'w',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 47,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 47
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 47,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 47
+          }
+        }
+      }
+    ],
+    [
+      `foo:
+    /bar/`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'LabeledStatement',
+            label: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 0,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'Literal',
+                value: /bar/,
+                regex: {
+                  pattern: 'bar',
+                  flags: ''
+                },
+                start: 9,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 4
+                  },
+                  end: {
+                    line: 2,
+                    column: 9
+                  }
+                }
+              },
+              start: 9,
+              end: 14,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 4
+                },
+                end: {
+                  line: 2,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 2,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      `foo:/bar/`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'LabeledStatement',
+            label: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 0,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'Literal',
+                value: /bar/,
+                regex: {
+                  pattern: 'bar',
+                  flags: ''
+                },
+                start: 4,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              start: 4,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
     [
       `await: while (await) { continue await; }`,
       Context.OptionsNext | Context.OptionsLoc,
@@ -822,7 +1531,10 @@ describe('Statements - Labeled', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

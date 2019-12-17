@@ -1,9 +1,19 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Function', () => {
   for (const [source, ctx, expected] of [
+    [`function f(...(x)){}`, Context.Empty],
+    [`function f(...rest + x){}`, Context.Empty],
+    [`function f(a, ...rest, b){}`, Context.Empty],
+    [`function f(...rest = x){}`, Context.Empty],
+    [`function f(...rest, b){}`, Context.Empty],
+    [`function f(...(x)){}`, Context.Empty],
+    [`function f(...(x)){}`, Context.Empty],
+    [`function f(...(x)){}`, Context.Empty],
+    [`function f(...(x)){}`, Context.Empty],
+
     [`let x; { var x; }`, Context.OptionsNext | Context.OptionsLoc],
     [`{ var x; } let x;`, Context.OptionsNext | Context.OptionsLoc],
     [`function foo(a, a) { }`, Context.OptionsNext | Context.OptionsLoc | Context.Strict | Context.Module],
@@ -26,11 +36,546 @@ describe('Expressions - Function', () => {
   ]) {
     it(source as string, () => {
       t.throws(() => {
-        parseSource(source as string, undefined, ctx as Context);
+        parseScript(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
+          module: ((ctx as any) & Context.Module) !== 0
+        });
       });
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `function f(...rest){}`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'RestElement',
+                argument: {
+                  type: 'Identifier',
+                  name: 'rest',
+                  start: 14,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                start: 11,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 19,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `function f([foo] = x, b){}`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 12,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    }
+                  ],
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 19,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 11,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'b',
+                start: 22,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 22
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 24,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 24
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
+    [
+      `function f([foo,,bar] = x){}`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 12,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    null,
+                    {
+                      type: 'Identifier',
+                      name: 'bar',
+                      start: 17,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 17
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    }
+                  ],
+                  start: 11,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 24,
+                  end: 25,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 24
+                    },
+                    end: {
+                      line: 1,
+                      column: 25
+                    }
+                  }
+                },
+                start: 11,
+                end: 25,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 25
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 26,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 26
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      `function f([] = x){}`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'ArrayPattern',
+                  elements: [],
+                  start: 11,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 16,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                start: 11,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 18,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 18
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
     [
       `typeof async function f(){}
       /foo/g`,
@@ -6435,7 +6980,10 @@ describe('Expressions - Function', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

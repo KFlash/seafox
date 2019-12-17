@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Class', () => {
   for (const arg of [
@@ -210,7 +210,7 @@ describe('Expressions - Class', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}` as string);
       });
     });
   }
@@ -260,19 +260,22 @@ describe('Expressions - Class', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
 
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsDisableWebCompat);
+        parseScript(`${arg}`),
+          {
+            OptionsDisableWebCompat: true
+          };
       });
     });
 
     it(`if (true) { ${arg} }`, () => {
       t.throws(() => {
-        parseSource(`if (true) { ${arg} }`, undefined, Context.Empty);
+        parseScript(`if (true) { ${arg} }`);
       });
     });
   }
@@ -285,19 +288,19 @@ describe('Expressions - Class', () => {
   ]) {
     it(`class C {${arg}}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`class C {${arg}}`, undefined, Context.Empty);
+        parseScript(`class C {${arg}}`);
       });
     });
 
     it(`(class C {${arg}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(class C {${arg}})`, undefined, Context.Empty);
+        parseScript(`(class C {${arg}})`);
       });
     });
 
     it(`(class C {${arg}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(class C {${arg}})`, undefined, Context.Empty);
+        parseScript(`(class C {${arg}})`);
       });
     });
   }
@@ -311,13 +314,7 @@ describe('Expressions - Class', () => {
   ]) {
     it(`class C {${arg}}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`class C {${arg}}`, undefined, Context.Empty);
-      });
-    });
-
-    it(`(class C {${arg}})`, () => {
-      t.doesNotThrow(() => {
-        parseSource(`(class C {${arg}})`, undefined, Context.Empty);
+        parseScript(`(class C {${arg}})`);
       });
     });
   }
@@ -336,13 +333,13 @@ describe('Expressions - Class', () => {
   ]) {
     it(`(${arg})`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(${arg})`, undefined, Context.Empty);
+        parseScript(`(${arg})`);
       });
     });
 
     it(`bar, ${arg};`, () => {
       t.doesNotThrow(() => {
-        parseSource(`bar, ${arg};`, undefined, Context.Empty);
+        parseScript(`bar, ${arg}`);
       });
     });
   }
@@ -379,7 +376,7 @@ describe('Expressions - Class', () => {
   ]) {
     it(`(class {${arg}() {}});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(class {${arg}() {}});`, undefined, Context.Empty);
+        parseScript(`(class {${arg}() {}});`);
       });
     });
   }
@@ -594,7 +591,7 @@ describe('Expressions - Class', () => {
   ]) {
     it(`(class { ${arg}})`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(class { ${arg}})`, undefined, Context.Empty);
+        parseScript(`(class {${arg}})`);
       });
     });
   }
@@ -16439,7 +16436,10 @@ describe('Expressions - Class', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

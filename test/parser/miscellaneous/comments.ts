@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Comments', () => {
   for (const arg of [
@@ -19,7 +19,10 @@ describe('Miscellaneous - Comments', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.Strict);
+        parseScript(`${arg}`, {
+          impliedStrict: true,
+          next: true
+        });
       });
     });
   }
@@ -70,13 +73,15 @@ describe('Miscellaneous - Comments', () => {
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Strict);
+        parseScript(`${arg}`, {
+          impliedStrict: true
+        });
       });
     });
 
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -1756,7 +1761,10 @@ describe('Miscellaneous - Comments', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

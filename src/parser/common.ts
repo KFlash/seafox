@@ -216,8 +216,9 @@ export function isIterationStatement(t: Token): boolean {
 
 export function addLabel(parser: ParserState, label: any, labels: any, nestedLabels: any): any {
   let set = labels;
+
   while (set) {
-    if (set['#' + labels]) report(parser, Errors.Unexpected);
+    if (set['#' + label]) report(parser, Errors.Unexpected);
     set = set.parentLabels;
   }
   labels = { parentLabels: labels, iterationLabels: null };

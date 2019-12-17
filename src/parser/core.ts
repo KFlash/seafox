@@ -1,11 +1,5 @@
 import { Token } from '../token';
-import { nextToken } from '../scanner/scan';
-import * as ESTree from './estree';
-import { skipHashBang } from '../scanner/comments';
-import { parseModuleItemListAndDirectives } from './module';
-import { parseStatementList } from './statements';
-import { Context, Flags, ParserState, DestructuringKind } from './common';
-import { ScopeState, createScope } from './scope';
+import { Flags, ParserState, DestructuringKind } from './common';
 
 /**
  * The parser options.
@@ -62,58 +56,4 @@ export function create(source: string): ParserState {
     assignable: 1,
     destructible: DestructuringKind.None
   };
-}
-
-export function parseSource(source: string, options: Options | void, context: Context): ESTree.Program {
-  if (options != null) {
-    if (options.module) context |= Context.Module | Context.Strict;
-    if (options.next) context |= Context.OptionsNext;
-    if (options.loc) context |= Context.OptionsLoc;
-    if (options.disableWebCompat) context |= Context.OptionsDisableWebCompat;
-    if (options.directives) context |= Context.OptionsDirectives | Context.OptionsRaw;
-    if (options.raw) context |= Context.OptionsRaw;
-    if (options.impliedStrict) context |= Context.Strict;
-  }
-
-  let body: any[] = [];
-
-  let sourceType: 'module' | 'script' = 'script';
-
-  const parser = create(source);
-
-  skipHashBang(parser, source);
-
-  const scope: ScopeState = createScope();
-
-  nextToken(parser, context, /* allowRegExp */ 1);
-
-  if (context & Context.Module) {
-    sourceType = 'module';
-    body = parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope);
-  } else {
-    body = parseStatementList(parser, context | Context.InGlobal, scope);
-  }
-  return context & Context.OptionsLoc
-    ? {
-        type: 'Program',
-        sourceType,
-        body,
-        start: 0,
-        end: source.length,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: parser.lineBase,
-            column: parser.index - parser.offset
-          }
-        }
-      }
-    : {
-        type: 'Program',
-        sourceType,
-        body
-      };
 }

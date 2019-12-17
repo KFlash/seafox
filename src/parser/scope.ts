@@ -46,7 +46,13 @@ export interface ScopeError {
  * @param value Binding name to be declared
  */
 export function createArrowHeadParsingScope(parser: ParserState, context: Context, value: string): ScopeState {
-  const scope = newScope(createScope(), ScopeKind.ArrowParams);
+  const scope = newScope(
+    {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    ScopeKind.ArrowParams
+  );
   addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
   return scope;
 }
@@ -65,16 +71,6 @@ export function recordScopeError(parser: ParserState, type: Errors, ...params: s
     index,
     line,
     column
-  };
-}
-
-/**
- * Creates a block scope
- */
-export function createScope(): ScopeState {
-  return {
-    parent: void 0,
-    type: ScopeKind.Block
   };
 }
 
@@ -154,7 +150,8 @@ export function addBlockName(
 
   if (
     scope.type & ScopeKind.FunctionBody &&
-    (scope.parent['#' + name] && (scope.parent['#' + name] & BindingKind.Empty) === 0)
+    scope.parent['#' + name] &&
+    (scope.parent['#' + name] & BindingKind.Empty) === 0
   ) {
     report(parser, Errors.DuplicateBinding, name);
   }
@@ -213,9 +210,7 @@ export function addVarName(
       }
     }
     if (value & (BindingKind.CatchIdentifier | BindingKind.CatchPattern)) {
-      if (
-        context & (Context.Strict | Context.OptionsDisableWebCompat) || (value & BindingKind.CatchIdentifier) === 0
-      ) {
+      if (context & (Context.Strict | Context.OptionsDisableWebCompat) || (value & BindingKind.CatchIdentifier) === 0) {
         report(parser, Errors.DuplicateBinding, name);
       }
     }

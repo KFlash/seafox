@@ -1,9 +1,181 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Async', () => {
   for (const [source, ctx, expected] of [
+    [
+      `async, async ({await})`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        "type": "Program",
+        "sourceType": "script",
+        "body": [
+            {
+                "type": "ExpressionStatement",
+                "expression": {
+                    "type": "SequenceExpression",
+                    "expressions": [
+                        {
+                            "type": "Identifier",
+                            "name": "async",
+                            "start": 0,
+                            "end": 5,
+                            "loc": {
+                                "start": {
+                                    "line": 1,
+                                    "column": 0
+                                },
+                                "end": {
+                                    "line": 1,
+                                    "column": 5
+                                }
+                            }
+                        },
+                        {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "Identifier",
+                                "name": "async",
+                                "start": 7,
+                                "end": 12,
+                                "loc": {
+                                    "start": {
+                                        "line": 1,
+                                        "column": 7
+                                    },
+                                    "end": {
+                                        "line": 1,
+                                        "column": 12
+                                    }
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "ObjectExpression",
+                                    "properties": [
+                                        {
+                                            "type": "Property",
+                                            "key": {
+                                                "type": "Identifier",
+                                                "name": "await",
+                                                "start": 15,
+                                                "end": 20,
+                                                "loc": {
+                                                    "start": {
+                                                        "line": 1,
+                                                        "column": 15
+                                                    },
+                                                    "end": {
+                                                        "line": 1,
+                                                        "column": 20
+                                                    }
+                                                }
+                                            },
+                                            "value": {
+                                                "type": "Identifier",
+                                                "name": "await",
+                                                "start": 15,
+                                                "end": 20,
+                                                "loc": {
+                                                    "start": {
+                                                        "line": 1,
+                                                        "column": 15
+                                                    },
+                                                    "end": {
+                                                        "line": 1,
+                                                        "column": 20
+                                                    }
+                                                }
+                                            },
+                                            "kind": "init",
+                                            "computed": false,
+                                            "method": false,
+                                            "shorthand": true,
+                                            "start": 15,
+                                            "end": 20,
+                                            "loc": {
+                                                "start": {
+                                                    "line": 1,
+                                                    "column": 15
+                                                },
+                                                "end": {
+                                                    "line": 1,
+                                                    "column": 20
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "start": 14,
+                                    "end": 21,
+                                    "loc": {
+                                        "start": {
+                                            "line": 1,
+                                            "column": 14
+                                        },
+                                        "end": {
+                                            "line": 1,
+                                            "column": 21
+                                        }
+                                    }
+                                }
+                            ],
+                            "optional": false,
+                            "shortCircuited": false,
+                            "start": 7,
+                            "end": 22,
+                            "loc": {
+                                "start": {
+                                    "line": 1,
+                                    "column": 7
+                                },
+                                "end": {
+                                    "line": 1,
+                                    "column": 22
+                                }
+                            }
+                        }
+                    ],
+                    "start": 0,
+                    "end": 22,
+                    "loc": {
+                        "start": {
+                            "line": 1,
+                            "column": 0
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 22
+                        }
+                    }
+                },
+                "start": 0,
+                "end": 22,
+                "loc": {
+                    "start": {
+                        "line": 1,
+                        "column": 0
+                    },
+                    "end": {
+                        "line": 1,
+                        "column": 22
+                    }
+                }
+            }
+        ],
+        "start": 0,
+        "end": 22,
+        "loc": {
+            "start": {
+                "line": 1,
+                "column": 0
+            },
+            "end": {
+                "line": 1,
+                "column": 22
+            }
+        }
+    }],
     [
       `async ({await})`,
       Context.OptionsNext | Context.OptionsLoc,
@@ -5078,7 +5250,10 @@ describe('Expressions - Async', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

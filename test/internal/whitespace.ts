@@ -1,7 +1,7 @@
 import * as t from 'assert';
 import { Context } from '../../src/parser/common';
 import { scan } from '../../src/scanner/scan';
-import { parseSource, create } from '../../src/parser/core';
+import { create } from '../../src/parser/core';
 
 describe('Lexer', () => {
   function pass(name: string, opts: any) {

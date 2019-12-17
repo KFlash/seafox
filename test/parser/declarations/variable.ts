@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Declarations - Variable', () => {
   for (const arg of [
@@ -42,29 +42,26 @@ describe('Declarations - Variable', () => {
     // future reserved keyword,
     // 'enum'
   ]) {
-    it(`for (var ${arg} = x;;);`, () => {
-      t.throws(() => {
-        parseSource(`for (var ${arg} = x;;);`, undefined, Context.Empty);
-      });
-    });
-    it(`for (let ${arg} = x;;);`, () => {
-      t.throws(() => {
-        parseSource(`for (let ${arg} = x;;);`, undefined, Context.Empty);
-      });
-    });
     it(`for (const ${arg} = x;;);`, () => {
       t.throws(() => {
-        parseSource(`for (const ${arg} = x;;);`, undefined, Context.Empty);
+        parseScript(`for (const ${arg} = x;;);`, {
+          disableWebCompat: false
+        });
       });
     });
     it(`var ${arg}`, () => {
       t.throws(() => {
-        parseSource(`var ${arg}`, undefined, Context.Empty);
+        parseScript(`var ${arg}`, {
+          disableWebCompat: true
+        });
       });
     });
     it(`const ${arg} = x;`, () => {
       t.throws(() => {
-        parseSource(`const ${arg} = x;`, undefined, Context.Empty);
+        parseScript(`const ${arg} = x;`, {
+          disableWebCompat: false,
+          loc: true
+        });
       });
     });
   }
@@ -216,12 +213,15 @@ describe('Declarations - Variable', () => {
     ],
     [`var x = a; const x = b;`, Context.Empty],
     [`var x = a; let x = b;`, Context.Empty],
-    [`var x; let x;`, Context.OptionsDisableWebCompat],
-    [`var x = a; function x(){};`, Context.Strict | Context.Module]
+    [`var x; let x;`, Context.OptionsDisableWebCompat]
   ]) {
     it(source as string, () => {
       t.throws(() => {
-        parseSource(source as string, undefined, ctx as Context);
+        parseScript(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
+          module: ((ctx as any) & Context.Module) !== 0
+        });
       });
     });
   }
@@ -18528,7 +18528,10 @@ var zoo;`,
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Destructuibility', () => {
   for (const arg of [
@@ -26,7 +26,7 @@ describe('Miscellaneous - Destructuibility', () => {
     '([a]) = 0',
     '((x,x)) = 5',
     '(((x,x))) = 5',
-    // '({a = 0});',
+    '({a = 0});',
     '({a} += 0);',
     '[a, ...b, {c=0}]',
     '{a = [...b, c]} = 0',
@@ -297,7 +297,7 @@ describe('Miscellaneous - Destructuibility', () => {
     '[ ...([a] = [])',
     '[ ...[ ( [ a ] ) ] ]',
     '[ ([a]) ]',
-    // '[ (...[a]) ]',
+    '[ (...[a]) ]',
     '[ ([a] = []) ]',
     '[ (++y) ]',
     '[ ...(++y) ]',
@@ -328,77 +328,75 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; (${arg} = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; (${arg} = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(
-          `'use strict'; let x, y, z; for (x in ${arg} = z = {});`,
-          undefined,
-          Context.OptionsDisableWebCompat
-        );
+        parseScript(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, {
+          disableWebCompat: true
+        });
       });
     });
 
     it(`'use strict'; let x, y, z; for (x in x =  ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; for (x in x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x in x = ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x of x =  ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; for (x of x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x of x = ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x of x = ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`var x, y, z; for (x of x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x of x = ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; (x = ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`var x, y, z; (x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; (x = ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x of ${arg}= z = {});`, () => {
       t.throws(() => {
-        parseSource(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x in ${arg} = z = {});`, () => {
       t.throws(() => {
-        parseSource(`var x, y, z; for (x in ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x in ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x in x = ${arg}  = z = {});`, () => {
       t.throws(() => {
-        parseSource(`var x, y, z; for (x in x = ${arg}  = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x in x = ${arg}  = z = {});`);
       });
     });
   }
@@ -422,22 +420,22 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsNext);
+        parseScript(`${arg}`);
       });
     });
     it(`{ function foo() {}; }; ${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`{ function foo() {}; }; ${arg}`, undefined, Context.OptionsNext);
+        parseScript(`{ function foo() {}; }; ${arg}`);
       });
     });
     it(`{  function* foo() {}; }; ${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`{  function* foo() {}; }; ${arg}`, undefined, Context.OptionsNext);
+        parseScript(`{  function* foo() {}; }; ${arg}`);
       });
     });
     it(`{ async function foo() {};  }; ${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`{ async function foo() {};  }; ${arg}`, undefined, Context.OptionsNext);
+        parseScript(`{ async function foo() {};  }; ${arg}`);
       });
     });
   }
@@ -445,10 +443,10 @@ describe('Miscellaneous - Destructuibility', () => {
   for (const arg of [
     '({[a / b = c]: {}})',
     '({[a / b = c]: {}})',
-    // '({a = {}})',
-    //'({a = []})',
+    '({a = {}})',
+    '({a = []})',
     '({a: ({1})})',
-    //'({a: ({x = (y)})})',
+    '({a: ({x = (y)})})',
     '({a = [b]} = 1 / d = a)',
     '({(a) = [b]} = 1 / (d = (a)))',
     '({"a" = [b]} = 1 / (d = (a)))',
@@ -464,7 +462,7 @@ describe('Miscellaneous - Destructuibility', () => {
     'function () { for (const x of [ (() => x)() ]) { } }',
     'function () { for (const x of [ eval("x") ]) { } }',
     '({a: ({1})})',
-    //'({a = {}})',
+    '({a = {}})',
     '({a: ("string") / a[3](((((a /= [b.c] = ({x)}))))) })',
     '({a: ("string") / a[3](((((a /= [b.c] = ([x / 2]()=> a)))))) })',
     '({a: ("string") / a[3](((((a /= [b.c] = ([x / 2]())))))=>) })',
@@ -478,12 +476,12 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsDisableWebCompat | Context.OptionsNext);
+        parseScript(`${arg}`, { disableWebCompat: true });
       });
     });
   }
@@ -498,13 +496,13 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
 
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsDisableWebCompat);
+        parseScript(`${arg}`, { disableWebCompat: true });
       });
     });
   }
@@ -580,7 +578,7 @@ describe('Miscellaneous - Destructuibility', () => {
     '([[[[[[[[[[[[[[[[[[[[{a:b[0]}]]]]]]]]]]]]]]]]]]]])=>0;',
     '(a,b)=(c,d);',
     '({a:this}=0)',
-    //'let {...rest, a} = {a:1, b:2};',
+    'let {...rest, a} = {a:1, b:2};',
     '...(rest)',
     'let {...(rest)} = {a:1, b:2};',
     'let {...++rest} = {a: 1, b: 2};',
@@ -598,7 +596,7 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsNext);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -621,14 +619,14 @@ describe('Miscellaneous - Destructuibility', () => {
     // Plain function
     it(`function fn(${arg}) {}`, () => {
       t.throws(() => {
-        parseSource(`function fn(${arg}) {}`, undefined, Context.Empty);
+        parseScript(`function fn(${arg}) {}`);
       });
     });
 
     // Generators
     it(`function fn(${arg}) {}`, () => {
       t.throws(() => {
-        parseSource(`function *fn(${arg}) {}`, undefined, Context.Empty);
+        parseScript(`function *fn(${arg}) {}`);
       });
     });
   }
@@ -777,7 +775,7 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -800,13 +798,15 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
 
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsDisableWebCompat);
+        parseScript(`${arg}`, {
+          disableWebCompat: true
+        });
       });
     });
   }
@@ -958,67 +958,67 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`function fn() { 'use strict';} fn(${arg});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`'use strict'; let x, y, z; (${arg} = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; (${arg} = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x in ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x in x =  ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`'use strict'; let x, y, z; for (x in x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x in x = ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x of x =  ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`'use strict'; let x, y, z; for (x of x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x of x = ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x of x = ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`var x, y, z; for (x of x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x of x = ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; (x = ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`var x, y, z; (x = ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; (x = ${arg} = z = {});`);
       });
     });
 
     it(`'use strict'; let x, y, z; for (x of ${arg}= z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`'use strict'; let x, y, z; for (x of ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x in ${arg} = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`var x, y, z; for (x in ${arg} = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x in ${arg} = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x in x = ${arg}  = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`var x, y, z; for (x in x = ${arg}  = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x in x = ${arg}  = z = {});`);
       });
     });
 
     it(`var x, y, z; for (x of x = ${arg}  = z = {});`, () => {
       t.doesNotThrow(() => {
-        parseSource(`var x, y, z; for (x of x = ${arg}  = z = {});`, undefined, Context.Empty);
+        parseScript(`var x, y, z; for (x of x = ${arg}  = z = {});`);
       });
     });
   }
@@ -2212,7 +2212,7 @@ describe('Miscellaneous - Destructuibility', () => {
   ]) {
     it(`  ${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -2238,47 +2238,47 @@ describe('Miscellaneous - Destructuibility', () => {
     // Plain function
     it(`function fn(${arg}) {}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`function fn(${arg}) {}`, undefined, Context.Empty);
+        parseScript(`function fn(${arg}) {}`);
       });
     });
 
     // Generators
     it(`function fn(${arg}) {}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`function *fn(${arg}) {}`, undefined, Context.Empty);
+        parseScript(`function *fn(${arg}) {}`);
       });
     });
 
     // Generator expression - no name
     it(`(function *(${arg}) {})`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(function *(${arg}) {})`, undefined, Context.Empty);
+        parseScript(`(function *(${arg}) {})`);
       });
     });
     // Async function
     it(`async function fn(${arg}) {}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`async function fn(${arg}) {}`, undefined, Context.Empty);
+        parseScript(`async function fn(${arg}) {}`);
       });
     });
 
     // Async Generator
     it(`async function *fn(${arg}) {}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`async function *fn(${arg}) {}`, undefined, Context.Empty);
+        parseScript(`async function *fn(${arg}) {}`);
       });
     });
     // Arrows
     it(`(${arg}) => x;`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(${arg}) => x;`, undefined, Context.Empty);
+        parseScript(`(${arg}) => x;`);
       });
     });
 
     // Async arrows
     it(`(${arg}) => x;`, () => {
       t.doesNotThrow(() => {
-        parseSource(`(${arg}) => x;`, undefined, Context.Empty);
+        parseScript(`(${arg}) => x;` as string);
       });
     });
   }
@@ -2353,7 +2353,7 @@ describe('Miscellaneous - Destructuibility', () => {
     // Plain function
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseSource(`${arg}`, undefined, Context.Empty);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -40961,7 +40961,10 @@ describe('Miscellaneous - Destructuibility', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

@@ -4,15 +4,7 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report, reportScopeError } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
-import {
-  ScopeState,
-  newScope,
-  createScope,
-  ScopeKind,
-  createArrowHeadParsingScope,
-  addBlockName,
-  addVarOrBlock
-} from './scope';
+import { ScopeState, newScope, ScopeKind, createArrowHeadParsingScope, addBlockName, addVarOrBlock } from './scope';
 import {
   Context,
   ParserState,
@@ -719,7 +711,13 @@ export function parseIdentifierOrArrow(
   const expr = parseIdentifier(parser, context);
   parser.assignable = 1;
   if (parser.token === Token.Arrow) {
-    const scope = newScope(createScope(), ScopeKind.ArrowParams);
+    const scope = newScope(
+      {
+        parent: void 0,
+        type: ScopeKind.Block
+      },
+      ScopeKind.ArrowParams
+    );
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
     return parseArrowFunctionExpression(parser, context, scope, [expr], 0, start, line, column);
   }
@@ -905,7 +903,13 @@ export function parseAsyncArrowOrCallExpression(
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
-  const scope = newScope(createScope(), ScopeKind.ArrowParams);
+  const scope = newScope(
+    {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    ScopeKind.ArrowParams
+  );
 
   if (consumeOpt(parser, context, Token.RightParen, /* allowRegExp */ 0)) {
     if (parser.token === Token.Arrow) {
@@ -1535,7 +1539,13 @@ export function parseParenthesizedExpression(
 ): ESTree.Expression {
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const scope = newScope(createScope(), ScopeKind.ArrowParams);
+  const scope = newScope(
+    {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    ScopeKind.ArrowParams
+  );
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
   let expr: any = [];
@@ -2342,7 +2352,10 @@ export function parseFunctionExpression(
   const generatorAndAsyncFlags = (isAsync * 2 + isGenerator) << 21;
 
   let id: ESTree.Identifier | null = null;
-  let scope = createScope();
+  let scope: ScopeState = {
+    parent: void 0,
+    type: ScopeKind.Block
+  };
 
   if (parser.token === Token.LeftParen) {
   } else {
@@ -2807,7 +2820,13 @@ export function parseMethodDefinition(
   return parseFunctionDeclarationOrExpressionRest(
     parser,
     context,
-    newScope(createScope(), ScopeKind.FunctionParams),
+    newScope(
+      {
+        parent: void 0,
+        type: ScopeKind.Block
+      },
+      ScopeKind.FunctionParams
+    ),
     null,
     void 0,
     FunctionFlag.None,
@@ -2826,7 +2845,13 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
 
   const params: ESTree.Parameter[] = [];
 
-  const scope = newScope(createScope(), ScopeKind.FunctionParams);
+  const scope = newScope(
+    {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    ScopeKind.FunctionParams
+  );
 
   if (parser.token !== Token.RightParen) {
     if (kind & PropertyKind.Getter) report(parser, Errors.AccessorWrongArgs, 'Getter', 'no', 's');

@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Declarations - Const', () => {
   for (const [source, ctx] of [
@@ -19,7 +19,7 @@ describe('Declarations - Const', () => {
     [`const x, {foo} = y;`, Context.Empty],
     [`for (const [foo] = arr, bar in arr);`, Context.Empty],
     [`for (const [.x] in obj);`, Context.Empty],
-    // [`for (const [...[foo, bar],] in obj);`, Context.Empty],
+    [`for (const [...[foo, bar],] in obj);`, Context.Empty],
     [`for (const {x} = a, y in obj);`, Context.Empty],
     [`for (const {x:y=z});`, Context.Empty],
     [`for (const {x,,} of obj);`, Context.Empty],
@@ -161,7 +161,9 @@ describe('Declarations - Const', () => {
   ]) {
     it(source as string, () => {
       t.throws(() => {
-        parseSource(source as string, undefined, ctx as Context);
+        parseScript(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
+        });
       });
     });
   }
@@ -15009,7 +15011,10 @@ describe('Declarations - Const', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

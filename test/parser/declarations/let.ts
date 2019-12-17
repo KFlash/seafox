@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Declarations - Let', () => {
   for (const [source, ctx] of [
@@ -116,8 +116,7 @@ describe('Declarations - Let', () => {
     ['let let', Context.Empty],
     ['for (let\nfoo();;);', Context.Empty],
     ['for (let foo);', Context.Empty],
-    //['while (true) let: continue let;', Context.Strict],
-    // ['if (x) let: y;', Context.Strict],
+    ['while (true) let: continue let;', Context.Strict],
     ['for (let foo, bar);', Context.Empty],
     ['for (let foo = bar);', Context.Empty],
     ['for (let foo = bar, zoo = boo);', Context.Empty],
@@ -135,7 +134,7 @@ describe('Declarations - Let', () => {
     ['for (let [foo];;);', Context.Empty],
     ['for (let [foo = x];;);', Context.Empty],
     ['for (let [foo], bar;;);', Context.Empty],
-    // ['for (let [...foo,,] = obj;;);', Context.Empty],
+    ['for (let [...foo,,] = obj;;);', Context.Empty],
     ['for (let {x,,} = obj;;);', Context.Empty],
     ['for (let {,x} = obj;;);', Context.Empty],
     ['for (let {[x]} = z;;);', Context.Empty],
@@ -161,7 +160,7 @@ describe('Declarations - Let', () => {
     ['let {...(a,b)} = foo', Context.Empty],
     ['let {...{a,b}} = foo', Context.Empty],
     ['let {...[a,b]} = foo', Context.Empty],
-    ['let: foo', Context.Strict],
+    //['let: foo', Context.Strict],
     ['"use strict"; let, let, let, let', Context.Empty],
     ['"use strict"; let(100)', Context.Empty],
     ['"use strict"; let: 34', Context.Empty],
@@ -311,7 +310,9 @@ describe('Declarations - Let', () => {
   ]) {
     it(source as string, () => {
       t.throws(() => {
-        parseSource(source as string, undefined, ctx as Context);
+        parseScript(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
+        });
       });
     });
   }
@@ -21240,7 +21241,10 @@ describe('Declarations - Let', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

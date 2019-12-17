@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Member', () => {
   for (const arg of [
@@ -13,7 +13,7 @@ describe('Expressions - Member', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseSource(`${arg}`, undefined, Context.OptionsNext);
+        parseScript(`${arg}`);
       });
     });
   }
@@ -3206,93 +3206,6 @@ describe('Expressions - Member', () => {
       }
     ],
     [
-      `abc.package`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
-      {
-        body: [
-          {
-            end: 11,
-            expression: {
-              computed: false,
-              end: 11,
-              loc: {
-                end: {
-                  column: 11,
-                  line: 1
-                },
-                start: {
-                  column: 0,
-                  line: 1
-                }
-              },
-              object: {
-                end: 3,
-                loc: {
-                  end: {
-                    column: 3,
-                    line: 1
-                  },
-                  start: {
-                    column: 0,
-                    line: 1
-                  }
-                },
-                name: 'abc',
-                start: 0,
-                type: 'Identifier'
-              },
-              property: {
-                end: 11,
-                loc: {
-                  end: {
-                    column: 11,
-                    line: 1
-                  },
-                  start: {
-                    column: 4,
-                    line: 1
-                  }
-                },
-                name: 'package',
-                start: 4,
-                type: 'Identifier'
-              },
-              start: 0,
-              optional: false,
-              shortCircuited: false,
-              type: 'MemberExpression'
-            },
-            loc: {
-              end: {
-                column: 11,
-                line: 1
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            start: 0,
-            type: 'ExpressionStatement'
-          }
-        ],
-        end: 11,
-        loc: {
-          end: {
-            column: 11,
-            line: 1
-          },
-          start: {
-            column: 0,
-            line: 1
-          }
-        },
-        sourceType: 'module',
-        start: 0,
-        type: 'Program'
-      }
-    ],
-    [
       `x[a, b]`,
       Context.OptionsNext | Context.OptionsLoc,
       {
@@ -5143,7 +5056,10 @@ describe('Expressions - Member', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+      });
       t.deepStrictEqual(parser, expected);
     });
   }

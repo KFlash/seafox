@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseSource } from '../../../src/parser/core';
+import { parseModule } from '../../../src/seafox';
 
 describe('Module - Export', () => {
   for (const [source, ctx, expected] of [
@@ -2111,7 +2111,12 @@ describe('Module - Export', () => {
     ]
   ]) {
     it(source as string, () => {
-      const parser = parseSource(source as string, undefined, ctx as Context);
+      const parser = parseModule(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0,
+        next: true,
+        raw: false
+      });
       t.deepStrictEqual(parser, expected);
     });
   }
