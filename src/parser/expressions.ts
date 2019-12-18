@@ -395,7 +395,7 @@ export function parseMemberExpression(
       const quasi =
         parser.token === Token.TemplateCont
           ? parseTemplate(parser, context | Context.TaggedTemplate, start, line, column)
-          : parseTemplateLiteral(parser, context | Context.TaggedTemplate);
+          : parseTemplateLiteral(parser, context);
 
       return parseMemberExpression(
         parser,
@@ -1183,30 +1183,23 @@ export function parseNewExpression(
   // - `new x(await foo);`
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  if (consumeOpt(parser, context, Token.Period, /* allowRegExp */ 0)) {
-    if (context & Context.AllowNewTarget && parser.tokenValue === 'target') {
-      parser.assignable = 0;
-      return parseMetaProperty(
-        parser,
-        context,
-        parseIdentifierFromValue(parser, context, 'new', curStart, curLine, curColumn),
-        curStart,
-        curLine,
-        curColumn
-      );
-    }
-    report(parser, Errors.Unexpected);
+  parser.assignable = 0;
+
+  if (parser.token === Token.Period) {
+    return parseNewTargetExpression(parser, context, curStart, curLine, curColumn);
   }
 
   const { start, line, column } = parser;
-  parser.assignable = 0;
+
   const expr = parsePrimaryExpression(parser, context, 1, /* allowLHS */ 1, 0, start, line, column);
 
   // NewExpression without arguments.
-  const callee = parseMembeExpressionNoCall(parser, context, expr, start, line, column);
+  const callee = parseNewMemberExpression(parser, context, expr, start, line, column);
 
   const args = parser.token === Token.LeftParen ? parseArguments(parser, context) : [];
+
   parser.assignable = 0;
+
   return context & Context.OptionsLoc
     ? {
         type: 'NewExpression',
@@ -1223,14 +1216,21 @@ export function parseNewExpression(
       } as any);
 }
 
-export function parseMetaProperty(
+export function parseNewTargetExpression(
   parser: ParserState,
   context: Context,
-  meta: ESTree.Identifier,
   start: number,
   line: number,
   column: number
 ): ESTree.MetaProperty {
+  nextToken(parser, context, /* allowRegExp */ 0);
+
+  if ((context & Context.AllowNewTarget) === 0 || parser.tokenValue !== 'target') {
+    report(parser, Errors.UnexpectedNewTarget);
+  }
+
+  const meta = parseIdentifierFromValue(parser, context, 'new', start, line, column);
+
   const property = parseIdentifier(parser, context);
   return context & Context.OptionsLoc
     ? {
@@ -1248,13 +1248,13 @@ export function parseMetaProperty(
       };
 }
 
-export function parseMembeExpressionNoCall(
+export function parseNewMemberExpression(
   parser: ParserState,
   context: Context,
   expr: any,
-  curStart: number,
-  curLine: number,
-  curColumn: number
+  start: number,
+  line: number,
+  column: number
 ): ESTree.MemberExpression {
   switch (parser.token) {
     /* Property */
@@ -1263,9 +1263,9 @@ export function parseMembeExpressionNoCall(
 
       parser.assignable = 1;
 
-      const property = parseIdentifier(parser, context);
+      const property = parsePropertyOrPrivatePropertyName(parser, context);
 
-      return parseMembeExpressionNoCall(
+      return parseNewMemberExpression(
         parser,
         context,
         context & Context.OptionsLoc
@@ -1276,9 +1276,9 @@ export function parseMembeExpressionNoCall(
               property,
               optional: false,
               shortCircuited: false,
-              start: curStart,
+              start,
               end: parser.endIndex,
-              loc: setLoc(parser, curLine, curColumn)
+              loc: setLoc(parser, line, column)
             }
           : {
               type: 'MemberExpression',
@@ -1288,9 +1288,9 @@ export function parseMembeExpressionNoCall(
               optional: false,
               shortCircuited: false
             },
-        curStart,
-        curLine,
-        curColumn
+        start,
+        line,
+        column
       );
     }
     case Token.LeftBracket: {
@@ -1300,7 +1300,7 @@ export function parseMembeExpressionNoCall(
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
-      return parseMembeExpressionNoCall(
+      return parseNewMemberExpression(
         parser,
         context,
         context & Context.OptionsLoc
@@ -1311,9 +1311,9 @@ export function parseMembeExpressionNoCall(
               property,
               optional: false,
               shortCircuited: false,
-              start: curStart,
+              start,
               end: parser.endIndex,
-              loc: setLoc(parser, curLine, curColumn)
+              loc: setLoc(parser, line, column)
             }
           : {
               type: 'MemberExpression',
@@ -1323,9 +1323,9 @@ export function parseMembeExpressionNoCall(
               optional: false,
               shortCircuited: false
             },
-        curStart,
-        curLine,
-        curColumn
+        start,
+        line,
+        column
       );
     }
 
@@ -1340,10 +1340,10 @@ export function parseMembeExpressionNoCall(
 
       const quasi =
         parser.token === Token.TemplateCont
-          ? parseTemplate(parser, context | Context.TaggedTemplate, curStart, curLine, curColumn)
-          : parseTemplateLiteral(parser, context | Context.TaggedTemplate);
+          ? parseTemplate(parser, context | Context.TaggedTemplate, start, line, column)
+          : parseTemplateLiteral(parser, context);
 
-      return parseMembeExpressionNoCall(
+      return parseNewMemberExpression(
         parser,
         context,
         context & Context.OptionsLoc
@@ -1351,18 +1351,18 @@ export function parseMembeExpressionNoCall(
               type: 'TaggedTemplateExpression',
               tag: expr,
               quasi,
-              start: curStart,
+              start: start,
               end: parser.endIndex,
-              loc: setLoc(parser, curLine, curColumn)
+              loc: setLoc(parser, line, column)
             }
           : {
               type: 'TaggedTemplateExpression',
               tag: expr,
               quasi
             },
-        curStart,
-        curLine,
-        curColumn
+        start,
+        line,
+        column
       );
     }
     default:
@@ -1385,20 +1385,14 @@ export function parseSuperExpression(
 ): ESTree.Super {
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  switch (parser.token) {
-    case Token.LeftParen: {
-      if ((context & Context.SuperCall) === 0) report(parser, Errors.Unexpected);
-      parser.assignable = 0;
-      break;
-    }
-    case Token.LeftBracket:
-    case Token.Period: {
-      if ((context & Context.SuperProperty) === 0) report(parser, Errors.Unexpected);
-      parser.assignable = 1;
-      break;
-    }
-    default:
-      report(parser, Errors.Unexpected);
+  if (parser.token === Token.LeftParen) {
+    if ((context & Context.SuperCall) === 0) report(parser, Errors.SuperNoConstructor);
+    parser.assignable = 0;
+  } else if (parser.token === Token.LeftBracket || parser.token === Token.Period) {
+    if ((context & Context.SuperProperty) === 0) report(parser, Errors.InvalidSuperProperty);
+    parser.assignable = 1;
+  } else {
+    report(parser, Errors.Unexpected);
   }
 
   return context & Context.OptionsLoc
@@ -1420,16 +1414,19 @@ export function parseRegExpLiteral(
   line: number,
   column: number
 ): any {
-  const { tokenRaw, tokenRegExp, tokenValue } = parser;
+  const { tokenRegExp, tokenValue } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   parser.assignable = 0;
-  return context & Context.OptionsRaw
-    ? context & Context.OptionsLoc
+
+  if (context & Context.OptionsRaw) {
+    const raw = parser.source.slice(parser.start, parser.index);
+
+    return context & Context.OptionsLoc
       ? {
           type: 'Literal',
           value: tokenValue,
           regex: tokenRegExp,
-          raw: tokenRaw,
+          raw,
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
@@ -1437,9 +1434,12 @@ export function parseRegExpLiteral(
       : {
           type: 'Literal',
           value: tokenValue,
+          raw,
           regex: tokenRegExp
-        }
-    : context & Context.OptionsLoc
+        };
+  }
+
+  return context & Context.OptionsLoc
     ? {
         type: 'Literal',
         value: tokenValue,
@@ -1527,19 +1527,22 @@ export function parseArrowFunctionExpression(
       void 0
     );
 
-    switch (parser.token) {
-      case Token.Period:
-      case Token.LeftBracket:
-      case Token.TemplateTail:
-      case Token.QuestionMark:
-        report(parser, Errors.Unexpected);
-      case Token.LeftParen:
-        report(parser, Errors.Unexpected);
-      default: // ignore
-    }
     if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp && parser.newLine === 0)
       report(parser, Errors.Unexpected);
-    if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) report(parser, Errors.Unexpected);
+    else if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
+      report(parser, Errors.Unexpected);
+    } else {
+      switch (parser.token) {
+        case Token.Period:
+        case Token.LeftBracket:
+        case Token.TemplateTail:
+        case Token.QuestionMark:
+          report(parser, Errors.Unexpected);
+        case Token.LeftParen:
+          report(parser, Errors.Unexpected);
+        default: // ignore
+      }
+    }
   }
   parser.assignable = 0;
   return context & Context.OptionsLoc

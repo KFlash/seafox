@@ -89,14 +89,22 @@ export const enum Errors {
   ClassForbiddenAsStatement,
   InvalidBreak,
   UnexpectedToken,
-  UnexpectedLetStrictReserved
+  UnexpectedLetStrictReserved,
+  UnexpectedNewTarget,
+  InvalidSuperProperty,
+  SuperNoConstructor
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
-  [Errors.UnexpectedLetStrictReserved]: 'UnexpectedLetStrictReserved',
+  [Errors.SuperNoConstructor]:
+    'Calls to super must be in the "constructor" method of a class expression or class declaration that has a superclass',
+  [Errors.InvalidSuperProperty]: 'Member access on super must be in a method',
+  [Errors.UnexpectedNewTarget]: 'new.target expression is not allowed here',
+  [Errors.UnexpectedLetStrictReserved]:
+    '`let` declaration not allowed here and `let` cannot be a regular var name in strict mode',
   [Errors.StrictFunction]:
     'In strict mode code or without web compability enabled, functions can only be declared at top level or inside a block',
   [Errors.SloppyFunction]:
