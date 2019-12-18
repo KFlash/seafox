@@ -233,7 +233,7 @@ export function addLabel(parser: ParserState, label: any, labels: any, nestedLab
   return labels;
 }
 
-export function validateBreakLabel(parser: ParserState, labels: any, label: string): 0 | 1 {
+export function isValidBreakLabel(parser: ParserState, labels: any, label: string): 0 | 1 {
   if (labels === null) report(parser, Errors.Unexpected);
 
   if (labels['#' + label]) return 1;
@@ -246,26 +246,6 @@ export function validateBreakLabel(parser: ParserState, labels: any, label: stri
 export interface Label {
   iterationLabels: string[];
   parentLabels: any;
-}
-
-export function validateContinueLabel(parser: ParserState, labels: Label, label: string): void {
-  let found: 0 | 1 = 0;
-  let iterationLabel: any;
-  l: while (labels) {
-    if (labels.iterationLabels) {
-      iterationLabel = labels.iterationLabels;
-      for (let i = 0; i < iterationLabel.length; i++) {
-        if (iterationLabel[i] === label) {
-          found = 1;
-          break l;
-        }
-      }
-    }
-    labels = labels.parentLabels;
-  }
-  if (found === 0) {
-    report(parser, Errors.UnknownLabel, label);
-  }
 }
 
 /**

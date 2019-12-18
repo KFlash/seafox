@@ -39,8 +39,7 @@ import {
   consume,
   consumeOpt,
   setLoc,
-  validateBreakLabel,
-  validateContinueLabel,
+  isValidBreakLabel,
   reinterpretToPattern,
   Origin,
   BindingKind,
@@ -1187,11 +1186,12 @@ export function parseBreakStatement(parser: ParserState, context: Context, label
   let label: ESTree.Identifier | null = null;
   if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) === 0) {
     const { tokenValue, start, line, column } = parser;
+
     nextToken(parser, context, /* allowRegExp */ 1);
+
     label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-    if (!validateBreakLabel(parser, labels, tokenValue)) {
-      report(parser, Errors.UnknownLabel, tokenValue);
-    }
+
+    if (isValidBreakLabel(parser, labels, tokenValue) === 0) report(parser, Errors.UnknownLabel, tokenValue);
   } else if ((context & (Context.InSwitch | Context.InIteration)) === 0) {
     report(parser, Errors.InvalidBreak);
   }
@@ -1220,11 +1220,30 @@ export function parseContinueStatement(parser: ParserState, context: Context, la
   nextToken(parser, context, /* allowRegExp */ 1);
 
   let label: ESTree.Identifier | null = null;
-  if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) === 0) {
+  if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) !== Token.IsAutoSemicolon) {
     const { tokenValue, start, line, column } = parser;
     nextToken(parser, context, /* allowRegExp */ 1);
     label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-    validateContinueLabel(parser, labels, tokenValue);
+
+    let found: 0 | 1 = 0;
+    let iterationLabel: any;
+
+    l: while (labels) {
+      if (labels.iterationLabels) {
+        iterationLabel = labels.iterationLabels;
+        for (let i = 0; i < iterationLabel.length; i++) {
+          if (iterationLabel[i] === tokenValue) {
+            found = 1;
+            break l;
+          }
+        }
+      }
+      labels = labels.parentLabels;
+    }
+
+    if (found === 0) {
+      report(parser, Errors.UnknownLabel, tokenValue);
+    }
   }
   consumeSemicolon(parser, context);
 
@@ -1258,7 +1277,9 @@ export function parseTryStatement(
   //
   // Finally ::
   //   'finally' Block
+
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const block = parseBlock(parser, context, newScope(scope, ScopeKind.TryStatement), labels, null);
@@ -1374,6 +1395,8 @@ export function parseWithStatement(
 }
 
 export function parseDebuggerStatement(parser: ParserState, context: Context): ESTree.DebuggerStatement {
+  // DebuggerStatement ::
+  //   'debugger' ';'
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   consumeSemicolon(parser, context);
@@ -1399,7 +1422,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   origin: Origin
 ): ESTree.VariableDeclaration | ESTree.LabeledStatement | ESTree.ExpressionStatement {
   const { token, tokenValue, start, line, column } = parser;
-  let expr: any;
+
   nextToken(parser, context, /* allowRegExp */ 0);
 
   if (parser.token & (Token.IsIdentifier | Token.IsPatternStart)) {
@@ -1433,11 +1456,12 @@ export function parseLetIdentOrVarDeclarationStatement(
         };
   }
 
+  // 'Let' as identifier
   parser.assignable = 1;
 
-  if (context & Context.Strict) report(parser, Errors.Unexpected);
+  if (context & Context.Strict) report(parser, Errors.UnexpectedLetStrictReserved);
 
-  expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+  let expr: any = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
   if (parser.token === Token.Colon) {
     return parseLabelledStatement(
@@ -1482,9 +1506,9 @@ export function parseExpressionOrLabelledStatement(
   allowFuncDecl: 0 | 1
 ): ESTree.LabeledStatement | ESTree.ExpressionStatement {
   const { tokenValue, token, start, line, column } = parser;
+
   let expr = parsePrimaryExpression(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
-  // let [
   if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.Unexpected);
 
   if (parser.token === Token.Colon) {

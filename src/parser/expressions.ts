@@ -737,11 +737,15 @@ export function parsePrimaryExpression(
   const token = parser.token;
 
   if ((token & Token.IsIdentifier) === Token.IsIdentifier) {
-    if (parser.token === Token.YieldKeyword)
-      return parseYieldExpression(parser, context, canAssign, start, line, column);
-    if (parser.token === Token.AwaitKeyword) return parseAwaitExpression(parser, context, inNew, start, line, column);
-    if (parser.token === Token.AsyncKeyword)
-      return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
+    switch (token) {
+      case Token.YieldKeyword:
+        return parseYieldExpression(parser, context, canAssign, start, line, column);
+      case Token.AwaitKeyword:
+        return parseAwaitExpression(parser, context, inNew, start, line, column);
+      case Token.AsyncKeyword:
+        return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
+    }
+
     parser.assignable = 1;
     const tokenValue = parser.tokenValue;
     const expr = parseIdentifier(parser, context | Context.TaggedTemplate);

@@ -88,13 +88,15 @@ export const enum Errors {
   SloppyFunction,
   ClassForbiddenAsStatement,
   InvalidBreak,
-  UnexpectedToken
+  UnexpectedToken,
+  UnexpectedLetStrictReserved
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.UnexpectedLetStrictReserved]: 'UnexpectedLetStrictReserved',
   [Errors.StrictFunction]:
     'In strict mode code or without web compability enabled, functions can only be declared at top level or inside a block',
   [Errors.SloppyFunction]:
