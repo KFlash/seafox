@@ -4,7 +4,7 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report, reportScopeError } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
-import { ScopeState, newScope, ScopeKind, createArrowHeadParsingScope, addBlockName, addVarOrBlock } from './scope';
+import { ScopeState, newScope, ScopeKind, addBlockName, addVarOrBlock } from './scope';
 import {
   Context,
   ParserState,
@@ -741,24 +741,16 @@ export function parsePrimaryExpression(
       return parseYieldExpression(parser, context, canAssign, start, line, column);
     if (parser.token === Token.AwaitKeyword) return parseAwaitExpression(parser, context, inNew, start, line, column);
     if (parser.token === Token.AsyncKeyword)
-      return parseAsyncExpression(parser, context, inNew, allowLHS, start, line, column);
+      return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
     parser.assignable = 1;
+    const tokenValue = parser.tokenValue;
     const expr = parseIdentifier(parser, context | Context.TaggedTemplate);
 
     if (parser.token === Token.Arrow) {
       if (allowLHS === 0) report(parser, Errors.Unexpected);
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
       if (inNew) report(parser, Errors.InvalidAsyncArrow);
-      return parseArrowFunctionExpression(
-        parser,
-        context,
-        createArrowHeadParsingScope(parser, context, parser.tokenValue),
-        [expr],
-        /* isAsync */ 0,
-        start,
-        line,
-        column
-      );
+      return parseAsyncArrowIdentifier(parser, context, /* isAsync */ 0, tokenValue, expr, start, line, column);
     }
 
     return expr;
@@ -830,69 +822,98 @@ export function parseAsyncExpression(
   context: Context,
   inNew: 0 | 1,
   allowLHS: 0 | 1,
-  start: number,
-  line: number,
-  column: number
+  canAssign: 0 | 1,
+  curStart: number,
+  curLine: number,
+  curColumn: number
 ): ESTree.FunctionExpression | ESTree.ArrowFunctionExpression | ESTree.CallExpression | ESTree.Identifier {
-  const expr = parseIdentifier(parser, context);
+  const { tokenValue, start, line, column } = parser;
+
+  nextToken(parser, context, /* allowRegExp */ 0);
 
   if (parser.newLine === 0) {
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
-      if (allowLHS === 0) report(parser, Errors.Unexpected);
-      return parseFunctionExpression(parser, context, 1, start, line, column);
+      if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Type]);
+
+      return parseFunctionExpression(parser, context, 1, curStart, curLine, curColumn);
     }
 
     // async Identifier => ...
     if ((parser.token & Token.IsIdentifier) === Token.IsIdentifier) {
-      if (allowLHS === 0) report(parser, Errors.Unexpected);
-      return parseArrowFunctionExpression(
+      if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Type]);
+
+      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+
+      return parseAsyncArrowIdentifier(
         parser,
         context,
-        createArrowHeadParsingScope(parser, context, parser.tokenValue),
-        [parseIdentifier(parser, context)],
         1,
-        start,
-        line,
-        column
+        parser.tokenValue,
+        parseIdentifier(parser, context),
+        curStart,
+        curLine,
+        curColumn
       );
     }
   }
 
+  const expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+
   // async (...) => ...
-  if (!inNew && parser.token === Token.LeftParen) {
+  if (inNew === 0 && parser.token === Token.LeftParen) {
     return parseAsyncArrowOrCallExpression(
       parser,
       context,
       expr,
+      canAssign,
+      parser.newLine,
       BindingKind.ArgumentList,
       Origin.None,
-      start,
-      line,
-      column
+      curStart,
+      curLine,
+      curColumn
     );
   }
 
   if (parser.token === Token.Arrow) {
-    if (inNew) report(parser, Errors.Unexpected);
-    return parseArrowFunctionExpression(
-      parser,
-      context,
-      createArrowHeadParsingScope(parser, context, parser.tokenValue),
-      [parseIdentifier(parser, context)],
-      1,
-      start,
-      line,
-      column
-    );
+    if (inNew === 1) report(parser, Errors.InvalidAsyncArrow);
+    return parseAsyncArrowIdentifier(parser, context, 0, 'async', expr, curStart, curLine, curColumn);
   }
+
   return expr;
+}
+
+export function parseAsyncArrowIdentifier(
+  parser: ParserState,
+  context: Context,
+  isAsync: 0 | 1,
+  value: string,
+  expr: any,
+  start: number,
+  line: number,
+  column: number
+): any {
+  // See V8: https://github.com/v8/v8/blob/master/src/parsing/parser-base.h#L1713
+
+  const scope = newScope(
+    {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    ScopeKind.ArrowParams
+  );
+  addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
+
+  return parseArrowFunctionExpression(parser, context, scope, [expr], isAsync, start, line, column);
 }
 
 export function parseAsyncArrowOrCallExpression(
   parser: ParserState,
   context: Context,
   callee: ESTree.Identifier | void,
+  canAssign: 0 | 1,
+  newLine: 0 | 1,
   kind: BindingKind,
   origin: Origin,
   start: number,
@@ -913,7 +934,8 @@ export function parseAsyncArrowOrCallExpression(
 
   if (consumeOpt(parser, context, Token.RightParen, /* allowRegExp */ 0)) {
     if (parser.token === Token.Arrow) {
-      if (parser.newLine) report(parser, Errors.Unexpected);
+      if (newLine === 1) report(parser, Errors.Unexpected);
+      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
       return parseArrowFunctionExpression(parser, context, scope, [], 1, start, line, column);
     }
     return context & Context.OptionsLoc
@@ -1750,8 +1772,10 @@ export function parseParenthesizedExpression(
     report(parser, Errors.CantAssignToValidRHS);
 
   if (parser.token === Token.Arrow) {
-    if (destructible & (DestructuringKind.AssignableDestruct | DestructuringKind.CannotDestruct))
+    if (destructible & (DestructuringKind.AssignableDestruct | DestructuringKind.CannotDestruct)) {
       report(parser, Errors.InvalidArrowDestructLHS);
+    }
+
     if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
     return parseArrowFunctionExpression(
       parser,

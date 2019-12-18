@@ -2,7 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
-import { ScopeState, newScope, ScopeKind, createArrowHeadParsingScope } from './scope';
+import { ScopeState, newScope, ScopeKind } from './scope';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -29,7 +29,8 @@ import {
   parseArrayExpressionOrPattern,
   parseLeftHandSideExpression,
   parseAndClassifyIdentifier,
-  parseBindingPattern
+  parseBindingPattern,
+  parseAsyncArrowIdentifier
 } from './expressions';
 import {
   Context,
@@ -332,20 +333,24 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
         column
       );
     }
-    let expr: any = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+
     // async Identifier => ...
 
     if ((parser.token & Token.IsIdentifier) === Token.IsIdentifier) {
-      expr = parseArrowFunctionExpression(
+      if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
+        report(parser, Errors.YieldInParameter);
+      }
+      let expr: any = parseAsyncArrowIdentifier(
         parser,
         context,
-        createArrowHeadParsingScope(parser, context, parser.tokenValue),
-        [parseIdentifier(parser, context)],
         1,
+        parser.tokenValue,
+        parseIdentifier(parser, context),
         start,
         line,
         column
       );
+
       if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
       return parseExpressionStatement(parser, context, expr, start, line, column);
@@ -359,6 +364,8 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
       parser,
       context,
       expr,
+      1,
+      asyncNewLine,
       BindingKind.ArgumentList,
       Origin.None,
       start,
@@ -367,16 +374,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     );
   } else {
     if (parser.token === Token.Arrow) {
-      expr = parseArrowFunctionExpression(
-        parser,
-        context,
-        createArrowHeadParsingScope(parser, context, parser.tokenValue),
-        [expr],
-        1,
-        start,
-        line,
-        column
-      );
+      expr = parseAsyncArrowIdentifier(parser, context, 1, 'async', expr, start, line, column);
     }
     parser.assignable = 1;
   }
@@ -1458,16 +1456,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   }
 
   if (parser.token === Token.Arrow) {
-    expr = parseArrowFunctionExpression(
-      parser,
-      context,
-      createArrowHeadParsingScope(parser, context, tokenValue),
-      [expr],
-      /* isAsync */ 0,
-      start,
-      line,
-      column
-    );
+    expr = parseAsyncArrowIdentifier(parser, context, /* isAsync */ 0, tokenValue, expr, start, line, column);
   } else {
     expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 

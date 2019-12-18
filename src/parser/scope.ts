@@ -39,25 +39,6 @@ export interface ScopeError {
 }
 
 /**
- * Create a parsing scope for arrow head, and add lexical binding
- *
- * @param parser Parser state
- * @param context Context masks
- * @param value Binding name to be declared
- */
-export function createArrowHeadParsingScope(parser: ParserState, context: Context, value: string): ScopeState {
-  const scope = newScope(
-    {
-      parent: void 0,
-      type: ScopeKind.Block
-    },
-    ScopeKind.ArrowParams
-  );
-  addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
-  return scope;
-}
-
-/**
  * Record duplicate binding errors that may occur in a arrow head or function parameters
  *
  * @param parser Parser state

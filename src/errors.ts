@@ -87,7 +87,8 @@ export const enum Errors {
   StrictFunction,
   SloppyFunction,
   ClassForbiddenAsStatement,
-  InvalidBreak
+  InvalidBreak,
+  UnexpectedToken
 }
 
 /*@internal*/
@@ -112,6 +113,7 @@ export const errorMessages: {
   [Errors.AsyncFunctionInSingleStatementContext]:
     'Async functions can only be declared at the top level or inside a block',
   [Errors.Unexpected]: 'Unexpected token',
+  [Errors.UnexpectedToken]: 'Unexpected token %0',
   [Errors.InvalidLineBreak]: "No line break is allowed after '=>'",
   [Errors.InvalidBreak]: 'Illegal break statement',
   [Errors.InvalidExponentationLHS]:

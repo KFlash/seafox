@@ -298,6 +298,8 @@ export function parseExportDefaultDeclaration(
                 parser,
                 context,
                 declaration,
+                1,
+                parser.newLine,
                 BindingKind.ArgumentList,
                 Origin.None,
                 start,
