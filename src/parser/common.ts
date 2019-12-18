@@ -361,3 +361,30 @@ export function isStrictReservedWord(parser: ParserState, context: Context, t: T
     t == Token.EscapedFutureReserved
   );
 }
+
+export function checkIfValidIdentifier(parser: ParserState, context: Context, kind: BindingKind, t: Token): void {
+  if (context & Context.Strict) {
+    if ((t & Token.FutureReserved) === Token.FutureReserved) {
+      report(parser, Errors.UnexpectedStrictReserved);
+    }
+  }
+
+  if ((t & Token.Keyword) === Token.Keyword) {
+    report(parser, Errors.KeywordNotId);
+  }
+
+  // Note: The BoundNames of LexicalDeclaration and ForDeclaration must not
+  // contain 'let'. (CatchParameter is the only lexical binding form
+  // without this restriction.)
+  if (kind & (BindingKind.Let | BindingKind.Const) && t === Token.LetKeyword) {
+    report(parser, Errors.InvalidLetConstBinding);
+  }
+
+  if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {
+    report(parser, Errors.AwaitOutsideAsync);
+  }
+
+  if (context & (Context.InYieldContext | Context.Strict) && t === Token.YieldKeyword) {
+    report(parser, Errors.DisallowedInContext, 'yield');
+  }
+}

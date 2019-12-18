@@ -6,32 +6,19 @@ describe('Statements - Labeled', () => {
   for (const [source, ctx] of [
     ['bar: foo: ding: foo: x', Context.OptionsDisableWebCompat],
     ['foo: foo: x', Context.OptionsDisableWebCompat],
-    //['do async \n () => x; while(y)', Context.Empty],
-    //['do async () \n => x; while(y)', Context.Empty],
-    ['do let x = 1; while (false)', Context.Empty],
-    ['do x, y while (z)', Context.Empty],
+    ['package: await', Context.Strict],
+    ['function: await', Context.Strict],
+    ['default: x', Context.Empty],
+    ['do: x', Context.Empty],
+    ['interface: x', Context.Strict],
+    ['let: let', Context.Strict],
+    ['typeof: x', Context.Empty],
+    ['static: x', Context.Strict],
+    ['await: { async function f(){ break await; } }', Context.Empty],
+    ['function *f(){ yield: x; }', Context.Empty],
     ['await: { async function f(){ break await; } }', Context.Empty],
     ['await: { function *f(){ break await; } }', Context.Empty],
-    //['function *f(){ await: x; }', Context.Module],
-    //['async function f(){ await: x; }', Context.Empty],
-    ['do foo while (bar);', Context.Empty],
-    ['do ()=>x while(c)', Context.Empty],
-    [
-      `do
-    a
-    b
-  while(c);`,
-      Context.Empty
-    ],
-    ['do let {} = y', Context.Empty],
-    ['do debugger while(x) x', Context.Empty],
-    ['do x: function s(){}while(y)', Context.OptionsDisableWebCompat],
-    [
-      `do throw function (v, h) {
-      "use strict"
-    } while ((""))`,
-      Context.Empty
-    ]
+    ['async function f(){ await: x; }', Context.Empty]
   ]) {
     it(source as string, () => {
       t.throws(() => {

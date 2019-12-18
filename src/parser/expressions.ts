@@ -1491,9 +1491,18 @@ export function parseArrowFunctionExpression(
   column: number
 ): ESTree.ArrowFunctionExpression {
   if (parser.newLine === 1) report(parser, Errors.InvalidLineBreak);
+
   consume(parser, context, Token.Arrow, /* allowRegExp */ 1);
-  for (let i = 0; i < params.length; ++i) reinterpretToPattern(parser, params[i]);
+
+  // Reverse while loop is slightly faster than a regular for loop
+  let i = params.length;
+
+  while (i--) {
+    reinterpretToPattern(parser, params[i]);
+  }
+
   context = ((context | 0b0000000111100000000_0000_00000000) ^ 0b0000000111100000000_0000_00000000) | (isAsync << 22);
+
   const expression = parser.token !== Token.LeftBrace;
 
   let body: any;

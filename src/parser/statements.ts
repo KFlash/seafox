@@ -49,7 +49,7 @@ import {
   isExactlyStrictDirective,
   FunctionFlag,
   DestructuringKind,
-  Flags
+  checkIfValidIdentifier
 } from './common';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
@@ -214,7 +214,7 @@ export function parseLabelledStatement(
   labels: any,
   nestedLabels: any,
   value: any,
-  _token: Token,
+  token: Token,
   expr: any,
   allowFuncDecl: 0 | 1,
   start: number,
@@ -227,6 +227,8 @@ export function parseLabelledStatement(
   //
   // ExpressionStatement[Yield] :
   //   [lookahead notin {{, function, class, let [}] Expression[In, ?Yield] ;
+
+  checkIfValidIdentifier(parser, context, BindingKind.None, token);
 
   labels = addLabel(parser, value, labels, nestedLabels);
 
@@ -1479,26 +1481,13 @@ export function parseExpressionOrLabelledStatement(
   nestedLabels: any,
   allowFuncDecl: 0 | 1
 ): ESTree.LabeledStatement | ESTree.ExpressionStatement {
-  // Check whether this is a label. The expression must have started with an
-  // identifier, be just an identifier and be
-  // followed by ':'
   const { tokenValue, token, start, line, column } = parser;
-  let expr: any;
+  let expr = parsePrimaryExpression(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
-  switch (token) {
-    case Token.LetKeyword:
-      expr = parseIdentifier(parser, context);
+  // let [
+  if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.Unexpected);
 
-      if (parser.token === Token.LeftBracket) report(parser, Errors.Unexpected);
-      break;
-    default:
-      expr = parsePrimaryExpression(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
-  }
-
-  if (
-    token & (Token.Contextual | Token.FutureReserved | Token.Keyword | Token.IsIdentifier) &&
-    parser.token === Token.Colon
-  ) {
+  if (parser.token === Token.Colon) {
     return parseLabelledStatement(
       parser,
       context,
@@ -1515,6 +1504,7 @@ export function parseExpressionOrLabelledStatement(
       column
     );
   }
+
   expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
