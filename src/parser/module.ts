@@ -5,13 +5,7 @@ import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
 import { Context, BindingKind, FunctionFlag, Origin } from './bits';
-import {
-  ParserState,
-  consumeSemicolon,
-  consume,
-  consumeOpt,
-  setLoc,
-} from './common';
+import { ParserState, consumeSemicolon, consume, consumeOpt, setLoc } from './common';
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,
@@ -27,7 +21,7 @@ import {
   parseMemberExpression,
   parseAssignmentExpression,
   parseIdentifierFromValue,
-  parseArrowFunctionExpression,
+  parseArrowFunction,
   parseAsyncArrowOrCallExpression
 } from './expressions';
 
@@ -288,7 +282,7 @@ export function parseExportDefaultDeclaration(
           declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
           if (parser.token & Token.IsIdentifier) {
             declaration = parseIdentifier(parser, context);
-            declaration = parseArrowFunctionExpression(parser, context, scope, [declaration], 1, start, line, column);
+            declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
           } else {
             if (parser.token === Token.LeftParen) {
               declaration = parseAsyncArrowOrCallExpression(

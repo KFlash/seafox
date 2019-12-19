@@ -721,10 +721,16 @@ export function parseAwaitExpression(
   if (context & Context.InAwaitContext) {
     if (inNew) report(parser, Errors.Unexpected);
 
+    if (context & Context.InArgumentList) {
+      report(parser, Errors.AwaitInParameter);
+    }
+
     nextToken(parser, context, /* allowRegExp */ 1);
 
     const argument = parseLeftHandSideExpression(parser, context, /* allowLHS */ 1, 0);
+
     parser.assignable = 0;
+
     return context & Context.OptionsLoc
       ? {
           type: 'AwaitExpression',
@@ -747,8 +753,11 @@ export function parseIdentifierOrArrow(
   context: Context
 ): ESTree.Identifier | ESTree.ArrowFunctionExpression {
   const { start, line, column } = parser;
+
   const expr = parseIdentifier(parser, context);
+
   parser.assignable = 1;
+
   if (parser.token === Token.Arrow) {
     const scope = {
       parent: {
@@ -760,7 +769,7 @@ export function parseIdentifierOrArrow(
     };
 
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
-    return parseArrowFunctionExpression(parser, context, scope, [expr], 0, start, line, column);
+    return parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
   }
   return expr;
 }
@@ -952,7 +961,7 @@ export function parseAsyncArrowIdentifier(
 
   addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
 
-  return parseArrowFunctionExpression(parser, context, scope, [expr], isAsync, start, line, column);
+  return parseArrowFunction(parser, context, scope, [expr], isAsync, start, line, column);
 }
 
 export function parseAsyncArrowOrCallExpression(
@@ -983,7 +992,7 @@ export function parseAsyncArrowOrCallExpression(
     if (parser.token === Token.Arrow) {
       if (newLine === 1) report(parser, Errors.Unexpected);
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
-      return parseArrowFunctionExpression(parser, context, scope, [], 1, start, line, column);
+      return parseArrowFunction(parser, context, scope, [], 1, start, line, column);
     }
     return context & Context.OptionsLoc
       ? {
@@ -1145,8 +1154,18 @@ export function parseAsyncArrowOrCallExpression(
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
   if (parser.token === Token.Arrow) {
-    if (destructible & (Flags.AssignableDestruct | Flags.NotDestructible)) report(parser, Errors.InvalidLHSAsyncArrow);
-    return parseArrowFunctionExpression(parser, context, scope, params, 1, start, line, column);
+    return parseArrowFunctionAfterParen(
+      parser,
+      context,
+      scope,
+      destructible,
+      params,
+      canAssign,
+      1,
+      start,
+      line,
+      column
+    );
   }
 
   if (destructible & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
@@ -1164,13 +1183,13 @@ export function parseAsyncArrowOrCallExpression(
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
-    : ({
+    : {
         type: 'CallExpression',
         callee,
         arguments: params,
         optional: false,
         shortCircuited: false
-      } as any);
+      };
 }
 
 export function parseImportCallOrMetaExpression(
@@ -1530,7 +1549,34 @@ export function parseBigIntLiteral(
       };
 }
 
-export function parseArrowFunctionExpression(
+export function parseArrowFunctionAfterParen(
+  parser: ParserState,
+  context: Context,
+  scope: any,
+  destructible: Flags,
+  params: any,
+  canAssign: 0 | 1,
+  isAsync: 0 | 1,
+  start: number,
+  line: number,
+  column: number
+): ESTree.ArrowFunctionExpression {
+  if (destructible & (Flags.AssignableDestruct | Flags.NotDestructible)) {
+    report(parser, Errors.InvalidArrowDestructLHS);
+  }
+
+  if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+
+  // Reverse while loop is slightly faster than a regular for loop
+  let i = params.length;
+
+  while (i--) {
+    reinterpretToPattern(parser, params[i]);
+  }
+  return parseArrowFunction(parser, context, scope, params, isAsync, start, line, column);
+}
+
+export function parseArrowFunction(
   parser: ParserState,
   context: Context,
   scope: any,
@@ -1540,16 +1586,11 @@ export function parseArrowFunctionExpression(
   line: number,
   column: number
 ): ESTree.ArrowFunctionExpression {
+
   if (parser.newLine === 1) report(parser, Errors.InvalidLineBreak);
 
+  // If next token is not `=>`, it's a syntax error
   consume(parser, context, Token.Arrow, /* allowRegExp */ 1);
-
-  // Reverse while loop is slightly faster than a regular for loop
-  let i = params.length;
-
-  while (i--) {
-    reinterpretToPattern(parser, params[i]);
-  }
 
   context = ((context | 0b0000000111100000000_0000_00000000) ^ 0b0000000111100000000_0000_00000000) | (isAsync << 22);
 
@@ -1573,9 +1614,9 @@ export function parseArrowFunctionExpression(
       void 0
     );
 
-    if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp && parser.newLine === 0)
+    if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp && parser.newLine === 0) {
       report(parser, Errors.Unexpected);
-    else if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
+    } else if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
       report(parser, Errors.Unexpected);
     } else {
       switch (parser.token) {
@@ -1637,27 +1678,7 @@ export function parseParenthesizedExpression(
   if (consumeOpt(parser, context, Token.RightParen, /* allowRegExp */ 0)) {
     if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
-    return parseArrowFunctionExpression(parser, context, scope, expr, /* isAsync */ 0, curStart, curLine, curColumn);
-  }
-
-  if (parser.token === Token.Ellipsis) {
-    const rest = parseSpreadOrRestElement(
-      parser,
-      context,
-      scope,
-      Token.RightParen,
-      0,
-      0,
-      kind,
-      origin,
-      parser.start,
-      parser.line,
-      parser.column
-    );
-    if (parser.flags & Flags.NotDestructible) report(parser, Errors.InvalidRestArg);
-
-    consume(parser, context, Token.RightParen, 0);
-    return parseArrowFunctionExpression(parser, context, scope, [rest], /* isAsync */ 0, curStart, curLine, curColumn);
+    return parseArrowFunction(parser, context, scope, expr, /* isAsync */ 0, curStart, curLine, curColumn);
   }
 
   let expressions: any[] = [];
@@ -1835,16 +1856,13 @@ export function parseParenthesizedExpression(
     report(parser, Errors.CantAssignToValidRHS);
 
   if (parser.token === Token.Arrow) {
-    if (destructible & (Flags.AssignableDestruct | Flags.NotDestructible)) {
-      report(parser, Errors.InvalidArrowDestructLHS);
-    }
-
-    if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
-    return parseArrowFunctionExpression(
+    return parseArrowFunctionAfterParen(
       parser,
       context,
       scope,
+      destructible,
       isSequence ? expressions : [expr],
+      canAssign,
       /* isAsync */ 0,
       curStart,
       curLine,
