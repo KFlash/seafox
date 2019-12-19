@@ -20,6 +20,18 @@ import {
   isStrictReservedWord
 } from './common';
 
+/** parseAssignmentExpression
+ *
+ * https://tc39.github.io/ecma262/#prod-AssignmentExpression
+ *
+ *
+ * AssignmentExpression :
+ *   1. ConditionalExpression
+ *   2. LeftHandSideExpression = AssignmentExpression
+ *
+ * IsValidAssignmentTarget
+ *   1,2 = false
+ */
 export function parseAssignmentExpression(
   parser: ParserState,
   context: Context,
@@ -30,23 +42,13 @@ export function parseAssignmentExpression(
   line: number,
   column: number
 ): any {
-  /** parseAssignmentExpression
-   *
-   * https://tc39.github.io/ecma262/#prod-AssignmentExpression
-   *
-   *
-   * AssignmentExpression :
-   *   1. ConditionalExpression
-   *   2. LeftHandSideExpression = AssignmentExpression
-   *
-   * IsValidAssignmentTarget
-   *   1,2 = false
-   */
   const token = parser.token;
 
   if ((token & Token.IsAssignOp) === Token.IsAssignOp) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
-    if (reinterpret && parser.token === Token.Assign) {
+
+    // Note: Avoids reinterpretation in most cases like in a function param list
+    if (reinterpret === 1 && parser.token === Token.Assign) {
       reinterpretToPattern(parser, left);
     }
 
@@ -719,11 +721,13 @@ export function parseAwaitExpression(
   column: number
 ): any {
   if (context & Context.InAwaitContext) {
-    if (inNew) report(parser, Errors.Unexpected);
+    if (inNew === 1) report(parser, Errors.Unexpected);
 
     if (context & Context.InArgumentList) {
       report(parser, Errors.AwaitInParameter);
     }
+
+    // TODO: Check for escaped ident, and throw
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -1234,18 +1238,13 @@ export function parseNewExpression(
   //   'new' '.' 'target'
   //
   // Examples of new expression:
-  // - new foo.bar().baz
-  // - new foo()()
-  // - new new foo()()
-  // - new new foo
-  // - new new foo()
-  // - new new foo().bar().baz
-  // - `new.target[await x]`
-  // - `new (foo);`
-  // - `new (foo)();`
-  // - `new foo()();`
-  // - `new (await foo);`
-  // - `new x(await foo);`
+  // new foo.bar().baz means (new (foo.bar)()).baz
+  // new foo()() means (new foo())()
+  // new new foo()() means (new (new foo())())
+  // new new foo means new (new foo)
+  // new new foo() means new (new foo())
+  // new new foo().bar().baz means (new (new foo()).bar()).baz
+
   nextToken(parser, context, /* allowRegExp */ 1);
 
   parser.assignable = 0;
@@ -1586,7 +1585,6 @@ export function parseArrowFunction(
   line: number,
   column: number
 ): ESTree.ArrowFunctionExpression {
-
   if (parser.newLine === 1) report(parser, Errors.InvalidLineBreak);
 
   // If next token is not `=>`, it's a syntax error
@@ -1908,12 +1906,13 @@ export function parseLeftHandSideExpression(
 ): any {
   // LeftHandSideExpression ::
   //   (PrimaryExpression | MemberExpression) ...
+
   const { start, line, column } = parser;
   const expression = parsePrimaryExpression(parser, context, 0, allowLHS, canAssign, start, line, column);
   return parseMemberExpression(parser, context, expression, 0, 0, start, line, column);
 }
 
-export function parseIdentifier(parser: ParserState, context: Context): any {
+export function parseIdentifier(parser: ParserState, context: Context): ESTree.Identifier {
   const { tokenValue: name, start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -1984,7 +1983,9 @@ export function parseExpressionFromLiteral(
   column: number
 ): ESTree.Literal {
   nextToken(parser, context, /* allowRegExp */ 0);
+
   parser.assignable = 0;
+
   return context & Context.OptionsLoc
     ? {
         type: 'Literal',
@@ -2006,6 +2007,7 @@ export function parseLiteral(parser: ParserState, context: Context): any {
   const line = parser.line;
   const column = parser.column;
   const index = parser.index;
+
   parser.assignable = 0;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -2128,33 +2130,33 @@ export function parseUnaryExpression(
   line: number,
   column: number
 ): ESTree.UnaryExpression {
-  /** parseUnaryExpression
-   * https://tc39.github.io/ecma262/#sec-unary-operators
-   *
-   * UnaryExpression :
-   *   1. LeftHandSideExpression
-   *   2. void UnaryExpression
-   *   3. typeof UnaryExpression
-   *   4. + UnaryExpression
-   *   5. - UnaryExpression
-   *   6. ! UnaryExpression
-   *
-   * IsValidAssignmentTarget
-   *   2,3,4,5,6 = false
-   *   1 = see parseLeftHandSideExpression
-   *
-   */
+  // UnaryExpression ::
+  //   PostfixExpression
+  //   'delete' UnaryExpression
+  //   'void' UnaryExpression
+  //   'typeof' UnaryExpression
+  //   '++' UnaryExpression
+  //   '--' UnaryExpression
+  //   '+' UnaryExpression
+  //   '-' UnaryExpression
+  //   '~' UnaryExpression
+  //   '!' UnaryExpression
+  //   [+Await] AwaitExpression[?Yield]
   if (allowLHS === 0) report(parser, Errors.Unexpected);
+
   if (inNew === 1) report(parser, Errors.InvalidNewUnary, KeywordDescTable[parser.token & Token.Type]);
+
   const unaryOperator = parser.token;
-  const operator = KeywordDescTable[unaryOperator & Token.Type] as ESTree.UnaryOperator;
+
   nextToken(parser, context, /* allowRegExp */ 1);
+
   const arg = parseLeftHandSideExpression(parser, context, /* allowLHS */ 1, 0);
+
   if (parser.token === Token.Exponentiate) report(parser, Errors.InvalidExponentationLHS);
-  if (context & Context.Strict && unaryOperator === Token.DeleteKeyword) {
-    if (arg.type === 'Identifier') {
-      report(parser, Errors.StrictDelete);
-    }
+
+  if (context & Context.Strict && unaryOperator === Token.DeleteKeyword && arg.type === 'Identifier') {
+    // "delete identifier" is a syntax error in strict mode.
+    report(parser, Errors.StrictDelete);
   }
 
   parser.assignable = 0;
@@ -2162,7 +2164,7 @@ export function parseUnaryExpression(
   return context & Context.OptionsLoc
     ? {
         type: 'UnaryExpression',
-        operator,
+        operator: KeywordDescTable[unaryOperator & Token.Type] as ESTree.UnaryOperator,
         argument: arg,
         prefix: true,
         start,
@@ -2171,7 +2173,7 @@ export function parseUnaryExpression(
       }
     : {
         type: 'UnaryExpression',
-        operator,
+        operator: KeywordDescTable[unaryOperator & Token.Type] as ESTree.UnaryOperator,
         argument: arg,
         prefix: true
       };
@@ -3080,6 +3082,8 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
       };
 }
 
+// See V8 - https://github.com/v8/v8/blob/master/src/parsing/parser-base.h#L3566
+
 export function parseFormalParams(
   parser: ParserState,
   context: Context,
@@ -3087,10 +3091,17 @@ export function parseFormalParams(
   kind: BindingKind,
   isMethod: 0 | 1
 ): ESTree.Parameter[] {
+  // FormalParameter[Yield,GeneratorParameter] :
+  //   BindingElement[?Yield, ?GeneratorParameter]
+
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
+
   nextToken(parser, context, /* allowRegExp */ 0);
+
   const params: ESTree.Parameter[] = [];
+
   let isSimpleParameterList: 0 | 1 = 0;
+
   while (parser.token !== Token.RightParen) {
     let left: any;
     const { start, line, column } = parser;
