@@ -1,9 +1,10 @@
 import { CharTypes, CharFlags } from './charClassifier';
 import { Chars } from '../chars';
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
 import { toHex } from './common';
 import { Token } from '../token';
 import { report, Errors } from '../errors';
+import { Context } from '../parser/bits';
 
 export function scanNumber(parser: ParserState, source: string, char: number, skipSMI: 0 | 1): Token {
   let digit = 9;

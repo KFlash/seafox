@@ -1,4 +1,5 @@
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
+import { Context } from '../parser/bits';
 import { Token } from '../token';
 import { Chars } from '../chars';
 import { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments';
@@ -366,7 +367,7 @@ export function scan(
 export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1): void {
   const { source, length, index, offset } = parser;
   parser.newLine = 0;
-  parser.prevColumn = (parser.endIndex = index) - offset;
+  parser.lastColumn = (parser.endIndex = index) - offset;
   parser.prevLinebase = parser.lineBase;
   parser.token = scan(parser, context, source, length, /* lastIsCR */ 0, index === 0, allowRegExp);
 }

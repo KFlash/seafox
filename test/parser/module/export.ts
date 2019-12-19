@@ -1,4 +1,4 @@
-import { Context } from '../../../src/parser/common';
+import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
 import { parseModule } from '../../../src/seafox';
 

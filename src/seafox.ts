@@ -1,4 +1,4 @@
-import { Context } from './parser/common';
+import { Context } from './parser/bits';
 import { Options, create } from './parser/core';
 import { Program } from './parser/estree';
 import { nextToken } from './scanner/scan';

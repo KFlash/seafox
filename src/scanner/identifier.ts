@@ -1,7 +1,7 @@
 import { isIdentifierPart } from './charClassifier';
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
 import { Token, descKeywordTable } from '../token';
-
+import { Context } from '../parser/bits';
 import { Chars } from '../chars';
 import { unicodeLookup } from './unicode';
 import { fromCodePoint, toHex } from './common';

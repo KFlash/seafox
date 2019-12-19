@@ -1,9 +1,10 @@
 import { CharTypes, CharFlags } from './charClassifier';
 import { Chars } from '../chars';
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
 import { toHex, fromCodePoint, readNext } from './common';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
+import { Context } from '../parser/bits';
 
 export const enum Escape {
   Empty = -1,

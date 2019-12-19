@@ -3,6 +3,7 @@ import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, newScope, ScopeKind } from './scope';
+import { Flags, Context, BindingKind, FunctionFlag, PropertyKind, Origin } from './bits';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -23,7 +24,6 @@ import {
   parseSequenceExpression,
   parseExpressionStatement,
   parseIdentifierFromValue,
-  parseArrowFunctionExpression,
   parseAsyncArrowOrCallExpression,
   parseObjectLiteralOrPattern,
   parseArrayExpressionOrPattern,
@@ -33,7 +33,6 @@ import {
   parseAsyncArrowIdentifier
 } from './expressions';
 import {
-  Context,
   ParserState,
   consumeSemicolon,
   consume,
@@ -41,14 +40,10 @@ import {
   setLoc,
   isValidBreakLabel,
   reinterpretToPattern,
-  Origin,
-  BindingKind,
   addLabel,
   parseStatementWithLabelSet,
   isExactlyStrictDirective,
-  FunctionFlag,
-  DestructuringKind,
-  checkIfValidIdentifier
+  validateIdentifier
 } from './common';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
@@ -227,7 +222,7 @@ export function parseLabelledStatement(
   // ExpressionStatement[Yield] :
   //   [lookahead notin {{, function, class, let [}] Expression[In, ?Yield] ;
 
-  checkIfValidIdentifier(parser, context, BindingKind.None, token);
+  validateIdentifier(parser, context, BindingKind.None, token);
 
   labels = addLabel(parser, value, labels, nestedLabels);
 
@@ -573,9 +568,9 @@ export function parseForStatementWithVariableDeclarations(
                 line,
                 column
               );
-        if (parser.destructible & DestructuringKind.CannotDestruct) report(parser, Errors.InvalidBindingDestruct);
+        if (parser.flags & Flags.CannotDestruct) report(parser, Errors.InvalidBindingDestruct);
 
-        if (parser.destructible & DestructuringKind.AssignableDestruct) report(parser, Errors.InvalidBindingDestruct);
+        if (parser.flags & Flags.AssignableDestruct) report(parser, Errors.InvalidBindingDestruct);
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -769,7 +764,7 @@ export function parseForStatement(
   let right;
   const origin = Origin.ForStatement;
   const kind: BindingKind = BindingKind.Empty;
-  let destructible: DestructuringKind = DestructuringKind.None;
+  let destructible: any = Flags.Empty;
   const { token, start, line, column } = parser;
 
   if ((token & Token.isVarDecl) !== 0) {
@@ -792,13 +787,13 @@ export function parseForStatement(
         ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column)
         : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column);
 
-    destructible = parser.destructible;
+    destructible = parser.flags;
 
-    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & DestructuringKind.SeenProto) {
-      report(parser, Errors.DuplicateProto);
-    }
+    //    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & Flags.SeenProto) {
+    //      report(parser, Errors.DuplicateProto);
+    //  }
 
-    parser.assignable = destructible & DestructuringKind.CannotDestruct ? 0 : 1;
+    parser.assignable = destructible & Flags.CannotDestruct ? 0 : 1;
 
     init = parseMemberExpression(
       parser,
@@ -810,7 +805,7 @@ export function parseForStatement(
       parser.line,
       parser.column
     );
-    destructible = parser.destructible;
+    destructible = parser.flags;
   } else {
     init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, /* allowLHS */ 1, 1);
   }
@@ -877,7 +872,7 @@ export function parseForStatement(
 
   if (forAwait) report(parser, Errors.Unexpected);
 
-  if (destructible & DestructuringKind.MustDestruct && parser.token !== Token.Assign) {
+  if (destructible & Flags.MustDestruct && parser.token !== Token.Assign) {
     report(parser, Errors.CantAssignToInOfForLoop, 'loop');
   }
 

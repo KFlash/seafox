@@ -7,5 +7,6 @@ src/token.ts
 src/common.ts
 src/chars.ts
 src/lexer/charClassifier.ts
+src/parser/bits.ts
 src/unicode.ts
 package-lock.json

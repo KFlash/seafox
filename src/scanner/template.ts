@@ -1,10 +1,11 @@
 import { CharFlags, CharTypes } from './charClassifier';
 import { Token } from '../token';
 import { Chars } from '../chars';
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
 import { fromCodePoint, readNext } from './common';
 import { report, Errors } from '../errors';
 import { scanEscapeSequence, Escape, handleStringError } from './string';
+import { Context } from '../parser/bits';
 
 export function scanTemplate(parser: ParserState, context: Context, source: string): Token {
   const { index: start } = parser;
