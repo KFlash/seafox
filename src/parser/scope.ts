@@ -1,5 +1,5 @@
 import { ParserState } from './common';
-import { BindingKind, Origin, Context, ParserState } from './bits';
+import { BindingKind, Origin, Context } from './bits';
 import { Errors, report } from '../errors';
 
 /**
