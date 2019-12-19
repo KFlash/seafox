@@ -255,7 +255,7 @@ export function parseBinaryExpression(
             operator
           };
   }
-  if (parser.token === Token.Assign) report(parser, Errors.CantAssignTo);
+
   return left;
 }
 

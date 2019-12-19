@@ -368,7 +368,6 @@ describe('Expressions - Arrow', () => {
     ['(function *g(z = ( {x=(yield)} ) => {}) { });', Context.Empty],
     ['(function *g(z = ( [x=(yield)] ) => {}) { });', Context.Empty],
     ['(function *g(z = ( [x=f(yield)] ) => {}) { });', Context.Empty],
-
     ['=> 0', Context.Empty],
     ['=>', Context.Empty],
     ['() =>', Context.Empty],

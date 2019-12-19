@@ -288,7 +288,31 @@ export function parseImportCallDeclaration(
   column: number
 ): ESTree.ExpressionStatement {
   let expr: any = parseImportExpression(parser, context, start, line, column);
+  /** MemberExpression :
+   *   1. PrimaryExpression
+   *   2. MemberExpression [ AssignmentExpression ]
+   *   3. MemberExpression . IdentifierName
+   *   4. MemberExpression TemplateLiteral
+   *
+   * CallExpression :
+   *   1. MemberExpression Arguments
+   *   2. CallExpression ImportCall
+   *   3. CallExpression Arguments
+   *   4. CallExpression [ AssignmentExpression ]
+   *   5. CallExpression . IdentifierName
+   *   6. CallExpression TemplateLiteral
+   *
+   *  UpdateExpression ::
+   *   ('++' | '--')? LeftHandSideExpression
+   *
+   */
+
   expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+
+  /**
+   * ExpressionStatement[Yield, Await]:
+   *  [lookahead ∉ { {, function, async [no LineTerminator here] function, class, let [ }]Expression[+In, ?Yield, ?Await]
+   */
   return parseExpressionStatement(parser, context, expr, start, line, column);
 }
 
@@ -315,9 +339,37 @@ export function parseImportMetaDeclaration(
 
   expr = parseImportMetaExpression(parser, context, expr, start, line, column);
 
+  /** MemberExpression :
+   *   1. PrimaryExpression
+   *   2. MemberExpression [ AssignmentExpression ]
+   *   3. MemberExpression . IdentifierName
+   *   4. MemberExpression TemplateLiteral
+   *
+   * CallExpression :
+   *   1. MemberExpression Arguments
+   *   2. CallExpression ImportCall
+   *   3. CallExpression Arguments
+   *   4. CallExpression [ AssignmentExpression ]
+   *   5. CallExpression . IdentifierName
+   *   6. CallExpression TemplateLiteral
+   *
+   *  UpdateExpression ::
+   *   ('++' | '--')? LeftHandSideExpression
+   */
+
   expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
+  /** AssignmentExpression :
+   *   1. ConditionalExpression
+   *   2. LeftHandSideExpression = AssignmentExpression
+   */
+
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+
+  /**
+   * ExpressionStatement[Yield, Await]:
+   *  [lookahead ∉ { {, function, async [no LineTerminator here] function, class, let [ }]Expression[+In, ?Yield, ?Await]
+   */
 
   return parseExpressionStatement(parser, context, expr, start, line, column);
 }

@@ -73,7 +73,7 @@ describe('Expressions - Class', () => {
     'class let { }',
     'function *f(){  class yield { }  }',
     'function *f(){  class x extends yield { }  }',
-    //    'function *f(){  class x extends yield y { }  }',
+    'function *f(){  class x extends yield y { }  }',
     //'class a { b(c,,) {} }',
     //'(class a { b(c,,) {} })',
     '(class b {)',
@@ -98,7 +98,7 @@ describe('Expressions - Class', () => {
     '(class x { async prototype(){} })',
     'class x { static set prototype(x){} }',
     'class x { static *prototype(){} }',
-    // 'class x extends ()=>1 {}',
+    'class x extends ()=>1 {}',
     'class X { async constructor() {} }',
     'class x{ async static static(){} }',
     'class x { x \n /foo/ }',
@@ -178,17 +178,17 @@ describe('Expressions - Class', () => {
     'class A extends void x {}',
     'class A extends !x {}',
     // 'class A extends "oct \\03 al" {}',
-    // 'class A extends (a, b) => {} {}',
-    // 'class A extends (a) => x {}',
-    // 'class A extends () => x {}',
+    'class A extends (a, b) => {} {}',
+    'class A extends (a) => x {}',
+    'class A extends () => x {}',
     'class A extends +x {}',
-    //'class A extends {...x=y} = b {}',
-    // 'class A extends {x: y} = b {}',
+    'class A extends {...x=y} = b {}',
+    'class A extends {x: y} = b {}',
     // 'class A extends yield {}',
     `class A extends yield
     x {}`,
     'class A extends ~x {}',
-    // 'class A extends {x} = b {}',
+    'class A extends {x} = b {}',
     'function *a() { class yield() {} }',
     `(class A extends B { method() { super() } })`,
     `let c = class x { async
@@ -204,9 +204,9 @@ describe('Expressions - Class', () => {
     `let c = class x { set
       /foo/ }`,
     `let c = class x { *
-      /foo/ }`
-    //'class x { async *constructor(){} }',
-    //'class x { async constructor(){} }'
+      /foo/ }`,
+    'class x { async *constructor(){} }',
+    'class x { async constructor(){} }'
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
@@ -249,8 +249,8 @@ describe('Expressions - Class', () => {
     'class name { get x }',
     'class name { get x() }',
     'class name { set x() {) }', // missing required param
-    //  'class {}', // Name is required for declaration
-    //  'class extends base {}',
+    'class {}', // Name is required for declaration
+    'class extends base {}',
     'class name { *',
     'class name { * }',
     'class name { *; }',
@@ -355,7 +355,7 @@ describe('Expressions - Class', () => {
     'true',
     "'str'",
     '"str"',
-    // 'static',
+    'static',
     'get',
     'set',
     'var',

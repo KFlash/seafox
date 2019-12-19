@@ -50,7 +50,7 @@ describe('Expressions - Async arrow', () => {
     ['async (a = b => { let b; })', Context.OptionsDisableWebCompat],
     ['async yield => { let yield; }', Context.OptionsDisableWebCompat],
     ['x = async yield => { let yield; }', Context.OptionsDisableWebCompat],
-    //['async await => { let await; }', Context.OptionsDisableWebCompat],
+    ['async await => { let await; }', Context.OptionsDisableWebCompat],
     ['(async => { let async; })', Context.OptionsDisableWebCompat],
     ['(async (a = b => { let b; }))', Context.OptionsDisableWebCompat],
     ['(async yield => { let yield; })', Context.OptionsDisableWebCompat],

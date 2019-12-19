@@ -13,7 +13,6 @@ describe('Expressions - Function', () => {
     [`function f(...(x)){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
-
     [`let x; { var x; }`, Context.OptionsNext | Context.OptionsLoc],
     [`{ var x; } let x;`, Context.OptionsNext | Context.OptionsLoc],
     [`function foo(a, a) { }`, Context.OptionsNext | Context.OptionsLoc | Context.Strict | Context.Module],
