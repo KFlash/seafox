@@ -55,25 +55,6 @@ export function consumeOpt(parser: ParserState, context: Context, t: Token, allo
   return true;
 }
 
-export function isValidIdentifier(context: Context, t: Token): boolean {
-  if (context & (Context.Strict | Context.InYieldContext)) {
-    // Module code is also "strict mode code"
-    if (context & Context.Module && t === Token.AwaitKeyword) return false;
-    if (context & Context.InYieldContext && t === Token.YieldKeyword) return false;
-    return (t & Token.IsIdentifier) === Token.IsIdentifier || (t & Token.Contextual) === Token.Contextual;
-  }
-
-  return (
-    (t & Token.IsIdentifier) === Token.IsIdentifier ||
-    (t & Token.Contextual) === Token.Contextual ||
-    (t & Token.FutureReserved) === Token.FutureReserved
-  );
-}
-export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
-  if (parser.token !== t) report(parser, Errors.Unexpected);
-  nextToken(parser, context, allowRegExp);
-}
-
 export function setLoc(parser: ParserState, line: number, column: number): any {
   return {
     start: {
@@ -85,6 +66,47 @@ export function setLoc(parser: ParserState, line: number, column: number): any {
       column: parser.lastColumn
     }
   };
+}
+
+
+/**
+ * Transforms a `LeftHandSideExpression` into a `AssignmentPattern` if possible,
+ * otherwise it returns the original tree.
+ *
+ * @param parser Parser state
+ * @param {*} node
+ */
+export function reinterpretToPattern(state: ParserState, node: any): void {
+  switch (node.type) {
+    case 'ArrayExpression':
+      node.type = 'ArrayPattern';
+      const elements = node.elements;
+      for (let i = 0, n = elements.length; i < n; ++i) {
+        const element = elements[i];
+        if (element) reinterpretToPattern(state, element);
+      }
+      return;
+    case 'ObjectExpression':
+      node.type = 'ObjectPattern';
+      const properties = node.properties;
+      for (let i = 0, n = properties.length; i < n; ++i) {
+        reinterpretToPattern(state, properties[i]);
+      }
+      return;
+    case 'AssignmentExpression':
+      node.type = 'AssignmentPattern';
+      if (node.operator !== '=') report(state, Errors.Unexpected);
+      delete node.operator;
+      reinterpretToPattern(state, node.left);
+      return;
+    case 'Property':
+      reinterpretToPattern(state, node.value);
+      return;
+    case 'SpreadElement':
+      node.type = 'RestElement';
+      reinterpretToPattern(state, node.argument);
+    default: // ignore
+  }
 }
 
 export function parseStatementWithLabelSet(t: Token, label: any, labels: any, nestedLabels: any) {
@@ -137,46 +159,6 @@ export interface Label {
   parentLabels: any;
 }
 
-/**
- * Transforms a `LeftHandSideExpression` into a `AssignmentPattern` if possible,
- * otherwise it returns the original tree.
- *
- * @param parser Parser state
- * @param {*} node
- */
-export function reinterpretToPattern(state: ParserState, node: any): void {
-  switch (node.type) {
-    case 'ArrayExpression':
-      node.type = 'ArrayPattern';
-      const elements = node.elements;
-      for (let i = 0, n = elements.length; i < n; ++i) {
-        const element = elements[i];
-        if (element) reinterpretToPattern(state, element);
-      }
-      return;
-    case 'ObjectExpression':
-      node.type = 'ObjectPattern';
-      const properties = node.properties;
-      for (let i = 0, n = properties.length; i < n; ++i) {
-        reinterpretToPattern(state, properties[i]);
-      }
-      return;
-    case 'AssignmentExpression':
-      node.type = 'AssignmentPattern';
-      if (node.operator !== '=') report(state, Errors.Unexpected);
-      delete node.operator;
-      reinterpretToPattern(state, node.left);
-      return;
-    case 'Property':
-      reinterpretToPattern(state, node.value);
-      return;
-    case 'SpreadElement':
-      node.type = 'RestElement';
-      reinterpretToPattern(state, node.argument);
-    default: // ignore
-  }
-}
-
 export function isExactlyStrictDirective(parser: ParserState, index: number, start: number, value: string): boolean {
   // The length of the token is used to make sure the literal equals without
   // taking escape sequences (e.g., "use \x73trict") or line continuations
@@ -215,6 +197,26 @@ export function validateFunctionName(parser: ParserState, context: Context, t: T
   if (context & (Context.InYieldContext | Context.Strict) && t === Token.YieldKeyword) {
     report(parser, Errors.DisallowedInContext, 'yield');
   }
+}
+
+
+export function isValidIdentifier(context: Context, t: Token): boolean {
+  if (context & (Context.Strict | Context.InYieldContext)) {
+    // Module code is also "strict mode code"
+    if (context & Context.Module && t === Token.AwaitKeyword) return false;
+    if (context & Context.InYieldContext && t === Token.YieldKeyword) return false;
+    return (t & Token.IsIdentifier) === Token.IsIdentifier || (t & Token.Contextual) === Token.Contextual;
+  }
+
+  return (
+    (t & Token.IsIdentifier) === Token.IsIdentifier ||
+    (t & Token.Contextual) === Token.Contextual ||
+    (t & Token.FutureReserved) === Token.FutureReserved
+  );
+}
+export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
+  if (parser.token !== t) report(parser, Errors.Unexpected);
+  nextToken(parser, context, allowRegExp);
 }
 
 export function isStrictReservedWord(parser: ParserState, context: Context, t: Token): boolean {

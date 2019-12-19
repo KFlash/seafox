@@ -58,12 +58,8 @@ export const enum PropertyKind {
   Async         = 1 << 4,
   Static        = 1 << 5,
   Constructor   = 1 << 6,
-  ClassField    = 1 << 7,
-  Getter        = 1 << 8,
-  Setter        = 1 << 9,
-  Extends       = 1 << 10,
-  Literal       = 1 << 11,
-  PrivateField  = 1 << 12,
+  Getter        = 1 << 7,
+  Setter        = 1 << 8,
   GetSet        = Getter | Setter
 }
 export const enum FunctionFlag {

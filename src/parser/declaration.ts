@@ -3,6 +3,7 @@ import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, newScope, ScopeKind, addVarName, addBlockName } from './scope';
+import { Context, BindingKind, FunctionFlag, Origin } from './bits';
 import {
   parseFunctionDeclarationOrExpressionRest,
   parseClassDeclarationOrExpressionRest,
@@ -17,14 +18,10 @@ import {
   parseIdentifier
 } from './expressions';
 import {
-  Context,
   ParserState,
   consumeSemicolon,
   setLoc,
-  FunctionFlag,
   optionalBit,
-  Origin,
-  BindingKind,
   validateFunctionName,
   isStrictReservedWord
 } from './common';
