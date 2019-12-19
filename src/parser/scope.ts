@@ -57,20 +57,6 @@ export function recordScopeError(parser: ParserState, type: Errors, ...params: s
 }
 
 /**
- * Inherit scope
- *
- * @param scope Parser object
- * @param type Scope kind
- */
-export function newScope(parent: ScopeState | undefined, type: ScopeKind): ScopeState {
-  return {
-    parent,
-    type,
-    scopeError: void 0
-  };
-}
-
-/**
  * Adds either a var binding or a block scoped binding.
  *
  * @param parser Parser state
@@ -113,7 +99,7 @@ export function addBlockName(
   kind: BindingKind,
   origin: Origin
 ) {
-  if (!scope) return;
+  if (scope === void 0) return;
 
   const value = scope['#' + name];
 
@@ -139,7 +125,7 @@ export function addBlockName(
   }
 
   if (scope.type & ScopeKind.ArrowParams && value && (value & BindingKind.Empty) === 0) {
-    if (kind & BindingKind.ArgumentList) {
+    if ((kind & BindingKind.ArgumentList) === BindingKind.ArgumentList) {
       scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
     }
   }
@@ -168,7 +154,7 @@ export function addVarName(
   name: string,
   kind: BindingKind
 ): void {
-  if (!scope) return;
+  if (scope === void 0) return;
 
   let currentScope: any = scope;
 

@@ -2,8 +2,8 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
-import { ScopeState, newScope, ScopeKind } from './scope';
-import { Flags, Context, BindingKind, FunctionFlag, PropertyKind, Origin } from './bits';
+import { ScopeState, ScopeKind } from './scope';
+import { Flags, Context, BindingKind, FunctionFlag, Origin } from './bits';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -159,7 +159,17 @@ export function parseStatement(
     case Token.VarKeyword:
       return parseVariableStatementOrLexicalDeclaration(parser, context, scope, BindingKind.Variable, Origin.None);
     case Token.LeftBrace:
-      return parseBlock(parser, context, newScope(scope, ScopeKind.Block), labels, nestedLabels);
+      return parseBlock(
+        parser,
+        context,
+        {
+          parent: scope,
+          type: ScopeKind.Block,
+          scopeError: void 0
+        },
+        labels,
+        nestedLabels
+      );
     case Token.Semicolon:
       return parseEmptyStatement(parser, context);
     case Token.ReturnKeyword:
@@ -568,7 +578,7 @@ export function parseForStatementWithVariableDeclarations(
                 line,
                 column
               );
-        if (parser.flags & Flags.CannotDestruct) report(parser, Errors.InvalidBindingDestruct);
+        if (parser.flags & Flags.NotDestructible) report(parser, Errors.InvalidBindingDestruct);
 
         if (parser.flags & Flags.AssignableDestruct) report(parser, Errors.InvalidBindingDestruct);
         if (parser.token === Token.Assign) {
@@ -756,7 +766,11 @@ export function parseForStatement(
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  scope = newScope(scope, ScopeKind.ForStatement);
+  scope = {
+    parent: scope,
+    type: ScopeKind.ForStatement,
+    scopeError: void 0
+  };
 
   let test: ESTree.Expression | null = null;
   let update: ESTree.Expression | null = null;
@@ -793,7 +807,7 @@ export function parseForStatement(
     //      report(parser, Errors.DuplicateProto);
     //  }
 
-    parser.assignable = destructible & Flags.CannotDestruct ? 0 : 1;
+    parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
 
     init = parseMemberExpression(
       parser,
@@ -1025,7 +1039,11 @@ export function parseSwitchStatement(
 
   let seenDefault: 0 | 1 = 0;
 
-  scope = newScope(scope, ScopeKind.SwitchStatement);
+  scope = {
+    parent: scope,
+    type: ScopeKind.SwitchStatement,
+    scopeError: void 0
+  };
 
   while (parser.token !== Token.RightBrace) {
     const { start, line, column } = parser;
@@ -1142,7 +1160,11 @@ export function parseConsequentOrAlternative(
     : parseFunctionDeclaration(
         parser,
         context,
-        newScope(scope, ScopeKind.Block),
+        {
+          parent: scope,
+          type: ScopeKind.Block,
+          scopeError: void 0
+        },
         FunctionFlag.Declaration,
         Origin.None
       );
@@ -1277,7 +1299,17 @@ export function parseTryStatement(
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const block = parseBlock(parser, context, newScope(scope, ScopeKind.TryStatement), labels, null);
+  const block = parseBlock(
+    parser,
+    context,
+    {
+      parent: scope,
+      type: ScopeKind.TryStatement,
+      scopeError: void 0
+    },
+    labels,
+    null
+  );
 
   let handler: ESTree.CatchClause | null = null;
 
@@ -1292,7 +1324,11 @@ export function parseTryStatement(
     if (parser.token === Token.LeftParen) {
       nextToken(parser, context, /* allowRegExp */ 0);
 
-      scope = newScope(scope, ScopeKind.CatchStatement);
+      scope = {
+        parent: scope,
+        type: ScopeKind.CatchStatement,
+        scopeError: void 0
+      };
 
       const kind =
         (parser.token & Token.IsPatternStart) === Token.IsPatternStart
@@ -1303,7 +1339,11 @@ export function parseTryStatement(
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-      additionalScope = newScope(scope, ScopeKind.CatchBlock);
+      additionalScope = {
+        parent: scope,
+        type: ScopeKind.CatchBlock,
+        scopeError: void 0
+      };
     }
 
     const body = parseBlock(parser, context, additionalScope, labels, null);
@@ -1326,7 +1366,17 @@ export function parseTryStatement(
   }
 
   const finalizer: ESTree.BlockStatement | null = consumeOpt(parser, context, Token.FinallyKeyword, /* allowRegExp */ 0)
-    ? parseBlock(parser, context, newScope(scope, ScopeKind.CatchStatement), labels, null)
+    ? parseBlock(
+        parser,
+        context,
+        {
+          parent: scope,
+          type: ScopeKind.CatchStatement,
+          scopeError: void 0
+        },
+        labels,
+        null
+      )
     : null;
 
   if (!handler && !finalizer) {

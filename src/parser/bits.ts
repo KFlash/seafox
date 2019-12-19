@@ -32,10 +32,10 @@ export const enum Context {
 export const enum Flags {
   Empty               = 0,
   HasConstructor      = 1 << 0,
-  Destructible        = 1 << 3,
-  AssignableDestruct  = 1 << 4,
-  CannotDestruct      = 1 << 5,
-  MustDestruct        = 1 << 6
+  Destructible        = 1 << 1,
+  AssignableDestruct  = 1 << 2,
+  NotDestructible     = 1 << 3,
+  MustDestruct        = 1 << 4
 }
 
 export const enum Origin {
@@ -62,6 +62,7 @@ export const enum PropertyKind {
   Setter        = 1 << 8,
   GetSet        = Getter | Setter
 }
+
 export const enum FunctionFlag {
   None              = 0,
   IsDeclaration     = 1 << 0,
@@ -86,6 +87,7 @@ export const enum BindingKind {
   FunctionStatement         = 1 << 7,
   CatchPattern              = 1 << 8,
   CatchIdentifier           = 1 << 9,
+  Pattern                   = 1 << 10,
   CatchIdentifierOrPattern  = CatchIdentifier | CatchPattern,
   LexicalOrFunction         = Variable | FunctionLexical,
   LexicalBinding            = Let | Const | FunctionLexical | FunctionStatement | Class

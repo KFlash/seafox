@@ -2,7 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
-import { ScopeState, newScope, ScopeKind, addVarName, addBlockName } from './scope';
+import { ScopeState, ScopeKind, addVarName, addBlockName } from './scope';
 import { Context, BindingKind, FunctionFlag, Origin } from './bits';
 import {
   parseFunctionDeclarationOrExpressionRest,
@@ -93,7 +93,11 @@ export function parseFunctionDeclarationRest(
       addBlockName(parser, context, scope, tokenValue, BindingKind.FunctionLexical, origin);
     }
 
-    innerScope = newScope(innerScope, ScopeKind.FunctionRoot);
+    innerScope = {
+      parent: innerScope,
+      type: ScopeKind.FunctionRoot,
+      scopeError: void 0
+    };
 
     firstRestricted = token;
 
@@ -126,7 +130,7 @@ export function parseFunctionDeclarationRest(
  *
  * @param parser  Parser object
  * @param context Context masks
- * @param scope
+ * @param scope Lexical scope
  * @param flags FunctionFlag
  */
 export function parseClassDeclaration(
@@ -138,7 +142,10 @@ export function parseClassDeclaration(
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  context = (context | Context.Strict) ^ Context.Strict;
+  // Second set of context masks to fix 'super' edge cases
+  let inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
+
+  context |= Context.Strict;
 
   let id: ESTree.Expression | null = null;
 
@@ -161,6 +168,7 @@ export function parseClassDeclaration(
   return parseClassDeclarationOrExpressionRest(
     parser,
     context,
+    inheritedContext,
     id,
     1,
     'ClassDeclaration',
@@ -224,18 +232,25 @@ export function parseVariableDeclarationListAndDeclarator(
 ): ESTree.VariableDeclarator[] {
   const list: ESTree.VariableDeclarator[] = [];
 
-  while (parser.token !== Token.Comma) {
-    const { start, line, column, token } = parser;
+  let id: any = null;
+  let binding: BindingKind;
 
-    const id = parseBindingPattern(parser, context, scope, kind, origin);
+  while (parser.token !== Token.Comma) {
+    const { start, line, column } = parser;
+
+    // This little 'trick' speeds up the validation below
+    binding = kind | ((parser.token & Token.IsPatternStart) === Token.IsPatternStart ? BindingKind.Pattern : 0);
+
+    id = parseBindingPattern(parser, context, scope, kind, origin);
+
     let init: ESTree.Expression | null = null;
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context);
     } else if (
-      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf &&
-      (kind & BindingKind.Const || (token & Token.IsPatternStart) === Token.IsPatternStart)
+      (binding & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
+      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
     ) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
