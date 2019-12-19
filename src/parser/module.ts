@@ -4,7 +4,7 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
-import { Flags, Context, BindingKind, FunctionFlag, Origin } from './bits';
+import { Context, BindingKind, FunctionFlag, Origin } from './bits';
 import {
   ParserState,
   consumeSemicolon,
