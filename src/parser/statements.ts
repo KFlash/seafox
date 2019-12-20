@@ -548,7 +548,7 @@ export function parseForStatementWithVariableDeclarations(
             }
           }
         } else if (
-          (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
+          (kind & BindingKind.Const || (token & Token.IsPatternStart) === 1) &&
           (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
@@ -600,7 +600,7 @@ export function parseForStatementWithVariableDeclarations(
             }
           }
         } else if (
-          (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
+          (kind & BindingKind.Const || (token & Token.IsPatternStart) === 1) &&
           (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
@@ -764,7 +764,7 @@ export function parseForStatement(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   const forAwait =
-    (context & Context.InAwaitContext) > 0 && consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
+    (context & Context.InAwaitContext) === 1 && consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
@@ -805,9 +805,9 @@ export function parseForStatement(
 
     destructible = parser.flags;
 
-    //    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & Flags.SeenProto) {
-    //      report(parser, Errors.DuplicateProto);
-    //  }
+    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & Flags.SeenProto) {
+      report(parser, Errors.DuplicateProto);
+    }
 
     parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
 

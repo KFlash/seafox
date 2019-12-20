@@ -36,6 +36,7 @@ export const enum Flags {
   AssignableDestruct  = 1 << 2,
   NotDestructible     = 1 << 3,
   MustDestruct        = 1 << 4,
+  SeenProto           = 1 << 5,
   Destructuring = Destructible | AssignableDestruct | NotDestructible | MustDestruct
 }
 

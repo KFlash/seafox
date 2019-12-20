@@ -6,6 +6,14 @@ describe('Expressions - Object', () => {
   for (const [source, ctx] of [
     ['({y={x={}={}={}={}={}={}={}={}}={}}),', Context.Empty],
     ['({a=1, b=2, c=3, x=({}={})}),', Context.Empty],
+    ['x = [{__proto__: 1, __proto__: 2}]', Context.Empty],
+    ['x = {__proto__: 1, "__proto__": 2}', Context.Empty],
+    ['x = {"__proto__": 1, __proto__: 2}', Context.Empty],
+    ['foo({ __proto__: null, other: null, "__proto__": null });', Context.Empty],
+    ['({ __proto__: null, other: null, "__proto__": null }) => foo;', Context.Empty],
+    ['async ({ __proto__: null, other: null, "__proto__": null }) => foo;', Context.Empty],
+    ['[{ __proto__: null, other: null, "__proto__": null }];', Context.Empty],
+    ['x = { __proto__: null, other: null, "__proto__": null };', Context.Empty],
     ['({x=1, y={z={1}}})', Context.Empty],
     ['({x=1} = {y=1});', Context.Empty],
     ['({x: y={z=1}}={})', Context.Empty],
@@ -435,6 +443,34 @@ describe('Expressions - Object', () => {
     });
   }
 
+  for (const arg of [
+    'x = {__proto__: 1, "__proto__": 2}',
+    'x = {\'__proto__\': 1, "__proto__": 2}',
+    "x = {'__proto__': 1, __proto__: 2}",
+    'x = {__proto__: 1, "__proto__": 2}'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`, {
+          disableWebCompat: true
+        });
+      });
+    });
+
+    it(`x = ${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`x = ${arg}`, {
+          disableWebCompat: true
+        });
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
     [
       `wrap({async foo(){}, bar(){}});`,
