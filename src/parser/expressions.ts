@@ -3031,10 +3031,6 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
   if (parser.token !== Token.RightParen) {
     if (kind & PropertyKind.Getter) report(parser, Errors.AccessorWrongArgs, 'Getter', 'no', 's');
 
-    if (kind & PropertyKind.Setter && parser.token === Token.Ellipsis) {
-      report(parser, Errors.BadSetterRestParameter);
-    }
-
     const modifierFlags =
       (kind & PropertyKind.Constructor) === 0
         ? 0b0000001111010000000_0000_00000000
@@ -3046,34 +3042,95 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
       0b0000110000001000000_0000_00000000 |
       ((context | Context.DisallowIn) ^ Context.DisallowIn);
 
-    let setterArgs = 0;
+    let argCount = 0;
+    let left: any;
 
     while (parser.token !== Token.RightParen) {
-      const { start, line, column } = parser;
+      const { start, line, column, token, tokenValue } = parser;
 
-      let left = parseBindingPattern(parser, context, scope, BindingKind.ArgumentList, Origin.None);
+      if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
+        left = parseAndClassifyIdentifier(
+          parser,
+          context,
+          scope,
+          token,
+          tokenValue,
+          kind | BindingKind.ArgumentList,
+          Origin.None,
+          start,
+          line,
+          column,
+          0
+        );
+      } else {
+        if (parser.token === Token.LeftBracket) {
+          left = parseArrayExpressionOrPattern(
+            parser,
+            context,
+            scope,
+            1,
+            1,
+            BindingKind.ArgumentList,
+            Origin.None,
+            start,
+            line,
+            column
+          );
+        } else if (parser.token === Token.LeftBrace) {
+          left = parseObjectLiteralOrPattern(
+            parser,
+            context,
+            scope,
+            1,
+            1,
+            BindingKind.ArgumentList,
+            Origin.None,
+            start,
+            line,
+            column
+          );
+        } else if (parser.token === Token.Ellipsis) {
+          if (kind & PropertyKind.Setter) report(parser, Errors.BadSetterRestParameter);
+          left = parseSpreadOrRestElement(
+            parser,
+            context,
+            scope,
+            Token.RightParen,
+            1,
+            0,
+            BindingKind.ArgumentList,
+            Origin.None,
+            start,
+            line,
+            column
+          );
+        }
 
-      // if (parser.flags & (Flags.AssignableDestruct | Flags.NotDestructible))
-      // report(parser, Errors.InvalidBindingDestruct);
+        if (parser.flags & (Flags.AssignableDestruct | Flags.NotDestructible)) {
+          report(parser, Errors.InvalidBindingDestruct);
+        }
+      }
 
       if (parser.token === Token.Assign) {
         nextToken(parser, context, /* allowRegExp */ 1);
         left = parseAssignmentOrPattern(parser, context, /* isPattern */ 1, left, '=', start, line, column);
       }
 
-      setterArgs++;
+      argCount++;
 
       params.push(left);
 
       if (parser.token !== Token.Comma) break;
+
       nextToken(parser, context, /* allowRegExp */ 0);
     }
 
-    if (kind & PropertyKind.Setter && setterArgs !== 1) {
+    if (kind & PropertyKind.Setter && argCount !== 1) {
       report(parser, Errors.AccessorWrongArgs, 'Setter', 'one', '');
     }
 
     if (scope && scope.scopeError !== void 0) reportScopeError(scope.scopeError);
+
   } else if (kind & PropertyKind.Setter) {
     report(parser, Errors.AccessorWrongArgs, 'Setter', 'one', '');
   }
@@ -3089,6 +3146,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     FunctionFlag.None,
     void 0
   );
+
   return context & Context.OptionsLoc
     ? {
         type: 'FunctionExpression',
@@ -3133,18 +3191,29 @@ export function parseFormalParams(
 
   while (parser.token !== Token.RightParen) {
     let left: any;
-    const { start, line, column } = parser;
+    const { start, line, column, token, tokenValue } = parser;
     if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
-      addVarOrBlock(parser, context, scope, parser.tokenValue, kind | BindingKind.ArgumentList, Origin.None);
-      left = parseIdentifier(parser, context);
+      left = parseAndClassifyIdentifier(
+        parser,
+        context,
+        scope,
+        token,
+        tokenValue,
+        kind | BindingKind.ArgumentList,
+        Origin.None,
+        start,
+        line,
+        column,
+        0
+      );
     } else {
       if (parser.token === Token.LeftBracket) {
         left = parseArrayExpressionOrPattern(
           parser,
           context,
           scope,
-          /* skipInitializer */ 1,
-          /* isPattern */ 1,
+          1,
+          1,
           kind,
           Origin.None,
           start,
@@ -3157,8 +3226,8 @@ export function parseFormalParams(
           parser,
           context,
           scope,
-          /* skipInitializer */ 1,
-          /* isPattern */ 1,
+          1,
+          1,
           kind,
           Origin.None,
           start,
@@ -3173,7 +3242,7 @@ export function parseFormalParams(
           scope,
           Token.RightParen,
           1,
-          /* isAsync */ 0,
+          0,
           kind,
           Origin.None,
           start,
