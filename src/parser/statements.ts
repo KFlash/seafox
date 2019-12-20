@@ -482,7 +482,7 @@ export function parseForStatementWithVariableDeclarations(
   let init = null;
   let right;
   const origin = Origin.ForStatement;
-  let kind: BindingKind = BindingKind.Empty;
+  let kind: BindingKind = BindingKind.Tail;
   let isLet = false;
   nextToken(parser, context, /* allowRegExp */ 0);
 
@@ -777,7 +777,7 @@ export function parseForStatement(
   let init = null;
   let right;
   const origin = Origin.ForStatement;
-  const kind: BindingKind = BindingKind.Empty;
+  const kind: BindingKind = BindingKind.Tail;
   let destructible: any = Flags.Empty;
   const { token, start, line, column } = parser;
 

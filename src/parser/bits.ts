@@ -81,7 +81,7 @@ export const enum BindingKind {
   ArgumentList              = 1 << 0,
   Variable                  = 1 << 1,
   FunctionLexical           = 1 << 2,
-  Empty                     = 1 << 3,
+  Tail                      = 1 << 3,
   Let                       = 1 << 4,
   Const                     = 1 << 5,
   Class                     = 1 << 6,

@@ -17,6 +17,32 @@ describe('Declarations - Let', () => {
     ['let [a];', Context.Empty],
     ['let let;', Context.Empty],
     ['let let x;', Context.Empty],
+    ['let [o.x=1]=[]', Context.Empty],
+    ['let [({x: 1})] = [];', Context.Empty],
+    ['let [(x)] = [];', Context.Empty],
+    ['let [({x: 1}) = y] = [];', Context.Empty],
+    ['let [(x) = y] = [];', Context.Empty],
+    ['var [({x: 1})] = [];', Context.Empty],
+    ['var [(x)] = [];', Context.Empty],
+    ['var [({x: 1}) = y] = [];', Context.Empty],
+    ['if (true) let x = 1;', Context.Empty],
+    ['let {x:o.f=1}={x:1}', Context.Empty],
+    ['let [o.x=1]=[]', Context.Empty],
+    ['(o.f=1)=>0', Context.Empty],
+    ['let x = ...y;', Context.Empty],
+    ['let test = 2, let = 1;', Context.Empty],
+    ['const let = 1, test = 2;', Context.Empty],
+    ['for(let let in { }) { };', Context.Empty],
+    ['let [a];', Context.Empty],
+    ['let let;', Context.Empty],
+    ['let let x;', Context.Empty],
+    ['if (1) let x = 10;', Context.Empty],
+    ['let [a + 1] = [];', Context.Empty],
+    ['let a; [a--] = [];', Context.Empty],
+    ['let a; [1, a] = [];', Context.Empty],
+    ['let [...a, b] = [];', Context.Empty],
+    ['let a; [...a = 1] = [];', Context.Empty],
+    ['let a; [((a)] = [];', Context.Empty],
     ['if (1) let x = 10;', Context.Empty],
     ['let [a + 1] = [];', Context.Empty],
     ['let a; [a--] = [];', Context.Empty],
@@ -44,10 +70,10 @@ describe('Declarations - Let', () => {
     ['let x,;', Context.Empty],
     ['let await 0', Context.Empty],
     ['"use strict"; const let = 1;', Context.Empty],
-    // ['"use strict"; let { let } = {};', Context.Empty],
-    // ['"use strict"; const { let } = {};', Context.Empty],
+    ['"use strict"; let { let } = {};', Context.Empty],
+    ['"use strict"; const { let } = {};', Context.Empty],
     ['"use strict"; let [let] = [];', Context.Empty],
-    //['"use strict"; const [let] = [];', Context.Empty],
+    ['"use strict"; const [let] = [];', Context.Empty],
     ['let {x};', Context.Empty],
     ['let [x()] = x', Context.Empty],
     ['let [x().foo] = x', Context.Empty],
@@ -124,8 +150,8 @@ describe('Declarations - Let', () => {
     ['for (let\nfoo());', Context.Empty],
     ['for (let foo, bar in x);', Context.Empty],
     ['for (let foo = bar in x);', Context.Empty],
-    //['let { let } = {};', Context.Empty],
-    //['const { let } = {};', Context.Empty],
+    ['let { let } = {};', Context.Empty],
+    ['const { let } = {};', Context.Empty],
     //['let [let] = [];', Context.Empty],
     //['const [let] = [];', Context.Empty],
     ['for (let foo = bar, zoo = boo in x);', Context.Empty],
@@ -160,7 +186,7 @@ describe('Declarations - Let', () => {
     ['let {...(a,b)} = foo', Context.Empty],
     ['let {...{a,b}} = foo', Context.Empty],
     ['let {...[a,b]} = foo', Context.Empty],
-    //['let: foo', Context.Strict],
+    ['let: foo', Context.Strict],
     ['"use strict"; let, let, let, let', Context.Empty],
     ['"use strict"; let(100)', Context.Empty],
     ['"use strict"; let: 34', Context.Empty],
@@ -267,8 +293,11 @@ describe('Declarations - Let', () => {
     ['for (let foo,)', Context.Empty],
     ['for (a in b) let [x] = y', Context.Empty],
     ['let p/', Context.Empty],
-    //    [`let
-    //    []`, Context.Empty],
+    [
+      `let
+        []`,
+      Context.Empty
+    ],
     ['for (a in b) let [x] = y', Context.Empty],
     ['for (a in b) let [x] = y', Context.Empty],
     ['for (a in b) let [x] = y', Context.Empty],
@@ -309,7 +338,8 @@ describe('Declarations - Let', () => {
     it(source as string, () => {
       t.throws(() => {
         parseScript(source as string, {
-          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });

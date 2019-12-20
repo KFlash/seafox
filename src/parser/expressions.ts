@@ -2213,7 +2213,7 @@ export function parseArrayLiteral(
     void 0,
     skipInitializer,
     0,
-    BindingKind.Empty,
+    BindingKind.Tail,
     Origin.None,
     start,
     line,
@@ -2321,7 +2321,7 @@ export function parseArrayExpressionOrPattern(
           destructible |=
             kind & BindingKind.ArgumentList
               ? Flags.AssignableDestruct
-              : (kind & BindingKind.Empty) === 0
+              : (kind & BindingKind.Tail) !== BindingKind.Tail
               ? Flags.NotDestructible
               : 0;
 
@@ -2384,13 +2384,13 @@ export function parseArrayExpressionOrPattern(
 
         if (parser.token !== Token.Comma && parser.token !== Token.RightBracket) {
           left = parseAssignmentExpression(parser, context, isPattern, 0, left, start, line, column);
-          if ((kind & (BindingKind.Empty | BindingKind.ArgumentList)) === 0 && token === Token.LeftParen)
+          if ((kind & (BindingKind.Tail | BindingKind.ArgumentList)) === 0 && token === Token.LeftParen)
             destructible |= Flags.NotDestructible;
         } else if (parser.assignable === 0) {
           destructible |= Flags.NotDestructible;
         } else if (token === Token.LeftParen) {
           destructible |=
-            parser.assignable === 1 && kind & (BindingKind.Empty | BindingKind.ArgumentList)
+            parser.assignable === 1 && kind & (BindingKind.Tail | BindingKind.ArgumentList)
               ? Flags.AssignableDestruct
               : Flags.NotDestructible;
         }
@@ -3223,7 +3223,7 @@ export function parseObjectLiteral(
     void 0,
     skipInitializer,
     /* isPattern */ 0,
-    BindingKind.Empty,
+    BindingKind.Tail,
     Origin.None,
     start,
     line,
@@ -3937,6 +3937,7 @@ export function parseSpreadOrRestElement(
       }
     } else {
       destructible |= Flags.AssignableDestruct;
+
       argument = parseLeftHandSideExpression(parser, context, /* allowLHS */ 1, 1);
 
       const token = parser.token;

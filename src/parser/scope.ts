@@ -103,7 +103,7 @@ export function addBlockName(
 
   const value = scope['#' + name];
 
-  if (value && (value & BindingKind.Empty) === 0) {
+  if (value && (value & BindingKind.Tail) !== BindingKind.Tail) {
     if (kind & BindingKind.ArgumentList) {
       scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
     } else if (
@@ -119,12 +119,12 @@ export function addBlockName(
   if (
     scope.type & ScopeKind.FunctionBody &&
     scope.parent['#' + name] &&
-    (scope.parent['#' + name] & BindingKind.Empty) === 0
+    (scope.parent['#' + name] & BindingKind.Tail) !== BindingKind.Tail
   ) {
     report(parser, Errors.DuplicateBinding, name);
   }
 
-  if (scope.type & ScopeKind.ArrowParams && value && (value & BindingKind.Empty) === 0) {
+  if (scope.type & ScopeKind.ArrowParams && value && (value & BindingKind.Tail) !== BindingKind.Tail) {
     if ((kind & BindingKind.ArgumentList) === BindingKind.ArgumentList) {
       scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
     }
