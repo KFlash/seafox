@@ -2509,7 +2509,7 @@ export function parseFunctionExpression(
       scopeError: void 0
     };
 
-    validateFunctionName(parser, ((context | 0x1ec0000) ^ 0x1ec0000) | generatorAndAsyncFlags, parser.token);
+    validateFunctionName(parser, ((context & 0b0000000000000000000_1100_00000000) << 11) | generatorAndAsyncFlags, parser.token);
 
     id = parseIdentifier(parser, context);
   }
