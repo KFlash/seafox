@@ -92,13 +92,17 @@ export const enum Errors {
   UnexpectedLetStrictReserved,
   UnexpectedNewTarget,
   InvalidSuperProperty,
-  SuperNoConstructor
+  SuperNoConstructor,
+  InvalidGeneratorGetter
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.InvalidGeneratorGetter]:
+    'Calls to super must be in the "constructor" method of a class expression or class declaration that has a superclass',
+  [Errors.InvalidSuperProperty]: 'Member access on super must be in a method',
   [Errors.SuperNoConstructor]:
     'Calls to super must be in the "constructor" method of a class expression or class declaration that has a superclass',
   [Errors.InvalidSuperProperty]: 'Member access on super must be in a method',

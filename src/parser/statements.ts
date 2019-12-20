@@ -232,6 +232,8 @@ export function parseLabelledStatement(
   // ExpressionStatement[Yield] :
   //   [lookahead notin {{, function, class, let [}] Expression[In, ?Yield] ;
 
+  if ((token & Token.IsStringOrNumber) === Token.IsStringOrNumber) report(parser, Errors.Unexpected);
+
   validateIdentifier(parser, context, BindingKind.None, token);
 
   labels = addLabel(parser, value, labels, nestedLabels);

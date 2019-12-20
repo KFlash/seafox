@@ -3453,13 +3453,23 @@ export function parseObjectLiteralOrPattern(
               ? PropertyKind.Setter
               : PropertyKind.Method;
 
-          value = parseMethodDefinition(parser, context, state);
+          value =
+            state & PropertyKind.GetSet
+              ? parseGetterSetter(parser, context, state)
+              : parseMethodDefinition(parser, context, state);
         } else if (parser.token === Token.LeftParen) {
           destructible |= Flags.NotDestructible;
+
           state |= PropertyKind.Method;
+
           value = parseMethodDefinition(parser, context, state);
         } else if (parser.token === Token.Multiply) {
+          if (token === Token.GetKeyword || token === Token.SetKeyword) {
+            report(parser, Errors.InvalidGeneratorGetter);
+          }
+
           destructible |= Flags.NotDestructible;
+
           nextToken(parser, context, /* allowRegExp */ 0);
 
           state |=
@@ -3488,7 +3498,10 @@ export function parseObjectLiteralOrPattern(
           destructible |= Flags.NotDestructible;
           key = parseLiteral(parser, context);
 
-          value = parseMethodDefinition(parser, context, state);
+          value =
+            state & PropertyKind.GetSet
+              ? parseGetterSetter(parser, context, state)
+              : parseMethodDefinition(parser, context, state);
         } else {
           report(parser, Errors.Unexpected);
         }
