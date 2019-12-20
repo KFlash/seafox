@@ -3324,7 +3324,7 @@ export function parseObjectLiteralOrPattern(
           if (tokenValue === '__proto__') prototypeCount++;
 
           if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
-            const { token: tokenAfterColon, token: valueAfterColon } = parser;
+            const { token: tokenAfterColon, tokenValue: valueAfterColon } = parser;
 
             value = parsePrimaryExpression(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
