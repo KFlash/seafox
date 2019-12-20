@@ -17,7 +17,8 @@ import {
   isValidIdentifier,
   validateIdentifier,
   isExactlyStrictDirective,
-  isStrictReservedWord
+  isStrictReservedWord,
+  validateFunctionName
 } from './common';
 
 /** parseAssignmentExpression
@@ -2507,6 +2508,9 @@ export function parseFunctionExpression(
       type: ScopeKind.FunctionRoot,
       scopeError: void 0
     };
+
+    validateFunctionName(parser, ((context | 0x1ec0000) ^ 0x1ec0000) | generatorAndAsyncFlags, parser.token);
+
     id = parseIdentifier(parser, context);
   }
   context =
@@ -2911,8 +2915,8 @@ export function parseClassElementList(
 
   const value =
     type & (PropertyKind.Setter | PropertyKind.Setter)
-      ? parseGetterSetter(parser, context, type)
-      : parseMethodDefinition(parser, context, type);
+      ? parseGetterSetter(parser, inheritedContext, type)
+      : parseMethodDefinition(parser, inheritedContext, type);
 
   const kind =
     isStatic === 0 && type & PropertyKind.Constructor
@@ -3130,7 +3134,6 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     }
 
     if (scope && scope.scopeError !== void 0) reportScopeError(scope.scopeError);
-
   } else if (kind & PropertyKind.Setter) {
     report(parser, Errors.AccessorWrongArgs, 'Setter', 'one', '');
   }
@@ -3208,32 +3211,10 @@ export function parseFormalParams(
       );
     } else {
       if (parser.token === Token.LeftBracket) {
-        left = parseArrayExpressionOrPattern(
-          parser,
-          context,
-          scope,
-          1,
-          1,
-          kind,
-          Origin.None,
-          start,
-          line,
-          column
-        );
+        left = parseArrayExpressionOrPattern(parser, context, scope, 1, 1, kind, Origin.None, start, line, column);
         isSimpleParameterList = 1;
       } else if (parser.token === Token.LeftBrace) {
-        left = parseObjectLiteralOrPattern(
-          parser,
-          context,
-          scope,
-          1,
-          1,
-          kind,
-          Origin.None,
-          start,
-          line,
-          column
-        );
+        left = parseObjectLiteralOrPattern(parser, context, scope, 1, 1, kind, Origin.None, start, line, column);
         isSimpleParameterList = 1;
       } else if (parser.token === Token.Ellipsis) {
         left = parseSpreadOrRestElement(
