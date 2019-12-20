@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Object', () => {
   for (const [source, ctx] of [
@@ -406,21 +406,19 @@ describe('Expressions - Object', () => {
     ['!{f({[a]: b}, ...b) {}}', Context.OptionsDisableWebCompat],
     ['!{f({[a]: b}, ...b) {}}', Context.OptionsDisableWebCompat],
     ['!{f({[a]: b}, ...b) {}}', Context.OptionsDisableWebCompat],
-    // ['({await}) => null', Context.Strict | Context.Module],
     ['({set a() {}})', Context.Empty],
     ['({get a(a) {}})', Context.Empty],
-    // ['s = {"foo": await = x} = x', Context.Module],
     ['({set a(...foo) {}})', Context.Empty],
     ['{ 1: {} [a] }', Context.Empty],
     ['{ 1: {} + a }', Context.Empty],
     ['{ 1: [] [a] }', Context.Empty],
     ['{ 1: [] = a }', Context.Empty],
-    //    ['s = {"foo": yield / x}', Context.Strict],
-    //    ['s = {"foo": yield}', Context.Strict],
-    //  ['s = {"foo": yield /x/}', Context.Strict],
-    //  ['s = {"foo": yield /x/g}', Context.Strict],
-    //    ['s = {"foo": yield / x}', Context.Strict],
-    // ['function *f(){   s = {"foo": yield / x}   }', Context.Empty],
+    ['s = {"foo": yield / x}', Context.Strict],
+    ['s = {"foo": yield}', Context.Strict],
+    ['s = {"foo": yield /x/}', Context.Strict],
+    ['s = {"foo": yield /x/g}', Context.Strict],
+    ['s = {"foo": yield / x}', Context.Strict],
+    ['function *f(){   s = {"foo": yield / x}   }', Context.Empty],
     ['({get *ident(){}})', Context.Empty],
     ['({set *ident(ident){}})', Context.Empty],
     ['({get *5(){}})', Context.Empty],
@@ -429,7 +427,6 @@ describe('Expressions - Object', () => {
     ['({get *[x](){}})', Context.Empty],
     ['({get *10(){}})', Context.Empty],
     ['({get *[expr](){}})', Context.Empty],
-    //['for(var [z] = function ([a]) { } in []) {}', Context.Empty],
     ['({eval} = x);', Context.Strict]
   ]) {
     it(source as string, () => {
@@ -442,7 +439,21 @@ describe('Expressions - Object', () => {
       });
     });
   }
-
+  for (const [source, ctx] of [
+    ['({await}) => null', Context.Strict | Context.Module],
+    ['s = {"foo": await = x} = x', Context.Strict | Context.Module],
+    ['s = {"foo": yield /x/}', Context.Strict | Context.Module]
+  ]) {
+    it(source as string, () => {
+      t.throws(() => {
+        parseModule(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
+          module: ((ctx as any) & Context.Module) !== 0
+        });
+      });
+    });
+  }
   for (const arg of [
     'x = {__proto__: 1, "__proto__": 2}',
     'x = {\'__proto__\': 1, "__proto__": 2}',

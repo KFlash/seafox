@@ -548,7 +548,7 @@ export function parseForStatementWithVariableDeclarations(
             }
           }
         } else if (
-          (kind & BindingKind.Const || (token & Token.IsPatternStart) === 1) &&
+          (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
           (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
@@ -588,19 +588,16 @@ export function parseForStatementWithVariableDeclarations(
 
           init = parseExpression(parser, context | Context.DisallowIn);
 
-          if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
-            if (parser.token === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
-            if (parser.token === Token.InKeyword) {
-              if (
-                (kind & BindingKind.Variable) !== BindingKind.Variable ||
-                context & (Context.Strict | Context.OptionsDisableWebCompat)
-              ) {
-                report(parser, Errors.ForInOfLoopInitializer, 'in');
-              }
-            }
+          if (
+            parser.token === Token.OfKeyword ||
+            (parser.token === Token.InKeyword &&
+              /* token & Token.IsPatternStart || */
+              ((kind & BindingKind.Variable) === 0 || context & (Context.Strict | Context.OptionsDisableWebCompat)))
+          ) {
+            report(parser, Errors.ForInOfLoopInitializer, 'in');
           }
         } else if (
-          (kind & BindingKind.Const || (token & Token.IsPatternStart) === 1) &&
+          (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
           (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
@@ -764,7 +761,7 @@ export function parseForStatement(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   const forAwait =
-    (context & Context.InAwaitContext) === 1 && consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
+    (context & Context.InAwaitContext) > 0 && consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 

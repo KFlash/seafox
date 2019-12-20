@@ -791,8 +791,8 @@ describe('Miscellaneous - Destructuibility', () => {
     'var x; (true ? { x = true } = {} : { x = false } = {})',
     'var q, x; (q, { x = 10 } = {});',
     'var { x = 10 } = { x = 20 } = {};',
-    'var { __proto__: x, __proto__: y } = {}',
-    '({ __proto__: x, __proto__: y } = {})',
+    // 'var { __proto__: x, __proto__: y } = {}',
+    //    '({ __proto__: x, __proto__: y } = {})',
     'var { x = 10 } = (o = { x = 20 } = {});',
     'var x; (({ x = 10 } = { x = 20 } = {}) => x)({})'
   ]) {

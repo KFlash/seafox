@@ -10,6 +10,7 @@ describe('Statements - For', () => {
     ['for (let x in y) { var x; ', Context.OptionsDisableWebCompat],
     ['for (const x in y) { var x; }', Context.Module | Context.OptionsDisableWebCompat],
     ['for (let x of y) { var x; }', Context.OptionsDisableWebCompat],
+    ['for(var [z] = function ([a]) { } in []) {}', Context.OptionsDisableWebCompat],
     ['for (const x of y) { var x; }', Context.OptionsDisableWebCompat],
     ['for (let a, b, x, d;;) { var foo; var bar; { var doo, x, ee; } }', Context.OptionsDisableWebCompat],
     ['for (var a;;) { var b; let b; }', Context.OptionsDisableWebCompat],
@@ -6830,7 +6831,7 @@ describe('Statements - For', () => {
     ],
     [
       `for ({__proto__: 1, __proto__: 2};;);`,
-      Context.OptionsLoc,
+      Context.OptionsLoc | Context.OptionsDisableWebCompat,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12562,7 +12563,7 @@ describe('Statements - For', () => {
     ],
     [
       `for ({__proto__: 1, __proto__: 2};;);`,
-      Context.OptionsLoc,
+      Context.OptionsLoc | Context.OptionsDisableWebCompat,
       {
         body: [
           {

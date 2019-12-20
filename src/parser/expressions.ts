@@ -709,6 +709,8 @@ export function parseYieldExpression(
         };
   }
 
+  if (context & Context.Strict) report(parser, Errors.DisallowedInContext, 'yield');
+
   return parseIdentifierOrArrow(parser, context);
 }
 
@@ -748,6 +750,8 @@ export function parseAwaitExpression(
           argument
         };
   }
+
+  if (context & Context.Module) report(parser, Errors.DisallowedInContext, 'Await');
 
   return parseIdentifierOrArrow(parser, context);
 }
@@ -3795,9 +3799,9 @@ export function parseObjectLiteralOrPattern(
               key,
               value,
               kind,
-              computed: (state & PropertyKind.Computed) === 1,
-              method: (state & PropertyKind.Method) === 1,
-              shorthand: (state & PropertyKind.Shorthand) === 1,
+              computed: (state & PropertyKind.Computed) === PropertyKind.Computed,
+              method: (state & PropertyKind.Method) === PropertyKind.Method,
+              shorthand: (state & PropertyKind.Shorthand) === PropertyKind.Shorthand,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -3807,9 +3811,9 @@ export function parseObjectLiteralOrPattern(
               key,
               value,
               kind,
-              computed: (state & PropertyKind.Computed) === 1,
-              method: (state & PropertyKind.Method) === 1,
-              shorthand: (state & PropertyKind.Shorthand) === 1
+              computed: (state & PropertyKind.Computed) === PropertyKind.Computed,
+              method: (state & PropertyKind.Method) === PropertyKind.Method,
+              shorthand: (state & PropertyKind.Shorthand) === PropertyKind.Shorthand
             }
       );
     }
