@@ -2472,8 +2472,8 @@ export function parseArrayOrObjectAssignmentPattern(
   const node = parseAssignmentOrPattern(parser, context, isPattern, left, '=', start, line, column);
 
   parser.flags =
-    ((parser.flags | Flags.Destructuring | Flags.SeenProto) ^ (Flags.SeenProto | Flags.Destructuring)) |
-    ((destructible | Flags.MustDestruct) ^ Flags.MustDestruct);
+    ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) |
+    ((destructible | Flags.MustDestruct | Flags.SeenProto) ^ (Flags.SeenProto | Flags.MustDestruct));
 
   return node;
 }
@@ -2991,7 +2991,8 @@ export function parseMethodDefinition(
 
   return parseFunctionDeclarationOrExpressionRest(
     parser,
-    context,
+    (context | 0b0001000000000000001_0000_00000000 | Context.InGlobal) ^
+      (0b0001000000000000001_0000_00000000 | Context.InGlobal),
     {
       parent: {
         parent: void 0,
@@ -3079,7 +3080,15 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-  const body = parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0);
+  const body = parseFunctionBody(
+    parser,
+    (context | 0b0001000000000000001_0000_00000000 | Context.InGlobal) ^
+      (0b0001000000000000001_0000_00000000 | Context.InGlobal),
+    scope,
+    void 0,
+    FunctionFlag.None,
+    void 0
+  );
   return context & Context.OptionsLoc
     ? {
         type: 'FunctionExpression',

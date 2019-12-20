@@ -1558,7 +1558,6 @@ describe('Miscellaneous - Destructuibility', () => {
     'f = ([cls = class {}, xCls = class X {}, xCls2 = class { static name() {} }]) => {}',
     '[{prop: 1}.prop] = []',
     '({__proto__: a, __proto__: b} = {});',
-    'var {__proto__: a, __proto__: b} = {};',
     'var f3 = ({__proto__: a, __proto__: b} = {}) => {}',
     'var f2 = ({__proto__: a, __proto__: b}) => {}',
     'bar1 = ( {abcdef  = (((((a1)) = (30))))} = (b1 = 40) ) => { try { throw a1; } catch(a1) { } };',
