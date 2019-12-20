@@ -35,7 +35,8 @@ export const enum Flags {
   Destructible        = 1 << 1,
   AssignableDestruct  = 1 << 2,
   NotDestructible     = 1 << 3,
-  MustDestruct        = 1 << 4
+  MustDestruct        = 1 << 4,
+  Destructuring = Destructible | AssignableDestruct | NotDestructible | MustDestruct
 }
 
 export const enum Origin {

@@ -147,7 +147,7 @@ export function parseClassDeclaration(
 
   context |= Context.Strict;
 
-  let id: ESTree.Expression | null = null;
+  let id: any = null;
 
   if (
     parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
