@@ -4,6 +4,7 @@
 
 ## WORK IN PROGRESS!!  Will probably never be finished. I'm just playing around with performance :)
 
+**Note:** The files in the `/distro` folder is the bundled files.
 
 ## Usage
 
@@ -17,8 +18,8 @@ parseModule(code, options);
 parseScript(code, options);
 ```
 
-## Options  
+## Options
 
 - Loc - Enable location tracking
 - DisableWebCompat - Disable AnnexB
-- Directives - Directive AST nodes 
+- Directives - Directive AST nodes
