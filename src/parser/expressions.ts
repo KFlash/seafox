@@ -1032,7 +1032,7 @@ export function parseAsyncArrowOrCallExpression(
   const params: ESTree.Expression[] = [];
 
   while (parser.token !== Token.RightParen) {
-    const { token, start, line, column } = parser;
+    const { token, tokenValue, start, line, column } = parser;
 
     if (token & (Token.IsIdentifier | Token.Keyword)) {
       addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
@@ -1042,6 +1042,10 @@ export function parseAsyncArrowOrCallExpression(
         if (parser.assignable === 0) {
           destructible |= Flags.NotDestructible;
           isSimpleParameterList = 1;
+        } else if (tokenValue === 'eval' || tokenValue === 'argumetns') {
+          parser.flags |= Flags.StrictEvalArguments;
+        } else if ((token & Token.FutureReserved) === Token.FutureReserved) {
+          parser.flags |= Flags.HasStrictReserved;
         }
       } else {
         if (parser.token === Token.Assign) {
@@ -2608,67 +2612,81 @@ export function parseFunctionBody(
   scopeError: any
 ): any {
   const { start, line, column } = parser;
+
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
+
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
+
   const body: any[] = [];
   const prevContext = context;
   const allowDirectives = context & Context.OptionsDirectives;
 
   let isStrictDirective: 0 | 1 = 0;
-  while (parser.token === Token.StringLiteral) {
-    const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
-    let expression = parseLiteral(parser, context);
-    if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
-      isStrictDirective = 1;
-      context |= Context.Strict;
-    }
 
-    if (isStrictDirective === 0) {
-      expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
-    }
-    consumeSemicolon(parser, context);
+  if (parser.token !== Token.RightBrace) {
+    while (parser.token === Token.StringLiteral) {
+      const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
+      let expression = parseLiteral(parser, context);
+      if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
+        isStrictDirective = 1;
+        context |= Context.Strict;
+      }
 
-    body.push(
-      allowDirectives
-        ? context & Context.OptionsLoc
+      if (isStrictDirective === 0) {
+        expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
+      }
+      consumeSemicolon(parser, context);
+
+      body.push(
+        allowDirectives
+          ? context & Context.OptionsLoc
+            ? {
+                type: 'ExpressionStatement',
+                expression,
+                directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue,
+                start,
+                end: parser.endIndex,
+                loc: setLoc(parser, line, column)
+              }
+            : {
+                type: 'ExpressionStatement',
+                expression,
+                directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue
+              }
+          : context & Context.OptionsLoc
           ? {
               type: 'ExpressionStatement',
               expression,
-              directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
             }
           : {
               type: 'ExpressionStatement',
-              expression,
-              directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue
+              expression
             }
-        : context & Context.OptionsLoc
-        ? {
-            type: 'ExpressionStatement',
-            expression,
-            start,
-            end: parser.endIndex,
-            loc: setLoc(parser, line, column)
-          }
-        : {
-            type: 'ExpressionStatement',
-            expression
-          }
-    );
+      );
+    }
+
+    if (context & Context.Strict) {
+      if (firstRestricted) {
+        if ((firstRestricted & Token.FutureReserved) === Token.FutureReserved) {
+          report(parser, Errors.Unexpected);
+        }
+      }
+      if (scopeError && (prevContext & Context.Strict) === 0 && (context & Context.InGlobal) === 0) {
+        reportScopeError(scopeError);
+      }
+
+      if (parser.flags & Flags.StrictEvalArguments) report(parser, Errors.StrictEvalArguments);
+
+      if (parser.flags & Flags.HasStrictReserved) report(parser, Errors.UnexpectedStrictReserved);
+    }
   }
 
-  if (context & Context.Strict) {
-    if (firstRestricted) {
-      if ((firstRestricted & Token.FutureReserved) === Token.FutureReserved) {
-        report(parser, Errors.Unexpected);
-      }
-    }
-    if (scopeError && (prevContext & Context.Strict) === 0 && (context & Context.InGlobal) === 0) {
-      reportScopeError(scopeError);
-    }
-  }
+  parser.flags =
+    (parser.flags | Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals) ^
+    (Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals);
 
   while (parser.token !== Token.RightBrace) {
     body.push(parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null));
@@ -2698,8 +2716,8 @@ export function parseClassExpression(
   curColumn: number
 ): ESTree.ClassExpression {
   nextToken(parser, context, /* allowRegExp */ 0);
-  // Second set of context masks to fix 'super' edge cases
 
+  // Second set of context masks to fix 'super' edge cases
   let inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
 
   context |= Context.Strict;
@@ -2742,14 +2760,17 @@ export function parseClassDeclarationOrExpressionRest(
   line: number,
   column: number
 ): any {
-  const superClass: ESTree.Expression | null = consumeOpt(parser, inheritedContext, Token.ExtendsKeyword, 1)
-    ? parseLeftHandSideExpression(parser, context, /* allowLHS */ 0, 0)
-    : null;
+  let superClass: ESTree.Expression | null = null;
 
-  inheritedContext |=
-    (inheritedContext | Context.SuperProperty | Context.SuperCall) ^ (superClass ? 0 : Context.SuperCall);
+  if (parser.token === Token.ExtendsKeyword) {
+    nextToken(parser, context, /* allowRegExp */ 1);
+    superClass = parseLeftHandSideExpression(parser, context, /* allowLHS */ 0, 0);
+    inheritedContext |= Context.SuperCall;
+  } else {
+    inheritedContext = (inheritedContext | Context.SuperCall) ^ Context.SuperCall;
+  }
 
-  const body = parseClassBody(parser, inheritedContext, context, isDecl);
+  const body = parseClassBody(parser, (inheritedContext | Context.DisallowIn) ^ Context.DisallowIn, context, isDecl);
 
   parser.assignable = 0;
 
@@ -2781,8 +2802,6 @@ export function parseClassBody(
 
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
 
-  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
-
   const body: ESTree.MethodDefinition[] = [];
 
   parser.flags = (parser.flags | Flags.HasConstructor) ^ Flags.HasConstructor;
@@ -2797,6 +2816,7 @@ export function parseClassBody(
         parser,
         context,
         inheritedContext,
+        null,
         /* isStatic */ 0,
         /* isComputed */ 0,
         PropertyKind.None,
@@ -2827,6 +2847,7 @@ export function parseClassElementList(
   parser: ParserState,
   context: Context,
   inheritedContext: Context,
+  key: any,
   isStatic: 0 | 1,
   isComputed: 0 | 1,
   type: PropertyKind,
@@ -2835,8 +2856,6 @@ export function parseClassElementList(
   curColumn: number
 ): any {
   const { token, start, line, column } = parser;
-
-  let key: any;
 
   if (token & (Token.Keyword | Token.Contextual | Token.FutureReserved | Token.IsIdentifier)) {
     key = parseIdentifier(parser, context);
@@ -2849,6 +2868,7 @@ export function parseClassElementList(
               parser,
               context,
               inheritedContext,
+              key,
               /* isStatic */ 1,
               isComputed,
               type,
@@ -2903,7 +2923,7 @@ export function parseClassElementList(
         if (type & (PropertyKind.GetSet | PropertyKind.Async | PropertyKind.Generator)) {
           report(parser, Errors.InvalidConstructor, 'accessor');
         }
-        if ((context & Context.SuperCall) === 0) {
+        if ((context & Context.SuperCall) !== Context.SuperCall) {
           if (parser.flags & Flags.HasConstructor) report(parser, Errors.DuplicateConstructor);
           else parser.flags |= Flags.HasConstructor;
         }
@@ -3057,6 +3077,11 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
       const { start, line, column, token, tokenValue } = parser;
 
       if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
+        if ((context & Context.Strict) !== Context.Strict) {
+          parser.flags |=
+            ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0) |
+            (tokenValue === 'eval' || tokenValue === 'arguments' ? Flags.StrictEvalArguments : 0);
+        }
         left = parseAndClassifyIdentifier(
           parser,
           context,
@@ -3199,7 +3224,12 @@ export function parseFormalParams(
   while (parser.token !== Token.RightParen) {
     let left: any;
     const { start, line, column, token, tokenValue } = parser;
-    if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
+    if (token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
+      if ((context & Context.Strict) !== Context.Strict) {
+        parser.flags |=
+          ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0) |
+          (tokenValue === 'eval' || tokenValue === 'arguments' ? Flags.StrictEvalArguments : 0);
+      }
       left = parseAndClassifyIdentifier(
         parser,
         context,

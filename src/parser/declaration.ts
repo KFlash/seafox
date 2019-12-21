@@ -234,6 +234,7 @@ export function parseVariableDeclarationListAndDeclarator(
 
   let id: any = null;
   let type: BindingKind;
+  let init: ESTree.Expression | null = null;
 
   while (parser.token !== Token.Comma) {
     const { start, line, column } = parser;
@@ -244,7 +245,7 @@ export function parseVariableDeclarationListAndDeclarator(
     id = parseBindingPattern(parser, context, scope, kind, origin);
 
     // Always set the 'initializer' to 'null' for each iteration
-    let init: ESTree.Expression | null = null;
+    init = null;
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
