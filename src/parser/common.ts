@@ -68,7 +68,6 @@ export function setLoc(parser: ParserState, line: number, column: number): any {
   };
 }
 
-
 /**
  * Transforms a `LeftHandSideExpression` into a `AssignmentPattern` if possible,
  * otherwise it returns the original tree.
@@ -199,7 +198,6 @@ export function validateFunctionName(parser: ParserState, context: Context, t: T
   }
 }
 
-
 export function isValidIdentifier(context: Context, t: Token): boolean {
   if (context & (Context.Strict | Context.InYieldContext)) {
     // Module code is also "strict mode code"
@@ -258,4 +256,8 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   if (context & (Context.InYieldContext | Context.Strict) && t === Token.YieldKeyword) {
     report(parser, Errors.DisallowedInContext, 'yield');
   }
+}
+
+export function isEvalOrArguments(value: string): boolean {
+  return value === 'eval' || value === 'arguments';
 }

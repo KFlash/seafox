@@ -91,6 +91,8 @@ export type Node =
   | LabeledStatement
   | Literal
   | LogicalExpression
+  | ChainingExpression
+  | Chain
   | MemberExpression
   | MetaProperty
   | MethodDefinition
@@ -157,6 +159,8 @@ export type LeftHandSideExpression =
   | ClassDeclaration
   | FunctionExpression
   | LiteralExpression
+  | ChainingExpression
+  | Chain
   | MemberExpression
   | PrimaryExpression
   | TaggedTemplateExpression;
@@ -556,6 +560,27 @@ export interface LogicalExpression extends _Node {
   operator: LogicalOperator;
   left: Expression;
   right: Expression;
+}
+
+export interface ChainingExpression extends _Node {
+  type: 'ChainingExpression';
+  base: Expression;
+  chain: [Chain];
+}
+
+export interface Chain extends _Node {
+  optional: boolean;
+}
+
+export interface MemberChain extends Chain {
+  type: 'MemberChain';
+  computed: boolean;
+  property: Expression;
+}
+
+export interface CallChain extends Chain {
+  type: 'CallChain';
+  arguments: [Expression];
 }
 
 export interface MemberExpression extends _Node {

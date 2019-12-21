@@ -266,16 +266,14 @@ export function parseLabelledStatement(
 
 export function parseImportCallOrForbidImport(parser: ParserState, context: Context): any {
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  switch (parser.token) {
-    case Token.LeftParen:
-      return parseImportCallDeclaration(parser, context, start, line, column);
-    case Token.Period:
-      return parseImportMetaDeclaration(parser, context, start, line, column);
-    default:
-      report(parser, Errors.InvalidImportExportSloppy, 'import');
-  }
+  if (parser.token === Token.LeftParen) return parseImportCallDeclaration(parser, context, start, line, column);
+
+  if (parser.token === Token.Period) return parseImportMetaDeclaration(parser, context, start, line, column);
+
+  report(parser, Errors.InvalidImportExportSloppy, 'import');
 }
 
 export function parseNonDirectiveExpression(
@@ -426,6 +424,7 @@ export function parseBlock(
 ): ESTree.BlockStatement {
   // Block ::
   //   '{' StatementList '}'
+
   const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 1);
@@ -472,22 +471,22 @@ export function parseReturnStatement(parser: ParserState, context: Context): EST
   if (context & Context.InGlobal && (context & Context.OptionsGlobalReturn) === 0) report(parser, Errors.IllegalReturn);
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
-  const argument =
-    parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context);
 
   consumeSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
         type: 'ReturnStatement',
-        argument,
+        argument:
+          parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context),
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
     : {
         type: 'ReturnStatement',
-        argument
+        argument:
+          parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context)
       };
 }
 
@@ -1072,17 +1071,19 @@ export function parseSwitchStatement(
 
   while (parser.token !== Token.RightBrace) {
     const { start, line, column } = parser;
-    let test: ESTree.Expression | null = null;
+    let test: ESTree.Expression | null = consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)
+      ? parseExpressions(parser, context)
+      : null;
     const consequent: ESTree.Statement[] = [];
 
-    if (consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)) {
-      test = parseExpressions(parser, context);
-    } else {
+    if (test === null) {
       consume(parser, context, Token.DefaultKeyword, /* allowRegExp */ 1);
       if (seenDefault) report(parser, Errors.Unexpected);
       seenDefault = 1;
     }
+
     consume(parser, context, Token.Colon, /* allowRegExp */ 1);
+
     while (
       parser.token !== Token.CaseKeyword &&
       parser.token !== Token.RightBrace &&

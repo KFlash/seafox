@@ -4563,6 +4563,9 @@ var seafox = (function (exports) {
           report(parser, 31, 'yield');
       }
   }
+  function isEvalOrArguments(value) {
+      return value === 'eval' || value === 'arguments';
+  }
 
   function parseAssignmentExpression(parser, context, isPattern, reinterpret, left, start, line, column) {
       const token = parser.token;
@@ -5231,7 +5234,7 @@ var seafox = (function (exports) {
               if (parser.token === 17 || parser.token === 19) {
                   conjuncted |=
                       (parser.assignable === 0 ? 8 | 512 : 0) |
-                          (tokenValue === 'eval' || tokenValue === 'arguments' ? 64 : 0) |
+                          (isEvalOrArguments(tokenValue) ? 64 : 0) |
                           ((token & 262144) === 262144 ? 128 : 0);
               }
               else {
@@ -6544,7 +6547,7 @@ var seafox = (function (exports) {
                   if ((context & 1024) !== 1024) {
                       parser.flags |=
                           ((token & 262144) === 262144 ? 128 : 0) |
-                              (tokenValue === 'eval' || tokenValue === 'arguments' ? 64 : 0);
+                              (isEvalOrArguments(tokenValue) ? 64 : 0);
                   }
                   left = parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, kind | 1, 0, start, line, column, 0);
               }
@@ -6627,7 +6630,7 @@ var seafox = (function (exports) {
               if ((context & 1024) !== 1024) {
                   parser.flags |=
                       ((token & 262144) === 262144 ? 128 : 0) |
-                          (tokenValue === 'eval' || tokenValue === 'arguments' ? 64 : 0);
+                          (isEvalOrArguments(tokenValue) ? 64 : 0);
               }
               left = parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, kind | 1, 0, start, line, column, 0);
           }
@@ -6664,11 +6667,10 @@ var seafox = (function (exports) {
               break;
           }
       }
-      if ((isMethod === 1 || isSimpleParameterList || context & 1024) && scope.scopeError !== void 0) {
+      if (scope.scopeError !== void 0 && (isMethod === 1 || isSimpleParameterList === 1 || context & 1024)) {
           reportScopeError(scope.scopeError);
       }
-      if (isSimpleParameterList)
-          parser.flags |= 512;
+      parser.flags |= isSimpleParameterList === 1 ? 512 : 0;
       consume(parser, context, 17, 0);
       return params;
   }
@@ -6705,7 +6707,7 @@ var seafox = (function (exports) {
                   key = parseIdentifier(parser, context);
                   if (parser.token === 19 || parser.token === 16777232 || parser.token === 67108896) {
                       state |= 4;
-                      if (context & 1024 && (tokenValue === 'eval' || tokenValue === 'arguments')) {
+                      if (context & 1024 && isEvalOrArguments(tokenValue)) {
                           conjuncted |= 8;
                       }
                       else {
@@ -7676,13 +7678,10 @@ var seafox = (function (exports) {
               report(parser, 50, 'import');
       }
   }
-  function parseNonDirectiveExpression(parser, context, expression, start, line, column) {
-      expression = parseMemberExpression(parser, context, expression, 0, 0, start, line, column);
-      expression = parseAssignmentExpression(parser, context, 0, 0, expression, start, line, column);
-      if (parser.token === 19) {
-          expression = parseSequenceExpression(parser, context, expression, start, line, column);
-      }
-      return expression;
+  function parseNonDirectiveExpression(parser, context, expr, start, line, column) {
+      expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+      expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+      return parser.token === 19 ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
   }
   function parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, allowFuncDecl) {
       const { token, tokenValue, start, line, column } = parser;
@@ -7761,7 +7760,7 @@ var seafox = (function (exports) {
   }
   function parseReturnStatement(parser, context) {
       if (context & 268435456 && (context & 64) === 0)
-          report(parser, 0);
+          report(parser, 21);
       const { start, line, column } = parser;
       nextToken(parser, context, 1);
       const argument = parser.newLine !== 0 || parser.token & 16777216 ? null : parseExpressions(parser, context);

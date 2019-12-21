@@ -18,7 +18,8 @@ import {
   validateIdentifier,
   isExactlyStrictDirective,
   isStrictReservedWord,
-  validateFunctionName
+  validateFunctionName,
+  isEvalOrArguments
 } from './common';
 
 /** parseAssignmentExpression
@@ -1047,7 +1048,7 @@ export function parseAsyncArrowOrCallExpression(
       if (parser.token === Token.RightParen || parser.token === Token.Comma) {
         conjuncted |=
           (parser.assignable === 0 ? Flags.NotDestructible | Flags.SimpleParameterList : 0) |
-          (tokenValue === 'eval' || tokenValue === 'arguments' ? Flags.StrictEvalArguments : 0) |
+          (isEvalOrArguments(tokenValue) ? Flags.StrictEvalArguments : 0) |
           ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0);
       } else {
         conjuncted |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
@@ -3060,7 +3061,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
         if ((context & Context.Strict) !== Context.Strict) {
           parser.flags |=
             ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0) |
-            (tokenValue === 'eval' || tokenValue === 'arguments' ? Flags.StrictEvalArguments : 0);
+            (isEvalOrArguments(tokenValue) ? Flags.StrictEvalArguments : 0);
         }
         left = parseAndClassifyIdentifier(
           parser,
@@ -3198,8 +3199,16 @@ export function parseFormalParams(
   kind: BindingKind,
   isMethod: 0 | 1
 ): ESTree.Parameter[] {
-  // FormalParameter[Yield,GeneratorParameter] :
-  //   BindingElement[?Yield, ?GeneratorParameter]
+  // FormalParameters[Yield] :
+  //   [empty]
+  //   FunctionRestParameter[?Yield]
+  //   FormalParameterList[?Yield]
+  //   FormalParameterList[?Yield] ,
+  //   FormalParameterList[?Yield] , FunctionRestParameter[?Yield]
+  //
+  // FormalParameterList[Yield] :
+  //   FormalParameter[?Yield]
+  //   FormalParameterList[?Yield] , FormalParameter[?Yield]
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
@@ -3213,13 +3222,16 @@ export function parseFormalParams(
 
   while (parser.token !== Token.RightParen) {
     let left: any;
+
     const { start, line, column, token, tokenValue } = parser;
+
     if (token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
       if ((context & Context.Strict) !== Context.Strict) {
         parser.flags |=
           ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0) |
-          (tokenValue === 'eval' || tokenValue === 'arguments' ? Flags.StrictEvalArguments : 0);
+          (isEvalOrArguments(tokenValue) ? Flags.StrictEvalArguments : 0);
       }
+
       left = parseAndClassifyIdentifier(
         parser,
         context,
@@ -3284,11 +3296,10 @@ export function parseFormalParams(
     }
   }
 
-  if ((isMethod === 1 || isSimpleParameterList || context & Context.Strict) && scope.scopeError !== void 0) {
+  if (scope.scopeError !== void 0 && (isMethod === 1 || isSimpleParameterList === 1 || context & Context.Strict)) {
     reportScopeError(scope.scopeError);
   }
-
-  if (isSimpleParameterList) parser.flags |= Flags.SimpleParameterList;
+  parser.flags |= isSimpleParameterList === 1 ? Flags.SimpleParameterList : 0;
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
   return params;
@@ -3366,7 +3377,7 @@ export function parseObjectLiteralOrPattern(
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
-  let conjuncted: Flags = 0;
+  let conjuncted: Flags = Flags.Empty;
   let prototypeCount = 0;
   let key: any = null;
   let value;
@@ -3385,7 +3396,7 @@ export function parseObjectLiteralOrPattern(
           scope,
           Token.RightBrace,
           isPattern,
-          /* isAsync */ 0,
+          0,
           type,
           origin,
           start,
@@ -3402,7 +3413,7 @@ export function parseObjectLiteralOrPattern(
         if (parser.token === Token.Comma || parser.token === Token.RightBrace || parser.token === Token.Assign) {
           state |= PropertyKind.Shorthand;
 
-          if (context & Context.Strict && (tokenValue === 'eval' || tokenValue === 'arguments')) {
+          if (context & Context.Strict && isEvalOrArguments(tokenValue)) {
             conjuncted |= Flags.NotDestructible;
           } else {
             validateIdentifier(parser, context, type, token);
