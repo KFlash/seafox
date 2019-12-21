@@ -370,7 +370,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
   if (parser.token === Token.LeftParen) {
     expr = parseAsyncArrowOrCallExpression(
       parser,
-      context,
+      (context | Context.DisallowIn) ^ Context.DisallowIn,
       expr,
       1,
       asyncNewLine,

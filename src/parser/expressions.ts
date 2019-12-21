@@ -100,7 +100,7 @@ export function parseAssignmentExpression(
     left = parseBinaryExpression(parser, context, 4, token, start, line, column, left);
   }
 
-  return consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)
+  return parser.token === Token.QuestionMark
     ? parseConditionalExpression(parser, context, left, start, line, column)
     : left;
 }
@@ -169,6 +169,7 @@ export function parseConditionalExpression(
    * IsValidAssignmentTarget
    *   1,2 = false
    */
+  nextToken(parser, context, /* allowRegExp */ 1); // skips: '?'
   const consequent = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
   consume(parser, context, Token.Colon, /* allowRegExp */ 1);
   const alternate = parseExpression(parser, context);
@@ -929,7 +930,7 @@ export function parseAsyncExpression(
   if (inNew === 0 && parser.token === Token.LeftParen) {
     return parseAsyncArrowOrCallExpression(
       parser,
-      context,
+      (context | Context.DisallowIn) ^ Context.DisallowIn,
       expr,
       canAssign,
       parser.newLine,
@@ -959,8 +960,6 @@ export function parseAsyncArrowIdentifier(
   line: number,
   column: number
 ): any {
-  // See V8: https://github.com/v8/v8/blob/master/src/parsing/parser-base.h#L1713
-
   const scope = {
     parent: {
       parent: void 0,
@@ -991,8 +990,6 @@ export function parseAsyncArrowOrCallExpression(
 ): any {
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
-
   const scope = {
     parent: {
       parent: void 0,
@@ -1002,12 +999,15 @@ export function parseAsyncArrowOrCallExpression(
     scopeError: void 0
   };
 
-  if (consumeOpt(parser, context, Token.RightParen, /* allowRegExp */ 0)) {
+  if (parser.token === Token.RightParen) {
+    nextToken(parser, context, /* allowRegExp */ 0);
+
     if (parser.token === Token.Arrow) {
       if (newLine === 1) report(parser, Errors.Unexpected);
-      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
-      return parseArrowFunction(parser, context, scope, [], 1, start, line, column);
+
+      return parseArrowFunctionAfterParen(parser, context, scope, Flags.Empty, [], canAssign, 1, start, line, column);
     }
+
     return context & Context.OptionsLoc
       ? {
           type: 'CallExpression',
@@ -1019,15 +1019,17 @@ export function parseAsyncArrowOrCallExpression(
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
         }
-      : ({
+      : {
           type: 'CallExpression',
           callee,
           arguments: [],
           optional: false,
           shortCircuited: false
-        } as any);
+        };
   }
+
   parser.flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
+
   let expr: any = null;
 
   let conjuncted: Flags = Flags.Empty;
@@ -1037,8 +1039,9 @@ export function parseAsyncArrowOrCallExpression(
   while (parser.token !== Token.RightParen) {
     const { token, tokenValue, start, line, column } = parser;
 
-    if (token & (Token.IsIdentifier | Token.Keyword)) {
+    if (token & (Token.IsIdentifier | Token.Keyword | Token.FutureReserved)) {
       addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
+
       expr = parsePrimaryExpression(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
       if (parser.token === Token.RightParen || parser.token === Token.Comma) {
@@ -1058,30 +1061,8 @@ export function parseAsyncArrowOrCallExpression(
     } else if (token & Token.IsPatternStart) {
       expr =
         parser.token === Token.LeftBrace
-          ? parseObjectLiteralOrPattern(
-              parser,
-              context,
-              scope,
-              /* skipInitializer */ 0,
-              /* isPattern */ 0,
-              kind,
-              origin,
-              start,
-              line,
-              column
-            )
-          : parseArrayExpressionOrPattern(
-              parser,
-              context,
-              scope,
-              /* skipInitializer */ 0,
-              /* isPattern */ 0,
-              kind,
-              origin,
-              start,
-              line,
-              column
-            );
+          ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, kind, origin, start, line, column)
+          : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, kind, origin, start, line, column);
 
       conjuncted |= parser.flags | Flags.SimpleParameterList;
 
@@ -1095,7 +1076,7 @@ export function parseAsyncArrowOrCallExpression(
         if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
           expr = parseBinaryExpression(parser, context, 4, token, start, line, column, expr);
         }
-        if (consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)) {
+        if (parser.token === Token.QuestionMark) {
           expr = parseConditionalExpression(parser, context, expr as ESTree.Expression, start, line, column);
         }
       }
@@ -1106,7 +1087,7 @@ export function parseAsyncArrowOrCallExpression(
         scope,
         Token.RightParen,
         0,
-        /* isAsync */ 1,
+        1,
         kind,
         origin,
         start,
@@ -1153,7 +1134,9 @@ export function parseAsyncArrowOrCallExpression(
 
     params.push(expr as ESTree.Expression);
 
-    if (!consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) break;
+    if (parser.token !== Token.Comma) break;
+
+    nextToken(parser, context, /* allowRegExp */ 1);
   }
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
@@ -1668,8 +1651,10 @@ export function parseParenthesizedExpression(
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
   let expr: any = [];
-  if (consumeOpt(parser, context, Token.RightParen, /* allowRegExp */ 0)) {
+  if (parser.token === Token.RightParen) {
     if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+
+    nextToken(parser, context, /* allowRegExp */ 0);
 
     return parseArrowFunction(parser, context, scope, expr, /* isAsync */ 0, curStart, curLine, curColumn);
   }
@@ -1812,7 +1797,9 @@ export function parseParenthesizedExpression(
       expressions.push(expr);
     }
 
-    if (!consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) break;
+    if (parser.token !== Token.Comma) break;
+
+    nextToken(parser, context, /* allowRegExp */ 1);
 
     if (!isSequence) {
       isSequence = 1;
@@ -3117,6 +3104,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
           );
         } else if (parser.token === Token.Ellipsis) {
           if (kind & PropertyKind.Setter) report(parser, Errors.BadSetterRestParameter);
+
           left = parseSpreadOrRestElement(
             parser,
             context,
@@ -3130,6 +3118,8 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
             line,
             column
           );
+        } else {
+          report(parser, Errors.Unexpected);
         }
 
         isSimpleParameterList = 1;
@@ -3265,6 +3255,8 @@ export function parseFormalParams(
           column
         );
         isSimpleParameterList = 1;
+      } else {
+        report(parser, Errors.Unexpected);
       }
 
       if (parser.flags & (Flags.AssignableDestruct | Flags.NotDestructible)) {
@@ -3282,7 +3274,9 @@ export function parseFormalParams(
 
     params.push(left);
 
-    if (!consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 0)) break;
+    if (parser.token !== Token.Comma) break;
+
+    nextToken(parser, context, /* allowRegExp */ 0);
 
     if (parser.token === Token.RightParen) {
       // allow the trailing comma
@@ -3423,7 +3417,9 @@ export function parseObjectLiteralOrPattern(
           } else {
             value = key;
           }
-        } else if (consumeOpt(parser, context, Token.Colon, /* allowRegExp */ 1)) {
+        } else if (parser.token === Token.Colon) {
+          nextToken(parser, context, /* allowRegExp */ 1);
+
           const { start, line, column } = parser;
 
           if (tokenValue === '__proto__') prototypeCount++;
@@ -3461,7 +3457,7 @@ export function parseObjectLiteralOrPattern(
               if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
                 value = parseBinaryExpression(parser, context, 0, parser.token, start, line, column, value as any);
               }
-              if (consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)) {
+              if (parser.token === Token.QuestionMark) {
                 value = parseConditionalExpression(parser, context, value, start, line, column);
               }
             }
@@ -3514,7 +3510,7 @@ export function parseObjectLiteralOrPattern(
                 if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
                   value = parseBinaryExpression(parser, context, 0, parser.token, start, line, column, value as any);
                 }
-                if (consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)) {
+                if (parser.token === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
                 conjuncted |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -3703,7 +3699,7 @@ export function parseObjectLiteralOrPattern(
                   value = parseBinaryExpression(parser, context, 0, parser.token, start, line, column, value as any);
                 }
 
-                if (consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)) {
+                if (parser.token === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
                 conjuncted |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -3827,7 +3823,7 @@ export function parseObjectLiteralOrPattern(
                 if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
                   value = parseBinaryExpression(parser, context, 0, parser.token, start, line, column, value as any);
                 }
-                if (consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)) {
+                if (parser.token === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
                 conjuncted |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -4033,7 +4029,7 @@ export function parseSpreadOrRestElement(
           if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
             argument = parseBinaryExpression(parser, context, 0, parser.token, start, line, column, argument as any);
           }
-          if (consumeOpt(parser, context, Token.QuestionMark, /* allowRegExp */ 1)) {
+          if (parser.token === Token.QuestionMark) {
             argument = parseConditionalExpression(parser, context, argument, start, line, column);
           }
           conjuncted |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;

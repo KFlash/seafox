@@ -287,7 +287,7 @@ export function parseExportDefaultDeclaration(
             if (parser.token === Token.LeftParen) {
               declaration = parseAsyncArrowOrCallExpression(
                 parser,
-                context,
+                (context | Context.DisallowIn) ^ Context.DisallowIn,
                 declaration,
                 1,
                 parser.newLine,
