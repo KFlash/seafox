@@ -2493,13 +2493,13 @@ export function parseFunctionExpression(
   const generatorAndAsyncFlags = (isAsync * 2 + isGenerator) << 21;
 
   let id: ESTree.Identifier | null = null;
+
   let scope: ScopeState = {
     parent: void 0,
     type: ScopeKind.Block
   };
 
-  if (parser.token === Token.LeftParen) {
-  } else {
+  if ((parser.token & (Token.Contextual | Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) === 0) {
     scope = {
       parent: {
         parent: void 0,
@@ -2509,7 +2509,11 @@ export function parseFunctionExpression(
       scopeError: void 0
     };
 
-    validateFunctionName(parser, ((context & 0b0000000000000000000_1100_00000000) << 11) | generatorAndAsyncFlags, parser.token);
+    validateFunctionName(
+      parser,
+      ((context & 0b0000000000000000000_1100_00000000) << 11) | generatorAndAsyncFlags,
+      parser.token
+    );
 
     id = parseIdentifier(parser, context);
   }
@@ -2915,8 +2919,8 @@ export function parseClassElementList(
 
   const value =
     type & (PropertyKind.Setter | PropertyKind.Setter)
-      ? parseGetterSetter(parser, inheritedContext, type)
-      : parseMethodDefinition(parser, inheritedContext, type);
+      ? parseGetterSetter(parser, context | Context.Strict, type)
+      : parseMethodDefinition(parser, context | Context.Strict, type);
 
   const kind =
     isStatic === 0 && type & PropertyKind.Constructor
