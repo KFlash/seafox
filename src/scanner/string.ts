@@ -4,7 +4,7 @@ import { ParserState } from '../parser/common';
 import { toHex, fromCodePoint, readNext } from './common';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
-import { Context } from '../parser/bits';
+import { Context, Flags } from '../parser/bits';
 
 export const enum Escape {
   Empty = -1,
@@ -136,8 +136,12 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
           }
         }
         parser.index = index + 1;
+
+        parser.flags |= Flags.Octals;
+
         return code * 8 + value;
       }
+
       return code;
     }
     case Chars.Eight:

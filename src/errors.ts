@@ -93,13 +93,17 @@ export const enum Errors {
   UnexpectedNewTarget,
   InvalidSuperProperty,
   SuperNoConstructor,
-  InvalidGeneratorGetter
+  InvalidGeneratorGetter,
+  IllegalUseStrict,
+  StrictOctalLiteral
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.IllegalUseStrict]: "Illegal 'use strict' directive in function with non-simple parameter list",
+  [Errors.StrictOctalLiteral]: 'Octal literals are not allowed in strict mode',
   [Errors.InvalidGeneratorGetter]:
     'Calls to super must be in the "constructor" method of a class expression or class declaration that has a superclass',
   [Errors.InvalidSuperProperty]: 'Member access on super must be in a method',

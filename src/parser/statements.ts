@@ -780,7 +780,7 @@ export function parseForStatement(
   let right;
   const origin = Origin.ForStatement;
   const kind: BindingKind = BindingKind.Tail;
-  let destructible: any = Flags.Empty;
+  let conjuncted: any = Flags.Empty;
   const { token, start, line, column } = parser;
 
   if ((token & Token.isVarDecl) !== 0) {
@@ -803,13 +803,13 @@ export function parseForStatement(
         ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column)
         : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column);
 
-    destructible = parser.flags;
+    conjuncted = parser.flags;
 
-    if ((context & Context.OptionsDisableWebCompat) === 0 && destructible & Flags.SeenProto) {
+    if ((context & Context.OptionsDisableWebCompat) === 0 && conjuncted & Flags.SeenProto) {
       report(parser, Errors.DuplicateProto);
     }
 
-    parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
+    parser.assignable = conjuncted & Flags.NotDestructible ? 0 : 1;
 
     init = parseMemberExpression(
       parser,
@@ -821,7 +821,7 @@ export function parseForStatement(
       parser.line,
       parser.column
     );
-    destructible = parser.flags;
+    conjuncted = parser.flags;
   } else {
     init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, /* allowLHS */ 1, 1);
   }
@@ -888,7 +888,7 @@ export function parseForStatement(
 
   if (forAwait) report(parser, Errors.Unexpected);
 
-  if (destructible & Flags.MustDestruct && parser.token !== Token.Assign) {
+  if (conjuncted & Flags.MustDestruct && parser.token !== Token.Assign) {
     report(parser, Errors.CantAssignToInOfForLoop, 'loop');
   }
 

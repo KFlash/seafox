@@ -40,6 +40,7 @@ export const enum Flags {
   StrictEvalArguments = 1 << 6,
   HasStrictReserved   = 1 << 7,
   Octals              = 1 << 8,
+  SimpleParameterList = 1 << 9,
   Destructuring = Destructible | AssignableDestruct | NotDestructible | MustDestruct
 }
 

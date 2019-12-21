@@ -4,7 +4,7 @@ import { ParserState } from '../parser/common';
 import { toHex } from './common';
 import { Token } from '../token';
 import { report, Errors } from '../errors';
-import { Context } from '../parser/bits';
+import { Context, Flags } from '../parser/bits';
 
 export function scanNumber(parser: ParserState, source: string, char: number, skipSMI: 0 | 1): Token {
   let digit = 9;
@@ -108,6 +108,7 @@ export function skipNumericSeparator(parser: ParserState, source: string, char: 
     }
 
     // Exponential notation must contain at least one digit
+
     if ((CharTypes[char] & CharFlags.Decimal) < 1) report(parser, Errors.MissingExponent);
 
     // Consume exponential digits
@@ -167,6 +168,8 @@ export function scanNumberAfterDecimalPoint(parser: ParserState, source: string,
 export function scanImplicitOctalDigits(parser: ParserState, context: Context, source: string, char: number): Token {
   // Octal integer literals are not permitted in strict mode code
   if (context & Context.Strict) report(parser, Errors.StrictOctalEscape);
+
+  parser.flags |= Flags.Octals;
 
   let value = 0;
 
