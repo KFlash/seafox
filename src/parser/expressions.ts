@@ -2499,7 +2499,8 @@ export function parseFunctionExpression(
     type: ScopeKind.Block
   };
 
-  if ((parser.token & (Token.Contextual | Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) === 0) {
+  if ((parser.token & (Token.Contextual | Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) !== 0) {
+
     scope = {
       parent: {
         parent: void 0,
