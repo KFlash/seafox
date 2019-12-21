@@ -2500,7 +2500,6 @@ export function parseFunctionExpression(
   };
 
   if ((parser.token & (Token.Contextual | Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) !== 0) {
-
     scope = {
       parent: {
         parent: void 0,
@@ -2523,7 +2522,7 @@ export function parseFunctionExpression(
     Context.AllowNewTarget |
     generatorAndAsyncFlags;
 
-  return parseFunctionDeclarationOrExpressionRest(
+  return parseFunctionLiteral(
     parser,
     context,
     scope,
@@ -2538,7 +2537,7 @@ export function parseFunctionExpression(
   );
 }
 
-export function parseFunctionDeclarationOrExpressionRest(
+export function parseFunctionLiteral(
   parser: ParserState,
   context: Context,
   scope: any,
@@ -2998,7 +2997,7 @@ export function parseMethodDefinition(
     (kind & PropertyKind.Async ? Context.InAwaitContext : 0) |
     (kind & PropertyKind.Generator ? Context.InYieldContext : 0);
 
-  return parseFunctionDeclarationOrExpressionRest(
+  return parseFunctionLiteral(
     parser,
     (context | 0b0001000000000000001_0000_00000000 | Context.InGlobal) ^
       (0b0001000000000000001_0000_00000000 | Context.InGlobal),

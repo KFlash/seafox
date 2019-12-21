@@ -512,9 +512,10 @@ export function parseForStatementWithVariableDeclarations(
     const declarations: any[] = [];
 
     let bindingCount = 0;
-
+    let type: BindingKind;
     while (parser.token !== Token.Comma) {
       const { tokenValue, start, line, column, token } = parser;
+      type = kind | ((parser.token & Token.IsPatternStart) === Token.IsPatternStart ? BindingKind.Pattern : 0);
 
       let id;
       let init: any = null;
@@ -548,7 +549,7 @@ export function parseForStatementWithVariableDeclarations(
             }
           }
         } else if (
-          (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
+          (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
           (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
@@ -580,24 +581,26 @@ export function parseForStatementWithVariableDeclarations(
                 line,
                 column
               );
-        if (parser.flags & Flags.NotDestructible) report(parser, Errors.InvalidBindingDestruct);
 
-        if (parser.flags & Flags.AssignableDestruct) report(parser, Errors.InvalidBindingDestruct);
+        if (parser.flags & (Flags.NotDestructible | Flags.AssignableDestruct))
+          report(parser, Errors.InvalidBindingDestruct);
+
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
           init = parseExpression(parser, context | Context.DisallowIn);
 
-          if (
-            parser.token === Token.OfKeyword ||
-            (parser.token === Token.InKeyword &&
-              /* token & Token.IsPatternStart || */
-              ((kind & BindingKind.Variable) === 0 || context & (Context.Strict | Context.OptionsDisableWebCompat)))
-          ) {
-            report(parser, Errors.ForInOfLoopInitializer, 'in');
+          if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
+            if (parser.token === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
+            if (
+              (parser.token === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
+              context & (Context.Strict | Context.OptionsDisableWebCompat)
+            ) {
+              report(parser, Errors.ForInOfLoopInitializer, 'in');
+            }
           }
         } else if (
-          (kind & BindingKind.Const || (token & Token.IsPatternStart) > 0) &&
+          (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
           (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');

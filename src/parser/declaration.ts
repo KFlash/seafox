@@ -5,7 +5,7 @@ import * as ESTree from './estree';
 import { ScopeState, ScopeKind, addVarName, addBlockName } from './scope';
 import { Context, BindingKind, FunctionFlag, Origin } from './bits';
 import {
-  parseFunctionDeclarationOrExpressionRest,
+  parseFunctionLiteral,
   parseClassDeclarationOrExpressionRest,
   parseIdentifierFromValue,
   parseBindingPattern,
@@ -110,7 +110,7 @@ export function parseFunctionDeclarationRest(
     Context.AllowNewTarget |
     ((isAsync * 2 + isGenerator) << 21);
 
-  return parseFunctionDeclarationOrExpressionRest(
+  return parseFunctionLiteral(
     parser,
     context,
     innerScope,
@@ -233,24 +233,25 @@ export function parseVariableDeclarationListAndDeclarator(
   const list: ESTree.VariableDeclarator[] = [];
 
   let id: any = null;
-  let binding: BindingKind;
+  let type: BindingKind;
 
   while (parser.token !== Token.Comma) {
     const { start, line, column } = parser;
 
     // This little 'trick' speeds up the validation below
-    binding = kind | ((parser.token & Token.IsPatternStart) === Token.IsPatternStart ? BindingKind.Pattern : 0);
+    type = kind | ((parser.token & Token.IsPatternStart) === Token.IsPatternStart ? BindingKind.Pattern : 0);
 
     id = parseBindingPattern(parser, context, scope, kind, origin);
 
+    // Always set the 'initializer' to 'null' for each iteration
     let init: ESTree.Expression | null = null;
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context);
     } else if (
-      (binding & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
-      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
+      (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
+      (parser.token & 0b0000000000000000001_0000_00110000) !== 0b0000000000000000001_0000_00110000
     ) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
