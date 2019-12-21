@@ -4,7 +4,7 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
-import { Context, BindingKind, FunctionFlag, Origin } from './bits';
+import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import { ParserState, consumeSemicolon, consume, consumeOpt, setLoc } from './common';
 import {
   parseFunctionDeclaration,
@@ -261,7 +261,7 @@ export function parseExportDefaultDeclaration(
       );
       break;
     case Token.ClassKeyword:
-      declaration = parseClassDeclaration(parser, context, scope);
+      declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Hoisted);
       break;
     case Token.AsyncKeyword:
       const { tokenValue, start, line, column } = parser;
@@ -456,7 +456,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     }
 
     case Token.ClassKeyword:
-      declaration = parseClassDeclaration(parser, context, scope);
+      declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Hoisted);
       break;
     case Token.FunctionKeyword:
       declaration = parseFunctionDeclaration(

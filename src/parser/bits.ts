@@ -78,6 +78,13 @@ export const enum FunctionFlag {
   Declaration       = IsDeclaration | AllowGenerator | RequireIdentifier
 }
 
+export const enum ClassFlags {
+  None              = 0,
+  Hoisted           = 1 << 0,
+  Export            = 1 << 1,
+  RequireIdentifier = 1 << 2,
+}
+
 /**
  * Masks to track the binding kind
  */

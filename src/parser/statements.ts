@@ -3,7 +3,7 @@ import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, ScopeKind } from './scope';
-import { Flags, Context, BindingKind, FunctionFlag, Origin } from './bits';
+import { Flags, Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -115,7 +115,7 @@ export function parseStatementListItem(
     case Token.AsyncKeyword:
       return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 1);
     case Token.ClassKeyword:
-      return parseClassDeclaration(parser, context, scope);
+      return parseClassDeclaration(parser, context, scope, ClassFlags.None);
     case Token.ConstKeyword:
       return parseVariableStatementOrLexicalDeclaration(parser, context, scope, BindingKind.Const, Origin.None);
     case Token.LetKeyword:

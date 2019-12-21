@@ -3,7 +3,7 @@ import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, ScopeKind, addVarName, addBlockName } from './scope';
-import { Context, BindingKind, FunctionFlag, Origin } from './bits';
+import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import {
   parseFunctionLiteral,
   parseClassDeclarationOrExpressionRest,
@@ -136,7 +136,8 @@ export function parseFunctionDeclarationRest(
 export function parseClassDeclaration(
   parser: ParserState,
   context: Context,
-  scope: ScopeState
+  scope: ScopeState,
+  flags: ClassFlags
 ): ESTree.ClassDeclaration {
   const { start, line, column } = parser;
 
@@ -162,7 +163,18 @@ export function parseClassDeclaration(
 
     id = parseIdentifier(parser, context);
   } else {
-    report(parser, Errors.DeclNoName, 'Class');
+    // Only under the "export default" context, class declaration does not require the class name.
+    //
+    //     ExportDeclaration:
+    //         ...
+    //         export default ClassDeclaration[~Yield, +Default]
+    //         ...
+    //
+    //     ClassDeclaration[Yield, Default]:
+    //         ...
+    //         [+Default] class ClassTail[?Yield]
+    //
+    if ((flags & ClassFlags.Hoisted) === 0) report(parser, Errors.DeclNoName, 'Class');
   }
 
   return parseClassDeclarationOrExpressionRest(

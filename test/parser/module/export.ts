@@ -5,6 +5,2586 @@ import { parseModule } from '../../../src/seafox';
 describe('Module - Export', () => {
   for (const [source, ctx, expected] of [
     [
+      `export default async function() {}`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 32,
+                end: 34,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 32
+                  },
+                  end: {
+                    line: 1,
+                    column: 34
+                  }
+                }
+              },
+              async: true,
+              generator: false,
+              id: null,
+              start: 15,
+              end: 34,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 34
+                }
+              }
+            },
+            start: 0,
+            end: 34,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 34
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 34,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 34
+          }
+        }
+      }
+    ],
+    [
+      `export default x;`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'Identifier',
+              name: 'x',
+              start: 15,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `export {get}; function get() {};`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'get',
+                  start: 8,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'get',
+                  start: 8,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                start: 8,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              }
+            ],
+            declaration: null,
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 29,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 29
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'get',
+              start: 23,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 23
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            start: 14,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 31,
+            end: 32,
+            loc: {
+              start: {
+                line: 1,
+                column: 31
+              },
+              end: {
+                line: 1,
+                column: 32
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 32,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 32
+          }
+        }
+      }
+    ],
+    [
+      `export let x = 0;`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Literal',
+                    value: 0,
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `export * from 'p.js';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportAllDeclaration',
+            source: {
+              type: 'Literal',
+              value: 'p.js',
+              start: 14,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            exported: null,
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `export class C { };`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'ClassDeclaration',
+              id: {
+                type: 'Identifier',
+                name: 'C',
+                start: 13,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              superClass: null,
+              body: {
+                type: 'ClassBody',
+                body: [],
+                start: 15,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 15
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              start: 7,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 18,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 18
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
+    [
+      `export var y = 0;`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Literal',
+                    value: 0,
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `var x; export default x = 7`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 6,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 6
+              }
+            }
+          },
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'x',
+                start: 22,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 22
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Literal',
+                value: 7,
+                start: 26,
+                end: 27,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 26
+                  },
+                  end: {
+                    line: 1,
+                    column: 27
+                  }
+                }
+              },
+              start: 22,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 7,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 7
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 27,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 27
+          }
+        }
+      }
+    ],
+    [
+      `export * from 'somemodule.js';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportAllDeclaration',
+            source: {
+              type: 'Literal',
+              value: 'somemodule.js',
+              start: 14,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            exported: null,
+            start: 0,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 30,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 30
+          }
+        }
+      }
+    ],
+    [
+      `export default function(){}; export default function(){};`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 25,
+                end: 27,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 25
+                  },
+                  end: {
+                    line: 1,
+                    column: 27
+                  }
+                }
+              },
+              async: false,
+              generator: false,
+              id: null,
+              start: 15,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 0,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 27,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 27
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          },
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 54,
+                end: 56,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 54
+                  },
+                  end: {
+                    line: 1,
+                    column: 56
+                  }
+                }
+              },
+              async: false,
+              generator: false,
+              id: null,
+              start: 44,
+              end: 56,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 44
+                },
+                end: {
+                  line: 1,
+                  column: 56
+                }
+              }
+            },
+            start: 29,
+            end: 56,
+            loc: {
+              start: {
+                line: 1,
+                column: 29
+              },
+              end: {
+                line: 1,
+                column: 56
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 56,
+            end: 57,
+            loc: {
+              start: {
+                line: 1,
+                column: 56
+              },
+              end: {
+                line: 1,
+                column: 57
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 57,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 57
+          }
+        }
+      }
+    ],
+    [
+      `export {a as b};`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 13,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                start: 8,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              }
+            ],
+            declaration: null,
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `export {thing}; import * as thing from 'a.js';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'thing',
+                  start: 8,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'thing',
+                  start: 8,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                start: 8,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              }
+            ],
+            declaration: null,
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'thing',
+                  start: 28,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 28
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                },
+                start: 23,
+                end: 33,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 23
+                  },
+                  end: {
+                    line: 1,
+                    column: 33
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'a.js',
+              start: 39,
+              end: 45,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 39
+                },
+                end: {
+                  line: 1,
+                  column: 45
+                }
+              }
+            },
+            start: 16,
+            end: 46,
+            loc: {
+              start: {
+                line: 1,
+                column: 16
+              },
+              end: {
+                line: 1,
+                column: 46
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 46,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 46
+          }
+        }
+      }
+    ],
+    [
+      `export default function f() {}`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 28,
+                end: 30,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 28
+                  },
+                  end: {
+                    line: 1,
+                    column: 30
+                  }
+                }
+              },
+              async: false,
+              generator: false,
+              id: {
+                type: 'Identifier',
+                name: 'f',
+                start: 24,
+                end: 25,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 24
+                  },
+                  end: {
+                    line: 1,
+                    column: 25
+                  }
+                }
+              },
+              start: 15,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 30,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 30
+          }
+        }
+      }
+    ],
+    [
+      `export default class extends C {}`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        body: [
+          {
+            declaration: {
+              body: {
+                body: [],
+                end: 33,
+                loc: {
+                  end: {
+                    column: 33,
+                    line: 1
+                  },
+                  start: {
+                    column: 31,
+                    line: 1
+                  }
+                },
+                start: 31,
+                type: 'ClassBody'
+              },
+              end: 33,
+              id: null,
+              loc: {
+                end: {
+                  column: 33,
+                  line: 1
+                },
+                start: {
+                  column: 15,
+                  line: 1
+                }
+              },
+              start: 15,
+              superClass: {
+                end: 30,
+                loc: {
+                  end: {
+                    column: 30,
+                    line: 1
+                  },
+                  start: {
+                    column: 29,
+                    line: 1
+                  }
+                },
+                name: 'C',
+                start: 29,
+                type: 'Identifier'
+              },
+              type: 'ClassDeclaration'
+            },
+            end: 33,
+            loc: {
+              end: {
+                column: 33,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExportDefaultDeclaration'
+          }
+        ],
+        end: 33,
+        loc: {
+          end: {
+            column: 33,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'module',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `export default 42`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'Literal',
+              value: 42,
+              start: 15,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `export default function() {}`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 26,
+                end: 28,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 26
+                  },
+                  end: {
+                    line: 1,
+                    column: 28
+                  }
+                }
+              },
+              async: false,
+              generator: false,
+              id: null,
+              start: 15,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 0,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      `export { };`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: null,
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 11,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `var foo; export { foo as for };`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 4,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                start: 4,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          },
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 18,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'for',
+                  start: 25,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 25
+                    },
+                    end: {
+                      line: 1,
+                      column: 28
+                    }
+                  }
+                },
+                start: 18,
+                end: 28,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 18
+                  },
+                  end: {
+                    line: 1,
+                    column: 28
+                  }
+                }
+              }
+            ],
+            declaration: null,
+            start: 9,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 9
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `class c { }; export default c`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'c',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [],
+              start: 8,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 11,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 11
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'Identifier',
+              name: 'c',
+              start: 28,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 28
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 13,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 13
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `export const const3 = 3, const4 = 4;`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Literal',
+                    value: 3,
+                    start: 22,
+                    end: 23,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 22
+                      },
+                      end: {
+                        line: 1,
+                        column: 23
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'const3',
+                    start: 13,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  start: 13,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Literal',
+                    value: 4,
+                    start: 34,
+                    end: 35,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 34
+                      },
+                      end: {
+                        line: 1,
+                        column: 35
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'const4',
+                    start: 25,
+                    end: 31,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 25
+                      },
+                      end: {
+                        line: 1,
+                        column: 31
+                      }
+                    }
+                  },
+                  start: 25,
+                  end: 35,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 25
+                    },
+                    end: {
+                      line: 1,
+                      column: 35
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 36,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 36
+                }
+              }
+            },
+            start: 0,
+            end: 36,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 36
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 36,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 36
+          }
+        }
+      }
+    ],
+    [
+      `export {x}; export class y {};`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              }
+            ],
+            declaration: null,
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'ClassDeclaration',
+              id: {
+                type: 'Identifier',
+                name: 'y',
+                start: 25,
+                end: 26,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 25
+                  },
+                  end: {
+                    line: 1,
+                    column: 26
+                  }
+                }
+              },
+              superClass: null,
+              body: {
+                type: 'ClassBody',
+                body: [],
+                start: 27,
+                end: 29,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 27
+                  },
+                  end: {
+                    line: 1,
+                    column: 29
+                  }
+                }
+              },
+              start: 19,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 12,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 12
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 29,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 29
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 30,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 30
+          }
+        }
+      }
+    ],
+    [
+      `export {f}; export async function f() {}`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [
+              {
+                type: 'ExportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'f',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                exported: {
+                  type: 'Identifier',
+                  name: 'f',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              }
+            ],
+            declaration: null,
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 38,
+                end: 40,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 38
+                  },
+                  end: {
+                    line: 1,
+                    column: 40
+                  }
+                }
+              },
+              async: true,
+              generator: false,
+              id: {
+                type: 'Identifier',
+                name: 'f',
+                start: 34,
+                end: 35,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 34
+                  },
+                  end: {
+                    line: 1,
+                    column: 35
+                  }
+                }
+              },
+              start: 19,
+              end: 40,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 40
+                }
+              }
+            },
+            start: 12,
+            end: 40,
+            loc: {
+              start: {
+                line: 1,
+                column: 12
+              },
+              end: {
+                line: 1,
+                column: 40
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 40,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 40
+          }
+        }
+      }
+    ],
+    [
+      `export let x = y, {...z} = y;`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: null,
+            specifiers: [],
+            declaration: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 27,
+                    end: 28,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 27
+                      },
+                      end: {
+                        line: 1,
+                        column: 28
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'RestElement',
+                        argument: {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 22,
+                          end: 23,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 22
+                            },
+                            end: {
+                              line: 1,
+                              column: 23
+                            }
+                          }
+                        },
+                        start: 19,
+                        end: 23,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 23
+                          }
+                        }
+                      }
+                    ],
+                    start: 18,
+                    end: 24,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 24
+                      }
+                    }
+                  },
+                  start: 18,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 28
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `export {} from 'e';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportNamedDeclaration',
+            source: {
+              type: 'Literal',
+              value: 'e',
+              start: 15,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            specifiers: [],
+            declaration: null,
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
+    [
+      `export * from 'g';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportAllDeclaration',
+            source: {
+              type: 'Literal',
+              value: 'g',
+              start: 14,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            exported: null,
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
       `export default foo => bar`,
       Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
       {

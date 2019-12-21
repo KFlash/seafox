@@ -7427,7 +7427,7 @@ function parseFunctionDeclarationRest(parser, context, scope, flags, origin, sta
             ((isAsync * 2 + isGenerator) << 21);
     return parseFunctionLiteral(parser, context, innerScope, id, firstRestricted, flags, 'FunctionDeclaration', 0, start, line, column);
 }
-function parseClassDeclaration(parser, context, scope) {
+function parseClassDeclaration(parser, context, scope, flags) {
     const { start, line, column } = parser;
     nextToken(parser, context, 0);
     let inheritedContext = (context | 16777216) ^ 16777216;
@@ -7442,7 +7442,8 @@ function parseClassDeclaration(parser, context, scope) {
         id = parseIdentifier(parser, context);
     }
     else {
-        report(parser, 32, 'Class');
+        if ((flags & 1) === 0)
+            report(parser, 32, 'Class');
     }
     return parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, 1, 'ClassDeclaration', start, line, column);
 }
@@ -7583,7 +7584,7 @@ function parseStatementListItem(parser, context, scope, origin, labels, nestedLa
         case 2162799:
             return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 1);
         case 1179728:
-            return parseClassDeclaration(parser, context, scope);
+            return parseClassDeclaration(parser, context, scope, 0);
         case 538050636:
             return parseVariableStatementOrLexicalDeclaration(parser, context, scope, 32, 0);
         case 538181707:
@@ -8690,7 +8691,7 @@ function parseExportDefaultDeclaration(parser, context, scope, start, line, colu
             declaration = parseFunctionDeclaration(parser, context, scope, 1 | 2, 4);
             break;
         case 1179728:
-            declaration = parseClassDeclaration(parser, context, scope);
+            declaration = parseClassDeclaration(parser, context, scope, 1);
             break;
         case 2162799:
             const { tokenValue, start, line, column } = parser;
@@ -8835,7 +8836,7 @@ function parseExportDeclaration(parser, context, scope) {
             break;
         }
         case 1179728:
-            declaration = parseClassDeclaration(parser, context, scope);
+            declaration = parseClassDeclaration(parser, context, scope, 1);
             break;
         case 1179738:
             declaration = parseFunctionDeclaration(parser, context, scope, 1 | 2, 4);
