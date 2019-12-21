@@ -1042,7 +1042,7 @@ export function parseAsyncArrowOrCallExpression(
         if (parser.assignable === 0) {
           destructible |= Flags.NotDestructible;
           isSimpleParameterList = 1;
-        } else if (tokenValue === 'eval' || tokenValue === 'argumetns') {
+        } else if (tokenValue === 'eval' || tokenValue === 'arguments') {
           parser.flags |= Flags.StrictEvalArguments;
         } else if ((token & Token.FutureReserved) === Token.FutureReserved) {
           parser.flags |= Flags.HasStrictReserved;
