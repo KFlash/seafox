@@ -2,7 +2,7 @@ import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
-describe('Miscellaneous - Destructuibility', () => {
+describe('Miscellaneous - Failure', () => {
   for (const arg of [
     'a: let {}',
     'a = let {}',
@@ -99,7 +99,6 @@ describe('Miscellaneous - Destructuibility', () => {
     '\\u0000',
     'for(const let = 0;;);',
     'class A extends B { constructor() { !{constructor() { super(); }}; } }',
-    'class A extends B { constructor() { !{get constructor() { super(); }}; } }',
     '();',
     '[(a = 1)] = t;',
     '[([b])] = t;',
