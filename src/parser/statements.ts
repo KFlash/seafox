@@ -1577,7 +1577,7 @@ export function parseExpressionOrLabelledStatement(
 ): ESTree.LabeledStatement | ESTree.ExpressionStatement {
   const { tokenValue, token, start, line, column } = parser;
 
-  let expr = parsePrimaryExpression(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
+  let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, /* allowLHS */ 1, 1, start, line, column);
 
   if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.Unexpected);
 

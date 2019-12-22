@@ -3,7 +3,2133 @@ import * as t from 'assert';
 import { parseModule } from '../../../src/seafox';
 
 describe('Module - Import', () => {
+  for (const [source, ctx] of [
+    ['import', Context.Empty],
+    ['import;', Context.Empty],
+    ['import;', Context.Empty],
+    ['import {}', Context.Empty],
+    ['import {};', Context.Empty],
+    ['import {} from;', Context.Empty],
+    ["import {,} from 'a';", Context.Empty],
+    ["import {b,,} from 'a';", Context.Empty],
+    ['import from;', Context.Empty],
+    //    ["import {b as,} from 'a';", Context.Empty],
+    // ["import {function} from 'a';", Context.Empty],
+    //["import {a as function} from 'a';", Context.Empty],
+    ['{import {x} from "y";}', Context.Empty],
+    ['function f(){import {x} from "y";}', Context.Empty],
+    ['if (x); else import {x} from "y";', Context.Empty],
+    ['switch (x) { case x: import {x} from "y"; }', Context.Empty],
+    ['try { } finally { import {x} from "y"; }', Context.Empty],
+    ['do import {x} from "y"; while (x);', Context.Empty],
+    ['import foo', Context.Empty],
+    ['import', Context.Empty],
+    //    ['import {await} from "foo";', Context.Empty],
+    //['import {foo as await} from "foo";', Context.Empty],
+    //['import await, {x, y, z} from "foo";', Context.Empty],
+    //['import eval, {x, y, z} from "foo";', Context.Empty],
+    // ['import package, {x, y, z} from "foo";', Context.Empty],
+    ['import * from "foo"', Context.Strict | Context.Module],
+    ['import * as from', Context.Strict | Context.Module],
+    ['import * as x', Context.Strict | Context.Module],
+    // ['import { null } from "null"', Context.Strict | Context.Module],
+    // ['import { implements } from "null"', Context.Strict | Context.Module],
+    //  ['import { foo as switch } from "module";', Context.Strict | Context.Module],
+    ['import { foo, , } from "module";', Context.Strict | Context.Module],
+    ['import * as a in b from "foo";', Context.Strict | Context.Module],
+    ["import { {} } from 'foo';", Context.Strict | Context.Module],
+    ["import { !d } from 'foo';", Context.Strict | Context.Module],
+    ["import { 123 } from 'foo';", Context.Strict | Context.Module],
+    ["import a, *= from 'foo';", Context.Strict | Context.Module],
+    ["import a, ** from 'foo';", Context.Strict | Context.Module],
+    ["import a, **= from 'foo';", Context.Strict | Context.Module],
+    ["import *= from 'foo';", Context.Strict | Context.Module],
+    ['import foo, from "bar";', Context.Strict | Context.Module],
+    ['import ghost from ;', Context.Strict | Context.Module],
+    ['import ghost from 12', Context.Strict | Context.Module],
+    ['import ghost from []', Context.Strict | Context.Module],
+    ["import { [123] } from 'foo';", Context.Strict | Context.Module],
+    ['import { a } from;', Context.Strict | Context.Module],
+    ["import / as a from 'a'", Context.Strict | Context.Module],
+    ["import * as b, a from 'a'", Context.Strict | Context.Module],
+    ["import {,} from 'a';", Context.Strict | Context.Module],
+    ["import {b,,} from 'a';", Context.Strict | Context.Module],
+    ["import * As a from 'a'", Context.Strict | Context.Module],
+    // ["import {eval} from 'x'", Context.Strict | Context.Module],
+    ['import {a b} from "foo";', Context.Strict | Context.Module],
+    ['import foo, bar from "foo.js";', Context.Strict | Context.Module],
+    ['import { foo }, * as ns1 from "foo.js";', Context.Strict | Context.Module],
+    ['import [ foo ] from "foo.js";', Context.Strict | Context.Module],
+    ['import { foo as ', Context.Strict | Context.Module],
+    ['import;', Context.Strict | Context.Module],
+    ['import {}', Context.Strict | Context.Module],
+    ['import {} from;', Context.Strict | Context.Module],
+    ["import {,} from 'a';", Context.Strict | Context.Module],
+    ['import foo, from "bar";', Context.Strict | Context.Module],
+    ["import {b,,c} from 'a';", Context.Empty],
+    ["import {b,c,,} from 'a';", Context.Empty],
+    ["import * As a from 'a'", Context.Empty],
+    ["import / as a from 'a'", Context.Empty],
+    ["import * as b, a from 'a'", Context.Empty],
+    ["import a as b from 'a'", Context.Empty],
+    ["import a, b from 'a'", Context.Empty]
+  ]) {
+    it(source as string, () => {
+      t.throws(() => {
+        parseModule(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
+        });
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
+    [
+      `import thing, * as rest from 'foo';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'thing',
+                  start: 7,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                start: 7,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'rest',
+                  start: 19,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                start: 14,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo',
+              start: 29,
+              end: 34,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 29
+                },
+                end: {
+                  line: 1,
+                  column: 34
+                }
+              }
+            },
+            start: 0,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 35,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 35
+          }
+        }
+      }
+    ],
+    [
+      `import {m as mm} from 'foo';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'mm',
+                  start: 13,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'm',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo',
+              start: 22,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 0,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      `import * as foob from 'bar.js';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'foob',
+                  start: 12,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                start: 7,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'bar.js',
+              start: 22,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `import { a } from 'm.js';`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                start: 9,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'm.js',
+              start: 18,
+              end: 24,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 18
+                },
+                end: {
+                  line: 1,
+                  column: 24
+                }
+              }
+            },
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      `import * as foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 12,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                start: 7,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo.js',
+              start: 21,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 21
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 0,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          },
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'ArrowFunctionExpression',
+                      body: {
+                        type: 'BlockStatement',
+                        body: [
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'AssignmentExpression',
+                              left: {
+                                type: 'Identifier',
+                                name: 'foo',
+                                start: 46,
+                                end: 49,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 46
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 49
+                                  }
+                                }
+                              },
+                              operator: '=',
+                              right: {
+                                type: 'Literal',
+                                value: 12,
+                                start: 52,
+                                end: 54,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 52
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 54
+                                  }
+                                }
+                              },
+                              start: 46,
+                              end: 54,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 46
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 54
+                                }
+                              }
+                            },
+                            start: 46,
+                            end: 55,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 46
+                              },
+                              end: {
+                                line: 1,
+                                column: 55
+                              }
+                            }
+                          }
+                        ],
+                        start: 44,
+                        end: 57,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 44
+                          },
+                          end: {
+                            line: 1,
+                            column: 57
+                          }
+                        }
+                      },
+                      params: [],
+                      async: false,
+                      expression: false,
+                      start: 38,
+                      end: 57,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 38
+                        },
+                        end: {
+                          line: 1,
+                          column: 57
+                        }
+                      }
+                    },
+                    arguments: [],
+                    optional: false,
+                    shortCircuited: false,
+                    start: 37,
+                    end: 60,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 37
+                      },
+                      end: {
+                        line: 1,
+                        column: 60
+                      }
+                    }
+                  },
+                  start: 37,
+                  end: 60,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 37
+                    },
+                    end: {
+                      line: 1,
+                      column: 60
+                    }
+                  }
+                }
+              ],
+              start: 35,
+              end: 62,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 35
+                },
+                end: {
+                  line: 1,
+                  column: 62
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'Identifier',
+                name: 'e',
+                start: 69,
+                end: 70,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 69
+                  },
+                  end: {
+                    line: 1,
+                    column: 70
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [
+                  {
+                    type: 'ExpressionStatement',
+                    expression: {
+                      type: 'CallExpression',
+                      callee: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'Identifier',
+                          name: 'assert',
+                          start: 74,
+                          end: 80,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 74
+                            },
+                            end: {
+                              line: 1,
+                              column: 80
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'areEqual',
+                          start: 81,
+                          end: 89,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 81
+                            },
+                            end: {
+                              line: 1,
+                              column: 89
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 74,
+                        end: 89,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 74
+                          },
+                          end: {
+                            line: 1,
+                            column: 89
+                          }
+                        }
+                      },
+                      arguments: [
+                        {
+                          type: 'Literal',
+                          value: 'Assignment to const',
+                          start: 90,
+                          end: 111,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 90
+                            },
+                            end: {
+                              line: 1,
+                              column: 111
+                            }
+                          }
+                        },
+                        {
+                          type: 'MemberExpression',
+                          object: {
+                            type: 'Identifier',
+                            name: 'e',
+                            start: 113,
+                            end: 114,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 113
+                              },
+                              end: {
+                                line: 1,
+                                column: 114
+                              }
+                            }
+                          },
+                          computed: false,
+                          property: {
+                            type: 'Identifier',
+                            name: 'message',
+                            start: 115,
+                            end: 122,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 115
+                              },
+                              end: {
+                                line: 1,
+                                column: 122
+                              }
+                            }
+                          },
+                          optional: false,
+                          shortCircuited: false,
+                          start: 113,
+                          end: 122,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 113
+                            },
+                            end: {
+                              line: 1,
+                              column: 122
+                            }
+                          }
+                        }
+                      ],
+                      optional: false,
+                      shortCircuited: false,
+                      start: 74,
+                      end: 123,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 74
+                        },
+                        end: {
+                          line: 1,
+                          column: 123
+                        }
+                      }
+                    },
+                    start: 74,
+                    end: 124,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 74
+                      },
+                      end: {
+                        line: 1,
+                        column: 124
+                      }
+                    }
+                  }
+                ],
+                start: 72,
+                end: 126,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 72
+                  },
+                  end: {
+                    line: 1,
+                    column: 126
+                  }
+                }
+              },
+              start: 63,
+              end: 126,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 63
+                },
+                end: {
+                  line: 1,
+                  column: 126
+                }
+              }
+            },
+            finalizer: null,
+            start: 31,
+            end: 126,
+            loc: {
+              start: {
+                line: 1,
+                column: 31
+              },
+              end: {
+                line: 1,
+                column: 126
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 126,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 126
+          }
+        }
+      }
+    ],
+    [
+      `import {k as l, m} from "module";`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'l',
+                  start: 13,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'k',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'm',
+                  start: 16,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'm',
+                  start: 16,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                start: 16,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'module',
+              start: 24,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 24
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            start: 0,
+            end: 33,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 33
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 33,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 33
+          }
+        }
+      }
+    ],
+    [
+      `import foo, {bar} from "foo";`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 7,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                start: 7,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'bar',
+                  start: 13,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'bar',
+                  start: 13,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                start: 13,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo',
+              start: 23,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 23
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `import { null as nil } from "bar"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'nil',
+                  start: 17,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 17
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'null',
+                  start: 9,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                start: 9,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'bar',
+              start: 28,
+              end: 33,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 28
+                },
+                end: {
+                  line: 1,
+                  column: 33
+                }
+              }
+            },
+            start: 0,
+            end: 33,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 33
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 33,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 33
+          }
+        }
+      }
+    ],
+    [
+      `import b, * as c from "module";`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 7,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'c',
+                  start: 15,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                start: 10,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'module',
+              start: 22,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `import x, * as ns from "foo"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 7,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'ns',
+                  start: 15,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                start: 10,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo',
+              start: 23,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 23
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 0,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      `import {a, b} from "c"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'c',
+              start: 19,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      `import x, * as a from "y"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 7,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              {
+                type: 'ImportNamespaceSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 15,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                start: 10,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 22,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      `import {x} from "y"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 16,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
+    [
+      `import {x,} from "y"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 17,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
+
+    [
+      `import {x as z} from "y"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'z',
+                  start: 13,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 21,
+              end: 24,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 21
+                },
+                end: {
+                  line: 1,
+                  column: 24
+                }
+              }
+            },
+            start: 0,
+            end: 24,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 24
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 24,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 24
+          }
+        }
+      }
+    ],
     [
       `import {} from "foo";`,
       Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,

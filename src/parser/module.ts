@@ -463,7 +463,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         parser,
         context,
         scope,
-        FunctionFlag.IsDeclaration | FunctionFlag.AllowGenerator,
+        FunctionFlag.IsDeclaration | FunctionFlag.AllowGenerator | FunctionFlag.RequireIdentifier,
         Origin.TopLevel
       );
       break;
