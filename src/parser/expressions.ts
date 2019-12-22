@@ -251,7 +251,7 @@ export function parseBinaryExpression(
       parser.start,
       parser.line,
       parser.column,
-      parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 0)
+      parseLeftHandSideExpression(parser, context, inGroup, /* allowLHS */ 1, 0)
     );
 
     parser.assignable = 0;
