@@ -1577,7 +1577,7 @@ export function parseArrowFunctionAfterParen(
     report(parser, Errors.InvalidArrowDestructLHS);
   }
   if (context & (Context.Strict | Context.InYieldContext) && conjuncted & Flags.SeenYield) {
-    report(parser, Errors.Unexpected);
+    report(parser, Errors.YieldInParameter);
   }
 
   parser.flags =
@@ -1880,7 +1880,7 @@ export function parseParenthesizedExpression(
   }
 
   parser.flags =
-    ((parser.flags | Flags.SeenYield | Flags.Destructuring) ^ (Flags.SeenYield | Flags.Destructuring)) | conjuncted;
+    ((parser.flags | Flags.Destructuring | Flags.SeenYield) ^ (Flags.Destructuring | Flags.SeenYield)) | conjuncted;
 
   return expr;
 }
@@ -2708,8 +2708,8 @@ export function parseFunctionBody(
   }
 
   parser.flags =
-    (parser.flags | Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals) ^
-    (Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals);
+    (parser.flags | Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals | Flags.SeenYield) ^
+    (Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals | Flags.SeenYield);
 
   while (parser.token !== Token.RightBrace) {
     body.push(parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null));
@@ -2717,7 +2717,9 @@ export function parseFunctionBody(
 
   consume(parser, context, Token.RightBrace, flags & FunctionFlag.IsDeclaration ? 1 : 0);
 
-  parser.flags = (parser.flags | Flags.SimpleParameterList | Flags.Octals) ^ (Flags.SimpleParameterList | Flags.Octals);
+  parser.flags =
+    (parser.flags | Flags.SimpleParameterList | Flags.Octals | Flags.SeenYield) ^
+    (Flags.SimpleParameterList | Flags.Octals | Flags.SeenYield);
 
   return context & Context.OptionsLoc
     ? {
@@ -3835,7 +3837,7 @@ export function parseObjectLiteralOrPattern(
           const { start, line, column, tokenValue, token: tokenAfterColon } = parser;
 
           if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
-            value = parsePrimaryExpression(parser, context, type, 1, 1, 1, inGroup, start, line, column);
+            value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
 
             const { token } = parser;
 

@@ -547,6 +547,454 @@ describe('Expressions - Yield', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `function* x({y = (0x44FB6C6428574)}) { while (({} = ([]), {} = function (z) { while (((yield))) ;}) => f = [, ]) {}}`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            async: false,
+            body: {
+              body: [
+                {
+                  body: {
+                    body: [],
+                    end: 115,
+                    loc: {
+                      end: {
+                        column: 115,
+                        line: 1
+                      },
+                      start: {
+                        column: 113,
+                        line: 1
+                      }
+                    },
+                    start: 113,
+                    type: 'BlockStatement'
+                  },
+                  end: 115,
+                  loc: {
+                    end: {
+                      column: 115,
+                      line: 1
+                    },
+                    start: {
+                      column: 39,
+                      line: 1
+                    }
+                  },
+                  start: 39,
+                  test: {
+                    async: false,
+                    body: {
+                      end: 111,
+                      left: {
+                        end: 104,
+                        loc: {
+                          end: {
+                            column: 104,
+                            line: 1
+                          },
+                          start: {
+                            column: 103,
+                            line: 1
+                          }
+                        },
+                        name: 'f',
+                        start: 103,
+                        type: 'Identifier'
+                      },
+                      loc: {
+                        end: {
+                          column: 111,
+                          line: 1
+                        },
+                        start: {
+                          column: 103,
+                          line: 1
+                        }
+                      },
+                      operator: '=',
+                      right: {
+                        elements: [null],
+                        end: 111,
+                        loc: {
+                          end: {
+                            column: 111,
+                            line: 1
+                          },
+                          start: {
+                            column: 107,
+                            line: 1
+                          }
+                        },
+                        start: 107,
+                        type: 'ArrayExpression'
+                      },
+                      start: 103,
+                      type: 'AssignmentExpression'
+                    },
+                    end: 111,
+                    expression: true,
+                    loc: {
+                      end: {
+                        column: 111,
+                        line: 1
+                      },
+                      start: {
+                        column: 46,
+                        line: 1
+                      }
+                    },
+                    params: [
+                      {
+                        end: 56,
+                        left: {
+                          end: 49,
+                          loc: {
+                            end: {
+                              column: 49,
+                              line: 1
+                            },
+                            start: {
+                              column: 47,
+                              line: 1
+                            }
+                          },
+                          properties: [],
+                          start: 47,
+                          type: 'ObjectPattern'
+                        },
+                        loc: {
+                          end: {
+                            column: 56,
+                            line: 1
+                          },
+                          start: {
+                            column: 47,
+                            line: 1
+                          }
+                        },
+                        right: {
+                          elements: [],
+                          end: 55,
+                          loc: {
+                            end: {
+                              column: 55,
+                              line: 1
+                            },
+                            start: {
+                              column: 53,
+                              line: 1
+                            }
+                          },
+                          start: 53,
+                          type: 'ArrayExpression'
+                        },
+                        start: 47,
+                        type: 'AssignmentPattern'
+                      },
+                      {
+                        end: 98,
+                        left: {
+                          end: 60,
+                          loc: {
+                            end: {
+                              column: 60,
+                              line: 1
+                            },
+                            start: {
+                              column: 58,
+                              line: 1
+                            }
+                          },
+                          properties: [],
+                          start: 58,
+                          type: 'ObjectPattern'
+                        },
+                        loc: {
+                          end: {
+                            column: 98,
+                            line: 1
+                          },
+                          start: {
+                            column: 58,
+                            line: 1
+                          }
+                        },
+                        right: {
+                          async: false,
+                          body: {
+                            body: [
+                              {
+                                body: {
+                                  end: 97,
+                                  loc: {
+                                    end: {
+                                      column: 97,
+                                      line: 1
+                                    },
+                                    start: {
+                                      column: 96,
+                                      line: 1
+                                    }
+                                  },
+                                  start: 96,
+                                  type: 'EmptyStatement'
+                                },
+                                end: 97,
+                                loc: {
+                                  end: {
+                                    column: 97,
+                                    line: 1
+                                  },
+                                  start: {
+                                    column: 78,
+                                    line: 1
+                                  }
+                                },
+                                start: 78,
+                                test: {
+                                  end: 92,
+                                  loc: {
+                                    end: {
+                                      column: 92,
+                                      line: 1
+                                    },
+                                    start: {
+                                      column: 87,
+                                      line: 1
+                                    }
+                                  },
+                                  name: 'yield',
+                                  start: 87,
+                                  type: 'Identifier'
+                                },
+                                type: 'WhileStatement'
+                              }
+                            ],
+                            end: 98,
+                            loc: {
+                              end: {
+                                column: 98,
+                                line: 1
+                              },
+                              start: {
+                                column: 76,
+                                line: 1
+                              }
+                            },
+                            start: 76,
+                            type: 'BlockStatement'
+                          },
+                          end: 98,
+                          generator: false,
+                          id: null,
+                          loc: {
+                            end: {
+                              column: 98,
+                              line: 1
+                            },
+                            start: {
+                              column: 63,
+                              line: 1
+                            }
+                          },
+                          params: [
+                            {
+                              end: 74,
+                              loc: {
+                                end: {
+                                  column: 74,
+                                  line: 1
+                                },
+                                start: {
+                                  column: 73,
+                                  line: 1
+                                }
+                              },
+                              name: 'z',
+                              start: 73,
+                              type: 'Identifier'
+                            }
+                          ],
+                          start: 63,
+                          type: 'FunctionExpression'
+                        },
+                        start: 58,
+                        type: 'AssignmentPattern'
+                      }
+                    ],
+                    start: 46,
+                    type: 'ArrowFunctionExpression'
+                  },
+                  type: 'WhileStatement'
+                }
+              ],
+              end: 116,
+              loc: {
+                end: {
+                  column: 116,
+                  line: 1
+                },
+                start: {
+                  column: 37,
+                  line: 1
+                }
+              },
+              start: 37,
+              type: 'BlockStatement'
+            },
+            end: 116,
+            generator: true,
+            id: {
+              end: 11,
+              loc: {
+                end: {
+                  column: 11,
+                  line: 1
+                },
+                start: {
+                  column: 10,
+                  line: 1
+                }
+              },
+              name: 'x',
+              start: 10,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 116,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            params: [
+              {
+                end: 35,
+                loc: {
+                  end: {
+                    column: 35,
+                    line: 1
+                  },
+                  start: {
+                    column: 12,
+                    line: 1
+                  }
+                },
+                properties: [
+                  {
+                    computed: false,
+                    end: 34,
+                    key: {
+                      end: 14,
+                      loc: {
+                        end: {
+                          column: 14,
+                          line: 1
+                        },
+                        start: {
+                          column: 13,
+                          line: 1
+                        }
+                      },
+                      name: 'y',
+                      start: 13,
+                      type: 'Identifier'
+                    },
+                    kind: 'init',
+                    loc: {
+                      end: {
+                        column: 34,
+                        line: 1
+                      },
+                      start: {
+                        column: 13,
+                        line: 1
+                      }
+                    },
+                    method: false,
+                    shorthand: true,
+                    start: 13,
+                    type: 'Property',
+                    value: {
+                      end: 34,
+                      left: {
+                        end: 14,
+                        loc: {
+                          end: {
+                            column: 14,
+                            line: 1
+                          },
+                          start: {
+                            column: 13,
+                            line: 1
+                          }
+                        },
+                        name: 'y',
+                        start: 13,
+                        type: 'Identifier'
+                      },
+                      loc: {
+                        end: {
+                          column: 34,
+                          line: 1
+                        },
+                        start: {
+                          column: 13,
+                          line: 1
+                        }
+                      },
+                      right: {
+                        end: 33,
+                        loc: {
+                          end: {
+                            column: 33,
+                            line: 1
+                          },
+                          start: {
+                            column: 18,
+                            line: 1
+                          }
+                        },
+                        start: 18,
+                        type: 'Literal',
+                        value: 1213546335733108
+                      },
+                      start: 13,
+                      type: 'AssignmentPattern'
+                    }
+                  }
+                ],
+                start: 12,
+                type: 'ObjectPattern'
+              }
+            ],
+            start: 0,
+            type: 'FunctionDeclaration'
+          }
+        ],
+        end: 116,
+        loc: {
+          end: {
+            column: 116,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
       `var gen = function *() {
         yield {
             ...yield,
