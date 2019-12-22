@@ -1167,7 +1167,7 @@ export function parseAsyncArrowOrCallExpression(
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
   conjuncted |=
-    parser.flags & Flags.SeenYield ? Flags.SeenYield : 0 | (parser.flags & Flags.SeenAwait) ? Flags.SeenAwait : 0;
+    (parser.flags & Flags.SeenYield ? Flags.SeenYield : 0) | (parser.flags & Flags.SeenAwait) ? Flags.SeenAwait : 0;
 
   if (parser.token === Token.Arrow) {
     if (context & (Context.Strict | Context.InYieldContext) && conjuncted & Flags.SeenYield)
@@ -1880,7 +1880,7 @@ export function parseParenthesizedExpression(
   }
 
   conjuncted |=
-    parser.flags & Flags.SeenYield ? Flags.SeenYield : 0 | (parser.flags & Flags.SeenAwait) ? Flags.SeenAwait : 0;
+    (parser.flags & Flags.SeenYield ? Flags.SeenYield : 0) | (parser.flags & Flags.SeenAwait) ? Flags.SeenAwait : 0;
 
   if (parser.token === Token.Arrow) {
     if (context & (Context.Strict | Context.InYieldContext) && conjuncted & Flags.SeenYield) {
