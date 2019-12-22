@@ -933,9 +933,12 @@ export function parseAsyncExpression(
     // async Identifier => ...
     if ((parser.token & Token.IsIdentifier) === Token.IsIdentifier) {
       if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Type]);
-
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+      if (parser.token === Token.AwaitKeyword) report(parser, Errors.AwaitInParameter);
 
+      if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
+        report(parser, Errors.YieldInParameter);
+      }
       return parseAsyncArrowIdentifier(
         parser,
         context,
@@ -969,6 +972,11 @@ export function parseAsyncExpression(
 
   if (parser.token === Token.Arrow) {
     if (inNew === 1) report(parser, Errors.InvalidAsyncArrow);
+    if (parser.token === Token.AwaitKeyword) report(parser, Errors.AwaitInParameter);
+
+    if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
+      report(parser, Errors.YieldInParameter);
+    }
     return parseAsyncArrowIdentifier(parser, context, 0, 'async', expr, curStart, curLine, curColumn);
   }
 
@@ -1173,6 +1181,8 @@ export function parseAsyncArrowOrCallExpression(
   if (parser.token === Token.Arrow) {
     return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, params, canAssign, 1, start, line, column);
   }
+
+  parser.flags = (parser.flags | Flags.SeenYield) ^ Flags.SeenYield;
 
   if (conjuncted & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
@@ -1879,8 +1889,7 @@ export function parseParenthesizedExpression(
     report(parser, Errors.UncompleteArrow);
   }
 
-  parser.flags =
-    ((parser.flags | Flags.Destructuring | Flags.SeenYield) ^ (Flags.Destructuring | Flags.SeenYield)) | conjuncted;
+  parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
 
   return expr;
 }
@@ -2718,8 +2727,7 @@ export function parseFunctionBody(
   consume(parser, context, Token.RightBrace, flags & FunctionFlag.IsDeclaration ? 1 : 0);
 
   parser.flags =
-    (parser.flags | Flags.SimpleParameterList | Flags.Octals | Flags.SeenYield) ^
-    (Flags.SimpleParameterList | Flags.Octals | Flags.SeenYield);
+    (parser.flags | Flags.SimpleParameterList | Flags.SeenYield) ^ (Flags.SimpleParameterList | Flags.SeenYield);
 
   return context & Context.OptionsLoc
     ? {
@@ -4274,9 +4282,13 @@ export function parseAndClassifyIdentifier(
   allowRegExp: 0 | 1 = 0
 ): ESTree.Identifier {
   if (context & Context.Strict) {
-    //if ((t & Token.FutureReserved) === Token.FutureReserved) {
-    // report(parser, Errors.UnexpectedStrictReserved);
-    //}
+    if ((t & Token.FutureReserved) === Token.FutureReserved) {
+      report(parser, Errors.UnexpectedStrictReserved);
+    }
+  }
+
+  if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {
+    report(parser, Errors.AwaitOutsideAsync);
   }
 
   if ((t & Token.Keyword) === Token.Keyword) {

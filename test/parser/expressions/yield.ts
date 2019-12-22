@@ -130,7 +130,7 @@ describe('Expressions - Yield', () => {
     ['"use strict"; +yield;', Context.Empty],
     ['(class yield {})', Context.Empty],
     ['"use strict"; ([yield] = a)', Context.Empty],
-    // ['function a(){ "use strict"; function a(yield){}}', Context.Empty],
+    ['function a(){ "use strict"; function a(yield){}}', Context.Empty],
     ['function* g(){ ({[yield]: a}) => 0; }', Context.Empty],
     ['function* g(){ ({ *m(a = yield){} }); }', Context.Empty],
     ['function* g(){ ({ *m({[yield]: a}){} }); }', Context.Empty],
@@ -187,6 +187,8 @@ describe('Expressions - Yield', () => {
     ['function *g() { (x = yield) => {}; }', Context.Empty],
     ['function *g() { (x = y = yield z) => {}; }', Context.Empty],
     ['function *g() { (x = y + yield z) => {}; }', Context.Empty],
+    ['function *x() { async yield => a}', Context.Empty],
+    ['function *x(yield) { async await => a}', Context.Empty],
     ['function *g() { (x = y + yield); }', Context.Empty],
     ['function *g() { (x = y + yield y); }', Context.Empty],
     ['function *g() { (x = y + yield) => x; }', Context.Empty],
@@ -992,6 +994,3374 @@ describe('Expressions - Yield', () => {
         sourceType: 'script',
         start: 0,
         type: 'Program'
+      }
+    ],
+    [
+      `x(10, y(...(function*() {
+        yield 1;
+        yield 2;
+        yield 3;
+        yield 4;
+      })()));`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'x',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'Literal',
+                  value: 10,
+                  start: 2,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 6,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  },
+                  arguments: [
+                    {
+                      type: 'SpreadElement',
+                      argument: {
+                        type: 'CallExpression',
+                        callee: {
+                          type: 'FunctionExpression',
+                          params: [],
+                          body: {
+                            type: 'BlockStatement',
+                            body: [
+                              {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                  type: 'YieldExpression',
+                                  argument: {
+                                    type: 'Literal',
+                                    value: 1,
+                                    start: 40,
+                                    end: 41,
+                                    loc: {
+                                      start: {
+                                        line: 2,
+                                        column: 14
+                                      },
+                                      end: {
+                                        line: 2,
+                                        column: 15
+                                      }
+                                    }
+                                  },
+                                  delegate: false,
+                                  start: 34,
+                                  end: 41,
+                                  loc: {
+                                    start: {
+                                      line: 2,
+                                      column: 8
+                                    },
+                                    end: {
+                                      line: 2,
+                                      column: 15
+                                    }
+                                  }
+                                },
+                                start: 34,
+                                end: 42,
+                                loc: {
+                                  start: {
+                                    line: 2,
+                                    column: 8
+                                  },
+                                  end: {
+                                    line: 2,
+                                    column: 16
+                                  }
+                                }
+                              },
+                              {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                  type: 'YieldExpression',
+                                  argument: {
+                                    type: 'Literal',
+                                    value: 2,
+                                    start: 57,
+                                    end: 58,
+                                    loc: {
+                                      start: {
+                                        line: 3,
+                                        column: 14
+                                      },
+                                      end: {
+                                        line: 3,
+                                        column: 15
+                                      }
+                                    }
+                                  },
+                                  delegate: false,
+                                  start: 51,
+                                  end: 58,
+                                  loc: {
+                                    start: {
+                                      line: 3,
+                                      column: 8
+                                    },
+                                    end: {
+                                      line: 3,
+                                      column: 15
+                                    }
+                                  }
+                                },
+                                start: 51,
+                                end: 59,
+                                loc: {
+                                  start: {
+                                    line: 3,
+                                    column: 8
+                                  },
+                                  end: {
+                                    line: 3,
+                                    column: 16
+                                  }
+                                }
+                              },
+                              {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                  type: 'YieldExpression',
+                                  argument: {
+                                    type: 'Literal',
+                                    value: 3,
+                                    start: 74,
+                                    end: 75,
+                                    loc: {
+                                      start: {
+                                        line: 4,
+                                        column: 14
+                                      },
+                                      end: {
+                                        line: 4,
+                                        column: 15
+                                      }
+                                    }
+                                  },
+                                  delegate: false,
+                                  start: 68,
+                                  end: 75,
+                                  loc: {
+                                    start: {
+                                      line: 4,
+                                      column: 8
+                                    },
+                                    end: {
+                                      line: 4,
+                                      column: 15
+                                    }
+                                  }
+                                },
+                                start: 68,
+                                end: 76,
+                                loc: {
+                                  start: {
+                                    line: 4,
+                                    column: 8
+                                  },
+                                  end: {
+                                    line: 4,
+                                    column: 16
+                                  }
+                                }
+                              },
+                              {
+                                type: 'ExpressionStatement',
+                                expression: {
+                                  type: 'YieldExpression',
+                                  argument: {
+                                    type: 'Literal',
+                                    value: 4,
+                                    start: 91,
+                                    end: 92,
+                                    loc: {
+                                      start: {
+                                        line: 5,
+                                        column: 14
+                                      },
+                                      end: {
+                                        line: 5,
+                                        column: 15
+                                      }
+                                    }
+                                  },
+                                  delegate: false,
+                                  start: 85,
+                                  end: 92,
+                                  loc: {
+                                    start: {
+                                      line: 5,
+                                      column: 8
+                                    },
+                                    end: {
+                                      line: 5,
+                                      column: 15
+                                    }
+                                  }
+                                },
+                                start: 85,
+                                end: 93,
+                                loc: {
+                                  start: {
+                                    line: 5,
+                                    column: 8
+                                  },
+                                  end: {
+                                    line: 5,
+                                    column: 16
+                                  }
+                                }
+                              }
+                            ],
+                            start: 24,
+                            end: 101,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 24
+                              },
+                              end: {
+                                line: 6,
+                                column: 7
+                              }
+                            }
+                          },
+                          async: false,
+                          generator: true,
+                          id: null,
+                          start: 12,
+                          end: 101,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 6,
+                              column: 7
+                            }
+                          }
+                        },
+                        arguments: [],
+                        optional: false,
+                        shortCircuited: false,
+                        start: 11,
+                        end: 104,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 6,
+                            column: 10
+                          }
+                        }
+                      },
+                      start: 8,
+                      end: 104,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 6,
+                          column: 10
+                        }
+                      }
+                    }
+                  ],
+                  optional: false,
+                  shortCircuited: false,
+                  start: 6,
+                  end: 105,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 6,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              optional: false,
+              shortCircuited: false,
+              start: 0,
+              end: 106,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 6,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 107,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 6,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 107,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 6,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `x(...(function*(){ yield 1; yield 2; yield 3; })())`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'x',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'SpreadElement',
+                  argument: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'FunctionExpression',
+                      params: [],
+                      body: {
+                        type: 'BlockStatement',
+                        body: [
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'Literal',
+                                value: 1,
+                                start: 25,
+                                end: 26,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 25
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 26
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 19,
+                              end: 26,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 19
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 26
+                                }
+                              }
+                            },
+                            start: 19,
+                            end: 27,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 19
+                              },
+                              end: {
+                                line: 1,
+                                column: 27
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'Literal',
+                                value: 2,
+                                start: 34,
+                                end: 35,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 34
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 35
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 28,
+                              end: 35,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 28
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 35
+                                }
+                              }
+                            },
+                            start: 28,
+                            end: 36,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 28
+                              },
+                              end: {
+                                line: 1,
+                                column: 36
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'Literal',
+                                value: 3,
+                                start: 43,
+                                end: 44,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 43
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 44
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 37,
+                              end: 44,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 37
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 44
+                                }
+                              }
+                            },
+                            start: 37,
+                            end: 45,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 37
+                              },
+                              end: {
+                                line: 1,
+                                column: 45
+                              }
+                            }
+                          }
+                        ],
+                        start: 17,
+                        end: 47,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 17
+                          },
+                          end: {
+                            line: 1,
+                            column: 47
+                          }
+                        }
+                      },
+                      async: false,
+                      generator: true,
+                      id: null,
+                      start: 6,
+                      end: 47,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 47
+                        }
+                      }
+                    },
+                    arguments: [],
+                    optional: false,
+                    shortCircuited: false,
+                    start: 5,
+                    end: 50,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 50
+                      }
+                    }
+                  },
+                  start: 2,
+                  end: 50,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 50
+                    }
+                  }
+                }
+              ],
+              optional: false,
+              shortCircuited: false,
+              start: 0,
+              end: 51,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 51
+                }
+              }
+            },
+            start: 0,
+            end: 51,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 51
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 51,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 51
+          }
+        }
+      }
+    ],
+    [
+      `function* c() { log += 'C1'; yield 1; log += 'C2'; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'log',
+                      start: 16,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 16
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    operator: '+=',
+                    right: {
+                      type: 'Literal',
+                      value: 'C1',
+                      start: 23,
+                      end: 27,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 27
+                        }
+                      }
+                    },
+                    start: 16,
+                    end: 27,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 16
+                      },
+                      end: {
+                        line: 1,
+                        column: 27
+                      }
+                    }
+                  },
+                  start: 16,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 28
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 35,
+                      end: 36,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 35
+                        },
+                        end: {
+                          line: 1,
+                          column: 36
+                        }
+                      }
+                    },
+                    delegate: false,
+                    start: 29,
+                    end: 36,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 29
+                      },
+                      end: {
+                        line: 1,
+                        column: 36
+                      }
+                    }
+                  },
+                  start: 29,
+                  end: 37,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 29
+                    },
+                    end: {
+                      line: 1,
+                      column: 37
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'log',
+                      start: 38,
+                      end: 41,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 38
+                        },
+                        end: {
+                          line: 1,
+                          column: 41
+                        }
+                      }
+                    },
+                    operator: '+=',
+                    right: {
+                      type: 'Literal',
+                      value: 'C2',
+                      start: 45,
+                      end: 49,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 45
+                        },
+                        end: {
+                          line: 1,
+                          column: 49
+                        }
+                      }
+                    },
+                    start: 38,
+                    end: 49,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 38
+                      },
+                      end: {
+                        line: 1,
+                        column: 49
+                      }
+                    }
+                  },
+                  start: 38,
+                  end: 50,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 38
+                    },
+                    end: {
+                      line: 1,
+                      column: 50
+                    }
+                  }
+                }
+              ],
+              start: 14,
+              end: 52,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 52
+                }
+              }
+            },
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 52,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 52
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 52,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 52
+          }
+        }
+      }
+    ],
+    [
+      `function *gen1() { yield 1; return 2; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 25,
+                      end: 26,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 25
+                        },
+                        end: {
+                          line: 1,
+                          column: 26
+                        }
+                      }
+                    },
+                    delegate: false,
+                    start: 19,
+                    end: 26,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 26
+                      }
+                    }
+                  },
+                  start: 19,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 27
+                    }
+                  }
+                },
+                {
+                  type: 'ReturnStatement',
+                  argument: {
+                    type: 'Literal',
+                    value: 2,
+                    start: 35,
+                    end: 36,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 35
+                      },
+                      end: {
+                        line: 1,
+                        column: 36
+                      }
+                    }
+                  },
+                  start: 28,
+                  end: 37,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 28
+                    },
+                    end: {
+                      line: 1,
+                      column: 37
+                    }
+                  }
+                }
+              ],
+              start: 17,
+              end: 39,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 39
+                }
+              }
+            },
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'gen1',
+              start: 10,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 39,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 39
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 39,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 39
+          }
+        }
+      }
+    ],
+    [
+      `var _ref2 = _asyncToGenerator(function* () {
+                yield j();
+                yield j();
+                yield j();
+                yield j();
+                yield j();
+                yield j();
+                yield j();
+                yield j();
+                yield j();
+                return j();
+              });`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: '_asyncToGenerator',
+                    start: 12,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  },
+                  arguments: [
+                    {
+                      type: 'FunctionExpression',
+                      params: [],
+                      body: {
+                        type: 'BlockStatement',
+                        body: [
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 67,
+                                  end: 68,
+                                  loc: {
+                                    start: {
+                                      line: 2,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 2,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 67,
+                                end: 70,
+                                loc: {
+                                  start: {
+                                    line: 2,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 2,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 61,
+                              end: 70,
+                              loc: {
+                                start: {
+                                  line: 2,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 2,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 61,
+                            end: 71,
+                            loc: {
+                              start: {
+                                line: 2,
+                                column: 16
+                              },
+                              end: {
+                                line: 2,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 94,
+                                  end: 95,
+                                  loc: {
+                                    start: {
+                                      line: 3,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 3,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 94,
+                                end: 97,
+                                loc: {
+                                  start: {
+                                    line: 3,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 3,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 88,
+                              end: 97,
+                              loc: {
+                                start: {
+                                  line: 3,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 3,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 88,
+                            end: 98,
+                            loc: {
+                              start: {
+                                line: 3,
+                                column: 16
+                              },
+                              end: {
+                                line: 3,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 121,
+                                  end: 122,
+                                  loc: {
+                                    start: {
+                                      line: 4,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 4,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 121,
+                                end: 124,
+                                loc: {
+                                  start: {
+                                    line: 4,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 4,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 115,
+                              end: 124,
+                              loc: {
+                                start: {
+                                  line: 4,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 4,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 115,
+                            end: 125,
+                            loc: {
+                              start: {
+                                line: 4,
+                                column: 16
+                              },
+                              end: {
+                                line: 4,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 148,
+                                  end: 149,
+                                  loc: {
+                                    start: {
+                                      line: 5,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 5,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 148,
+                                end: 151,
+                                loc: {
+                                  start: {
+                                    line: 5,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 5,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 142,
+                              end: 151,
+                              loc: {
+                                start: {
+                                  line: 5,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 5,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 142,
+                            end: 152,
+                            loc: {
+                              start: {
+                                line: 5,
+                                column: 16
+                              },
+                              end: {
+                                line: 5,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 175,
+                                  end: 176,
+                                  loc: {
+                                    start: {
+                                      line: 6,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 6,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 175,
+                                end: 178,
+                                loc: {
+                                  start: {
+                                    line: 6,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 6,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 169,
+                              end: 178,
+                              loc: {
+                                start: {
+                                  line: 6,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 6,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 169,
+                            end: 179,
+                            loc: {
+                              start: {
+                                line: 6,
+                                column: 16
+                              },
+                              end: {
+                                line: 6,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 202,
+                                  end: 203,
+                                  loc: {
+                                    start: {
+                                      line: 7,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 7,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 202,
+                                end: 205,
+                                loc: {
+                                  start: {
+                                    line: 7,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 7,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 196,
+                              end: 205,
+                              loc: {
+                                start: {
+                                  line: 7,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 7,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 196,
+                            end: 206,
+                            loc: {
+                              start: {
+                                line: 7,
+                                column: 16
+                              },
+                              end: {
+                                line: 7,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 229,
+                                  end: 230,
+                                  loc: {
+                                    start: {
+                                      line: 8,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 8,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 229,
+                                end: 232,
+                                loc: {
+                                  start: {
+                                    line: 8,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 8,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 223,
+                              end: 232,
+                              loc: {
+                                start: {
+                                  line: 8,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 8,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 223,
+                            end: 233,
+                            loc: {
+                              start: {
+                                line: 8,
+                                column: 16
+                              },
+                              end: {
+                                line: 8,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 256,
+                                  end: 257,
+                                  loc: {
+                                    start: {
+                                      line: 9,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 9,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 256,
+                                end: 259,
+                                loc: {
+                                  start: {
+                                    line: 9,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 9,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 250,
+                              end: 259,
+                              loc: {
+                                start: {
+                                  line: 9,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 9,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 250,
+                            end: 260,
+                            loc: {
+                              start: {
+                                line: 9,
+                                column: 16
+                              },
+                              end: {
+                                line: 9,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'YieldExpression',
+                              argument: {
+                                type: 'CallExpression',
+                                callee: {
+                                  type: 'Identifier',
+                                  name: 'j',
+                                  start: 283,
+                                  end: 284,
+                                  loc: {
+                                    start: {
+                                      line: 10,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 10,
+                                      column: 23
+                                    }
+                                  }
+                                },
+                                arguments: [],
+                                optional: false,
+                                shortCircuited: false,
+                                start: 283,
+                                end: 286,
+                                loc: {
+                                  start: {
+                                    line: 10,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 10,
+                                    column: 25
+                                  }
+                                }
+                              },
+                              delegate: false,
+                              start: 277,
+                              end: 286,
+                              loc: {
+                                start: {
+                                  line: 10,
+                                  column: 16
+                                },
+                                end: {
+                                  line: 10,
+                                  column: 25
+                                }
+                              }
+                            },
+                            start: 277,
+                            end: 287,
+                            loc: {
+                              start: {
+                                line: 10,
+                                column: 16
+                              },
+                              end: {
+                                line: 10,
+                                column: 26
+                              }
+                            }
+                          },
+                          {
+                            type: 'ReturnStatement',
+                            argument: {
+                              type: 'CallExpression',
+                              callee: {
+                                type: 'Identifier',
+                                name: 'j',
+                                start: 311,
+                                end: 312,
+                                loc: {
+                                  start: {
+                                    line: 11,
+                                    column: 23
+                                  },
+                                  end: {
+                                    line: 11,
+                                    column: 24
+                                  }
+                                }
+                              },
+                              arguments: [],
+                              optional: false,
+                              shortCircuited: false,
+                              start: 311,
+                              end: 314,
+                              loc: {
+                                start: {
+                                  line: 11,
+                                  column: 23
+                                },
+                                end: {
+                                  line: 11,
+                                  column: 26
+                                }
+                              }
+                            },
+                            start: 304,
+                            end: 315,
+                            loc: {
+                              start: {
+                                line: 11,
+                                column: 16
+                              },
+                              end: {
+                                line: 11,
+                                column: 27
+                              }
+                            }
+                          }
+                        ],
+                        start: 43,
+                        end: 331,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 43
+                          },
+                          end: {
+                            line: 12,
+                            column: 15
+                          }
+                        }
+                      },
+                      async: false,
+                      generator: true,
+                      id: null,
+                      start: 30,
+                      end: 331,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 30
+                        },
+                        end: {
+                          line: 12,
+                          column: 15
+                        }
+                      }
+                    }
+                  ],
+                  optional: false,
+                  shortCircuited: false,
+                  start: 12,
+                  end: 332,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 12,
+                      column: 16
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: '_ref2',
+                  start: 4,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 4,
+                end: 332,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 12,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 333,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 12,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 333,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 12,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `(function TestConciseGenerator() {
+                  var o = {
+                    __proto__: {
+                      m() {
+                        return 42;
+                      }
+                    },
+                    *g() {
+                      yield super.m();
+                    },
+                  };
+
+                  assertEquals(42, o.g().next().value);
+                })();`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'FunctionExpression',
+                params: [],
+                body: {
+                  type: 'BlockStatement',
+                  body: [
+                    {
+                      type: 'VariableDeclaration',
+                      kind: 'var',
+                      declarations: [
+                        {
+                          type: 'VariableDeclarator',
+                          init: {
+                            type: 'ObjectExpression',
+                            properties: [
+                              {
+                                type: 'Property',
+                                key: {
+                                  type: 'Identifier',
+                                  name: '__proto__',
+                                  start: 83,
+                                  end: 92,
+                                  loc: {
+                                    start: {
+                                      line: 3,
+                                      column: 20
+                                    },
+                                    end: {
+                                      line: 3,
+                                      column: 29
+                                    }
+                                  }
+                                },
+                                value: {
+                                  type: 'ObjectExpression',
+                                  properties: [
+                                    {
+                                      type: 'Property',
+                                      key: {
+                                        type: 'Identifier',
+                                        name: 'm',
+                                        start: 118,
+                                        end: 119,
+                                        loc: {
+                                          start: {
+                                            line: 4,
+                                            column: 22
+                                          },
+                                          end: {
+                                            line: 4,
+                                            column: 23
+                                          }
+                                        }
+                                      },
+                                      value: {
+                                        type: 'FunctionExpression',
+                                        params: [],
+                                        body: {
+                                          type: 'BlockStatement',
+                                          body: [
+                                            {
+                                              type: 'ReturnStatement',
+                                              argument: {
+                                                type: 'Literal',
+                                                value: 42,
+                                                start: 155,
+                                                end: 157,
+                                                loc: {
+                                                  start: {
+                                                    line: 5,
+                                                    column: 31
+                                                  },
+                                                  end: {
+                                                    line: 5,
+                                                    column: 33
+                                                  }
+                                                }
+                                              },
+                                              start: 148,
+                                              end: 158,
+                                              loc: {
+                                                start: {
+                                                  line: 5,
+                                                  column: 24
+                                                },
+                                                end: {
+                                                  line: 5,
+                                                  column: 34
+                                                }
+                                              }
+                                            }
+                                          ],
+                                          start: 122,
+                                          end: 182,
+                                          loc: {
+                                            start: {
+                                              line: 4,
+                                              column: 26
+                                            },
+                                            end: {
+                                              line: 6,
+                                              column: 23
+                                            }
+                                          }
+                                        },
+                                        async: false,
+                                        generator: false,
+                                        id: null,
+                                        start: 119,
+                                        end: 182,
+                                        loc: {
+                                          start: {
+                                            line: 4,
+                                            column: 23
+                                          },
+                                          end: {
+                                            line: 6,
+                                            column: 23
+                                          }
+                                        }
+                                      },
+                                      kind: 'init',
+                                      computed: false,
+                                      method: true,
+                                      shorthand: false,
+                                      start: 118,
+                                      end: 182,
+                                      loc: {
+                                        start: {
+                                          line: 4,
+                                          column: 22
+                                        },
+                                        end: {
+                                          line: 6,
+                                          column: 23
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  start: 94,
+                                  end: 204,
+                                  loc: {
+                                    start: {
+                                      line: 3,
+                                      column: 31
+                                    },
+                                    end: {
+                                      line: 7,
+                                      column: 21
+                                    }
+                                  }
+                                },
+                                kind: 'init',
+                                computed: false,
+                                method: false,
+                                shorthand: false,
+                                start: 83,
+                                end: 204,
+                                loc: {
+                                  start: {
+                                    line: 3,
+                                    column: 20
+                                  },
+                                  end: {
+                                    line: 7,
+                                    column: 21
+                                  }
+                                }
+                              },
+                              {
+                                type: 'Property',
+                                key: {
+                                  type: 'Identifier',
+                                  name: 'g',
+                                  start: 227,
+                                  end: 228,
+                                  loc: {
+                                    start: {
+                                      line: 8,
+                                      column: 21
+                                    },
+                                    end: {
+                                      line: 8,
+                                      column: 22
+                                    }
+                                  }
+                                },
+                                value: {
+                                  type: 'FunctionExpression',
+                                  params: [],
+                                  body: {
+                                    type: 'BlockStatement',
+                                    body: [
+                                      {
+                                        type: 'ExpressionStatement',
+                                        expression: {
+                                          type: 'YieldExpression',
+                                          argument: {
+                                            type: 'CallExpression',
+                                            callee: {
+                                              type: 'MemberExpression',
+                                              object: {
+                                                type: 'Super',
+                                                start: 261,
+                                                end: 266,
+                                                loc: {
+                                                  start: {
+                                                    line: 9,
+                                                    column: 28
+                                                  },
+                                                  end: {
+                                                    line: 9,
+                                                    column: 33
+                                                  }
+                                                }
+                                              },
+                                              computed: false,
+                                              property: {
+                                                type: 'Identifier',
+                                                name: 'm',
+                                                start: 267,
+                                                end: 268,
+                                                loc: {
+                                                  start: {
+                                                    line: 9,
+                                                    column: 34
+                                                  },
+                                                  end: {
+                                                    line: 9,
+                                                    column: 35
+                                                  }
+                                                }
+                                              },
+                                              optional: false,
+                                              shortCircuited: false,
+                                              start: 261,
+                                              end: 268,
+                                              loc: {
+                                                start: {
+                                                  line: 9,
+                                                  column: 28
+                                                },
+                                                end: {
+                                                  line: 9,
+                                                  column: 35
+                                                }
+                                              }
+                                            },
+                                            arguments: [],
+                                            optional: false,
+                                            shortCircuited: false,
+                                            start: 261,
+                                            end: 270,
+                                            loc: {
+                                              start: {
+                                                line: 9,
+                                                column: 28
+                                              },
+                                              end: {
+                                                line: 9,
+                                                column: 37
+                                              }
+                                            }
+                                          },
+                                          delegate: false,
+                                          start: 255,
+                                          end: 270,
+                                          loc: {
+                                            start: {
+                                              line: 9,
+                                              column: 22
+                                            },
+                                            end: {
+                                              line: 9,
+                                              column: 37
+                                            }
+                                          }
+                                        },
+                                        start: 255,
+                                        end: 271,
+                                        loc: {
+                                          start: {
+                                            line: 9,
+                                            column: 22
+                                          },
+                                          end: {
+                                            line: 9,
+                                            column: 38
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    start: 231,
+                                    end: 293,
+                                    loc: {
+                                      start: {
+                                        line: 8,
+                                        column: 25
+                                      },
+                                      end: {
+                                        line: 10,
+                                        column: 21
+                                      }
+                                    }
+                                  },
+                                  async: false,
+                                  generator: true,
+                                  id: null,
+                                  start: 228,
+                                  end: 293,
+                                  loc: {
+                                    start: {
+                                      line: 8,
+                                      column: 22
+                                    },
+                                    end: {
+                                      line: 10,
+                                      column: 21
+                                    }
+                                  }
+                                },
+                                kind: 'init',
+                                computed: false,
+                                method: true,
+                                shorthand: false,
+                                start: 226,
+                                end: 293,
+                                loc: {
+                                  start: {
+                                    line: 8,
+                                    column: 20
+                                  },
+                                  end: {
+                                    line: 10,
+                                    column: 21
+                                  }
+                                }
+                              }
+                            ],
+                            start: 61,
+                            end: 314,
+                            loc: {
+                              start: {
+                                line: 2,
+                                column: 26
+                              },
+                              end: {
+                                line: 11,
+                                column: 19
+                              }
+                            }
+                          },
+                          id: {
+                            type: 'Identifier',
+                            name: 'o',
+                            start: 57,
+                            end: 58,
+                            loc: {
+                              start: {
+                                line: 2,
+                                column: 22
+                              },
+                              end: {
+                                line: 2,
+                                column: 23
+                              }
+                            }
+                          },
+                          start: 57,
+                          end: 314,
+                          loc: {
+                            start: {
+                              line: 2,
+                              column: 22
+                            },
+                            end: {
+                              line: 11,
+                              column: 19
+                            }
+                          }
+                        }
+                      ],
+                      start: 53,
+                      end: 315,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 18
+                        },
+                        end: {
+                          line: 11,
+                          column: 20
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'CallExpression',
+                        callee: {
+                          type: 'Identifier',
+                          name: 'assertEquals',
+                          start: 335,
+                          end: 347,
+                          loc: {
+                            start: {
+                              line: 13,
+                              column: 18
+                            },
+                            end: {
+                              line: 13,
+                              column: 30
+                            }
+                          }
+                        },
+                        arguments: [
+                          {
+                            type: 'Literal',
+                            value: 42,
+                            start: 348,
+                            end: 350,
+                            loc: {
+                              start: {
+                                line: 13,
+                                column: 31
+                              },
+                              end: {
+                                line: 13,
+                                column: 33
+                              }
+                            }
+                          },
+                          {
+                            type: 'MemberExpression',
+                            object: {
+                              type: 'CallExpression',
+                              callee: {
+                                type: 'MemberExpression',
+                                object: {
+                                  type: 'CallExpression',
+                                  callee: {
+                                    type: 'MemberExpression',
+                                    object: {
+                                      type: 'Identifier',
+                                      name: 'o',
+                                      start: 352,
+                                      end: 353,
+                                      loc: {
+                                        start: {
+                                          line: 13,
+                                          column: 35
+                                        },
+                                        end: {
+                                          line: 13,
+                                          column: 36
+                                        }
+                                      }
+                                    },
+                                    computed: false,
+                                    property: {
+                                      type: 'Identifier',
+                                      name: 'g',
+                                      start: 354,
+                                      end: 355,
+                                      loc: {
+                                        start: {
+                                          line: 13,
+                                          column: 37
+                                        },
+                                        end: {
+                                          line: 13,
+                                          column: 38
+                                        }
+                                      }
+                                    },
+                                    optional: false,
+                                    shortCircuited: false,
+                                    start: 352,
+                                    end: 355,
+                                    loc: {
+                                      start: {
+                                        line: 13,
+                                        column: 35
+                                      },
+                                      end: {
+                                        line: 13,
+                                        column: 38
+                                      }
+                                    }
+                                  },
+                                  arguments: [],
+                                  optional: false,
+                                  shortCircuited: false,
+                                  start: 352,
+                                  end: 357,
+                                  loc: {
+                                    start: {
+                                      line: 13,
+                                      column: 35
+                                    },
+                                    end: {
+                                      line: 13,
+                                      column: 40
+                                    }
+                                  }
+                                },
+                                computed: false,
+                                property: {
+                                  type: 'Identifier',
+                                  name: 'next',
+                                  start: 358,
+                                  end: 362,
+                                  loc: {
+                                    start: {
+                                      line: 13,
+                                      column: 41
+                                    },
+                                    end: {
+                                      line: 13,
+                                      column: 45
+                                    }
+                                  }
+                                },
+                                optional: false,
+                                shortCircuited: false,
+                                start: 352,
+                                end: 362,
+                                loc: {
+                                  start: {
+                                    line: 13,
+                                    column: 35
+                                  },
+                                  end: {
+                                    line: 13,
+                                    column: 45
+                                  }
+                                }
+                              },
+                              arguments: [],
+                              optional: false,
+                              shortCircuited: false,
+                              start: 352,
+                              end: 364,
+                              loc: {
+                                start: {
+                                  line: 13,
+                                  column: 35
+                                },
+                                end: {
+                                  line: 13,
+                                  column: 47
+                                }
+                              }
+                            },
+                            computed: false,
+                            property: {
+                              type: 'Identifier',
+                              name: 'value',
+                              start: 365,
+                              end: 370,
+                              loc: {
+                                start: {
+                                  line: 13,
+                                  column: 48
+                                },
+                                end: {
+                                  line: 13,
+                                  column: 53
+                                }
+                              }
+                            },
+                            optional: false,
+                            shortCircuited: false,
+                            start: 352,
+                            end: 370,
+                            loc: {
+                              start: {
+                                line: 13,
+                                column: 35
+                              },
+                              end: {
+                                line: 13,
+                                column: 53
+                              }
+                            }
+                          }
+                        ],
+                        optional: false,
+                        shortCircuited: false,
+                        start: 335,
+                        end: 371,
+                        loc: {
+                          start: {
+                            line: 13,
+                            column: 18
+                          },
+                          end: {
+                            line: 13,
+                            column: 54
+                          }
+                        }
+                      },
+                      start: 335,
+                      end: 372,
+                      loc: {
+                        start: {
+                          line: 13,
+                          column: 18
+                        },
+                        end: {
+                          line: 13,
+                          column: 55
+                        }
+                      }
+                    }
+                  ],
+                  start: 33,
+                  end: 390,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 33
+                    },
+                    end: {
+                      line: 14,
+                      column: 17
+                    }
+                  }
+                },
+                async: false,
+                generator: false,
+                id: {
+                  type: 'Identifier',
+                  name: 'TestConciseGenerator',
+                  start: 10,
+                  end: 30,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 30
+                    }
+                  }
+                },
+                start: 1,
+                end: 390,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 14,
+                    column: 17
+                  }
+                }
+              },
+              arguments: [],
+              optional: false,
+              shortCircuited: false,
+              start: 0,
+              end: 393,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 14,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 394,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 14,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 394,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 14,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `generatorFn = function*() { yield true; };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'generatorFn',
+                start: 0,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'FunctionExpression',
+                params: [],
+                body: {
+                  type: 'BlockStatement',
+                  body: [
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'YieldExpression',
+                        argument: {
+                          type: 'Literal',
+                          value: true,
+                          start: 34,
+                          end: 38,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 34
+                            },
+                            end: {
+                              line: 1,
+                              column: 38
+                            }
+                          }
+                        },
+                        delegate: false,
+                        start: 28,
+                        end: 38,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 28
+                          },
+                          end: {
+                            line: 1,
+                            column: 38
+                          }
+                        }
+                      },
+                      start: 28,
+                      end: 39,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 28
+                        },
+                        end: {
+                          line: 1,
+                          column: 39
+                        }
+                      }
+                    }
+                  ],
+                  start: 26,
+                  end: 41,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 26
+                    },
+                    end: {
+                      line: 1,
+                      column: 41
+                    }
+                  }
+                },
+                async: false,
+                generator: true,
+                id: null,
+                start: 14,
+                end: 41,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 41
+                  }
+                }
+              },
+              start: 0,
+              end: 41,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 41
+                }
+              }
+            },
+            start: 0,
+            end: 42,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 42
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 42,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 42
+          }
+        }
+      }
+    ],
+    [
+      `function* f() {
+                      log.push("1");
+                      yield 1;
+                      log.push("2");
+                      yield 2;
+                      log.push("3");
+                      yield 3;
+                      log.push("done");
+                    };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'log',
+                        start: 38,
+                        end: 41,
+                        loc: {
+                          start: {
+                            line: 2,
+                            column: 22
+                          },
+                          end: {
+                            line: 2,
+                            column: 25
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'push',
+                        start: 42,
+                        end: 46,
+                        loc: {
+                          start: {
+                            line: 2,
+                            column: 26
+                          },
+                          end: {
+                            line: 2,
+                            column: 30
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 38,
+                      end: 46,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 22
+                        },
+                        end: {
+                          line: 2,
+                          column: 30
+                        }
+                      }
+                    },
+                    arguments: [
+                      {
+                        type: 'Literal',
+                        value: '1',
+                        start: 47,
+                        end: 50,
+                        loc: {
+                          start: {
+                            line: 2,
+                            column: 31
+                          },
+                          end: {
+                            line: 2,
+                            column: 34
+                          }
+                        }
+                      }
+                    ],
+                    optional: false,
+                    shortCircuited: false,
+                    start: 38,
+                    end: 51,
+                    loc: {
+                      start: {
+                        line: 2,
+                        column: 22
+                      },
+                      end: {
+                        line: 2,
+                        column: 35
+                      }
+                    }
+                  },
+                  start: 38,
+                  end: 52,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 22
+                    },
+                    end: {
+                      line: 2,
+                      column: 36
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 81,
+                      end: 82,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 28
+                        },
+                        end: {
+                          line: 3,
+                          column: 29
+                        }
+                      }
+                    },
+                    delegate: false,
+                    start: 75,
+                    end: 82,
+                    loc: {
+                      start: {
+                        line: 3,
+                        column: 22
+                      },
+                      end: {
+                        line: 3,
+                        column: 29
+                      }
+                    }
+                  },
+                  start: 75,
+                  end: 83,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 22
+                    },
+                    end: {
+                      line: 3,
+                      column: 30
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'log',
+                        start: 106,
+                        end: 109,
+                        loc: {
+                          start: {
+                            line: 4,
+                            column: 22
+                          },
+                          end: {
+                            line: 4,
+                            column: 25
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'push',
+                        start: 110,
+                        end: 114,
+                        loc: {
+                          start: {
+                            line: 4,
+                            column: 26
+                          },
+                          end: {
+                            line: 4,
+                            column: 30
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 106,
+                      end: 114,
+                      loc: {
+                        start: {
+                          line: 4,
+                          column: 22
+                        },
+                        end: {
+                          line: 4,
+                          column: 30
+                        }
+                      }
+                    },
+                    arguments: [
+                      {
+                        type: 'Literal',
+                        value: '2',
+                        start: 115,
+                        end: 118,
+                        loc: {
+                          start: {
+                            line: 4,
+                            column: 31
+                          },
+                          end: {
+                            line: 4,
+                            column: 34
+                          }
+                        }
+                      }
+                    ],
+                    optional: false,
+                    shortCircuited: false,
+                    start: 106,
+                    end: 119,
+                    loc: {
+                      start: {
+                        line: 4,
+                        column: 22
+                      },
+                      end: {
+                        line: 4,
+                        column: 35
+                      }
+                    }
+                  },
+                  start: 106,
+                  end: 120,
+                  loc: {
+                    start: {
+                      line: 4,
+                      column: 22
+                    },
+                    end: {
+                      line: 4,
+                      column: 36
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'Literal',
+                      value: 2,
+                      start: 149,
+                      end: 150,
+                      loc: {
+                        start: {
+                          line: 5,
+                          column: 28
+                        },
+                        end: {
+                          line: 5,
+                          column: 29
+                        }
+                      }
+                    },
+                    delegate: false,
+                    start: 143,
+                    end: 150,
+                    loc: {
+                      start: {
+                        line: 5,
+                        column: 22
+                      },
+                      end: {
+                        line: 5,
+                        column: 29
+                      }
+                    }
+                  },
+                  start: 143,
+                  end: 151,
+                  loc: {
+                    start: {
+                      line: 5,
+                      column: 22
+                    },
+                    end: {
+                      line: 5,
+                      column: 30
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'log',
+                        start: 174,
+                        end: 177,
+                        loc: {
+                          start: {
+                            line: 6,
+                            column: 22
+                          },
+                          end: {
+                            line: 6,
+                            column: 25
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'push',
+                        start: 178,
+                        end: 182,
+                        loc: {
+                          start: {
+                            line: 6,
+                            column: 26
+                          },
+                          end: {
+                            line: 6,
+                            column: 30
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 174,
+                      end: 182,
+                      loc: {
+                        start: {
+                          line: 6,
+                          column: 22
+                        },
+                        end: {
+                          line: 6,
+                          column: 30
+                        }
+                      }
+                    },
+                    arguments: [
+                      {
+                        type: 'Literal',
+                        value: '3',
+                        start: 183,
+                        end: 186,
+                        loc: {
+                          start: {
+                            line: 6,
+                            column: 31
+                          },
+                          end: {
+                            line: 6,
+                            column: 34
+                          }
+                        }
+                      }
+                    ],
+                    optional: false,
+                    shortCircuited: false,
+                    start: 174,
+                    end: 187,
+                    loc: {
+                      start: {
+                        line: 6,
+                        column: 22
+                      },
+                      end: {
+                        line: 6,
+                        column: 35
+                      }
+                    }
+                  },
+                  start: 174,
+                  end: 188,
+                  loc: {
+                    start: {
+                      line: 6,
+                      column: 22
+                    },
+                    end: {
+                      line: 6,
+                      column: 36
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'Literal',
+                      value: 3,
+                      start: 217,
+                      end: 218,
+                      loc: {
+                        start: {
+                          line: 7,
+                          column: 28
+                        },
+                        end: {
+                          line: 7,
+                          column: 29
+                        }
+                      }
+                    },
+                    delegate: false,
+                    start: 211,
+                    end: 218,
+                    loc: {
+                      start: {
+                        line: 7,
+                        column: 22
+                      },
+                      end: {
+                        line: 7,
+                        column: 29
+                      }
+                    }
+                  },
+                  start: 211,
+                  end: 219,
+                  loc: {
+                    start: {
+                      line: 7,
+                      column: 22
+                    },
+                    end: {
+                      line: 7,
+                      column: 30
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'log',
+                        start: 242,
+                        end: 245,
+                        loc: {
+                          start: {
+                            line: 8,
+                            column: 22
+                          },
+                          end: {
+                            line: 8,
+                            column: 25
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'push',
+                        start: 246,
+                        end: 250,
+                        loc: {
+                          start: {
+                            line: 8,
+                            column: 26
+                          },
+                          end: {
+                            line: 8,
+                            column: 30
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 242,
+                      end: 250,
+                      loc: {
+                        start: {
+                          line: 8,
+                          column: 22
+                        },
+                        end: {
+                          line: 8,
+                          column: 30
+                        }
+                      }
+                    },
+                    arguments: [
+                      {
+                        type: 'Literal',
+                        value: 'done',
+                        start: 251,
+                        end: 257,
+                        loc: {
+                          start: {
+                            line: 8,
+                            column: 31
+                          },
+                          end: {
+                            line: 8,
+                            column: 37
+                          }
+                        }
+                      }
+                    ],
+                    optional: false,
+                    shortCircuited: false,
+                    start: 242,
+                    end: 258,
+                    loc: {
+                      start: {
+                        line: 8,
+                        column: 22
+                      },
+                      end: {
+                        line: 8,
+                        column: 38
+                      }
+                    }
+                  },
+                  start: 242,
+                  end: 259,
+                  loc: {
+                    start: {
+                      line: 8,
+                      column: 22
+                    },
+                    end: {
+                      line: 8,
+                      column: 39
+                    }
+                  }
+                }
+              ],
+              start: 14,
+              end: 281,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 9,
+                  column: 21
+                }
+              }
+            },
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 281,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 9,
+                column: 21
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 281,
+            end: 282,
+            loc: {
+              start: {
+                line: 9,
+                column: 21
+              },
+              end: {
+                line: 9,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 282,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 9,
+            column: 22
+          }
+        }
       }
     ],
     [
