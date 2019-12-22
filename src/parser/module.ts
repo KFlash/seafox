@@ -299,13 +299,13 @@ export function parseExportDefaultDeclaration(
               );
             }
             declaration = parseMemberExpression(parser, context, declaration, 0, 0, start, line, column);
-            declaration = parseAssignmentExpression(parser, context, 0, 0, declaration, start, line, column);
+            declaration = parseAssignmentExpression(parser, context, 0, 0, 0, declaration, start, line, column);
           }
         }
       }
       break;
     default:
-      declaration = parseExpression(parser, context);
+      declaration = parseExpression(parser, context, 0);
       consumeSemicolon(parser, context);
   }
 

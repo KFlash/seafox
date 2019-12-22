@@ -309,7 +309,7 @@ export function parseNonDirectiveExpression(
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression
    */
-  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
   return parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
 }
 
@@ -410,7 +410,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 
   if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
-  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
 
   parser.assignable = 1;
 
@@ -560,7 +560,7 @@ export function parseForStatementWithVariableDeclarations(
 
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
-          init = parseExpression(parser, context | Context.DisallowIn);
+          init = parseExpression(parser, context | Context.DisallowIn, 0);
 
           if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
             if (parser.token === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
@@ -586,6 +586,7 @@ export function parseForStatementWithVariableDeclarations(
                 scope,
                 1,
                 1,
+                0,
                 kind,
                 origin,
                 start,
@@ -598,6 +599,7 @@ export function parseForStatementWithVariableDeclarations(
                 scope,
                 1,
                 1,
+                0,
                 kind,
                 origin,
                 start,
@@ -611,7 +613,7 @@ export function parseForStatementWithVariableDeclarations(
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
-          init = parseExpression(parser, context | Context.DisallowIn);
+          init = parseExpression(parser, context | Context.DisallowIn, 0);
 
           if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
             if (parser.token === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
@@ -681,7 +683,7 @@ export function parseForStatementWithVariableDeclarations(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    right = parseExpression(parser, context);
+    right = parseExpression(parser, context, 0);
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -736,6 +738,7 @@ export function parseForStatementWithVariableDeclarations(
     context | Context.DisallowIn,
     0,
     parser.token === Token.Assign ? 1 : 0,
+    0,
     init,
     start,
     line,
@@ -823,8 +826,8 @@ export function parseForStatement(
   } else if ((token & Token.IsPatternStart) === Token.IsPatternStart) {
     init =
       token === Token.LeftBrace
-        ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column)
-        : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, kind, origin, start, line, column);
+        ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column)
+        : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column);
 
     conjuncted = parser.flags;
 
@@ -846,7 +849,7 @@ export function parseForStatement(
     );
     conjuncted = parser.flags;
   } else {
-    init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, /* allowLHS */ 1, 1);
+    init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, 0, /* allowLHS */ 1, 1);
   }
   if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
     reinterpretToPattern(parser, init);
@@ -855,7 +858,7 @@ export function parseForStatement(
 
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      right = parseExpression(parser, context);
+      right = parseExpression(parser, context, 0);
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -920,6 +923,7 @@ export function parseForStatement(
     context | Context.DisallowIn,
     0,
     parser.token === Token.Assign ? 1 : 0,
+    0,
     init,
     start,
     line,
@@ -1556,7 +1560,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   } else {
     expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
-    expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+    expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
   }
 
   if (parser.token === Token.Comma) {
@@ -1577,7 +1581,7 @@ export function parseExpressionOrLabelledStatement(
 ): ESTree.LabeledStatement | ESTree.ExpressionStatement {
   const { tokenValue, token, start, line, column } = parser;
 
-  let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, /* allowLHS */ 1, 1, start, line, column);
+  let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, /* allowLHS */ 1, 1, 0, start, line, column);
 
   if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.Unexpected);
 
@@ -1601,7 +1605,7 @@ export function parseExpressionOrLabelledStatement(
 
   expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
-  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
 
   if (parser.token === Token.Comma) {
     expr = parseSequenceExpression(parser, context, expr, start, line, column);

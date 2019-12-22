@@ -261,7 +261,7 @@ export function parseVariableDeclarationListAndDeclarator(
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
-      init = parseExpression(parser, context);
+      init = parseExpression(parser, context, 0);
     } else if (
       (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
       (parser.token & 0b0000000000000000001_0000_00110000) !== 0b0000000000000000001_0000_00110000
@@ -378,7 +378,7 @@ export function parseImportMetaDeclaration(
    *   2. LeftHandSideExpression = AssignmentExpression
    */
 
-  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
 
   /**
    * ExpressionStatement[Yield, Await]:
