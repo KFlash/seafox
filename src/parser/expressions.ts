@@ -1084,9 +1084,13 @@ export function parseAsyncArrowOrCallExpression(
           (isEvalOrArguments(tokenValue) ? Flags.StrictEvalArguments : 0) |
           ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0);
       } else {
-        conjuncted |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
+        if (parser.token === Token.Assign) {
+          conjuncted |= Flags.SimpleParameterList;
+        } else {
+          conjuncted |= Flags.NotDestructible;
 
-        expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+          expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+        }
 
         if (parser.token !== Token.RightParen && parser.token !== Token.Comma) {
           expr = parseAssignmentExpression(parser, context, 0, 1, 1, expr, start, line, column);
