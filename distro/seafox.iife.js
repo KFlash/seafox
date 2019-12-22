@@ -5231,7 +5231,8 @@ var seafox = (function (exports) {
                   shortCircuited: false
               };
       }
-      parser.flags = (parser.flags | 256) ^ 256;
+      parser.flags =
+          (parser.flags | 1024 | 256) ^ (256 | 1024);
       let expr = null;
       let conjuncted = 0;
       const params = [];
@@ -5239,7 +5240,7 @@ var seafox = (function (exports) {
           const { token, tokenValue, start, line, column } = parser;
           if (token & (2162688 | 131072 | 262144)) {
               addBlockName(parser, context, scope, parser.tokenValue, 1, 0);
-              expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 0, start, line, column);
+              expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column);
               if (parser.token === 17 || parser.token === 19) {
                   conjuncted |=
                       (parser.assignable === 0 ? 8 | 256 : 0) |
@@ -5313,10 +5314,8 @@ var seafox = (function (exports) {
       }
       consume(parser, context, 17, 0);
       conjuncted |=
-          (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048) ? 2048 : 0;
+          parser.flags & 1024 ? 1024 : 0 | (parser.flags & 2048) ? 2048 : 0;
       if (parser.token === 11) {
-          if (context & (1024 | 2097152) && conjuncted & 1024)
-              report(parser, 0);
           return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, params, canAssign, 1, start, line, column);
       }
       if (conjuncted & 16)
@@ -5571,7 +5570,11 @@ var seafox = (function (exports) {
       if (conjuncted & (4 | 8)) {
           report(parser, 71);
       }
-      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+      if (context & (1024 | 2097152) && conjuncted & 1024) {
+          report(parser, 0);
+      }
+      parser.flags =
+          ((parser.flags | 1024 | 30) ^ (30 | 1024)) | conjuncted;
       if (canAssign === 0)
           report(parser, 73);
       let i = params.length;
@@ -5643,7 +5646,8 @@ var seafox = (function (exports) {
           type: 1024,
           scopeError: void 0
       };
-      parser.flags = (parser.flags | 256) ^ 256;
+      parser.flags =
+          (parser.flags | 1024 | 256) ^ (256 | 1024);
       context = (context | 8192) ^ 8192;
       let expr = [];
       if (parser.token === 17) {
@@ -5661,7 +5665,7 @@ var seafox = (function (exports) {
           const { token, start, line, column } = parser;
           if (parser.token & (131072 | 262144 | 2162688)) {
               addBlockName(parser, context, scope, parser.tokenValue, 1, 0);
-              expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 0, start, line, column);
+              expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column);
               if (parser.token === 19 || parser.token === 17) {
                   if (parser.assignable === 0) {
                       conjuncted |= 8 | 256;
@@ -5772,17 +5776,15 @@ var seafox = (function (exports) {
           report(parser, 62);
       }
       conjuncted |=
-          (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048) ? 2048 : 0;
+          parser.flags & 1024 ? 1024 : 0 | (parser.flags & 2048) ? 2048 : 0;
       if (parser.token === 11) {
-          if (context & (1024 | 2097152) && conjuncted & 1024) {
-              report(parser, 0);
-          }
           return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, isSequence ? expressions : [expr], canAssign, 0, curStart, curLine, curColumn);
       }
       else if (conjuncted & 16) {
           report(parser, 75);
       }
-      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+      parser.flags =
+          ((parser.flags | 1024 | 30) ^ (1024 | 30)) | conjuncted;
       return expr;
   }
   function parseExpressionStatement(parser, context, expression, start, line, column) {
@@ -6736,7 +6738,7 @@ var seafox = (function (exports) {
                       if (parser.token === 67108896) {
                           conjuncted |= 16;
                           nextToken(parser, context, 1);
-                          value = parseAssignmentOrPattern(parser, context, isPattern, 0, key, '=', start, line, column);
+                          value = parseAssignmentOrPattern(parser, context, isPattern, inGroup, key, '=', start, line, column);
                       }
                       else {
                           value = key;
