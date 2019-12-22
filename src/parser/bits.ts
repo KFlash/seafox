@@ -36,11 +36,13 @@ export const enum Flags {
   AssignableDestruct  = 1 << 2,
   NotDestructible     = 1 << 3,
   MustDestruct        = 1 << 4,
-  SeenProto           = 1 << 5,
-  StrictEvalArguments = 1 << 6,
-  HasStrictReserved   = 1 << 7,
-  Octals              = 1 << 8,
-  SimpleParameterList = 1 << 9,
+  StrictEvalArguments = 1 << 5,
+  HasStrictReserved   = 1 << 6,
+  Octals              = 1 << 7,
+  SimpleParameterList = 1 << 8,
+  SeenProto           = 1 << 9,
+  SeenYield           = 1 << 10,
+  SeenAwait           = 1 << 11,
   Destructuring = Destructible | AssignableDestruct | NotDestructible | MustDestruct
 }
 
