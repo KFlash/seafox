@@ -293,7 +293,8 @@ export function parseMemberExpression(
   isShortCircuited: 0 | 1,
   start: number,
   line: number,
-  column: number
+  column: number,
+  inGroup: 0 | 1 = 0
 ): ESTree.Expression | ESTree.MemberExpression | ESTree.UpdateExpression {
   if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
     return parser.newLine === 0 ? parseUpdateExpression(parser, context, expr, start, line, column) : expr;
@@ -381,7 +382,7 @@ export function parseMemberExpression(
 
     /* Call */
     case Token.LeftParen: {
-      const args = parseArguments(parser, context);
+      const args = parseArguments(parser, context, inGroup);
       const type = 'CallExpression';
 
       parser.assignable = 0;
@@ -493,7 +494,11 @@ export function parseMemberExpression(
   }
 }
 
-export function parseArguments(parser: ParserState, context: Context): (ESTree.Expression | ESTree.SpreadElement)[] {
+export function parseArguments(
+  parser: ParserState,
+  context: Context,
+  inGroup: 0 | 1
+): (ESTree.Expression | ESTree.SpreadElement)[] {
   // Arguments ::
   //   '(' (AssignmentExpression)*[','] ')'
   nextToken(parser, context, /* allowRegExp */ 1);
@@ -504,7 +509,7 @@ export function parseArguments(parser: ParserState, context: Context): (ESTree.E
     if (parser.token === Token.Ellipsis) {
       args.push(parseSpreadElement(parser, context));
     } else {
-      args.push(parseExpression(parser, context, 0));
+      args.push(parseExpression(parser, context, inGroup));
     }
 
     if (parser.token !== Token.Comma) break;
@@ -734,11 +739,14 @@ export function parseYieldExpression(
 export function parseAwaitExpression(
   parser: ParserState,
   context: Context,
+  inGroup: 0 | 1,
   inNew: 0 | 1,
   start: number,
   line: number,
   column: number
 ): any {
+  if (inGroup === 1) parser.flags |= Flags.SeenAwait;
+
   if (context & Context.InAwaitContext) {
     if (inNew === 1) report(parser, Errors.Unexpected);
 
@@ -750,7 +758,7 @@ export function parseAwaitExpression(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    const argument = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 0);
+    const argument = parseLeftHandSideExpression(parser, context, inGroup, /* allowLHS */ 1, 0);
 
     parser.assignable = 0;
 
@@ -796,7 +804,10 @@ export function parseIdentifierOrArrow(
     };
 
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
-    return parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
+    let t = parser.flags;
+    let x = parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
+    parser.flags |= t;
+    return x;
   }
   return expr;
 }
@@ -821,8 +832,7 @@ export function parsePrimaryExpression(
         if (inGroup === 1) parser.flags |= Flags.SeenYield;
         return parseYieldExpression(parser, context, canAssign, start, line, column);
       case Token.AwaitKeyword:
-        if (inGroup === 1) parser.flags |= Flags.SeenAwait;
-        return parseAwaitExpression(parser, context, inNew, start, line, column);
+        return parseAwaitExpression(parser, context, inGroup, inNew, start, line, column);
 
       case Token.AsyncKeyword:
         return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
@@ -891,7 +901,7 @@ export function parsePrimaryExpression(
     case Token.RegularExpression:
       return parseRegExpLiteral(parser, context, start, line, column);
     case Token.NewKeyword:
-      return parseNewExpression(parser, context, start, line, column);
+      return parseNewExpression(parser, context, inGroup, start, line, column);
     case Token.FunctionKeyword:
       return parseFunctionExpression(parser, context, /* isAsync */ 0, start, line, column);
     case Token.ClassKeyword:
@@ -1039,7 +1049,6 @@ export function parseAsyncArrowOrCallExpression(
 
     if (parser.token === Token.Arrow) {
       if (newLine === 1) report(parser, Errors.Unexpected);
-
       return parseArrowFunctionAfterParen(parser, context, scope, Flags.Empty, [], canAssign, 1, start, line, column);
     }
 
@@ -1079,7 +1088,6 @@ export function parseAsyncArrowOrCallExpression(
       addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
 
       expr = parsePrimaryExpression(parser, context, kind, 0, /* allowLHS */ 1, 1, 1, start, line, column);
-
       if (parser.token === Token.RightParen || parser.token === Token.Comma) {
         conjuncted |=
           (parser.assignable === 0 ? Flags.NotDestructible | Flags.SimpleParameterList : 0) |
@@ -1246,6 +1254,7 @@ export function parseImportCallOrMetaExpression(
 export function parseNewExpression(
   parser: ParserState,
   context: Context,
+  inGroup: 0 | 1,
   curStart: number,
   curLine: number,
   curColumn: number
@@ -1281,7 +1290,7 @@ export function parseNewExpression(
     1,
     /* allowLHS */ 1,
     0,
-    0,
+    inGroup,
     start,
     line,
     column
@@ -1290,7 +1299,7 @@ export function parseNewExpression(
   // NewExpression without arguments.
   const callee = parseNewMemberExpression(parser, context, expr, start, line, column);
 
-  const args = parser.token === Token.LeftParen ? parseArguments(parser, context) : [];
+  const args = parser.token === Token.LeftParen ? parseArguments(parser, context, inGroup) : [];
 
   parser.assignable = 0;
 
@@ -1956,7 +1965,7 @@ export function parseLeftHandSideExpression(
     line,
     column
   );
-  return parseMemberExpression(parser, context, expression, 0, 0, start, line, column);
+  return parseMemberExpression(parser, context, expression, 0, 0, start, line, column, inGroup);
 }
 
 export function parseIdentifier(parser: ParserState, context: Context): ESTree.Identifier {

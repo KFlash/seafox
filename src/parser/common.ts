@@ -219,8 +219,8 @@ export function consume(parser: ParserState, context: Context, t: Token, allowRe
 
 export function isStrictReservedWord(parser: ParserState, context: Context, t: Token, inGroup: 0 | 1): boolean {
   if (t === Token.AwaitKeyword) {
-    if (inGroup === 1) parser.flags |= Flags.SeenAwait;
     if (context & (Context.InAwaitContext | Context.Module)) report(parser, Errors.AwaitOutsideAsync);
+    if (inGroup === 1) parser.flags |= Flags.SeenAwait;
   }
 
   if (t === Token.YieldKeyword && context & Context.InYieldContext) report(parser, Errors.DisallowedInContext, 'yield');
