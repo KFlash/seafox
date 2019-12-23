@@ -475,7 +475,7 @@ export function parseReturnStatement(parser: ParserState, context: Context): EST
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   const argument =
-    parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context);
+    parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context, 0);
 
   consumeSemicolon(parser, context);
 
@@ -712,7 +712,7 @@ export function parseForStatementWithVariableDeclarations(
   } else if (parser.token === Token.InKeyword) {
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    right = parseExpressions(parser, context);
+    right = parseExpressions(parser, context, 0);
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -752,11 +752,11 @@ export function parseForStatementWithVariableDeclarations(
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context);
+  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context);
+  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -891,7 +891,7 @@ export function parseForStatement(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    right = parseExpressions(parser, context);
+    right = parseExpressions(parser, context, 0);
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -938,11 +938,11 @@ export function parseForStatement(
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context);
+  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context);
+  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -988,7 +988,7 @@ export function parseDoWhileStatement(
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  const test = parseExpressions(parser, context);
+  const test = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -1026,7 +1026,7 @@ export function parseWhileStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
+  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabels, 0);
 
@@ -1062,7 +1062,7 @@ export function parseSwitchStatement(
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  const discriminant = parseExpressions(parser, context);
+  const discriminant = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 0);
@@ -1083,7 +1083,7 @@ export function parseSwitchStatement(
     const consequent: ESTree.Statement[] = [];
 
     if (consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)) {
-      test = parseExpressions(parser, context);
+      test = parseExpressions(parser, context, 0);
     } else {
       consume(parser, context, Token.DefaultKeyword, /* allowRegExp */ 1);
       if (seenDefault) report(parser, Errors.Unexpected);
@@ -1147,7 +1147,7 @@ export function parseIfStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
+  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
@@ -1210,7 +1210,7 @@ export function parseThrowStatement(parser: ParserState, context: Context): ESTr
 
   if (parser.newLine !== 0) report(parser, Errors.NewlineAfterThrow);
 
-  const argument: ESTree.Statement = parseExpressions(parser, context);
+  const argument: ESTree.Statement = parseExpressions(parser, context, 0);
 
   consumeSemicolon(parser, context);
 
@@ -1449,7 +1449,7 @@ export function parseWithStatement(
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  const object = parseExpressions(parser, context);
+  const object = parseExpressions(parser, context, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 

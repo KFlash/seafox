@@ -123,14 +123,14 @@ export function parseExpression(parser: ParserState, context: Context, inGroup: 
     column
   );
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
 
   return parseAssignmentExpression(parser, context, 0, 0, inGroup, expr, start, line, column);
 }
 
-export function parseExpressions(parser: ParserState, context: Context): any {
+export function parseExpressions(parser: ParserState, context: Context, inGroup: 0 | 1): any {
   const { start, line, column } = parser;
-  const property = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+  const property = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
   return parser.token === Token.Comma
     ? parseSequenceExpression(parser, context, property, start, line, column)
     : property;
@@ -344,7 +344,7 @@ export function parseMemberExpression(
     case Token.LeftBracket: {
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      const property = parseExpressions(parser, context);
+      const property = parseExpressions(parser, context, inGroup);
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
@@ -611,12 +611,12 @@ export function parseTemplate(
 
   consume(parser, context, Token.TemplateCont, /* allowRegExp */ 1);
 
-  const expressions = [parseExpressions(parser, context)];
+  const expressions = [parseExpressions(parser, context, 0)];
 
   while ((parser.token = scanTemplateTail(parser, context)) === Token.TemplateCont) {
     quasis.push(parseTemplateElement(parser, context, /* tail */ false));
     consume(parser, context, Token.TemplateCont, /* allowRegExp */ 1);
-    expressions.push(parseExpressions(parser, context));
+    expressions.push(parseExpressions(parser, context, 0));
   }
 
   quasis.push(parseTemplateElement(parser, context, /* tail */ true));
@@ -793,13 +793,11 @@ export function parseIdentifierOrArrow(
 
   let expr: ESTree.Identifier | ESTree.ArrowFunctionExpression = parseIdentifier(parser, context);
 
-  parser.flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
-
   parser.assignable = 1;
 
   if (parser.token === Token.Arrow) {
 
-    const conjuncted: Flags = parser.flags;
+    const conjuncted: Flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
 
     const scope = {
       parent: {
@@ -815,6 +813,7 @@ export function parseIdentifierOrArrow(
     expr = parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
 
     parser.flags |= conjuncted;
+
   }
   return expr;
 }
@@ -892,6 +891,7 @@ export function parsePrimaryExpression(
       return parseParenthesizedExpression(
         parser,
         context,
+        inGroup,
         canAssign,
         BindingKind.ArgumentList,
         Origin.None,
@@ -1406,7 +1406,7 @@ export function parseNewMemberExpression(
     case Token.LeftBracket: {
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      const property = parseExpressions(parser, context);
+      const property = parseExpressions(parser, context, 0);
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
@@ -1707,6 +1707,7 @@ export function parseArrowFunction(
 export function parseParenthesizedExpression(
   parser: ParserState,
   context: Context,
+  inGroup: 0 | 1,
   canAssign: 0 | 1,
   kind: BindingKind,
   origin: Origin,
@@ -1764,7 +1765,7 @@ export function parseParenthesizedExpression(
       } else {
         conjuncted |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
 
-        expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
 
         if (parser.token !== Token.RightParen && parser.token !== Token.Comma) {
           expr = parseAssignmentExpression(parser, context, 0, 0, 1, expr, start, line, column);
@@ -1814,7 +1815,7 @@ export function parseParenthesizedExpression(
     } else {
       conjuncted |= Flags.NotDestructible;
 
-      expr = parseExpression(parser, context, 0);
+      expr = parseExpression(parser, context, inGroup);
 
       if (isSequence && (parser.token === Token.Comma || parser.token === Token.RightParen)) {
         expressions.push(expr);
@@ -1829,7 +1830,7 @@ export function parseParenthesizedExpression(
 
       if (isSequence) {
         while (consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) {
-          expressions.push(parseExpression(parser, context, 0));
+          expressions.push(parseExpression(parser, context, inGroup));
         }
 
         expr =
@@ -1960,7 +1961,8 @@ export function parseLeftHandSideExpression(
   //   (PrimaryExpression | MemberExpression) ...
 
   const { start, line, column } = parser;
-  const expression = parsePrimaryExpression(
+
+  const expr = parsePrimaryExpression(
     parser,
     context,
     BindingKind.None,
@@ -1972,7 +1974,8 @@ export function parseLeftHandSideExpression(
     line,
     column
   );
-  return parseMemberExpression(parser, context, expression, 0, 0, inGroup, start, line, column);
+
+  return parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
 }
 
 export function parseIdentifier(parser: ParserState, context: Context): ESTree.Identifier {
