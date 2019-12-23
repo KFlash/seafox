@@ -367,6 +367,8 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
       if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
       }
+      if (parser.token === Token.AwaitKeyword) report(parser, Errors.UnexpectedLetStrictReserved);
+
       let expr: any = parseAsyncArrowIdentifier(
         parser,
         context,

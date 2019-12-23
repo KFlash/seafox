@@ -182,6 +182,7 @@ export function parseClassDeclaration(
     context,
     inheritedContext,
     id,
+    0,
     1,
     'ClassDeclaration',
     start,

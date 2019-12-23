@@ -5078,6 +5078,8 @@ var seafox = (function (exports) {
                       parser.flags |= 1024;
                   return parseYieldExpression(parser, context, canAssign, start, line, column);
               case 3211376:
+                  if (inGroup === 1)
+                      parser.flags |= 2048;
                   return parseAwaitExpression(parser, context, inNew, start, line, column);
               case 2162799:
                   return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
@@ -5113,7 +5115,7 @@ var seafox = (function (exports) {
           case 135309875:
           case 1179693:
           case 1179695:
-              return parseUnaryExpression(parser, context, inNew, allowLHS, start, line, column);
+              return parseUnaryExpression(parser, context, inGroup, inNew, allowLHS, start, line, column);
           case 1572868:
           case 1572866:
               return parseLiteral(parser, context);
@@ -5139,7 +5141,7 @@ var seafox = (function (exports) {
           case 1179738:
               return parseFunctionExpression(parser, context, 0, start, line, column);
           case 1179728:
-              return parseClassExpression(parser, context, start, line, column);
+              return parseClassExpression(parser, context, inGroup, start, line, column);
           case 1179743:
               return parseSuperExpression(parser, context, start, line, column);
           case 1048586:
@@ -5168,6 +5170,11 @@ var seafox = (function (exports) {
                   report(parser, 86, KeywordDescTable[parser.token & 255]);
               if (canAssign === 0)
                   report(parser, 73);
+              if (parser.token === 3211376)
+                  report(parser, 37);
+              if (context & (1024 | 2097152) && parser.token === 3473517) {
+                  report(parser, 36);
+              }
               return parseAsyncArrowIdentifier(parser, context, 1, parser.tokenValue, parseIdentifier(parser, context), curStart, curLine, curColumn);
           }
       }
@@ -5178,6 +5185,11 @@ var seafox = (function (exports) {
       if (parser.token === 11) {
           if (inNew === 1)
               report(parser, 74);
+          if (parser.token === 3211376)
+              report(parser, 37);
+          if (context & (1024 | 2097152) && parser.token === 3473517) {
+              report(parser, 36);
+          }
           return parseAsyncArrowIdentifier(parser, context, 0, 'async', expr, curStart, curLine, curColumn);
       }
       return expr;
@@ -5248,8 +5260,13 @@ var seafox = (function (exports) {
                           ((token & 262144) === 262144 ? 64 : 0);
               }
               else {
-                  conjuncted |= parser.token === 67108896 ? 256 : 8;
-                  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+                  if (parser.token === 67108896) {
+                      conjuncted |= 256;
+                  }
+                  else {
+                      conjuncted |= 8;
+                      expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+                  }
                   if (parser.token !== 17 && parser.token !== 19) {
                       expr = parseAssignmentExpression(parser, context, 0, 1, 1, expr, start, line, column);
                   }
@@ -5275,7 +5292,7 @@ var seafox = (function (exports) {
               }
           }
           else if (token === 15) {
-              expr = parseSpreadOrRestElement(parser, context, scope, 17, 0, 1, kind, origin, start, line, column);
+              expr = parseSpreadOrRestElement(parser, context, scope, 17, 0, 1, 1, kind, origin, start, line, column);
               conjuncted |=
                   (parser.token === 17 ? 0 : 8) | (parser.flags | 256);
           }
@@ -5314,10 +5331,13 @@ var seafox = (function (exports) {
       }
       consume(parser, context, 17, 0);
       conjuncted |=
-          parser.flags & 1024 ? 1024 : 0 | (parser.flags & 2048) ? 2048 : 0;
+          (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048 ? 2048 : 0);
       if (parser.token === 11) {
+          if (parser.flags & 2048)
+              report(parser, 37);
           return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, params, canAssign, 1, start, line, column);
       }
+      parser.flags = (parser.flags | 1024 | 2048) ^ (1024 | 2048);
       if (conjuncted & 16)
           report(parser, 58);
       parser.assignable = 0;
@@ -5571,10 +5591,12 @@ var seafox = (function (exports) {
           report(parser, 71);
       }
       if (context & (1024 | 2097152) && conjuncted & 1024) {
-          report(parser, 0);
+          report(parser, 36);
       }
       parser.flags =
-          ((parser.flags | 1024 | 30) ^ (30 | 1024)) | conjuncted;
+          ((parser.flags | 1024 | 2048 | 30) ^
+              (30 | 1024 | 2048)) |
+              conjuncted;
       if (canAssign === 0)
           report(parser, 73);
       let i = params.length;
@@ -5647,7 +5669,8 @@ var seafox = (function (exports) {
           scopeError: void 0
       };
       parser.flags =
-          (parser.flags | 1024 | 256) ^ (256 | 1024);
+          (parser.flags | 1024 | 2048 | 256) ^
+              (256 | 1024 | 2048);
       context = (context | 8192) ^ 8192;
       let expr = [];
       if (parser.token === 17) {
@@ -5697,7 +5720,7 @@ var seafox = (function (exports) {
               }
           }
           else if (token === 15) {
-              expr = parseSpreadOrRestElement(parser, context, scope, 17, 0, 0, kind, origin, start, line, column);
+              expr = parseSpreadOrRestElement(parser, context, scope, 17, 0, 0, 0, kind, origin, start, line, column);
               if (parser.flags & 8)
                   report(parser, 63);
               if (isSequence && (parser.token === 17 || parser.token === 19)) {
@@ -5776,15 +5799,17 @@ var seafox = (function (exports) {
           report(parser, 62);
       }
       conjuncted |=
-          parser.flags & 1024 ? 1024 : 0 | (parser.flags & 2048) ? 2048 : 0;
+          (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048 ? 2048 : 0);
       if (parser.token === 11) {
+          if (context & (4194304 | 2048) && conjuncted & 2048) {
+              report(parser, 37);
+          }
           return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, isSequence ? expressions : [expr], canAssign, 0, curStart, curLine, curColumn);
       }
       else if (conjuncted & 16) {
           report(parser, 75);
       }
-      parser.flags =
-          ((parser.flags | 1024 | 30) ^ (1024 | 30)) | conjuncted;
+      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
       return expr;
   }
   function parseExpressionStatement(parser, context, expression, start, line, column) {
@@ -5959,14 +5984,14 @@ var seafox = (function (exports) {
               prefix: true
           };
   }
-  function parseUnaryExpression(parser, context, inNew, allowLHS, start, line, column) {
+  function parseUnaryExpression(parser, context, inGroup, inNew, allowLHS, start, line, column) {
       if (allowLHS === 0)
           report(parser, 0);
       if (inNew === 1)
           report(parser, 48, KeywordDescTable[parser.token & 255]);
       const unaryOperator = parser.token;
       nextToken(parser, context, 1);
-      const arg = parseLeftHandSideExpression(parser, context, 0, 1, 0);
+      const arg = parseLeftHandSideExpression(parser, context, inGroup, 1, 0);
       if (parser.token === 135318585)
           report(parser, 76);
       if (context & 1024 && unaryOperator === 1179694 && arg.type === 'Identifier') {
@@ -6109,7 +6134,7 @@ var seafox = (function (exports) {
                   }
               }
               else if (token === 15) {
-                  left = parseSpreadOrRestElement(parser, context, scope, 21, isPattern, 0, kind, origin, start, line, column);
+                  left = parseSpreadOrRestElement(parser, context, scope, 21, isPattern, 0, 0, kind, origin, start, line, column);
                   conjuncted |= parser.flags;
                   if (parser.token !== 19 && parser.token !== 21) {
                       report(parser, 86, KeywordDescTable[parser.token & 255]);
@@ -6305,13 +6330,20 @@ var seafox = (function (exports) {
           }
       }
       parser.flags =
-          (parser.flags | 32 | 64 | 128) ^
-              (32 | 64 | 128);
+          (parser.flags |
+              32 |
+              64 |
+              128 |
+              1024 |
+              2048) ^
+              (32 | 64 | 128 | 1024 | 2048);
       while (parser.token !== 16777232) {
           body.push(parseStatementListItem(parser, context, scope, 4, null, null));
       }
       consume(parser, context, 16777232, flags & 1 ? 1 : 0);
-      parser.flags = (parser.flags | 256 | 128) ^ (256 | 128);
+      parser.flags =
+          (parser.flags | 256 | 1024 | 2048) ^
+              (256 | 1024 | 2048);
       return context & 2
           ? {
               type: 'BlockStatement',
@@ -6325,7 +6357,7 @@ var seafox = (function (exports) {
               body
           };
   }
-  function parseClassExpression(parser, context, curStart, curLine, curColumn) {
+  function parseClassExpression(parser, context, inGroup, curStart, curLine, curColumn) {
       nextToken(parser, context, 0);
       let inheritedContext = (context | 16777216 | 8192) ^ (8192 | 16777216);
       context |= 1024;
@@ -6338,19 +6370,19 @@ var seafox = (function (exports) {
           nextToken(parser, context, 0);
           id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
       }
-      return parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, 0, 'ClassExpression', curStart, curLine, curColumn);
+      return parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, inGroup, 0, 'ClassExpression', curStart, curLine, curColumn);
   }
-  function parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, isDecl, type, start, line, column) {
+  function parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, inGroup, isDecl, type, start, line, column) {
       let superClass = null;
       if (parser.token === 131159) {
           nextToken(parser, context, 1);
-          superClass = parseLeftHandSideExpression(parser, context, 0, 0, 0);
+          superClass = parseLeftHandSideExpression(parser, context, inGroup, 0, 0);
           inheritedContext |= 524288;
       }
       else {
           inheritedContext = (inheritedContext | 524288) ^ 524288;
       }
-      const body = parseClassBody(parser, inheritedContext, context, isDecl);
+      const body = parseClassBody(parser, inheritedContext, context, isDecl, inGroup);
       parser.assignable = 0;
       return context & 2
           ? {
@@ -6369,7 +6401,7 @@ var seafox = (function (exports) {
               body
           };
   }
-  function parseClassBody(parser, context, inheritedContext, isDecl) {
+  function parseClassBody(parser, context, inheritedContext, isDecl, inGroup) {
       const { start, line, column } = parser;
       consume(parser, context, 34603021, 1);
       const body = [];
@@ -6379,7 +6411,7 @@ var seafox = (function (exports) {
               nextToken(parser, context, 0);
               continue;
           }
-          body.push(parseClassElementList(parser, context, inheritedContext, null, 0, 0, 0, parser.start, parser.line, parser.column));
+          body.push(parseClassElementList(parser, context, inheritedContext, null, 0, 0, inGroup, 0, parser.start, parser.line, parser.column));
       }
       consume(parser, context, 16777232, isDecl ? 1 : 0);
       return context & 2
@@ -6395,7 +6427,7 @@ var seafox = (function (exports) {
               body
           };
   }
-  function parseClassElementList(parser, context, inheritedContext, key, isStatic, isComputed, type, curStart, curLine, curColumn) {
+  function parseClassElementList(parser, context, inheritedContext, key, isStatic, isComputed, inGroup, type, curStart, curLine, curColumn) {
       const { token, start, line, column } = parser;
       if (token & (131072 | 65536 | 262144 | 2162688)) {
           key = parseIdentifier(parser, context);
@@ -6403,7 +6435,7 @@ var seafox = (function (exports) {
               switch (token) {
                   case 262252:
                       if (isStatic === 0) {
-                          return parseClassElementList(parser, context, inheritedContext, key, 1, isComputed, type, start, line, column);
+                          return parseClassElementList(parser, context, inheritedContext, key, 1, isComputed, inGroup, type, start, line, column);
                       }
                       break;
                   case 2162799:
@@ -6423,7 +6455,7 @@ var seafox = (function (exports) {
       }
       else if (token === 34603028) {
           isComputed = 1;
-          key = parseComputedPropertyName(parser, inheritedContext);
+          key = parseComputedPropertyName(parser, inheritedContext, inGroup);
       }
       else if (token === 135314230) {
           type |= 8;
@@ -6441,7 +6473,7 @@ var seafox = (function (exports) {
           }
           else if (parser.token === 34603028) {
               isComputed = 1;
-              key = parseComputedPropertyName(parser, context);
+              key = parseComputedPropertyName(parser, context, 0);
           }
           else
               report(parser, 52);
@@ -6511,7 +6543,7 @@ var seafox = (function (exports) {
               name
           };
   }
-  function parseComputedPropertyName(parser, context, inGroup = 0) {
+  function parseComputedPropertyName(parser, context, inGroup) {
       nextToken(parser, context, 1);
       const key = parseExpression(parser, (context | 8192) ^ 8192, inGroup);
       consume(parser, context, 21, 0);
@@ -6582,7 +6614,7 @@ var seafox = (function (exports) {
                   else if (parser.token === 15) {
                       if (kind & 256)
                           report(parser, 39);
-                      left = parseSpreadOrRestElement(parser, context, scope, 17, 1, 0, 1, 0, start, line, column);
+                      left = parseSpreadOrRestElement(parser, context, scope, 17, 1, 0, 0, 1, 0, start, line, column);
                   }
                   else {
                       report(parser, 0);
@@ -6665,7 +6697,7 @@ var seafox = (function (exports) {
                   isSimpleParameterList = 1;
               }
               else if (parser.token === 15) {
-                  left = parseSpreadOrRestElement(parser, context, scope, 17, 1, 0, kind, 0, start, line, column);
+                  left = parseSpreadOrRestElement(parser, context, scope, 17, 1, 0, 0, kind, 0, start, line, column);
                   isSimpleParameterList = 1;
               }
               else {
@@ -6720,7 +6752,7 @@ var seafox = (function (exports) {
       while (parser.token !== 16777232) {
           const { token, start, line, column, tokenValue } = parser;
           if (token === 15) {
-              properties.push(parseSpreadOrRestElement(parser, context, scope, 16777232, isPattern, 0, type, origin, start, line, column));
+              properties.push(parseSpreadOrRestElement(parser, context, scope, 16777232, isPattern, 0, 0, type, origin, start, line, column));
           }
           else {
               state = 0;
@@ -6741,6 +6773,8 @@ var seafox = (function (exports) {
                           value = parseAssignmentOrPattern(parser, context, isPattern, inGroup, key, '=', start, line, column);
                       }
                       else {
+                          if (inGroup === 1 && token === 3211376)
+                              conjuncted |= 2048;
                           value = key;
                       }
                   }
@@ -6777,7 +6811,7 @@ var seafox = (function (exports) {
                               else {
                                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                               }
-                              value = parseAssignmentExpression(parser, context, isPattern, 0, 0, value, start, line, column);
+                              value = parseAssignmentExpression(parser, context, isPattern, 0, inGroup, value, start, line, column);
                           }
                           else {
                               conjuncted |= 8;
@@ -6850,7 +6884,7 @@ var seafox = (function (exports) {
                               : token === 65651
                                   ? 256
                                   : 1) | 2;
-                      key = parseComputedPropertyName(parser, context);
+                      key = parseComputedPropertyName(parser, context, 0);
                       value = parseMethodDefinition(parser, context, state);
                   }
                   else if (parser.token & (131072 | 262144 | 65536 | 2162688)) {
@@ -6890,7 +6924,7 @@ var seafox = (function (exports) {
                       }
                       else if (parser.token === 34603028) {
                           state |= 2;
-                          key = parseComputedPropertyName(parser, context);
+                          key = parseComputedPropertyName(parser, context, inGroup);
                       }
                       else {
                           report(parser, 0);
@@ -7019,7 +7053,7 @@ var seafox = (function (exports) {
                       nextToken(parser, context, 1);
                       const { start, line, column, tokenValue, token: tokenAfterColon } = parser;
                       if (parser.token & (131072 | 262144 | 2162688)) {
-                          value = parsePrimaryExpression(parser, context, type, 1, 1, 1, inGroup, start, line, column);
+                          value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
                           const { token } = parser;
                           value = parseMemberExpression(parser, context, value, 0, 0, start, line, column);
                           if ((parser.token & 67108864) === 67108864) {
@@ -7101,8 +7135,9 @@ var seafox = (function (exports) {
                   }
                   else if (parser.token === 1048588) {
                       state |= 1;
+                      conjuncted |= parser.flags & 2048 ? 2048 : 0;
                       value = parseMethodDefinition(parser, context, state);
-                      conjuncted = 8;
+                      conjuncted |= 8;
                   }
                   else {
                       report(parser, 59);
@@ -7130,7 +7165,7 @@ var seafox = (function (exports) {
                   }
                   else if (parser.token === 34603028) {
                       state |= 2 | 1;
-                      key = parseComputedPropertyName(parser, context);
+                      key = parseComputedPropertyName(parser, context, 0);
                       value = parseMethodDefinition(parser, context, state);
                       conjuncted |= 8;
                   }
@@ -7192,14 +7227,14 @@ var seafox = (function (exports) {
       parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
       return node;
   }
-  function parseSpreadOrRestElement(parser, context, scope, closingToken, isPattern, isAsync, kind, origin, curStart, curLine, curColumn) {
+  function parseSpreadOrRestElement(parser, context, scope, closingToken, isPattern, isAsync, inGroup, kind, origin, curStart, curLine, curColumn) {
       nextToken(parser, context, 1);
       let argument;
       let conjuncted = 0;
       let { start, line, column, token, tokenValue } = parser;
       if (token & (131072 | 262144 | 65536 | 2162688)) {
           parser.assignable = 1;
-          argument = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 0, start, line, column);
+          argument = parsePrimaryExpression(parser, context, kind, 0, 1, 1, inGroup, start, line, column);
           const isClosingTokenOrComma = parser.token === closingToken || parser.token === 19;
           argument = parseMemberExpression(parser, context, argument, 0, 0, start, line, column);
           if (parser.token !== 19 && parser.token !== closingToken) {
@@ -7339,6 +7374,14 @@ var seafox = (function (exports) {
           };
   }
   function parseAndClassifyIdentifier(parser, context, scope, t, name, kind, origin, start, line, column, allowRegExp = 0) {
+      if (context & 1024) {
+          if ((t & 262144) === 262144) {
+              report(parser, 26);
+          }
+      }
+      if (context & (4194304 | 2048) && t === 3211376) {
+          report(parser, 30);
+      }
       if ((t & 131072) === 131072) {
           report(parser, 28);
       }
@@ -7465,7 +7508,7 @@ var seafox = (function (exports) {
           if ((flags & 1) === 0)
               report(parser, 32, 'Class');
       }
-      return parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, 1, 'ClassDeclaration', start, line, column);
+      return parseClassDeclarationOrExpressionRest(parser, context, inheritedContext, id, 0, 1, 'ClassDeclaration', start, line, column);
   }
   function parseVariableStatementOrLexicalDeclaration(parser, context, scope, kind, origin) {
       const { start, line, column } = parser;
@@ -7722,6 +7765,8 @@ var seafox = (function (exports) {
               if (context & (1024 | 2097152) && parser.token === 3473517) {
                   report(parser, 36);
               }
+              if (parser.token === 3211376)
+                  report(parser, 87);
               let expr = parseAsyncArrowIdentifier(parser, context, 1, parser.tokenValue, parseIdentifier(parser, context), start, line, column);
               if (parser.token === 19)
                   expr = parseSequenceExpression(parser, context, expr, start, line, column);
