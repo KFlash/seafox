@@ -1158,7 +1158,7 @@ export function parseAsyncArrowOrCallExpression(
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-      parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted | Flags.NotDestructible;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted | Flags.NotDestructible;
 
       parser.assignable = 0;
 
@@ -1606,10 +1606,7 @@ export function parseArrowFunctionAfterParen(
     report(parser, Errors.YieldInParameter);
   }
 
-  parser.flags =
-    ((parser.flags | Flags.SeenYield | Flags.SeenAwait | Flags.Destructuring) ^
-      (Flags.Destructuring | Flags.SeenYield | Flags.SeenAwait)) |
-    conjuncted;
+  parser.flags = ((parser.flags | 0xc1e) ^ 0xc1e) | conjuncted;
 
   if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
@@ -1841,7 +1838,7 @@ export function parseParenthesizedExpression(
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-      parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
       return expr;
     }
@@ -1912,7 +1909,7 @@ export function parseParenthesizedExpression(
     report(parser, Errors.UncompleteArrow);
   }
 
-  parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+  parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
   return expr;
 }
@@ -2503,7 +2500,7 @@ export function parseArrayExpressionOrPattern(
     );
   }
 
-  parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+  parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
   return node;
 }
@@ -2529,9 +2526,7 @@ export function parseArrayOrObjectAssignmentPattern(
 
   const node = parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, '=', start, line, column);
 
-  parser.flags =
-    ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) |
-    ((conjuncted | Flags.MustDestruct | Flags.SeenProto) ^ (Flags.SeenProto | Flags.MustDestruct));
+  parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | ((conjuncted | 0x210) ^ 0x210);
 
   return node;
 }
@@ -4051,7 +4046,7 @@ export function parseObjectLiteralOrPattern(
         report(parser, Errors.Unexpected);
       }
 
-      parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
       kind = (state & PropertyKind.GetSet) === 0 ? 'init' : state & PropertyKind.Setter ? 'set' : 'get';
 
@@ -4120,7 +4115,7 @@ export function parseObjectLiteralOrPattern(
     );
   }
 
-  parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+  parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
   return node;
 }
@@ -4224,7 +4219,7 @@ export function parseSpreadOrRestElement(
         conjuncted |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
       }
 
-      parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
       if (parser.token !== closingToken && parser.token !== Token.Comma) report(parser, Errors.UnclosedSpreadElement);
 
@@ -4260,7 +4255,7 @@ export function parseSpreadOrRestElement(
     }
   }
 
-  parser.flags = ((parser.flags | Flags.Destructuring) ^ Flags.Destructuring) | conjuncted;
+  parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
 
   return context & Context.OptionsLoc
     ? {

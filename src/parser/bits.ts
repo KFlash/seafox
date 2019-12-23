@@ -43,8 +43,7 @@ export const enum Flags {
   SimpleParameterList = 1 << 8,
   SeenProto           = 1 << 9,
   SeenYield           = 1 << 10,
-  SeenAwait           = 1 << 11,
-  Destructuring = Destructible | AssignableDestruct | NotDestructible | MustDestruct
+  SeenAwait           = 1 << 11
 }
 
 export const enum Origin {
