@@ -144,7 +144,7 @@ export function parseClassDeclaration(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   // Second set of context masks to fix 'super' edge cases
-  let inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
+  const inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
 
   context |= Context.Strict;
 
@@ -322,7 +322,7 @@ export function parseImportCallDeclaration(
    *
    */
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
   /**
    * ExpressionStatement[Yield, Await]:
@@ -372,7 +372,7 @@ export function parseImportMetaDeclaration(
    *   ('++' | '--')? LeftHandSideExpression
    */
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
   /** AssignmentExpression :
    *   1. ConditionalExpression

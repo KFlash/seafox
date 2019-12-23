@@ -304,7 +304,7 @@ export function parseNonDirectiveExpression(
    *   ('++' | '--')? LeftHandSideExpression
    *
    */
-  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
   /** AssignmentExpression :
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression
@@ -408,7 +408,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     parser.assignable = 1;
   }
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
   if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
@@ -524,7 +524,7 @@ export function parseForStatementWithVariableDeclarations(
     } else {
       if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
       init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-      init = parseMemberExpression(parser, context, init, 0, 0, start, line, column);
+      init = parseMemberExpression(parser, context, init, 0, 0, 0, start, line, column);
       isLet = true;
     }
     parser.assignable = 1;
@@ -843,6 +843,7 @@ export function parseForStatement(
       parser,
       context | Context.DisallowIn,
       init,
+      0,
       0,
       0,
       parser.start,
@@ -1560,7 +1561,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   if (parser.token === Token.Arrow) {
     expr = parseAsyncArrowIdentifier(parser, context, /* isAsync */ 0, tokenValue, expr, start, line, column);
   } else {
-    expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
     expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
   }
@@ -1605,7 +1606,7 @@ export function parseExpressionOrLabelledStatement(
     );
   }
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
   expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
 
