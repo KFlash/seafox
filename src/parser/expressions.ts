@@ -1078,8 +1078,7 @@ export function parseAsyncArrowOrCallExpression(
         };
   }
 
-  parser.flags =
-    (parser.flags | Flags.SeenYield | Flags.SimpleParameterList) ^ (Flags.SimpleParameterList | Flags.SeenYield);
+  parser.flags = (parser.flags | 0b0000110100000000) ^ 0b0000110100000000;
 
   let expr: any = null;
 
@@ -1199,8 +1198,6 @@ export function parseAsyncArrowOrCallExpression(
     if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
     return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, params, canAssign, 1, start, line, column);
   }
-
-  parser.flags = (parser.flags | Flags.SeenYield | Flags.SeenAwait) ^ (Flags.SeenYield | Flags.SeenAwait);
 
   if (conjuncted & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
@@ -1722,9 +1719,7 @@ export function parseParenthesizedExpression(
     scopeError: void 0
   };
 
-  parser.flags =
-    (parser.flags | Flags.SeenYield | Flags.SeenAwait | Flags.SimpleParameterList) ^
-    (Flags.SimpleParameterList | Flags.SeenYield | Flags.SeenAwait);
+  parser.flags = (parser.flags | 0b0000110100000000) ^ 0b0000110100000000;
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
@@ -2748,14 +2743,7 @@ export function parseFunctionBody(
     }
   }
 
-  parser.flags =
-    (parser.flags |
-      Flags.StrictEvalArguments |
-      Flags.HasStrictReserved |
-      Flags.Octals |
-      Flags.SeenYield |
-      Flags.SeenAwait) ^
-    (Flags.StrictEvalArguments | Flags.HasStrictReserved | Flags.Octals | Flags.SeenYield | Flags.SeenAwait);
+  parser.flags = (parser.flags | 0b0000001000000000000_0100_00000000) ^ 0b0000001000000000000_0100_00000000;
 
   while (parser.token !== Token.RightBrace) {
     body.push(parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null));
@@ -2763,9 +2751,7 @@ export function parseFunctionBody(
 
   consume(parser, context, Token.RightBrace, flags & FunctionFlag.IsDeclaration ? 1 : 0);
 
-  parser.flags =
-    (parser.flags | Flags.SimpleParameterList | Flags.SeenYield | Flags.SeenAwait) ^
-    (Flags.SimpleParameterList | Flags.SeenYield | Flags.SeenAwait);
+  parser.flags = (parser.flags | 0b0000110100000000) ^ 0b0000110100000000;
 
   return context & Context.OptionsLoc
     ? {
