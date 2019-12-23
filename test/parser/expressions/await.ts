@@ -32,6 +32,27 @@ describe('Expressions - Await', () => {
     ['async function *f(await){}', Context.Empty],
     ['let o = {f(foo = await bar){}}', Context.Empty],
     ['function f(foo = await bar){}', Context.Empty],
+    ['async function wrap() {\nasync function await() { }\n}', Context.Empty],
+    ['async function foo(await) { }', Context.Empty],
+    ['async function foo() { return {await} }', Context.Empty],
+    ['(async function await() { })', Context.Empty],
+    ['async ({a: await}) => 1', Context.Empty],
+    ['async ([await]) => 1', Context.Empty],
+    ['async ([...await]) => 1', Context.Empty],
+    ['async (b = {a: await}) => 1', Context.Empty],
+    ['async (b = {1: await}) => 1', Context.Empty],
+    ['async (b = {"a": await}) => 1', Context.Empty],
+    ['async (b = {[a]: await}) => 1', Context.Empty],
+    ['async (b = [await]) => 1', Context.Empty],
+    ['async (b = [...await]) => 1', Context.Empty],
+    ['async (b = class await {}) => 1', Context.Empty],
+    ['async (await, b = async()) => 2', Context.Empty],
+    ['class A {async foo() { var await }}', Context.Empty],
+    ['class A {async foo(await) { }}', Context.Empty],
+    ['class A {async foo() { return {await} }}', Context.Empty],
+    ['await a', Context.Empty],
+    ['async (...await) => 1', Context.Empty],
+    ['async ({...await}) => 1', Context.Empty],
     ['class x {f(foo = await bar){}}', Context.Empty],
     ['let o = {*f(foo = await bar){}}', Context.Empty],
     ['let x = function *f(foo = await bar){}', Context.Empty],
@@ -255,6 +276,8 @@ describe('Expressions - Await', () => {
     ['async ({a = await b})', Context.Empty],
     ['async ({a = await b}) => x', Context.Empty],
     ['async ({a = await})', Context.Empty],
+    ['async (x = delete ((await) = f)) => {}', Context.Empty],
+    ['async (x = (await) = f) => {}', Context.Empty],
     ['async ({a: b = await c})', Context.Empty],
     ['async ({a: b = await c}) => x', Context.Empty],
     ['async x => async (a = await)', Context.Empty],
@@ -290,6 +313,10 @@ describe('Expressions - Await', () => {
     ['async (...await) => x', Context.Empty],
     ['async function f(){ (fail = class extends await foo {}) => fail    }', Context.Empty],
     ['async function f(){ (fail = class A extends await foo {}) => fail    }', Context.Empty]
+    // ['async (await, b = async () => {}) => 1', Context.Empty],
+    // ['async function f(){ (x = new x(await x)) => {} }', Context.Empty],
+    // ['async function a(){     async ([y] = delete ((((foo))[await x]))) => {};     }', Context.Empty],
+    // ['async function a(){     async ([y] = delete ((foo[await x]))) => {};     }', Context.Empty],
     // ['async function f(){ (fail = class A {[await foo](){}; "x"(){}}) => {}    }', Context.Empty],
     // ['var lambdaArgs = await (async (a, b ,c) => a + b + c);', Context.Empty],
     // ['async(a = (await) => {}) => {};', Context.Empty],
@@ -305,6 +332,248 @@ describe('Expressions - Await', () => {
     });
   }
 
+  for (const arg of [
+    `await;`,
+    'class await {}',
+    `function await(yield) {}`,
+    'var await = 1',
+    'async(await)',
+    '({ await: async })',
+    'await => {}',
+    'await => async',
+    'await => async.await[foo]',
+    'await => async.await[async = bar / (async + 1)]',
+    'await => async.await[async / (async => foo)]',
+    'await => async.await[async / (async => foo.bar)]',
+    'await => async.await[async / ((async) => foo.bar)]',
+    'await => async.await[async / (async = async(async, await, bar))]',
+    'class X { await(){} }',
+    'f(x, await(y, z))',
+    'class X { static await(){} }',
+    'x = await(y);',
+    'class X { await() {} }',
+    'let async = await;',
+    'x = { await: false }',
+    'class test{ async method (param){ await foo();  }  method2(){}  }',
+    'async function test() { await foo(); }',
+    'var a = async function test() { await foo(); }',
+    'var test = async a => await test();',
+    '({ async* f(a, b, ...c) { await 1; } })',
+    '({ async* f(a, b = 2) { await 1; } })',
+    '({ async* f(a, b) { await 1; } })',
+    '({ async* f(a) { await 1; } })',
+    '({ async* f(a, b, ...c) { yield 1; } })',
+    '({ async* f(a, b = 2) { yield 1; } })',
+    '({ async* f(a, b) { yield 1; } })',
+    '({ async* f(a) { yield 1; } })',
+    '(x = class A {[await](){}; "x"(){}}) => {}'
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '[await]',
+    '[await] = []',
+    '[await = 1]',
+    '[await = 1] = []',
+    '...await',
+    'await',
+    'await = 1',
+    '...[await]',
+    'var [await f] = [];',
+    'let [await f] = [];',
+    'const [await f] = [];',
+    'e=await',
+    'var [...await f] = [];',
+    'let [...await f] = [];',
+    'const [...await f] = [];',
+    'var { await f } = {};',
+    'let { await f } = {};',
+    'const { await f } = {};',
+    'var { ...await f } = {};',
+    'let { ...await f } = {};',
+    'const { ...await f } = {};',
+    'var { f: await f } = {};',
+    'let { f: await f } = {};',
+    'const { f: await f } = {};',
+    'x = await',
+    '1) => 1',
+    "'str') => 1",
+    '/foo/) => 1',
+    '{ foo = async(1) => 1 }) => 1',
+    '{ foo = async(a) => 1 })',
+    'x = async(await)',
+    'x = { [await]: 1 }',
+    'x = class extends (await) { }',
+    'x = class { static [await]() {} }',
+    '{ x = await }',
+    'class await {}',
+    'x = class await {}',
+    'x = 1 ? class await {} : 0',
+    'x = async function await() {}',
+    'x = y[await]',
+    'x = `${await}`',
+    'x = y()[await]',
+    'var { f: ...await f } = {};',
+    'let { f: ...await f } = {};',
+    'const { f: ...await f } = {};',
+    'var { [f]: await f } = {};',
+    'let { [f]: await f } = {};',
+    'const { [f]: await f } = {};',
+    'var { [f]: ...await f } = {};',
+    'let { [f]: ...await f } = {};',
+    'const { [f]: ...await f } = {};',
+    `x = await`
+  ]) {
+    it(`async function f( ${arg}) {}`, () => {
+      t.throws(() => {
+        parseScript(`async function f() { ${arg} }`);
+      });
+    });
+
+    it(`async function f( ${arg}) {}`, () => {
+      t.throws(() => {
+        parseScript(`async function f() { ${arg} }`, { disableWebCompat: true });
+      });
+    });
+
+    it(`'use strict'; function f() { ${arg}) }`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; function f() { ${arg}) }`);
+      });
+    });
+
+    it(`let f = () => {${arg})`, () => {
+      t.throws(() => {
+        parseScript(`let f = () => {${arg})`);
+      });
+    });
+  }
+
+  for (const arg of [
+    `async function f(await) {}`,
+    `async function f(...await) {}`,
+    `async function f(await = 1) {}`,
+    `async function f([await]) {}`,
+    `async function f([await = 1]) {}`,
+    `async function f({ await }) {}`,
+    `async function f({ await = 1 }) {}`,
+    `async function f({ } = await) {}`,
+
+    `(async function(await) {})`,
+    `(async function(...await) {})`,
+    `(async function(await = 1) {})`,
+    `(async function([await]) {})`,
+    `(async function([await = 1]) {})`,
+    `(async function({ await }) {})`,
+    `(async function({ await = 1 }) {})`,
+    `(async function({ } = await) {})`,
+
+    `var asyncArrow = async(await) => 1;`,
+    `var asyncArrow = async(await) => {};`,
+    `var asyncArrow = async(...await) => 1;`,
+    `var asyncArrow = async(...await) => {};`,
+    `var asyncArrow = async(await = 1) => 1;`,
+    `var asyncArrow = async(await = 1) => {};`,
+    `var asyncArrow = async([await]) => 1;`,
+    `var asyncArrow = async([await]) => {};`,
+    `var asyncArrow = async([await = 1]) => 1;`,
+    `var asyncArrow = async([await = 1]) => {};`,
+    `var asyncArrow = async([] = await) => 1;`,
+    `var asyncArrow = async([] = await) => {};`,
+    `var asyncArrow = async({ await }) => 1;`,
+    `var asyncArrow = async({ await } ) => {};`,
+    `var asyncArrow = async({ await = 1}) => 1;`,
+    `var asyncArrow = async({ await = 1}) => {};`,
+    `var asyncArrow = async({ } = await) => 1;`,
+    `var asyncArrow = async({ } = await) => {};`,
+
+    `({ async method(await) {} })`,
+    `({ async method(...await) {} })`,
+    `({ async method(await = 1) {} })`,
+    `({ async method([await]) {} })`,
+    `({ async method([await = 1]) {} })`,
+    `({ async method({ await }) {} })`,
+    `({ async method({ await = 1 }) {} })`,
+    `({ async method({ } = await) {} })`,
+
+    `(class { async method(await) {} })`,
+    `(class { async method(...await) {} })`,
+    `(class { async method(await = 1) {} })`,
+    `(class { async method([await]) {} })`,
+    `(class { async method([await = 1]) {} })`,
+    `(class { async method({ await }) {} })`,
+    `(class { async method({ await = 1 }) {} })`,
+    `(class { async method({ } = await) {} })`,
+
+    `(class { static async method(await) {} })`,
+    `(class { static async method(...await) {} })`,
+    `(class { static async method(await = 1) {} })`,
+    `(class { static async method([await]) {} })`,
+    `(class { static async method([await = 1]) {} })`,
+    `(class { static async method({ await }) {} })`,
+    `(class { static async method({ await = 1 }) {} })`,
+    `(class { static async method({ } = await) {} })`
+  ]) {
+    it(`async function f() { ${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`async function f() { ${arg} }`);
+      });
+    });
+
+    it(`"use strict"; async function f() { ${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; async function f() { ${arg} }`);
+      });
+    });
+
+    it(`var await; var f = (async function() { ${arg} });`, () => {
+      t.throws(() => {
+        parseScript(`var await; var f = (async function() { ${arg} });`);
+      });
+    });
+
+    it(`"use strict"; var await; var f = (async function() { ${arg} });`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; var await; var f = (async function() { ${arg} });`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'await',
+    'var f = await => 42;',
+    'var { await } = 1;',
+    'var [ await ] = 1;',
+    'return async (await) => {};',
+    'var O = { async [await](a, a) {} }',
+    'await;',
+    'function await() {}',
+    '(a = await b) => a',
+    'var f = await => 42;',
+    'var f = (await) => 42;',
+    'var f = (await, a) => 42;',
+    'var f = (...await) => 42;',
+    'var e = (await);',
+    'var e = (await, f);',
+    'var e = (await = 42)',
+    '(await 1) = 1',
+    'var e = [await];',
+    'var e = {await};'
+  ]) {
+    it(`async function f() { ${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`async function f() { ${arg} }`);
+      });
+      t.throws(() => {
+        parseModule(`async function f() { ${arg} }`);
+      });
+    });
+  }
   for (const arg of [
     'var [await f] = [];',
     'let [await f] = [];',
@@ -448,6 +717,2499 @@ describe('Expressions - Await', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `async ({await: a}) => 1`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Literal',
+                value: 1,
+                start: 22,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 22
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'await',
+                        start: 8,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 15,
+                        end: 16,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 16
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 8,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    }
+                  ],
+                  start: 7,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
+              start: 0,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `async function one(x) { await two(x); }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'Identifier',
+                name: 'x',
+                start: 19,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 19
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AwaitExpression',
+                    argument: {
+                      type: 'CallExpression',
+                      callee: {
+                        type: 'Identifier',
+                        name: 'two',
+                        start: 30,
+                        end: 33,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 30
+                          },
+                          end: {
+                            line: 1,
+                            column: 33
+                          }
+                        }
+                      },
+                      arguments: [
+                        {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 34,
+                          end: 35,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 34
+                            },
+                            end: {
+                              line: 1,
+                              column: 35
+                            }
+                          }
+                        }
+                      ],
+                      optional: false,
+                      shortCircuited: false,
+                      start: 30,
+                      end: 36,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 30
+                        },
+                        end: {
+                          line: 1,
+                          column: 36
+                        }
+                      }
+                    },
+                    start: 24,
+                    end: 36,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 24
+                      },
+                      end: {
+                        line: 1,
+                        column: 36
+                      }
+                    }
+                  },
+                  start: 24,
+                  end: 37,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 24
+                    },
+                    end: {
+                      line: 1,
+                      column: 37
+                    }
+                  }
+                }
+              ],
+              start: 22,
+              end: 39,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 39
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'one',
+              start: 15,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 39,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 39
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 39,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 39
+          }
+        }
+      }
+    ],
+    [
+      `async function* x({y = (0x44FB6C6428574)}) { while (({} = ([]), {} = function (z) { while (((await))) ;}) => f = [, ]) {}}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ObjectPattern',
+                properties: [
+                  {
+                    type: 'Property',
+                    key: {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 19,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    },
+                    value: {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 19,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      right: {
+                        type: 'Literal',
+                        value: 1213546335733108,
+                        start: 24,
+                        end: 39,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 24
+                          },
+                          end: {
+                            line: 1,
+                            column: 39
+                          }
+                        }
+                      },
+                      start: 19,
+                      end: 40,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 40
+                        }
+                      }
+                    },
+                    kind: 'init',
+                    computed: false,
+                    method: false,
+                    shorthand: true,
+                    start: 19,
+                    end: 40,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 40
+                      }
+                    }
+                  }
+                ],
+                start: 18,
+                end: 41,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 18
+                  },
+                  end: {
+                    line: 1,
+                    column: 41
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'WhileStatement',
+                  test: {
+                    type: 'ArrowFunctionExpression',
+                    body: {
+                      type: 'AssignmentExpression',
+                      left: {
+                        type: 'Identifier',
+                        name: 'f',
+                        start: 109,
+                        end: 110,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 109
+                          },
+                          end: {
+                            line: 1,
+                            column: 110
+                          }
+                        }
+                      },
+                      operator: '=',
+                      right: {
+                        type: 'ArrayExpression',
+                        elements: [null],
+                        start: 113,
+                        end: 117,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 113
+                          },
+                          end: {
+                            line: 1,
+                            column: 117
+                          }
+                        }
+                      },
+                      start: 109,
+                      end: 117,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 109
+                        },
+                        end: {
+                          line: 1,
+                          column: 117
+                        }
+                      }
+                    },
+                    params: [
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'ObjectPattern',
+                          properties: [],
+                          start: 53,
+                          end: 55,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 53
+                            },
+                            end: {
+                              line: 1,
+                              column: 55
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'ArrayExpression',
+                          elements: [],
+                          start: 59,
+                          end: 61,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 59
+                            },
+                            end: {
+                              line: 1,
+                              column: 61
+                            }
+                          }
+                        },
+                        start: 53,
+                        end: 62,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 53
+                          },
+                          end: {
+                            line: 1,
+                            column: 62
+                          }
+                        }
+                      },
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'ObjectPattern',
+                          properties: [],
+                          start: 64,
+                          end: 66,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 64
+                            },
+                            end: {
+                              line: 1,
+                              column: 66
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'FunctionExpression',
+                          params: [
+                            {
+                              type: 'Identifier',
+                              name: 'z',
+                              start: 79,
+                              end: 80,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 79
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 80
+                                }
+                              }
+                            }
+                          ],
+                          body: {
+                            type: 'BlockStatement',
+                            body: [
+                              {
+                                type: 'WhileStatement',
+                                test: {
+                                  type: 'Identifier',
+                                  name: 'await',
+                                  start: 93,
+                                  end: 98,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 93
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 98
+                                    }
+                                  }
+                                },
+                                body: {
+                                  type: 'EmptyStatement',
+                                  start: 102,
+                                  end: 103,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 102
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 103
+                                    }
+                                  }
+                                },
+                                start: 84,
+                                end: 103,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 84
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 103
+                                  }
+                                }
+                              }
+                            ],
+                            start: 82,
+                            end: 104,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 82
+                              },
+                              end: {
+                                line: 1,
+                                column: 104
+                              }
+                            }
+                          },
+                          async: false,
+                          generator: false,
+                          id: null,
+                          start: 69,
+                          end: 104,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 69
+                            },
+                            end: {
+                              line: 1,
+                              column: 104
+                            }
+                          }
+                        },
+                        start: 64,
+                        end: 104,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 64
+                          },
+                          end: {
+                            line: 1,
+                            column: 104
+                          }
+                        }
+                      }
+                    ],
+                    async: false,
+                    expression: true,
+                    start: 52,
+                    end: 117,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 52
+                      },
+                      end: {
+                        line: 1,
+                        column: 117
+                      }
+                    }
+                  },
+                  body: {
+                    type: 'BlockStatement',
+                    body: [],
+                    start: 119,
+                    end: 121,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 119
+                      },
+                      end: {
+                        line: 1,
+                        column: 121
+                      }
+                    }
+                  },
+                  start: 45,
+                  end: 121,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 45
+                    },
+                    end: {
+                      line: 1,
+                      column: 121
+                    }
+                  }
+                }
+              ],
+              start: 43,
+              end: 122,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 43
+                },
+                end: {
+                  line: 1,
+                  column: 122
+                }
+              }
+            },
+            async: true,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 16,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 122,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 122
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 122,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 122
+          }
+        }
+      }
+    ],
+    [
+      `async function* x() { let r = n * await asyncFact(n - 1); }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'VariableDeclaration',
+                  kind: 'let',
+                  declarations: [
+                    {
+                      type: 'VariableDeclarator',
+                      init: {
+                        type: 'BinaryExpression',
+                        left: {
+                          type: 'Identifier',
+                          name: 'n',
+                          start: 30,
+                          end: 31,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 30
+                            },
+                            end: {
+                              line: 1,
+                              column: 31
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'AwaitExpression',
+                          argument: {
+                            type: 'CallExpression',
+                            callee: {
+                              type: 'Identifier',
+                              name: 'asyncFact',
+                              start: 40,
+                              end: 49,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 40
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 49
+                                }
+                              }
+                            },
+                            arguments: [
+                              {
+                                type: 'BinaryExpression',
+                                left: {
+                                  type: 'Identifier',
+                                  name: 'n',
+                                  start: 50,
+                                  end: 51,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 50
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 51
+                                    }
+                                  }
+                                },
+                                right: {
+                                  type: 'Literal',
+                                  value: 1,
+                                  start: 54,
+                                  end: 55,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 54
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 55
+                                    }
+                                  }
+                                },
+                                operator: '-',
+                                start: 50,
+                                end: 55,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 50
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 55
+                                  }
+                                }
+                              }
+                            ],
+                            optional: false,
+                            shortCircuited: false,
+                            start: 40,
+                            end: 56,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 40
+                              },
+                              end: {
+                                line: 1,
+                                column: 56
+                              }
+                            }
+                          },
+                          start: 34,
+                          end: 56,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 34
+                            },
+                            end: {
+                              line: 1,
+                              column: 56
+                            }
+                          }
+                        },
+                        operator: '*',
+                        start: 30,
+                        end: 56,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 30
+                          },
+                          end: {
+                            line: 1,
+                            column: 56
+                          }
+                        }
+                      },
+                      id: {
+                        type: 'Identifier',
+                        name: 'r',
+                        start: 26,
+                        end: 27,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 26
+                          },
+                          end: {
+                            line: 1,
+                            column: 27
+                          }
+                        }
+                      },
+                      start: 26,
+                      end: 56,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 26
+                        },
+                        end: {
+                          line: 1,
+                          column: 56
+                        }
+                      }
+                    }
+                  ],
+                  start: 22,
+                  end: 57,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 57
+                    }
+                  }
+                }
+              ],
+              start: 20,
+              end: 59,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 20
+                },
+                end: {
+                  line: 1,
+                  column: 59
+                }
+              }
+            },
+            async: true,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 16,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 59,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 59
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 59,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 59
+          }
+        }
+      }
+    ],
+    [
+      `(async function x(y) { await 1; }).length`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'FunctionExpression',
+                params: [
+                  {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 18,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  }
+                ],
+                body: {
+                  type: 'BlockStatement',
+                  body: [
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'Literal',
+                          value: 1,
+                          start: 29,
+                          end: 30,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 29
+                            },
+                            end: {
+                              line: 1,
+                              column: 30
+                            }
+                          }
+                        },
+                        start: 23,
+                        end: 30,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 23
+                          },
+                          end: {
+                            line: 1,
+                            column: 30
+                          }
+                        }
+                      },
+                      start: 23,
+                      end: 31,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 31
+                        }
+                      }
+                    }
+                  ],
+                  start: 21,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                },
+                async: true,
+                generator: false,
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 16,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                start: 1,
+                end: 33,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 33
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'length',
+                start: 35,
+                end: 41,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 35
+                  },
+                  end: {
+                    line: 1,
+                    column: 41
+                  }
+                }
+              },
+              optional: false,
+              shortCircuited: false,
+              start: 0,
+              end: 41,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 41
+                }
+              }
+            },
+            start: 0,
+            end: 41,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 41
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 41,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 41
+          }
+        }
+      }
+    ],
+    [
+      `i = async function i() {
+      await j();
+      await j();
+      await j();
+      await j();
+      await j();
+      await j();
+      await j();
+      await j();
+      await j();
+      return j();
+    };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'i',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'FunctionExpression',
+                params: [],
+                body: {
+                  type: 'BlockStatement',
+                  body: [
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 37,
+                            end: 38,
+                            loc: {
+                              start: {
+                                line: 2,
+                                column: 12
+                              },
+                              end: {
+                                line: 2,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 37,
+                          end: 40,
+                          loc: {
+                            start: {
+                              line: 2,
+                              column: 12
+                            },
+                            end: {
+                              line: 2,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 31,
+                        end: 40,
+                        loc: {
+                          start: {
+                            line: 2,
+                            column: 6
+                          },
+                          end: {
+                            line: 2,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 31,
+                      end: 41,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 6
+                        },
+                        end: {
+                          line: 2,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 54,
+                            end: 55,
+                            loc: {
+                              start: {
+                                line: 3,
+                                column: 12
+                              },
+                              end: {
+                                line: 3,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 54,
+                          end: 57,
+                          loc: {
+                            start: {
+                              line: 3,
+                              column: 12
+                            },
+                            end: {
+                              line: 3,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 48,
+                        end: 57,
+                        loc: {
+                          start: {
+                            line: 3,
+                            column: 6
+                          },
+                          end: {
+                            line: 3,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 48,
+                      end: 58,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 6
+                        },
+                        end: {
+                          line: 3,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 71,
+                            end: 72,
+                            loc: {
+                              start: {
+                                line: 4,
+                                column: 12
+                              },
+                              end: {
+                                line: 4,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 71,
+                          end: 74,
+                          loc: {
+                            start: {
+                              line: 4,
+                              column: 12
+                            },
+                            end: {
+                              line: 4,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 65,
+                        end: 74,
+                        loc: {
+                          start: {
+                            line: 4,
+                            column: 6
+                          },
+                          end: {
+                            line: 4,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 65,
+                      end: 75,
+                      loc: {
+                        start: {
+                          line: 4,
+                          column: 6
+                        },
+                        end: {
+                          line: 4,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 88,
+                            end: 89,
+                            loc: {
+                              start: {
+                                line: 5,
+                                column: 12
+                              },
+                              end: {
+                                line: 5,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 88,
+                          end: 91,
+                          loc: {
+                            start: {
+                              line: 5,
+                              column: 12
+                            },
+                            end: {
+                              line: 5,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 82,
+                        end: 91,
+                        loc: {
+                          start: {
+                            line: 5,
+                            column: 6
+                          },
+                          end: {
+                            line: 5,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 82,
+                      end: 92,
+                      loc: {
+                        start: {
+                          line: 5,
+                          column: 6
+                        },
+                        end: {
+                          line: 5,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 105,
+                            end: 106,
+                            loc: {
+                              start: {
+                                line: 6,
+                                column: 12
+                              },
+                              end: {
+                                line: 6,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 105,
+                          end: 108,
+                          loc: {
+                            start: {
+                              line: 6,
+                              column: 12
+                            },
+                            end: {
+                              line: 6,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 99,
+                        end: 108,
+                        loc: {
+                          start: {
+                            line: 6,
+                            column: 6
+                          },
+                          end: {
+                            line: 6,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 99,
+                      end: 109,
+                      loc: {
+                        start: {
+                          line: 6,
+                          column: 6
+                        },
+                        end: {
+                          line: 6,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 122,
+                            end: 123,
+                            loc: {
+                              start: {
+                                line: 7,
+                                column: 12
+                              },
+                              end: {
+                                line: 7,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 122,
+                          end: 125,
+                          loc: {
+                            start: {
+                              line: 7,
+                              column: 12
+                            },
+                            end: {
+                              line: 7,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 116,
+                        end: 125,
+                        loc: {
+                          start: {
+                            line: 7,
+                            column: 6
+                          },
+                          end: {
+                            line: 7,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 116,
+                      end: 126,
+                      loc: {
+                        start: {
+                          line: 7,
+                          column: 6
+                        },
+                        end: {
+                          line: 7,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 139,
+                            end: 140,
+                            loc: {
+                              start: {
+                                line: 8,
+                                column: 12
+                              },
+                              end: {
+                                line: 8,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 139,
+                          end: 142,
+                          loc: {
+                            start: {
+                              line: 8,
+                              column: 12
+                            },
+                            end: {
+                              line: 8,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 133,
+                        end: 142,
+                        loc: {
+                          start: {
+                            line: 8,
+                            column: 6
+                          },
+                          end: {
+                            line: 8,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 133,
+                      end: 143,
+                      loc: {
+                        start: {
+                          line: 8,
+                          column: 6
+                        },
+                        end: {
+                          line: 8,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 156,
+                            end: 157,
+                            loc: {
+                              start: {
+                                line: 9,
+                                column: 12
+                              },
+                              end: {
+                                line: 9,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 156,
+                          end: 159,
+                          loc: {
+                            start: {
+                              line: 9,
+                              column: 12
+                            },
+                            end: {
+                              line: 9,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 150,
+                        end: 159,
+                        loc: {
+                          start: {
+                            line: 9,
+                            column: 6
+                          },
+                          end: {
+                            line: 9,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 150,
+                      end: 160,
+                      loc: {
+                        start: {
+                          line: 9,
+                          column: 6
+                        },
+                        end: {
+                          line: 9,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'j',
+                            start: 173,
+                            end: 174,
+                            loc: {
+                              start: {
+                                line: 10,
+                                column: 12
+                              },
+                              end: {
+                                line: 10,
+                                column: 13
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 173,
+                          end: 176,
+                          loc: {
+                            start: {
+                              line: 10,
+                              column: 12
+                            },
+                            end: {
+                              line: 10,
+                              column: 15
+                            }
+                          }
+                        },
+                        start: 167,
+                        end: 176,
+                        loc: {
+                          start: {
+                            line: 10,
+                            column: 6
+                          },
+                          end: {
+                            line: 10,
+                            column: 15
+                          }
+                        }
+                      },
+                      start: 167,
+                      end: 177,
+                      loc: {
+                        start: {
+                          line: 10,
+                          column: 6
+                        },
+                        end: {
+                          line: 10,
+                          column: 16
+                        }
+                      }
+                    },
+                    {
+                      type: 'ReturnStatement',
+                      argument: {
+                        type: 'CallExpression',
+                        callee: {
+                          type: 'Identifier',
+                          name: 'j',
+                          start: 191,
+                          end: 192,
+                          loc: {
+                            start: {
+                              line: 11,
+                              column: 13
+                            },
+                            end: {
+                              line: 11,
+                              column: 14
+                            }
+                          }
+                        },
+                        arguments: [],
+                        optional: false,
+                        shortCircuited: false,
+                        start: 191,
+                        end: 194,
+                        loc: {
+                          start: {
+                            line: 11,
+                            column: 13
+                          },
+                          end: {
+                            line: 11,
+                            column: 16
+                          }
+                        }
+                      },
+                      start: 184,
+                      end: 195,
+                      loc: {
+                        start: {
+                          line: 11,
+                          column: 6
+                        },
+                        end: {
+                          line: 11,
+                          column: 17
+                        }
+                      }
+                    }
+                  ],
+                  start: 23,
+                  end: 201,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 23
+                    },
+                    end: {
+                      line: 12,
+                      column: 5
+                    }
+                  }
+                },
+                async: true,
+                generator: false,
+                id: {
+                  type: 'Identifier',
+                  name: 'i',
+                  start: 19,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 4,
+                end: 201,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 12,
+                    column: 5
+                  }
+                }
+              },
+              start: 0,
+              end: 201,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 12,
+                  column: 5
+                }
+              }
+            },
+            start: 0,
+            end: 202,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 12,
+                column: 6
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 202,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 12,
+            column: 6
+          }
+        }
+      }
+    ],
+    [
+      `async function h() { for await (let x of ["a"]) { Debugger(); } };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ForOfStatement',
+                  body: {
+                    type: 'BlockStatement',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: {
+                          type: 'CallExpression',
+                          callee: {
+                            type: 'Identifier',
+                            name: 'Debugger',
+                            start: 50,
+                            end: 58,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 50
+                              },
+                              end: {
+                                line: 1,
+                                column: 58
+                              }
+                            }
+                          },
+                          arguments: [],
+                          optional: false,
+                          shortCircuited: false,
+                          start: 50,
+                          end: 60,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 50
+                            },
+                            end: {
+                              line: 1,
+                              column: 60
+                            }
+                          }
+                        },
+                        start: 50,
+                        end: 61,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 50
+                          },
+                          end: {
+                            line: 1,
+                            column: 61
+                          }
+                        }
+                      }
+                    ],
+                    start: 48,
+                    end: 63,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 48
+                      },
+                      end: {
+                        line: 1,
+                        column: 63
+                      }
+                    }
+                  },
+                  left: {
+                    type: 'VariableDeclaration',
+                    kind: 'let',
+                    declarations: [
+                      {
+                        type: 'VariableDeclarator',
+                        init: null,
+                        id: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 36,
+                          end: 37,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 36
+                            },
+                            end: {
+                              line: 1,
+                              column: 37
+                            }
+                          }
+                        },
+                        start: 36,
+                        end: 37,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 36
+                          },
+                          end: {
+                            line: 1,
+                            column: 37
+                          }
+                        }
+                      }
+                    ],
+                    start: 32,
+                    end: 37,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 32
+                      },
+                      end: {
+                        line: 1,
+                        column: 37
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Literal',
+                        value: 'a',
+                        start: 42,
+                        end: 45,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 42
+                          },
+                          end: {
+                            line: 1,
+                            column: 45
+                          }
+                        }
+                      }
+                    ],
+                    start: 41,
+                    end: 46,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 41
+                      },
+                      end: {
+                        line: 1,
+                        column: 46
+                      }
+                    }
+                  },
+                  await: false,
+                  start: 21,
+                  end: 63,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 63
+                    }
+                  }
+                }
+              ],
+              start: 19,
+              end: 65,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 65
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'h',
+              start: 15,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 65,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 65
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 65,
+            end: 66,
+            loc: {
+              start: {
+                line: 1,
+                column: 65
+              },
+              end: {
+                line: 1,
+                column: 66
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 66,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 66
+          }
+        }
+      }
+    ],
+    [
+      `async function caught_reject() {
+      try {
+        await reject;
+      } catch (e) {
+        assertEquals("b", e);
+      }
+    }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'TryStatement',
+                  block: {
+                    type: 'BlockStatement',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: {
+                          type: 'AwaitExpression',
+                          argument: {
+                            type: 'Identifier',
+                            name: 'reject',
+                            start: 59,
+                            end: 65,
+                            loc: {
+                              start: {
+                                line: 3,
+                                column: 14
+                              },
+                              end: {
+                                line: 3,
+                                column: 20
+                              }
+                            }
+                          },
+                          start: 53,
+                          end: 65,
+                          loc: {
+                            start: {
+                              line: 3,
+                              column: 8
+                            },
+                            end: {
+                              line: 3,
+                              column: 20
+                            }
+                          }
+                        },
+                        start: 53,
+                        end: 66,
+                        loc: {
+                          start: {
+                            line: 3,
+                            column: 8
+                          },
+                          end: {
+                            line: 3,
+                            column: 21
+                          }
+                        }
+                      }
+                    ],
+                    start: 43,
+                    end: 74,
+                    loc: {
+                      start: {
+                        line: 2,
+                        column: 10
+                      },
+                      end: {
+                        line: 4,
+                        column: 7
+                      }
+                    }
+                  },
+                  handler: {
+                    type: 'CatchClause',
+                    param: {
+                      type: 'Identifier',
+                      name: 'e',
+                      start: 82,
+                      end: 83,
+                      loc: {
+                        start: {
+                          line: 4,
+                          column: 15
+                        },
+                        end: {
+                          line: 4,
+                          column: 16
+                        }
+                      }
+                    },
+                    body: {
+                      type: 'BlockStatement',
+                      body: [
+                        {
+                          type: 'ExpressionStatement',
+                          expression: {
+                            type: 'CallExpression',
+                            callee: {
+                              type: 'Identifier',
+                              name: 'assertEquals',
+                              start: 95,
+                              end: 107,
+                              loc: {
+                                start: {
+                                  line: 5,
+                                  column: 8
+                                },
+                                end: {
+                                  line: 5,
+                                  column: 20
+                                }
+                              }
+                            },
+                            arguments: [
+                              {
+                                type: 'Literal',
+                                value: 'b',
+                                start: 108,
+                                end: 111,
+                                loc: {
+                                  start: {
+                                    line: 5,
+                                    column: 21
+                                  },
+                                  end: {
+                                    line: 5,
+                                    column: 24
+                                  }
+                                }
+                              },
+                              {
+                                type: 'Identifier',
+                                name: 'e',
+                                start: 113,
+                                end: 114,
+                                loc: {
+                                  start: {
+                                    line: 5,
+                                    column: 26
+                                  },
+                                  end: {
+                                    line: 5,
+                                    column: 27
+                                  }
+                                }
+                              }
+                            ],
+                            optional: false,
+                            shortCircuited: false,
+                            start: 95,
+                            end: 115,
+                            loc: {
+                              start: {
+                                line: 5,
+                                column: 8
+                              },
+                              end: {
+                                line: 5,
+                                column: 28
+                              }
+                            }
+                          },
+                          start: 95,
+                          end: 116,
+                          loc: {
+                            start: {
+                              line: 5,
+                              column: 8
+                            },
+                            end: {
+                              line: 5,
+                              column: 29
+                            }
+                          }
+                        }
+                      ],
+                      start: 85,
+                      end: 124,
+                      loc: {
+                        start: {
+                          line: 4,
+                          column: 18
+                        },
+                        end: {
+                          line: 6,
+                          column: 7
+                        }
+                      }
+                    },
+                    start: 75,
+                    end: 124,
+                    loc: {
+                      start: {
+                        line: 4,
+                        column: 8
+                      },
+                      end: {
+                        line: 6,
+                        column: 7
+                      }
+                    }
+                  },
+                  finalizer: null,
+                  start: 39,
+                  end: 124,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 6
+                    },
+                    end: {
+                      line: 6,
+                      column: 7
+                    }
+                  }
+                }
+              ],
+              start: 31,
+              end: 130,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 31
+                },
+                end: {
+                  line: 7,
+                  column: 5
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'caught_reject',
+              start: 15,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 0,
+            end: 130,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 7,
+                column: 5
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 130,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 7,
+            column: 5
+          }
+        }
+      }
+    ],
     [
       `async r => result = [...{ x = await x }] = y;`,
       Context.OptionsLoc,

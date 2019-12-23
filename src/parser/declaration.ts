@@ -154,7 +154,7 @@ export function parseClassDeclaration(
     parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
     parser.token !== Token.ExtendsKeyword
   ) {
-    if (isStrictReservedWord(parser, context, parser.token)) {
+    if (isStrictReservedWord(parser, context, parser.token, /* inGroup */ 0)) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
     // A named class creates a new lexical scope with a const binding of the

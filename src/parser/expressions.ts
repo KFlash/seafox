@@ -2423,7 +2423,7 @@ export function parseArrayExpressionOrPattern(
           Token.RightBracket,
           isPattern,
           /* isAsync */ 0,
-          0,
+          inGroup,
           kind,
           origin,
           start,
@@ -2790,7 +2790,7 @@ export function parseClassExpression(
   ) {
     const { token, start, line, column, tokenValue } = parser;
 
-    if (isStrictReservedWord(parser, context, token)) report(parser, Errors.UnexpectedStrictReserved);
+    if (isStrictReservedWord(parser, context, token, inGroup)) report(parser, Errors.UnexpectedStrictReserved);
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
@@ -3492,7 +3492,7 @@ export function parseObjectLiteralOrPattern(
           Token.RightBrace,
           isPattern,
           0,
-          0,
+          inGroup,
           type,
           origin,
           start,
@@ -3536,7 +3536,7 @@ export function parseObjectLiteralOrPattern(
           if (parser.token & (Token.Contextual | Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
             const { token: tokenAfterColon, tokenValue: valueAfterColon } = parser;
 
-            value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, 0, start, line, column);
+            value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
 
             const { token } = parser;
 
@@ -3751,7 +3751,7 @@ export function parseObjectLiteralOrPattern(
           if (tokenValue === '__proto__') prototypeCount++;
 
           if (parser.token & (Token.Contextual | Token.IsIdentifier)) {
-            value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, 0, start, line, column);
+            value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
             const { token, tokenValue: valueAfterColon } = parser;
             value = parseMemberExpression(parser, context, value, 0, 0, start, line, column);
 
