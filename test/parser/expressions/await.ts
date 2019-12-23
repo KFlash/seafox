@@ -281,8 +281,8 @@ describe('Expressions - Await', () => {
     ['async function f(){ (x = new x(await x)) => {} }', Context.Empty],
     ['async function a(){ async ([y] = delete ((((foo))[await x]))) => {}; }', Context.Empty],
     ['async function a(){ async ([y] = delete ((foo[await x]))) => {}; }', Context.Empty],
-    ['async (await, b = async () => {}) => 1', Context.Empty]
-    // ['async function f(){ (fail = class A {[await foo](){}; "x"(){}}) => {}    }', Context.Empty],
+    ['async (await, b = async () => {}) => 1', Context.Empty],
+    ['async function f(){ (fail = class A {[await foo](){}; "x"(){}}) => {}    }', Context.Empty]
     // ['async(a = (await) => {}) => {};', Context.Empty],
   ]) {
     it(source as string, () => {

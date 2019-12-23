@@ -2875,6 +2875,7 @@ export function parseClassBody(
         parser,
         context,
         inheritedContext,
+        Flags.Empty,
         null,
         /* isStatic */ 0,
         /* isComputed */ 0,
@@ -2907,6 +2908,7 @@ export function parseClassElementList(
   parser: ParserState,
   context: Context,
   inheritedContext: Context,
+  conjuncted: Flags,
   key: any,
   isStatic: 0 | 1,
   isComputed: 0 | 1,
@@ -2929,6 +2931,7 @@ export function parseClassElementList(
               parser,
               context,
               inheritedContext,
+              conjuncted,
               key,
               /* isStatic */ 1,
               isComputed,
@@ -2968,7 +2971,7 @@ export function parseClassElementList(
     report(parser, Errors.Unexpected);
   }
 
-  if (type & (PropertyKind.Generator | PropertyKind.Async | PropertyKind.GetSet)) {
+  if (type & 0x198) {
     if (parser.token & (Token.Keyword | Token.Contextual | Token.FutureReserved | Token.IsIdentifier)) {
       key = parseIdentifier(parser, context);
     } else if ((parser.token & Token.IsStringOrNumber) === Token.IsStringOrNumber) {
@@ -2982,7 +2985,7 @@ export function parseClassElementList(
   if (isComputed === 0) {
     if (parser.tokenValue === 'constructor') {
       if (isStatic === 0 && parser.token === Token.LeftParen) {
-        if (type & (PropertyKind.GetSet | PropertyKind.Async | PropertyKind.Generator)) {
+        if (type & 0x198) {
           report(parser, Errors.InvalidConstructor, 'accessor');
         }
         if ((context & Context.SuperCall) !== Context.SuperCall) {
@@ -2991,18 +2994,19 @@ export function parseClassElementList(
         }
       }
       type |= PropertyKind.Constructor;
-    } else if (
-      type & (PropertyKind.Static | PropertyKind.GetSet | PropertyKind.Generator | PropertyKind.Async) &&
-      parser.tokenValue === 'prototype'
-    ) {
+    } else if (type & 0x1b8 && parser.tokenValue === 'prototype') {
       report(parser, Errors.StaticPrototype);
     }
   }
 
+  conjuncted = parser.flags;
+
   const value =
-    type & (PropertyKind.Setter | PropertyKind.Setter)
+    type & 0x180
       ? parseGetterSetter(parser, context | Context.Strict, type)
       : parseMethodDefinition(parser, context | Context.Strict, type);
+
+  parser.flags |= conjuncted;
 
   const kind =
     isStatic === 0 && type & PropertyKind.Constructor
