@@ -796,7 +796,6 @@ export function parseIdentifierOrArrow(
   parser.assignable = 1;
 
   if (parser.token === Token.Arrow) {
-
     const conjuncted: Flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
 
     const scope = {
@@ -813,7 +812,6 @@ export function parseIdentifierOrArrow(
     expr = parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
 
     parser.flags |= conjuncted;
-
   }
   return expr;
 }
@@ -1056,6 +1054,7 @@ export function parseAsyncArrowOrCallExpression(
 
     if (parser.token === Token.Arrow) {
       if (newLine === 1) report(parser, Errors.Unexpected);
+      if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
       return parseArrowFunctionAfterParen(parser, context, scope, Flags.Empty, [], canAssign, 1, start, line, column);
     }
 
@@ -1095,22 +1094,19 @@ export function parseAsyncArrowOrCallExpression(
       addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
 
       expr = parsePrimaryExpression(parser, context, kind, 0, /* allowLHS */ 1, 1, 1, start, line, column);
+
       if (parser.token === Token.RightParen || parser.token === Token.Comma) {
         conjuncted |=
           (parser.assignable === 0 ? Flags.NotDestructible | Flags.SimpleParameterList : 0) |
           (isEvalOrArguments(tokenValue) ? Flags.StrictEvalArguments : 0) |
           ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0);
+      } else if (parser.token === Token.Assign) {
+        conjuncted |= Flags.SimpleParameterList;
+        expr = parseAssignmentExpression(parser, context, 0, 1, 1, expr, start, line, column);
       } else {
-        if (parser.token === Token.Assign) {
-          conjuncted |= Flags.SimpleParameterList;
-        } else {
-          conjuncted |= Flags.NotDestructible;
-          expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
-        }
-
-        if (parser.token !== Token.RightParen && parser.token !== Token.Comma) {
-          expr = parseAssignmentExpression(parser, context, 0, 1, 1, expr, start, line, column);
-        }
+        conjuncted |= Flags.NotDestructible;
+        expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+        expr = parseAssignmentExpression(parser, context, 0, 1, 1, expr, start, line, column);
       }
     } else if (token & Token.IsPatternStart) {
       expr =
