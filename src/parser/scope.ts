@@ -75,7 +75,7 @@ export function addVarOrBlock(
   origin: Origin
 ) {
   if (kind & BindingKind.Variable) {
-    //addVarName(parser, context, scope, name, kind);
+    addVarName(parser, context, scope, name, kind);
   } else {
     addBlockName(parser, context, scope, name, kind, origin);
   }

@@ -1,7 +1,7 @@
 import { Token } from '../token';
 import { nextToken } from '../scanner/scan';
 import { report, Errors } from '../errors';
-import { Context, BindingKind } from './bits';
+import { Context, Flags, BindingKind } from './bits';
 
 export function getStartLoc(parser: ParserState) {
   return { start: parser.start, line: parser.line, column: parser.line };
@@ -217,9 +217,10 @@ export function consume(parser: ParserState, context: Context, t: Token, allowRe
   nextToken(parser, context, allowRegExp);
 }
 
-export function isStrictReservedWord(parser: ParserState, context: Context, t: Token): boolean {
+export function isStrictReservedWord(parser: ParserState, context: Context, t: Token, inGroup: 0 | 1): boolean {
   if (t === Token.AwaitKeyword) {
     if (context & (Context.InAwaitContext | Context.Module)) report(parser, Errors.AwaitOutsideAsync);
+    if (inGroup === 1) parser.flags |= Flags.SeenAwait;
   }
 
   if (t === Token.YieldKeyword && context & Context.InYieldContext) report(parser, Errors.DisallowedInContext, 'yield');

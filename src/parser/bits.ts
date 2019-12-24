@@ -26,6 +26,7 @@ export const enum Context {
   InSwitch                = 1 << 27,
   InGlobal                = 1 << 28
 }
+
 /**
  * The mutable parser flags, in case any flags need passed by reference.
  */
