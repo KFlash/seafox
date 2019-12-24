@@ -10,13 +10,11 @@ describe('Lexer', () => {
       scan(parser, Context.Empty, opts.source, opts.source.length, 0, true, /* allowRegExp */ 0);
       t.deepEqual(
         {
-          //seek: scan(parser),
           hasNext: parser.index < parser.source.length,
           line: parser.lineBase,
           column: parser.index - parser.offset
         },
         {
-          //  seek: opts.seek,
           hasNext: opts.hasNext,
           line: opts.line,
           column: opts.column
@@ -24,7 +22,6 @@ describe('Lexer', () => {
       );
     });
   }
-
   function passAll(name: (lt: string) => string, opts: (lt: string) => any) {
     pass(name('line feed'), opts('\n'));
     pass(name('carriage return'), opts('\r'));
@@ -67,21 +64,21 @@ describe('Lexer', () => {
   pass('skips spaces2', {
     source: '/* \u2029 \u2028 \r\n \u2028 */',
     hasNext: false,
-    line: 6,
+    line: 5,
     column: 3
   });
 
   pass('skips spaces2', {
     source: '/* \u2029 \u2028 \r\n \u2028  \r\n */',
     hasNext: false,
-    line: 8,
+    line: 6,
     column: 3
   });
 
   pass('skips spaces2', {
     source: '/* \u2029 \r\n \u2028 */',
     hasNext: false,
-    line: 5,
+    line: 4,
     column: 3
   });
 
@@ -143,7 +140,7 @@ describe('Lexer', () => {
   pass('skips mixed whitespace1', {
     source: '/* \r\n */',
     hasNext: false,
-    line: 3,
+    line: 2,
     column: 3
   });
 

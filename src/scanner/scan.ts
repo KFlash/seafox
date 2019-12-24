@@ -3,7 +3,7 @@ import { Context } from '../parser/bits';
 import { Token } from '../token';
 import { Chars } from '../chars';
 import { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments';
-import { scanMaybeIdentifier, scanIdentifier, scanUnicodeEscapeIdStart } from './identifier';
+import { scanMaybeIdentifier, scanIdentifier, scanIdentifierOrKeyword, scanUnicodeEscapeIdStart } from './identifier';
 import { scanStringLiteral } from './string';
 import { scanRegularExpression } from './regexp';
 import { scanTemplate } from './template';
@@ -78,13 +78,13 @@ export function scan(
         parser.index++;
         break;
 
-      // `a`...`z`
-      case Token.IdentifierOrKeyword:
-        return scanIdentifier(parser, context, source, char, /* maybeKeyword */ 1);
-
       // `A`...`Z`, `_var`, `$var`
       case Token.Identifier:
-        return scanIdentifier(parser, context, source, char, /* maybeKeyword */ 0);
+        return scanIdentifier(parser, context, source, char);
+
+      // `a`...`z`
+      case Token.IdentifierOrKeyword:
+        return scanIdentifierOrKeyword(parser, context, source, char);
 
       // `1`...`9`
       case Token.NumericLiteral:
@@ -148,20 +148,23 @@ export function scan(
 
       // `/`, `/=`, `/>`, '/*..*/'
       case Token.Divide:
-        char = source.charCodeAt(++parser.index);
+        index = ++parser.index;
+        char = source.charCodeAt(index);
 
         if (char === Chars.Slash) {
-          parser.index = skipSingleLineComment(parser, source, ++parser.index);
+          index++; // skips: '/'
+          parser.index = skipSingleLineComment(parser, source, index);
           continue;
         }
 
         if (char === Chars.Asterisk) {
-          parser.index = skipMultiLineComment(parser, source, ++parser.index);
+          index++; // skips: '*'
+          parser.index = skipMultiLineComment(parser, source, index);
           continue;
         }
 
         if (allowRegExp === 1) {
-          return scanRegularExpression(parser, context, source);
+          return scanRegularExpression(parser, context, source, index);
         }
 
         if (char === Chars.EqualSign) {

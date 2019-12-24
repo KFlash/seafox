@@ -3,7 +3,6 @@ import { Context } from '../parser/bits';
 import { Chars } from '../chars';
 import { unicodeLookup } from './unicode';
 import { report, Errors } from '../errors';
-import { CharFlags, CharTypes } from './charClassifier';
 
 export function skipHashBang(parser: ParserState, source: string): void {
   const index = parser.index;
@@ -42,12 +41,15 @@ export function skipMultiLineComment(parser: ParserState, source: string, i: num
         }
       }
 
-      if ((CharTypes[char] & CharFlags.LineTerminator) === CharFlags.LineTerminator) {
-        if (char === Chars.CarriageReturn) {
-          parser.lineBase++;
-          lastIsCR = 1;
-        }
-        parser.lineBase = parser.lineBase + (1 - lastIsCR);
+      if (char === Chars.CarriageReturn) {
+        parser.lineBase++;
+        lastIsCR = 1;
+        parser.newLine = 1;
+        parser.offset = i;
+      }
+
+      if (char === Chars.LineFeed) {
+        if (lastIsCR === 0) parser.lineBase++;
         lastIsCR = 0;
         parser.newLine = 1;
         parser.offset = i;

@@ -12,19 +12,19 @@ import { Context } from '../parser/bits';
  * @param context Context masks
  */
 
-export function scanRegularExpression(parser: ParserState, context: Context, source: string): Token {
+export function scanRegularExpression(parser: ParserState, context: Context, source: string, i: number): Token {
   const enum RegexState {
     Empty = 0,
     Escape = 0x1,
     Class = 0x2
   }
-  const bodyStart = parser.index;
+  const bodyStart = i;
   // Scan: ('/' | '/=') RegularExpressionBody '/' RegularExpressionFlags
   let preparseState = RegexState.Empty;
 
   while (true) {
-    const ch = source.charCodeAt(parser.index);
-    parser.index++;
+    const ch = source.charCodeAt(i);
+    i++;
     if (preparseState & RegexState.Escape) {
       preparseState &= ~RegexState.Escape;
     } else {
@@ -45,12 +45,12 @@ export function scanRegularExpression(parser: ParserState, context: Context, sou
       }
     }
 
-    if (parser.index >= parser.length) {
+    if (i >= parser.length) {
       report(parser, Errors.UnterminatedRegExp);
     }
   }
 
-  const bodyEnd = parser.index - 1;
+  const bodyEnd = i - 1;
 
   const enum RegexFlags {
     Empty = 0b00000,
@@ -64,8 +64,9 @@ export function scanRegularExpression(parser: ParserState, context: Context, sou
 
   let mask = RegexFlags.Empty;
 
-  const { index: flagStart } = parser;
-  let char = source.charCodeAt(parser.index);
+  const flagStart = i;
+
+  let char = source.charCodeAt(i);
 
   while (isIdentifierPart(char)) {
     switch (char) {
@@ -103,16 +104,18 @@ export function scanRegularExpression(parser: ParserState, context: Context, sou
         report(parser, Errors.UnexpectedTokenRegExpFlag);
     }
 
-    parser.index++;
-    char = source.charCodeAt(parser.index);
+    i++;
+    char = source.charCodeAt(i);
   }
-  const flags = source.slice(flagStart, parser.index);
+  const flags = source.slice(flagStart, i);
 
   const pattern = source.slice(bodyStart, bodyEnd);
 
   parser.tokenRegExp = { pattern, flags };
 
-  if (context & Context.OptionsRaw) parser.tokenRaw = source.slice(parser.start, parser.index);
+  parser.index = i;
+
+  if (context & Context.OptionsRaw) parser.tokenRaw = source.slice(parser.start, i);
 
   parser.tokenValue = validate(parser, pattern, flags);
 

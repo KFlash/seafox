@@ -2662,6 +2662,63 @@
       throw new ParseError(scope.index, scope.line, scope.column, scope.type, scope.params);
   }
 
+  function skipHashBang(parser, source) {
+      const index = parser.index;
+      if (source.charCodeAt(index) === 35 && source.charCodeAt(index + 1) === 33) {
+          parser.index = skipSingleLineComment(parser, source, index + 1);
+      }
+  }
+  function skipSingleHTMLComment(parser, context, source, i) {
+      if (context & (16 | 2048)) {
+          report(parser, 11);
+      }
+      return skipSingleLineComment(parser, source, i + 2);
+  }
+  function skipSingleLineComment(parser, source, i) {
+      let char = source.charCodeAt(i);
+      while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0) {
+          char = source.charCodeAt(++i);
+      }
+      return i;
+  }
+  function skipMultiLineComment(parser, source, i) {
+      let lastIsCR = 0;
+      let char = source.charCodeAt(i++);
+      while (i < parser.length) {
+          if (char < 0x2b) {
+              if (char === 42) {
+                  while (char === 42) {
+                      char = source.charCodeAt(i++);
+                  }
+                  if (char === 47) {
+                      return i;
+                  }
+              }
+              if (char === 13) {
+                  parser.lineBase++;
+                  lastIsCR = 1;
+                  parser.newLine = 1;
+                  parser.offset = i;
+              }
+              if (char === 10) {
+                  if (lastIsCR === 0)
+                      parser.lineBase++;
+                  lastIsCR = 0;
+                  parser.newLine = 1;
+                  parser.offset = i;
+              }
+          }
+          else if ((char & ~1) === 8232) {
+              parser.offset = i;
+              parser.newLine = 1;
+              parser.lineBase++;
+              lastIsCR = 0;
+          }
+          char = source.charCodeAt(i++);
+      }
+      report(parser, 10);
+  }
+
   const CharTypes = [
       0,
       0,
@@ -2797,60 +2854,6 @@
           ? CharTypes[code] & 5
           : (unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1 ||
               (code === 8204 || code === 8205);
-  }
-
-  function skipHashBang(parser, source) {
-      const index = parser.index;
-      if (source.charCodeAt(index) === 35 && source.charCodeAt(index + 1) === 33) {
-          parser.index = skipSingleLineComment(parser, source, index + 1);
-      }
-  }
-  function skipSingleHTMLComment(parser, context, source, i) {
-      if (context & (16 | 2048)) {
-          report(parser, 11);
-      }
-      return skipSingleLineComment(parser, source, i + 2);
-  }
-  function skipSingleLineComment(parser, source, i) {
-      let char = source.charCodeAt(i);
-      while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0) {
-          char = source.charCodeAt(++i);
-      }
-      return i;
-  }
-  function skipMultiLineComment(parser, source, i) {
-      let lastIsCR = 0;
-      let char = source.charCodeAt(i++);
-      while (i < parser.length) {
-          if (char < 0x2b) {
-              if (char === 42) {
-                  while (char === 42) {
-                      char = source.charCodeAt(i++);
-                  }
-                  if (char === 47) {
-                      return i;
-                  }
-              }
-              if ((CharTypes[char] & 16) === 16) {
-                  if (char === 13) {
-                      parser.lineBase++;
-                      lastIsCR = 1;
-                  }
-                  parser.lineBase = parser.lineBase + (1 - lastIsCR);
-                  lastIsCR = 0;
-                  parser.newLine = 1;
-                  parser.offset = i;
-              }
-          }
-          else if ((char & ~1) === 8232) {
-              parser.offset = i;
-              parser.newLine = 1;
-              parser.lineBase++;
-              lastIsCR = 0;
-          }
-          char = source.charCodeAt(i++);
-      }
-      report(parser, 10);
   }
 
   const KeywordDescTable = [
@@ -3058,12 +3061,23 @@
           : String.fromCharCode(codePoint >>> 10) + String.fromCharCode(codePoint & 0x3ff);
   }
 
-  function scanIdentifier(parser, context, source, char, maybeKeyword) {
-      while (isIdentifierPart((char = source.charCodeAt(++parser.index))))
-          ;
+  function scanIdentifier(parser, context, source, char) {
+      while (CharTypes[char] & 5) {
+          char = source.charCodeAt(++parser.index);
+      }
       const value = source.slice(parser.start, parser.index);
       if (char > 90)
-          return scanIdentifierSlowPath(parser, context, source, value, maybeKeyword);
+          return scanIdentifierSlowPath(parser, context, source, value, 0);
+      parser.tokenValue = value;
+      return 3211265;
+  }
+  function scanIdentifierOrKeyword(parser, context, source, char) {
+      while (CharTypes[char] & 5) {
+          char = source.charCodeAt(++parser.index);
+      }
+      const value = source.slice(parser.start, parser.index);
+      if (char > 90)
+          return scanIdentifierSlowPath(parser, context, source, value, 1);
       parser.tokenValue = value;
       const token = descKeywordTable[value];
       return token === void 0 ? 3211265 : token;
@@ -3072,11 +3086,12 @@
       let start = parser.index;
       let escaped = 0;
       let char = source.charCodeAt(parser.index);
+      let code = null;
       while (parser.index < parser.length) {
           if (char === 92) {
               value += source.slice(start, parser.index);
               escaped = 1;
-              const code = scanUnicodeEscape(parser, source);
+              code = scanUnicodeEscape(parser, source);
               if (!isIdentifierPart(code))
                   report(parser, 19);
               maybeKeyword = 1;
@@ -3157,7 +3172,6 @@
       }
       parser.index++;
       report(parser, 19);
-      return 121;
   }
   function scanMaybeIdentifier(parser, context, source, char) {
       if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
@@ -3324,12 +3338,12 @@
       }
   }
 
-  function scanRegularExpression(parser, context, source) {
-      const bodyStart = parser.index;
+  function scanRegularExpression(parser, context, source, i) {
+      const bodyStart = i;
       let preparseState = 0;
       while (true) {
-          const ch = source.charCodeAt(parser.index);
-          parser.index++;
+          const ch = source.charCodeAt(i);
+          i++;
           if (preparseState & 1) {
               preparseState &= ~1;
           }
@@ -3356,14 +3370,14 @@
                   report(parser, 12);
               }
           }
-          if (parser.index >= parser.length) {
+          if (i >= parser.length) {
               report(parser, 12);
           }
       }
-      const bodyEnd = parser.index - 1;
+      const bodyEnd = i - 1;
       let mask = 0;
-      const { index: flagStart } = parser;
-      let char = source.charCodeAt(parser.index);
+      const flagStart = i;
+      let char = source.charCodeAt(i);
       while (isIdentifierPart(char)) {
           switch (char) {
               case 103:
@@ -3399,14 +3413,15 @@
               default:
                   report(parser, 13);
           }
-          parser.index++;
-          char = source.charCodeAt(parser.index);
+          i++;
+          char = source.charCodeAt(i);
       }
-      const flags = source.slice(flagStart, parser.index);
+      const flags = source.slice(flagStart, i);
       const pattern = source.slice(bodyStart, bodyEnd);
       parser.tokenRegExp = { pattern, flags };
+      parser.index = i;
       if (context & 8)
-          parser.tokenRaw = source.slice(parser.start, parser.index);
+          parser.tokenRaw = source.slice(parser.start, i);
       parser.tokenValue = validate(parser, pattern, flags);
       return 1048581;
   }
@@ -4080,10 +4095,10 @@
               case 123:
                   parser.index++;
                   break;
-              case 132:
-                  return scanIdentifier(parser, context, source, char, 1);
               case 3211265:
-                  return scanIdentifier(parser, context, source, char, 0);
+                  return scanIdentifier(parser, context, source, char);
+              case 132:
+                  return scanIdentifierOrKeyword(parser, context, source, char);
               case 1572866:
                   return scanNumber(parser, source, char, 0);
               case 1572868:
@@ -4130,17 +4145,20 @@
                   }
                   return 14;
               case 135314232:
-                  char = source.charCodeAt(++parser.index);
+                  index = ++parser.index;
+                  char = source.charCodeAt(index);
                   if (char === 47) {
-                      parser.index = skipSingleLineComment(parser, source, ++parser.index);
+                      index++;
+                      parser.index = skipSingleLineComment(parser, source, index);
                       continue;
                   }
                   if (char === 42) {
-                      parser.index = skipMultiLineComment(parser, source, ++parser.index);
+                      index++;
+                      parser.index = skipMultiLineComment(parser, source, index);
                       continue;
                   }
                   if (allowRegExp === 1) {
-                      return scanRegularExpression(parser, context, source);
+                      return scanRegularExpression(parser, context, source, index);
                   }
                   if (char === 61) {
                       parser.index++;

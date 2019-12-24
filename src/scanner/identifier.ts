@@ -6,17 +6,24 @@ import { Chars } from '../chars';
 import { unicodeLookup } from './unicode';
 import { fromCodePoint, toHex } from './common';
 import { report, Errors } from '../errors';
+import { CharFlags, CharTypes } from './charClassifier';
 
-export function scanIdentifier(
-  parser: ParserState,
-  context: Context,
-  source: string,
-  char: number,
-  maybeKeyword: 0 | 1
-): Token {
-  while (isIdentifierPart((char = source.charCodeAt(++parser.index))));
+export function scanIdentifier(parser: ParserState, context: Context, source: string, char: number): Token {
+  while (CharTypes[char] & CharFlags.IdentifierPart) {
+    char = source.charCodeAt(++parser.index);
+  }
   const value = source.slice(parser.start, parser.index);
-  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, maybeKeyword);
+  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 0);
+  parser.tokenValue = value;
+  return Token.Identifier;
+}
+
+export function scanIdentifierOrKeyword(parser: ParserState, context: Context, source: string, char: number): Token {
+  while (CharTypes[char] & CharFlags.IdentifierPart) {
+    char = source.charCodeAt(++parser.index);
+  }
+  const value = source.slice(parser.start, parser.index);
+  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 1);
   parser.tokenValue = value;
   const token: Token | undefined = descKeywordTable[value];
   return token === void 0 ? Token.Identifier : token;
@@ -32,12 +39,13 @@ export function scanIdentifierSlowPath(
   let start = parser.index;
   let escaped: 0 | 1 = 0;
   let char = source.charCodeAt(parser.index);
+  let code: number | null = null;
 
   while (parser.index < parser.length) {
     if (char === Chars.Backslash) {
       value += source.slice(start, parser.index);
       escaped = 1;
-      const code = scanUnicodeEscape(parser, source);
+      code = scanUnicodeEscape(parser, source);
       if (!isIdentifierPart(code)) report(parser, Errors.InvalidUnicodeEscapeSequence);
       maybeKeyword = 1;
       value += fromCodePoint(code);
@@ -134,7 +142,6 @@ export function scanUnicodeEscapeIdStart(parser: ParserState, context: Context, 
   }
   parser.index++; // skip: '\'
   report(parser, Errors.InvalidUnicodeEscapeSequence);
-  return Token.Error;
 }
 
 export function scanMaybeIdentifier(parser: ParserState, context: Context, source: string, char: number): any {
