@@ -26,7 +26,6 @@ export const enum Context {
   InSwitch                = 1 << 27,
   InGlobal                = 1 << 28
 }
-
 /**
  * The mutable parser flags, in case any flags need passed by reference.
  */
@@ -43,7 +42,8 @@ export const enum Flags {
   SimpleParameterList = 1 << 8,
   SeenProto           = 1 << 9,
   SeenYield           = 1 << 10,
-  SeenAwait           = 1 << 11
+  SeenAwait           = 1 << 11,
+  Destructuring = Destructible | AssignableDestruct | NotDestructible | MustDestruct
 }
 
 export const enum Origin {

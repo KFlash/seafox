@@ -144,7 +144,7 @@ export function parseClassDeclaration(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   // Second set of context masks to fix 'super' edge cases
-  const inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
+  let inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
 
   context |= Context.Strict;
 
@@ -154,7 +154,7 @@ export function parseClassDeclaration(
     parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
     parser.token !== Token.ExtendsKeyword
   ) {
-    if (isStrictReservedWord(parser, context, parser.token, /* inGroup */ 0)) {
+    if (isStrictReservedWord(parser, context, parser.token)) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
     // A named class creates a new lexical scope with a const binding of the
@@ -182,7 +182,6 @@ export function parseClassDeclaration(
     context,
     inheritedContext,
     id,
-    0,
     1,
     'ClassDeclaration',
     start,
@@ -322,7 +321,7 @@ export function parseImportCallDeclaration(
    *
    */
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
   /**
    * ExpressionStatement[Yield, Await]:
@@ -372,7 +371,7 @@ export function parseImportMetaDeclaration(
    *   ('++' | '--')? LeftHandSideExpression
    */
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
   /** AssignmentExpression :
    *   1. ConditionalExpression

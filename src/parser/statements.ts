@@ -304,7 +304,7 @@ export function parseNonDirectiveExpression(
    *   ('++' | '--')? LeftHandSideExpression
    *
    */
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
   /** AssignmentExpression :
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression
@@ -367,8 +367,6 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
       if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
       }
-      if (parser.token === Token.AwaitKeyword) report(parser, Errors.UnexpectedLetStrictReserved);
-
       let expr: any = parseAsyncArrowIdentifier(
         parser,
         context,
@@ -408,7 +406,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     parser.assignable = 1;
   }
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
   if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
@@ -475,7 +473,7 @@ export function parseReturnStatement(parser: ParserState, context: Context): EST
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
   const argument =
-    parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context, 0);
+    parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context);
 
   consumeSemicolon(parser, context);
 
@@ -524,7 +522,7 @@ export function parseForStatementWithVariableDeclarations(
     } else {
       if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
       init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-      init = parseMemberExpression(parser, context, init, 0, 0, 0, start, line, column);
+      init = parseMemberExpression(parser, context, init, 0, 0, start, line, column);
       isLet = true;
     }
     parser.assignable = 1;
@@ -712,7 +710,7 @@ export function parseForStatementWithVariableDeclarations(
   } else if (parser.token === Token.InKeyword) {
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    right = parseExpressions(parser, context, 0);
+    right = parseExpressions(parser, context);
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -752,11 +750,11 @@ export function parseForStatementWithVariableDeclarations(
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context, 0);
+  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context, 0);
+  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -845,7 +843,6 @@ export function parseForStatement(
       init,
       0,
       0,
-      0,
       parser.start,
       parser.line,
       parser.column
@@ -891,7 +888,7 @@ export function parseForStatement(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    right = parseExpressions(parser, context, 0);
+    right = parseExpressions(parser, context);
 
     consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -938,11 +935,11 @@ export function parseForStatement(
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context, 0);
+  if (parser.token !== Token.Semicolon) test = parseExpressions(parser, context);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context, 0);
+  if (parser.token !== Token.RightParen) update = parseExpressions(parser, context);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -988,7 +985,7 @@ export function parseDoWhileStatement(
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  const test = parseExpressions(parser, context, 0);
+  const test = parseExpressions(parser, context);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -1026,7 +1023,7 @@ export function parseWhileStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabels, 0);
 
@@ -1062,7 +1059,7 @@ export function parseSwitchStatement(
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  const discriminant = parseExpressions(parser, context, 0);
+  const discriminant = parseExpressions(parser, context);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 0);
@@ -1083,7 +1080,7 @@ export function parseSwitchStatement(
     const consequent: ESTree.Statement[] = [];
 
     if (consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)) {
-      test = parseExpressions(parser, context, 0);
+      test = parseExpressions(parser, context);
     } else {
       consume(parser, context, Token.DefaultKeyword, /* allowRegExp */ 1);
       if (seenDefault) report(parser, Errors.Unexpected);
@@ -1147,7 +1144,7 @@ export function parseIfStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
@@ -1210,7 +1207,7 @@ export function parseThrowStatement(parser: ParserState, context: Context): ESTr
 
   if (parser.newLine !== 0) report(parser, Errors.NewlineAfterThrow);
 
-  const argument: ESTree.Statement = parseExpressions(parser, context, 0);
+  const argument: ESTree.Statement = parseExpressions(parser, context);
 
   consumeSemicolon(parser, context);
 
@@ -1449,7 +1446,7 @@ export function parseWithStatement(
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  const object = parseExpressions(parser, context, 0);
+  const object = parseExpressions(parser, context);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -1561,7 +1558,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   if (parser.token === Token.Arrow) {
     expr = parseAsyncArrowIdentifier(parser, context, /* isAsync */ 0, tokenValue, expr, start, line, column);
   } else {
-    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
     expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
   }
@@ -1606,7 +1603,7 @@ export function parseExpressionOrLabelledStatement(
     );
   }
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, 0, start, line, column);
 
   expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
 
