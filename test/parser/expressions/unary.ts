@@ -18,8 +18,8 @@ describe('Expressions - Unary', () => {
     'async function f(){   function fh({x: - await x}) { "use strict"; }   }',
     `void a
     /foo/`,
-    // 'async function f(){   async function g(x = - await x) { "use strict"; }  }',
-    // 'delete async() => foo',
+    'async function f(){   async function g(x = - await x) { "use strict"; }  }',
+    'delete async() => foo',
     'delete () => foo',
     '_ => _ => _ => _ => new.target',
     '_ => new.target',

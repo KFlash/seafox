@@ -74,8 +74,8 @@ describe('Expressions - Class', () => {
     'function *f(){  class yield { }  }',
     'function *f(){  class x extends yield { }  }',
     'function *f(){  class x extends yield y { }  }',
-    //'class a { b(c,,) {} }',
-    //'(class a { b(c,,) {} })',
+    'class a { b(c,,) {} }',
+    '(class a { b(c,,) {} })',
     '(class b {)',
     '(class b )',
     '(class b {-})',
@@ -184,7 +184,7 @@ describe('Expressions - Class', () => {
     'class A extends +x {}',
     'class A extends {...x=y} = b {}',
     'class A extends {x: y} = b {}',
-    // 'class A extends yield {}',
+    'class A extends yield {}',
     `class A extends yield
     x {}`,
     'class A extends ~x {}',
@@ -214,7 +214,7 @@ describe('Expressions - Class', () => {
       });
     });
   }
-  /*
+
   for (const arg of [
     'arguments',
     'eval',
@@ -231,10 +231,10 @@ describe('Expressions - Class', () => {
   ]) {
     it(`class C { get name(${arg}) {} }`, () => {
       t.throws(() => {
-        parseSource(`class C { get name(${arg}) {} }`, undefined, Context.Empty);
+        parseScript(`class C { get name(${arg}) {} }`);
       });
     });
-  } */
+  }
 
   for (const arg of [
     'class',

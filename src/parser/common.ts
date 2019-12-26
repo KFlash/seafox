@@ -183,6 +183,9 @@ export function validateFunctionName(parser: ParserState, context: Context, t: T
     if ((t & Token.FutureReserved) === Token.FutureReserved) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
+    if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.UnexpectedStrictReserved);
+    }
   }
 
   if ((t & Token.Keyword) === Token.Keyword) {
@@ -246,6 +249,7 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   // Note: The BoundNames of LexicalDeclaration and ForDeclaration must not
   // contain 'let'. (CatchParameter is the only lexical binding form
   // without this restriction.)
+
   if (kind & (BindingKind.Let | BindingKind.Const) && t === Token.LetKeyword) {
     report(parser, Errors.InvalidLetConstBinding);
   }
@@ -257,8 +261,4 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   if (context & (Context.InYieldContext | Context.Strict) && t === Token.YieldKeyword) {
     report(parser, Errors.DisallowedInContext, 'yield');
   }
-}
-
-export function isEvalOrArguments(value: string): boolean {
-  return value === 'eval' || value === 'arguments';
 }

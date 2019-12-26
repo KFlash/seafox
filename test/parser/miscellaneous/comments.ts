@@ -1379,7 +1379,7 @@ describe('Miscellaneous - Comments', () => {
         loc: {
           end: {
             column: 6,
-            line: 5
+            line: 4
           },
           start: {
             column: 0,

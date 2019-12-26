@@ -38,9 +38,9 @@ describe('Declarations - Variable', () => {
     'with',
     'null',
     'true',
-    'false'
+    'false',
     // future reserved keyword,
-    // 'enum'
+    'enum'
   ]) {
     it(`for (const ${arg} = x;;);`, () => {
       t.throws(() => {
@@ -84,9 +84,9 @@ describe('Declarations - Variable', () => {
     [`var foo = 1; let foo = 1;`, Context.OptionsDisableWebCompat],
     [`var x = a; const x = b;`, Context.Empty],
     [`function var() { }`, Context.Empty],
-    //[`function a({var}) { }`, Context.Empty],
-    //[`(function a([{var}]) { })`, Context.Empty],
-    //[`(function a({ hello: {var}}) { })`, Context.Empty],
+    [`function a({var}) { }`, Context.Empty],
+    [`(function a([{var}]) { })`, Context.Empty],
+    [`(function a({ hello: {var}}) { })`, Context.Empty],
     [`(function a({ 0: [var]}) { })`, Context.Empty],
     [`class var { }`, Context.Empty],
     [`var [...[ x ] = []] = [];`, Context.Empty],

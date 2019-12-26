@@ -24,9 +24,7 @@ export function scanIdentifierOrKeyword(parser: ParserState, context: Context, s
   }
   const value = source.slice(parser.start, parser.index);
   if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 1);
-  parser.tokenValue = value;
-  const token: Token | undefined = descKeywordTable[value];
-  return token === void 0 ? Token.Identifier : token;
+  return descKeywordTable[(parser.tokenValue = value)] || Token.Identifier;
 }
 
 export function scanIdentifierSlowPath(

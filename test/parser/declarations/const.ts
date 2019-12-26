@@ -85,8 +85,8 @@ describe('Declarations - Const', () => {
     ['const [...{ x }, y] = [1, 2, 3];', Context.Empty],
     ['const [...x, y] = [1, 2, 3];', Context.Empty],
     // Babylon PR: https://github.com/babel/babylon/pull/195
-    // ['const { foo: enum } = bar();', Context.Empty],
-    //  ['function foo({ bar: enum }) {}', Context.Empty],
+    ['const { foo: enum } = bar();', Context.Empty],
+    ['function foo({ bar: enum }) {}', Context.Empty],
     ['const foo', Context.Empty],
     ['const foo, bar;', Context.Empty],
     ['const foo, bar', Context.Empty],
@@ -155,9 +155,9 @@ describe('Declarations - Const', () => {
     ['const [1, a] = [];', Context.Empty],
     ['const [...a, b] = [];', Context.Empty],
     ['const foo =x, bar;', Context.Empty],
-    ['const foo, bar;', Context.Module]
-    //['const [a, let, b] = [1, 2, 3];', Context.Empty],
-    //['const {let} = 1;', Context.Empty]
+    ['const foo, bar;', Context.Module],
+    ['const [a, let, b] = [1, 2, 3];', Context.Empty],
+    ['const {let} = 1;', Context.Empty]
   ]) {
     it(source as string, () => {
       t.throws(() => {

@@ -4,7 +4,7 @@ import { parseScript } from '../../../src/seafox';
 
 describe('Declarations - Let', () => {
   for (const [source, ctx] of [
-    //['const [a, let, b] = [1, 2, 3];', Context.Empty],
+    ['const [a, let, b] = [1, 2, 3];', Context.Empty],
     ['for(let let in { }) { };', Context.Empty],
     ['let [foo:bar] = obj;', Context.Empty],
     ['let [...] = obj;', Context.Empty],
@@ -106,7 +106,7 @@ describe('Declarations - Let', () => {
     ['let x = {y=z}', Context.Empty],
     ['let x = {y=z} => d', Context.Empty],
     ['let {[x]: y = z};', Context.Empty],
-    // ['let {...let} = {a: 1, b: 2};', Context.Empty],
+    ['let {...let} = {a: 1, b: 2};', Context.Empty],
     ['let [[(a)], ((((((([b])))))))] = [[],[]];', Context.Empty],
     ['let a, b; [...a, b] = [];', Context.Empty],
     ['let [((a)] = [];', Context.Empty],
@@ -152,8 +152,8 @@ describe('Declarations - Let', () => {
     ['for (let foo = bar in x);', Context.Empty],
     ['let { let } = {};', Context.Empty],
     ['const { let } = {};', Context.Empty],
-    //['let [let] = [];', Context.Empty],
-    //['const [let] = [];', Context.Empty],
+    ['let [let] = [];', Context.Empty],
+    ['const [let] = [];', Context.Empty],
     ['for (let foo = bar, zoo = boo in x);', Context.Empty],
     ['for (let\nfoo() in x);', Context.Empty],
     ['for (let foo = bar, zoo = boo of x);', Context.Empty],
@@ -272,7 +272,7 @@ describe('Declarations - Let', () => {
     [`for (let let of []) {}`, Context.OptionsDisableWebCompat],
     [`const let = 1`, Context.OptionsDisableWebCompat],
     [`for (const let in {}) {}`, Context.OptionsDisableWebCompat],
-    // [`for (const [let] of []) {}`, Context.OptionsDisableWebCompat],
+    [`for (const [let] of []) {}`, Context.OptionsDisableWebCompat],
     [`let test = 2, let = 1;`, Context.OptionsDisableWebCompat],
     [`let let;`, Context.OptionsDisableWebCompat],
     [`let let x`, Context.OptionsDisableWebCompat],
@@ -280,7 +280,7 @@ describe('Declarations - Let', () => {
     [`let x = ...y;`, Context.OptionsDisableWebCompat],
     [`let ];`, Context.OptionsDisableWebCompat],
     [`let p/`, Context.OptionsDisableWebCompat],
-    //[`let [a, let, b] = [1, 2, 3];`, Context.OptionsDisableWebCompat],
+    [`let [a, let, b] = [1, 2, 3];`, Context.OptionsDisableWebCompat],
     [
       `let
     {}`,

@@ -5,6 +5,14 @@ import * as ESTree from './estree';
 import { ScopeState, ScopeKind, addVarName, addBlockName } from './scope';
 import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import {
+  ParserState,
+  consumeSemicolon,
+  setLoc,
+  optionalBit,
+  validateFunctionName,
+  isStrictReservedWord
+} from './common';
+import {
   parseFunctionLiteral,
   parseClassDeclarationOrExpressionRest,
   parseIdentifierFromValue,
@@ -17,14 +25,6 @@ import {
   parseExpression,
   parseIdentifier
 } from './expressions';
-import {
-  ParserState,
-  consumeSemicolon,
-  setLoc,
-  optionalBit,
-  validateFunctionName,
-  isStrictReservedWord
-} from './common';
 
 /**
  * Parse function declaration
@@ -86,7 +86,8 @@ export function parseFunctionDeclarationRest(
     const { token, tokenValue, start, line, column } = parser;
 
     validateFunctionName(parser, context | ((context & 0b0000000000000000000_1100_00000000) << 11), token);
-
+    // In ES6, a function behaves as a lexical binding, except in
+    // a script scope, or the initial scope of eval or another function.
     if (origin & Origin.TopLevel && (context & Context.Module) !== Context.Module) {
       addVarName(parser, context, scope, tokenValue, BindingKind.Variable);
     } else {

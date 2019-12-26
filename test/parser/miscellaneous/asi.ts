@@ -70,7 +70,6 @@ describe('Miscellaneous - ASI', () => {
     'function f(){\n"foo"\n}',
     '"ignore me"\n++x',
     '("use strict"); foo = 42;',
-    '("use strict"); eval = 42;',
     'function f(){ 123; "use strict";}'
   ]) {
     it(`${arg}`, () => {

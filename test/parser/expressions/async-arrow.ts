@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Async arrow', () => {
   for (const [source, ctx] of [
@@ -58,7 +58,6 @@ describe('Expressions - Async arrow', () => {
     ['async a?c:d=>{}=>{};', Context.Empty],
     ['async(...a)`template-head${c}`=>{}', Context.Empty],
     ['async(...a)?c:d=>{}=>{};', Context.Empty],
-    ['interface => {}', Context.Strict | Context.Module],
     ['async (...a)?c:d=>{}=>{}', Context.Empty],
     ['async (...a)[1]=>{};', Context.Empty],
     ['async (a,...b)`template-head${c}`=>{}', Context.Empty],
@@ -105,10 +104,10 @@ describe('Expressions - Async arrow', () => {
     ["async (c, a['b']) => {}", Context.Empty],
     ['async (...a = b) => b', Context.Empty],
     ["async () => {'value': 42}", Context.Empty],
-    //['async enum => 1;', Context.Strict],
+    ['async enum => 1;', Context.Strict],
     ['var af = package => 1;', Context.Strict],
-    //['var af = arguments => 1;', Context.Strict],
-    // ['async eval => 1;', Context.Strict],
+    ['var af = arguments => 1;', Context.Strict],
+    ['async eval => 1;', Context.Strict],
     [`async left = (aSize.width/2) - ()`, Context.Empty],
     [`async (10) => 0;`, Context.Empty],
     [`async "use strict"; (a) => 00;`, Context.Empty],
@@ -146,41 +145,37 @@ describe('Expressions - Async arrow', () => {
     ['async ((x, y)) => 0', Context.Empty],
     ['async  ...x => x;', Context.Empty],
     ['async yield => 1;', Context.Strict],
-    //['async (yield) => 1;', Context.Strict],
+    ['async (yield) => 1;', Context.Strict],
     ['async ([{x: y.z}]) => b', Context.Empty],
     ['async ([{x: y.z}] = a) => b', Context.Empty],
     ['async ([{x: y.z}] = a) => b', Context.Empty],
     ['async ([{x: y.z} = a]) => b', Context.Empty],
     ['async(foo = super()) => {}', Context.Empty],
-    //['async(x = await) => {  }', Context.Empty],
-    //['async (x = 1) => {"use strict"}', Context.Empty],
-    //['async(await) => {  }', Context.Empty],
+    ['async(x = await) => {  }', Context.Empty],
+    ['async (x = 1) => {"use strict"}', Context.Empty],
+    ['async(await) => {  }', Context.Empty],
     ['async(foo) => { super() };', Context.Empty],
     ['async(foo) => { super.prop };', Context.Empty],
     //['\\u0061sync () => {}', Context.Empty],
     ['(async (...a,) => {}', Context.Empty],
     ['a + async () => {}', Context.Empty],
-    //['async() => { (a = await/r/g) => {} };', Context.Empty],
+    ['async() => { (a = await/r/g) => {} };', Context.Empty],
     [`async ((x, y)) => 0`, Context.Empty],
     [`async(...x,b) => x`, Context.Empty],
     [`async(...x,) => x`, Context.Empty],
     ['a = (b = await/r/g) => {}) => {}', Context.Empty],
     //['async(a = (b = await/r/g) => {}) => {}', Context.Empty],
-    //['(a = async(b = await/r/g) => {}) => {}', Context.Empty],
-    //['(...await) => {}', Context.Strict | Context.Module],
-    //['async(...await) => {}', Context.Empty],
-    //['(a, ...await) => {}', Context.Strict | Context.Module],
-    //['async(a, ...await) => {}', Context.Empty],
-    //['(a = async(...await) => {}) => {}', Context.Empty],
-    //['(a = (...await) => {}) => {}', Context.Strict | Context.Module],
-    //['(a = async(...await) => {}) => {}', Context.Empty],
-    //['async(a = (...await) => {}) => {}', Context.Empty],
-    //['async(a = async(...await) => {}) => {}', Context.Empty],
-    //['(a = (b, ...await) => {}) => {}', Context.Strict | Context.Module],
-    //['(a = async(b, ...await) => {}) => {}', Context.Empty],
+    ['(a = async(b = await/r/g) => {}) => {}', Context.Empty],
+    ['async(...await) => {}', Context.Empty],
+    ['async(a, ...await) => {}', Context.Empty],
+    ['(a = async(...await) => {}) => {}', Context.Empty],
+    ['(a = async(...await) => {}) => {}', Context.Empty],
+    // ['async(a = (...await) => {}) => {}', Context.Empty],
+    ['async(a = async(...await) => {}) => {}', Context.Empty],
+    ['(a = async(b, ...await) => {}) => {}', Context.Empty],
     //['async(a = (b, ...await) => {}) => {}', Context.Empty],
-    //['async(a = async(b, ...await) => {}) => {}', Context.Empty],
-    //['async(a = async(b = await/r/g) => {}) => {}', Context.Empty],
+    ['async(a = async(b, ...await) => {}) => {}', Context.Empty],
+    ['async(a = async(b = await/r/g) => {}) => {}', Context.Empty],
     ['async(foo) => { super.prop };', Context.Empty],
     ['async(foo = super()) => {}', Context.Empty],
     ['async (foo = super.foo) => { }', Context.Empty],
@@ -216,7 +211,7 @@ describe('Expressions - Async arrow', () => {
     ['async(...a, b) => b', Context.Empty],
     ['async(...a,) => b', Context.Empty],
     ['async(...a, b) => b', Context.Empty],
-    // ['({async foo() { return {await} }})', Context.Empty],
+    ['({async foo() { return {await} }})', Context.Empty],
     ['async().foo13 () => 1', Context.Empty],
     ['async().foo10 => 1', Context.Empty],
     ['async(...a, b) => b', Context.Empty],
@@ -228,8 +223,8 @@ describe('Expressions - Async arrow', () => {
     ['function* a(){ async (yield) => {}; }', Context.Empty],
     ['f(async\n()=>c)', Context.Empty],
     ['let f = a + b + async()=>d', Context.Empty],
-    //['(class { async })', Context.Empty],
-    //['(class { async\na(){} })', Context.Empty],
+    ['(class { async })', Context.Empty],
+    // ['(class { async\na(){} })', Context.Empty],
     ['(class { async get a(){} })', Context.Empty],
     //['x = async \n () => x, y', Context.Empty],
     ['async \n () => {}', Context.Empty],
@@ -241,9 +236,9 @@ describe('Expressions - Async arrow', () => {
     //['async \n (x) => x', Context.Empty],
     ['async foo ? bar : baz => {}', Context.Empty],
     ['async (x) \n => x', Context.Empty],
-    //['async (await, b = async () => {}) => 1', Context.Empty],
+    ['async (await, b = async () => {}) => 1', Context.Empty],
     ['break async \n () => x', Context.Empty],
-    //['async await => {}', Context.Empty],
+    ['async await => {}', Context.Empty],
     ['async (a, ...b, ...c) => {}', Context.Empty],
     ['async ((a)) => {}', Context.Empty],
     ['({ async get a(){} })', Context.Empty],
@@ -333,13 +328,28 @@ describe('Expressions - Async arrow', () => {
       t.throws(() => {
         parseScript(source as string, {
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
-          module: ((ctx as any) & Context.Module) !== 0
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });
   }
 
+  // Module code
+  for (const [source, ctx] of [
+    ['interface => {}', Context.Strict | Context.Module],
+    ['(...await) => {}', Context.Strict | Context.Module],
+    ['(a, ...await) => {}', Context.Strict | Context.Module],
+    ['(a = (...await) => {}) => {}', Context.Strict | Context.Module],
+    ['(a = (b, ...await) => {}) => {}', Context.Strict | Context.Module]
+  ]) {
+    it(source as string, () => {
+      t.throws(() => {
+        parseModule(source as string, {
+          disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
+        });
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
     [
       `(async => {})[foo]`,

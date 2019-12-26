@@ -29,8 +29,6 @@ export function scanNumber(parser: ParserState, source: string, char: number, sk
     }
   }
 
-  if (char === Chars.Underscore) return skipNumericSeparator(parser, source, char);
-
   while (char <= Chars.Nine && char >= Chars.Zero) {
     char = source.charCodeAt(++parser.index);
   }

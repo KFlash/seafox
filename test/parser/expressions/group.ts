@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Group', () => {
   for (const arg of [
@@ -124,7 +124,7 @@ describe('Expressions - Group', () => {
     '({ ...{a} } = {})',
     '({b, c, d, ...{a} } = {})',
     '({a,,a} = 0)',
-    // '({function} = 0)',
+    '({function} = 0)',
     '({a:function} = 0)',
     '({a:for} = 0)',
     '({*=f(){}})',
@@ -135,10 +135,10 @@ describe('Expressions - Group', () => {
     '({a: b += 0} = {})',
     '[a += b] = []',
     '({"a"} = 0)',
-    // '"use strict"; (arguments = a)',
-    // '"use strict"; (arguments = a) => {}',
-    // '"use strict"; (arguments) => {}',
-    // '"use strict"; (a, arguments) => {}',
+    '"use strict"; (arguments = a)',
+    '"use strict"; (arguments = a) => {}',
+    '"use strict"; (arguments) => {}',
+    '"use strict"; (a, arguments) => {}',
     '({var} = 0)',
     '({a.b} = 0)',
     '({0} = 0)',
@@ -155,8 +155,8 @@ describe('Expressions - Group', () => {
     '(++x) => x;',
     '(++x, y) => x',
     '(x--) => x;',
-    // '({get p(...[]) {}})',
-    // '({set p(...[]) {}})',
+    '({get p(...[]) {}})',
+    '({set p(...[]) {}})',
     '(x--, y) => x;',
     '...x => x',
     'y, ...x => x',
@@ -366,6 +366,123 @@ describe('Expressions - Group', () => {
     it(`${arg}`, () => {
       t.throws(() => {
         parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '([...[]] = x);',
+    '({...[].x} = x);',
+    '({...[({...[].x} = x)].x} = x);',
+    '({...a.x} = x);',
+    '({...x.x, y})',
+    '({...x.x = y, y})',
+    '({...x = y, y})',
+    '([x.y = a] = z)',
+    '([x.y = a] = ([x.y = a] = ([x.y = a] = z)))',
+    '({..."x".x} = x);',
+    '({...{}.x} = x);',
+    '([...[].x] = x);',
+    '([...[([...[].x] = x)].x] = x);',
+    '([...{}.x] = x);',
+    '({..."x"[x]} = x);',
+    '({...[][x]} = x);',
+    '({...[][x]} = x = y);',
+    '({...[][x]} = x = (y));',
+    '({...[][x]} = (x) = (y));',
+    '({...{}[x]} = x);',
+    '({...{}[x = (y)[z]]} = x);',
+    '([...[({...{}[x = (y)[z]]} = x)][x]] = x);',
+    '([...[][x]] = x);',
+    '([...{}[x]] = x);',
+    '([...{}[x]] = "x");',
+    '({...{b: 0}.x} = {});',
+    '({...[0].x} = {});',
+    '({...{b: 0}[x]} = {});',
+    '({...[0][x]} = {});',
+    '({...[1][2]} = {});',
+    'foo({get [bar](){}, [zoo](){}});',
+    'foo({[bar](){}, get [zoo](){}});',
+    'foo({set [bar](c){}, [zoo](){}});',
+    'foo({[bar](){}, set [zoo](e){}});'
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '(a,b+=2',
+    '(a,b)+=2',
+    '(a[b],c)+=2',
+    '(a,b)=2',
+    '(a=1)+=2',
+    '(a=1)=2',
+    '();',
+    '()',
+    '(...x);',
+    '(...);',
+    '([a + b] = x);',
+    'async([].x) => x;',
+    'async ({} + 1) => x;',
+    '(a, b) = c',
+    '(,,)',
+    '(,) = x',
+    '(,,) = x',
+    '(a,) = x',
+    '(a,b,) = x',
+    '(a = b,) = x',
+    '(...a,) = x',
+    '([x],) = x',
+    '({a},) = x',
+    '(...a = x,) = x',
+    '({a} = b,) = x',
+    '(a, 1, "c", d, e, f) => x;',
+    '((x)) => x;',
+    '(x--, y) => x;',
+    '(x--) => x;',
+    '(++x, y) => x;',
+    '(++x) => x;',
+    '/i/ * ()=>j',
+    '(a[b]) => x;',
+    '(a.b) => x;',
+    '((x)) => x;',
+    '...x => x',
+    'y, ...x => x',
+    '(x, ...y, z) => x',
+    '(...x, y) => x',
+    '(...x = y) => x',
+    '([...x.y]) => z',
+    '([a + b] = x) => a;',
+    '({ident: [foo, bar] + x} = y)',
+    '(a=/i/) = /i/',
+    '(/x/) => x',
+    '(x, /x/g) => x',
+    '(x, /x/g) => x',
+    '({ident: {x}.join("")}) => x',
+    '({ident: {x:y} += x})',
+    '({ident: {x}/x/g}) => x',
+    '(a,,) => {}',
+    '(...a = x,) => {}',
+    '(...a = x,) => {}'
+  ]) {
+    it(`should fail on '${arg}'`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+
+    it(`should fail on '${arg}'`, () => {
+      t.throws(() => {
+        parseModule(`${arg}`);
+      });
+    });
+
+    it(`should fail on '${arg}'`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; ${arg}`);
       });
     });
   }

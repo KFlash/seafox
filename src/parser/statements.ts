@@ -37,6 +37,7 @@ import {
   consumeSemicolon,
   consume,
   consumeOpt,
+  optionalBit,
   setLoc,
   isValidBreakLabel,
   reinterpretToPattern,
@@ -367,13 +368,26 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
       if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
       }
+
       if (parser.token === Token.AwaitKeyword) report(parser, Errors.UnexpectedLetStrictReserved);
+      if (context & Context.Strict && (parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+        report(parser, Errors.Unexpected);
+      }
 
       let expr: any = parseAsyncArrowIdentifier(
         parser,
         context,
+        {
+          parent: {
+            parent: void 0,
+            type: ScopeKind.Block
+          },
+          type: ScopeKind.ArrowParams,
+          scopeError: void 0
+        },
         1,
         parser.tokenValue,
+        parser.token,
         parseIdentifier(parser, context),
         start,
         line,
@@ -403,7 +417,25 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     );
   } else {
     if (parser.token === Token.Arrow) {
-      expr = parseAsyncArrowIdentifier(parser, context, 1, 'async', expr, start, line, column);
+      expr = parseAsyncArrowIdentifier(
+        parser,
+        context,
+        {
+          parent: {
+            parent: void 0,
+            type: ScopeKind.Block
+          },
+          type: ScopeKind.ArrowParams,
+          scopeError: void 0
+        },
+        1,
+        'async',
+        parser.token,
+        expr,
+        start,
+        line,
+        column
+      );
     }
     parser.assignable = 1;
   }
@@ -497,6 +529,7 @@ export function parseForStatementWithVariableDeclarations(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
+  _forAwait: any,
   labels: any,
   curStart: number,
   curLine: number,
@@ -521,13 +554,18 @@ export function parseForStatementWithVariableDeclarations(
       } else {
         kind = BindingKind.Let;
       }
+      parser.assignable = 1;
     } else {
       if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
+
       init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+
+      parser.assignable = 1;
+
       init = parseMemberExpression(parser, context, init, 0, 0, 0, start, line, column);
+
       isLet = true;
     }
-    parser.assignable = 1;
   } else {
     parser.assignable = 1;
     kind = token === Token.VarKeyword ? BindingKind.Variable : BindingKind.Const;
@@ -652,7 +690,7 @@ export function parseForStatementWithVariableDeclarations(
       );
 
       bindingCount++;
-
+      parser.assignable = 1;
       if (parser.token !== Token.Comma) break;
 
       consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1);
@@ -683,6 +721,8 @@ export function parseForStatementWithVariableDeclarations(
     // `for of` only allows LeftHandSideExpressions which do not start with `let`, and no other production matches
     if (isLet) report(parser, Errors.ForOfLet);
 
+    if ((parser.assignable as 0 | 1) === 0) report(parser, Errors.CantAssignToInOfForLoop, 'of');
+
     nextToken(parser, context, /* allowRegExp */ 1);
 
     right = parseExpression(parser, context, 0);
@@ -709,7 +749,11 @@ export function parseForStatementWithVariableDeclarations(
           right,
           await: false
         };
-  } else if (parser.token === Token.InKeyword) {
+  }
+
+  if (parser.token === Token.InKeyword) {
+    if ((parser.assignable as 0 | 1) === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
+
     nextToken(parser, context, /* allowRegExp */ 1);
 
     right = parseExpressions(parser, context, 0);
@@ -737,7 +781,7 @@ export function parseForStatementWithVariableDeclarations(
   }
   init = parseAssignmentExpression(
     parser,
-    context | Context.DisallowIn,
+    context,
     0,
     parser.token === Token.Assign ? 1 : 0,
     0,
@@ -747,8 +791,9 @@ export function parseForStatementWithVariableDeclarations(
     column
   );
 
-  if (parser.token === Token.Comma)
+  if (parser.token === Token.Comma) {
     init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
+  }
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
@@ -789,6 +834,7 @@ export function parseForStatement(
   labels: any
 ): ESTree.ForStatement | ESTree.ForInStatement | ESTree.ForOfStatement {
   const { start: curStart, line: curLine, column: curColumn } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 0);
 
   const forAwait =
@@ -806,16 +852,20 @@ export function parseForStatement(
   let update: ESTree.Expression | null = null;
   let init = null;
   let right;
-  const origin = Origin.ForStatement;
-  const kind: BindingKind = BindingKind.Tail;
   let conjuncted: any = Flags.Empty;
+
+  const origin = Origin.ForStatement;
+
+  const kind: BindingKind = BindingKind.Tail;
+
   const { token, start, line, column } = parser;
 
-  if ((token & Token.isVarDecl) !== 0) {
+  if (token === Token.VarKeyword || token === Token.LetKeyword || token === Token.ConstKeyword) {
     return parseForStatementWithVariableDeclarations(
       parser,
       context,
       scope,
+      forAwait,
       labels,
       curStart,
       curLine,
@@ -823,9 +873,7 @@ export function parseForStatement(
     ) as any;
   }
 
-  if (token === Token.Semicolon) {
-    if (forAwait) report(parser, Errors.Unexpected);
-  } else if ((token & Token.IsPatternStart) === Token.IsPatternStart) {
+  if ((token & Token.IsPatternStart) === Token.IsPatternStart) {
     init =
       token === Token.LeftBrace
         ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column)
@@ -837,57 +885,54 @@ export function parseForStatement(
       report(parser, Errors.DuplicateProto);
     }
 
-    parser.assignable = conjuncted & Flags.NotDestructible ? 0 : 1;
+    parser.assignable = (conjuncted & Flags.NotDestructible) === Flags.NotDestructible ? 0 : 1;
 
-    init = parseMemberExpression(
-      parser,
-      context | Context.DisallowIn,
-      init,
-      0,
-      0,
-      0,
-      parser.start,
-      parser.line,
-      parser.column
-    );
+    init = parseMemberExpression(parser, context, init, 0, 0, 0, parser.start, parser.line, parser.column);
+
     conjuncted = parser.flags;
+  } else if (token === Token.Semicolon) {
+    if (forAwait) report(parser, Errors.Unexpected);
   } else {
     init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, 0, /* allowLHS */ 1, 1);
   }
-  if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
+
+  if (parser.token === Token.OfKeyword) {
+    if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, forAwait ? 'await' : 'of');
+
     reinterpretToPattern(parser, init);
-    if (parser.token === Token.OfKeyword) {
-      if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, forAwait ? 'await' : 'of');
 
-      nextToken(parser, context, /* allowRegExp */ 1);
+    nextToken(parser, context, /* allowRegExp */ 1);
 
-      right = parseExpression(parser, context, 0);
+    right = parseExpression(parser, context, 0);
 
-      consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
+    consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-      const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
+    const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
-      return context & Context.OptionsLoc
-        ? {
-            type: 'ForOfStatement',
-            body,
-            left: init,
-            right,
-            await: forAwait,
-            start: curStart,
-            end: parser.endIndex,
-            loc: setLoc(parser, curLine, curColumn)
-          }
-        : {
-            type: 'ForOfStatement',
-            body,
-            left: init,
-            right,
-            await: forAwait
-          };
-    }
+    return context & Context.OptionsLoc
+      ? {
+          type: 'ForOfStatement',
+          body,
+          left: init,
+          right,
+          await: forAwait,
+          start: curStart,
+          end: parser.endIndex,
+          loc: setLoc(parser, curLine, curColumn)
+        }
+      : {
+          type: 'ForOfStatement',
+          body,
+          left: init,
+          right,
+          await: forAwait
+        };
+  }
 
+  if (parser.token === Token.InKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
+
+    reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -917,21 +962,14 @@ export function parseForStatement(
 
   if (forAwait) report(parser, Errors.Unexpected);
 
-  if (conjuncted & Flags.MustDestruct && parser.token !== Token.Assign) {
-    report(parser, Errors.CantAssignToInOfForLoop, 'loop');
+  if (parser.token === Token.Assign) {
+    init = parseAssignmentExpression(parser, context, 0, 1, 0, init, start, line, column);
+  } else {
+    if ((conjuncted & Flags.MustDestruct) === Flags.MustDestruct) {
+      report(parser, Errors.CantAssignToInOfForLoop, 'loop');
+    }
+    init = parseAssignmentExpression(parser, context, 0, 0, 0, init, start, line, column);
   }
-
-  init = parseAssignmentExpression(
-    parser,
-    context | Context.DisallowIn,
-    0,
-    parser.token === Token.Assign ? 1 : 0,
-    0,
-    init,
-    start,
-    line,
-    column
-  );
 
   if (parser.token === Token.Comma)
     init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
@@ -1559,7 +1597,25 @@ export function parseLetIdentOrVarDeclarationStatement(
   }
 
   if (parser.token === Token.Arrow) {
-    expr = parseAsyncArrowIdentifier(parser, context, /* isAsync */ 0, tokenValue, expr, start, line, column);
+    expr = parseAsyncArrowIdentifier(
+      parser,
+      context,
+      {
+        parent: {
+          parent: void 0,
+          type: ScopeKind.Block
+        },
+        type: ScopeKind.ArrowParams,
+        scopeError: void 0
+      },
+      /* isAsync */ 0,
+      tokenValue,
+      token,
+      expr,
+      start,
+      line,
+      column
+    );
   } else {
     expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 

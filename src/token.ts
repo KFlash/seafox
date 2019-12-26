@@ -23,7 +23,7 @@ export const enum Token {
    IsAssignOp = 1 << 26,
    IsBinaryOp = (1 << 27) | IsExpressionStart,
    IsUpdateOp = (1 << 28) | IsExpressionStart,
-   isVarDecl = 1 << 29,
+   IsEvalOrArguments = 1 << 29,
    IsCoalesc = 1 << 30,
 
   /* Node types */
@@ -115,9 +115,9 @@ export const enum Token {
   BitwiseXor         = 73 | IsBinaryOp | (5 << PrecStart) | (5 << (PrecStart + InPrec)), // ^
 
   /* Variable declaration kinds */
-  VarKeyword = 74 | IsExpressionStart | Keyword | isVarDecl,
-  LetKeyword = 75 | IsExpressionStart | FutureReserved | isVarDecl,
-  ConstKeyword = 76 | IsExpressionStart | Keyword | isVarDecl,
+  VarKeyword = 74 | IsExpressionStart | Keyword,
+  LetKeyword = 75 | IsExpressionStart | FutureReserved | IsIdentifier,
+  ConstKeyword = 76 | IsExpressionStart | Keyword,
 
   /* Other Keyword words */
   BreakKeyword = 77 | Keyword,
@@ -165,7 +165,7 @@ export const enum Token {
   SetKeyword = 115 | Contextual,
   FromKeyword = 116 | Contextual,
   OfKeyword = 117 | Contextual | IsInOrOf,
-  EnumKeyword = 118,
+  EnumKeyword = 118 | Keyword,
 
   /* Escapes */
   EscapedIdentifier = 119 | IsIdentifier,
@@ -184,7 +184,9 @@ export const enum Token {
   HexDigits = 129,
   OctalDigits = 130,
   Underscore = 131,
-  IdentifierOrKeyword = 132
+  IdentifierOrKeyword = 132,
+  Eval = 133 | IsIdentifier | IsEvalOrArguments,
+  Arguments = 134 | IsIdentifier | IsEvalOrArguments,
 }
 
 export const KeywordDescTable = [
@@ -343,13 +345,14 @@ export const KeywordDescTable = [
   'comment'
 ];
 
-// Normal object is much faster than Object.create(null), even with typeof check to avoid Object.prototype interference
 export const descKeywordTable: { [key: string]: Token } = Object.create(null, {
   this: { value: Token.ThisKeyword },
   function: { value: Token.FunctionKeyword },
   if: { value: Token.IfKeyword },
   return: { value: Token.ReturnKeyword },
   var: { value: Token.VarKeyword },
+  eval: { value: Token.Eval },
+  arguments: { value: Token.Arguments },
   else: { value: Token.ElseKeyword },
   for: { value: Token.ForKeyword },
   new: { value: Token.NewKeyword },
@@ -367,6 +370,7 @@ export const descKeywordTable: { [key: string]: Token } = Object.create(null, {
   default: { value: Token.DefaultKeyword },
   instanceof: { value: Token.InstanceofKeyword },
   do: { value: Token.DoKeyword },
+  enum: { value: Token.EnumKeyword },
   void: { value: Token.VoidKeyword },
   finally: { value: Token.FinallyKeyword },
   async: { value: Token.AsyncKeyword },
