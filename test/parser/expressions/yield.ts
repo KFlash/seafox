@@ -5259,153 +5259,154 @@ describe('Expressions - Yield', () => {
       `function* x() {class y extends (yield arguments) {}}`,
       Context.OptionsLoc,
       {
-        "type": "Program",
-        "sourceType": "script",
-        "body": [
+        type: 'Program',
+        sourceType: 'script',
+        body: [
           {
-            "type": "FunctionDeclaration",
-            "params": [],
-            "body": {
-              "type": "BlockStatement",
-              "body": [
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
                 {
-                  "type": "ClassDeclaration",
-                  "id": {
-                    "type": "Identifier",
-                    "name": "y",
-                    "start": 21,
-                    "end": 22,
-                    "loc": {
-                      "start": {
-                        "line": 1,
-                        "column": 21
+                  type: 'ClassDeclaration',
+                  id: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 21,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 21
                       },
-                      "end": {
-                        "line": 1,
-                        "column": 22
+                      end: {
+                        line: 1,
+                        column: 22
                       }
                     }
                   },
-                  "superClass": {
-                    "type": "YieldExpression",
-                    "argument": {
-                      "type": "Identifier",
-                      "name": "arguments",
-                      "start": 38,
-                      "end": 47,
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 38
+                  superClass: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'Identifier',
+                      name: 'arguments',
+                      start: 38,
+                      end: 47,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 38
                         },
-                        "end": {
-                          "line": 1,
-                          "column": 47
+                        end: {
+                          line: 1,
+                          column: 47
                         }
                       }
                     },
-                    "delegate": false,
-                    "start": 32,
-                    "end": 47,
-                    "loc": {
-                      "start": {
-                        "line": 1,
-                        "column": 32
+                    delegate: false,
+                    start: 32,
+                    end: 47,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 32
                       },
-                      "end": {
-                        "line": 1,
-                        "column": 47
+                      end: {
+                        line: 1,
+                        column: 47
                       }
                     }
                   },
-                  "body": {
-                    "type": "ClassBody",
-                    "body": [],
-                    "start": 49,
-                    "end": 51,
-                    "loc": {
-                      "start": {
-                        "line": 1,
-                        "column": 49
+                  body: {
+                    type: 'ClassBody',
+                    body: [],
+                    start: 49,
+                    end: 51,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 49
                       },
-                      "end": {
-                        "line": 1,
-                        "column": 51
+                      end: {
+                        line: 1,
+                        column: 51
                       }
                     }
                   },
-                  "start": 15,
-                  "end": 51,
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 15
+                  start: 15,
+                  end: 51,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
                     },
-                    "end": {
-                      "line": 1,
-                      "column": 51
+                    end: {
+                      line: 1,
+                      column: 51
                     }
                   }
                 }
               ],
-              "start": 14,
-              "end": 52,
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 14
+              start: 14,
+              end: 52,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
                 },
-                "end": {
-                  "line": 1,
-                  "column": 52
+                end: {
+                  line: 1,
+                  column: 52
                 }
               }
             },
-            "async": false,
-            "generator": true,
-            "id": {
-              "type": "Identifier",
-              "name": "x",
-              "start": 10,
-              "end": 11,
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 10
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
                 },
-                "end": {
-                  "line": 1,
-                  "column": 11
+                end: {
+                  line: 1,
+                  column: 11
                 }
               }
             },
-            "start": 0,
-            "end": 52,
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
+            start: 0,
+            end: 52,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
               },
-              "end": {
-                "line": 1,
-                "column": 52
+              end: {
+                line: 1,
+                column: 52
               }
             }
           }
         ],
-        "start": 0,
-        "end": 52,
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 0
+        start: 0,
+        end: 52,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
           },
-          "end": {
-            "line": 1,
-            "column": 52
+          end: {
+            line: 1,
+            column: 52
           }
         }
-      }],
+      }
+    ],
     [
       `var f = function *(a) { yield a+1; return; };`,
       Context.OptionsLoc,

@@ -4759,11 +4759,10 @@
           }
           case 1048588: {
               const args = parseArguments(parser, context, inGroup);
-              const type = 'CallExpression';
               parser.assignable = 0;
               return parseMemberExpression(parser, context, context & 2
                   ? {
-                      type,
+                      type: 'CallExpression',
                       callee: expr,
                       arguments: args,
                       optional: isOptional === 1,
@@ -4773,7 +4772,7 @@
                       loc: setLoc(parser, line, column)
                   }
                   : {
-                      type,
+                      type: 'CallExpression',
                       callee: expr,
                       arguments: args,
                       optional: isOptional === 1,
@@ -4876,7 +4875,28 @@
       const { start, line, column, tokenValue, tokenRaw } = parser;
       parser.assignable = 0;
       consume(parser, context, 1048586, 0);
-      const quasis = [parseTemplateElement1(parser, context, tokenValue, tokenRaw, true, start, line, column)];
+      const quasis = [
+          context & 2
+              ? {
+                  type: 'TemplateElement',
+                  value: {
+                      cooked: tokenValue,
+                      raw: tokenRaw
+                  },
+                  tail: true,
+                  start,
+                  end: parser.endIndex,
+                  loc: setLoc(parser, line, column)
+              }
+              : {
+                  type: 'TemplateElement',
+                  value: {
+                      cooked: tokenValue,
+                      raw: tokenRaw
+                  },
+                  tail: true
+              }
+      ];
       return context & 2
           ? {
               type: 'TemplateLiteral',
@@ -4917,28 +4937,6 @@
               type: 'TemplateLiteral',
               expressions,
               quasis
-          };
-  }
-  function parseTemplateElement1(parser, context, cooked, raw, tail, start, line, column) {
-      return context & 2
-          ? {
-              type: 'TemplateElement',
-              value: {
-                  cooked,
-                  raw
-              },
-              tail,
-              start,
-              end: parser.endIndex,
-              loc: setLoc(parser, line, column)
-          }
-          : {
-              type: 'TemplateElement',
-              value: {
-                  cooked,
-                  raw
-              },
-              tail
           };
   }
   function parseTemplateElement(parser, context, tail) {
@@ -5037,7 +5035,7 @@
       let expr = parseIdentifier(parser, context);
       parser.assignable = 1;
       if (parser.token === 11) {
-          const conjuncted = (parser.flags | 256) ^ 256;
+          const conjuncted = (parser.flags | 0x100) ^ 0x100;
           const scope = {
               parent: {
                   parent: void 0,
@@ -5202,7 +5200,7 @@
   }
   function parseAsyncArrowIdentifier(parser, context, scope, isAsync, value, token, expr, start, line, column) {
       parser.flags =
-          ((parser.flags | 256) ^ 256) |
+          ((parser.flags | 0x100) ^ 0x100) |
               ((token & 537919488) === 537919488 ? 32 : 0);
       addBlockName(parser, context, scope, value, 1, 0);
       return parseArrowFunction(parser, context, scope, [expr], isAsync, start, line, column);
@@ -5245,8 +5243,7 @@
                   shortCircuited: false
               };
       }
-      parser.flags =
-          (parser.flags | 1024 | 256) ^ (256 | 1024);
+      parser.flags = (parser.flags | 0x500) ^ (0x500 | 1024);
       let expr = null;
       let conjuncted = 0;
       const params = [];
@@ -5301,7 +5298,7 @@
                   params.push(parseExpression(parser, context, 0));
               }
               consume(parser, context, 17, 0);
-              parser.flags = ((parser.flags | 30) ^ 30) | conjuncted | 8;
+              parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted | 8;
               parser.assignable = 0;
               return context & 2
                   ? {
@@ -5335,7 +5332,7 @@
               report(parser, 37);
           return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, params, canAssign, 1, start, line, column);
       }
-      parser.flags = (parser.flags | 1024 | 2048) ^ (1024 | 2048);
+      parser.flags = (parser.flags | 0xc00) ^ 0xc00;
       if (conjuncted & 16)
           report(parser, 58);
       parser.assignable = 0;
@@ -5591,10 +5588,7 @@
       if (context & (1024 | 2097152) && conjuncted & 1024) {
           report(parser, 36);
       }
-      parser.flags =
-          ((parser.flags | 1024 | 2048 | 30) ^
-              (30 | 1024 | 2048)) |
-              conjuncted;
+      parser.flags = ((parser.flags | 0xc1e) ^ 0xc1e) | conjuncted;
       if (canAssign === 0)
           report(parser, 73);
       let i = params.length;
@@ -5666,9 +5660,7 @@
           type: 1024,
           scopeError: void 0
       };
-      parser.flags =
-          (parser.flags | 1024 | 2048 | 256) ^
-              (256 | 1024 | 2048);
+      parser.flags = (parser.flags | 0xd00) ^ 0xd00;
       context = (context | 8192) ^ 8192;
       let expr = [];
       if (parser.token === 17) {
@@ -5759,7 +5751,7 @@
                           };
               }
               consume(parser, context, 17, 0);
-              parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+              parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
               return expr;
           }
           if (isSequence && (parser.token === 19 || parser.token === 17)) {
@@ -5808,7 +5800,7 @@
       else if (conjuncted & 16) {
           report(parser, 75);
       }
-      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
       return expr;
   }
   function parseExpressionStatement(parser, context, expression, start, line, column) {
@@ -6180,7 +6172,7 @@
       if (skipInitializer === 0 && parser.token & 67108864) {
           return parseArrayOrObjectAssignmentPattern(parser, context, conjuncted, isPattern, inGroup, curStart, curLine, curColumn, node);
       }
-      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
       return node;
   }
   function parseArrayOrObjectAssignmentPattern(parser, context, conjuncted, isPattern, inGroup, start, line, column, left) {
@@ -6188,9 +6180,8 @@
           report(parser, 60);
       if ((conjuncted & 8) === 8)
           report(parser, 60);
-      if (isPattern === 0) {
+      if (isPattern === 0)
           reinterpretToPattern(parser, left);
-      }
       const node = parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, '=', start, line, column);
       parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | ((conjuncted | 0x210) ^ 0x210);
       return node;
@@ -6326,27 +6317,18 @@
               if (scopeError && (prevContext & 1024) === 0 && (context & 268435456) === 0) {
                   reportScopeError(scopeError);
               }
-              if (parser.flags & 32)
+              if ((parser.flags & 32) === 32)
                   report(parser, 27);
-              if (parser.flags & 64)
+              if ((parser.flags & 64) === 64)
                   report(parser, 26);
           }
       }
-      parser.flags =
-          (parser.flags |
-              32 |
-              64 |
-              128 |
-              1024 |
-              2048) ^
-              (32 | 64 | 128 | 1024 | 2048);
+      parser.flags = (parser.flags | 0xce0) ^ 0xce0;
       while (parser.token !== 16777232) {
           body.push(parseStatementListItem(parser, context, scope, 4, null, null));
       }
       consume(parser, context, 16777232, flags & 1 ? 1 : 0);
-      parser.flags =
-          (parser.flags | 256 | 1024 | 2048) ^
-              (256 | 1024 | 2048);
+      parser.flags = (parser.flags | 0xd00) ^ 0xd00;
       return context & 2
           ? {
               type: 'BlockStatement',
@@ -6362,7 +6344,7 @@
   }
   function parseClassExpression(parser, context, inGroup, curStart, curLine, curColumn) {
       nextToken(parser, context, 0);
-      const inheritedContext = (context | 16777216 | 8192) ^ (8192 | 16777216);
+      const inheritedContext = (context | 0x1002000) ^ 0x1002000;
       context |= 1024;
       let id = null;
       if (parser.token & (131072 | 262144 | 2162688) &&
@@ -7176,7 +7158,7 @@
               else {
                   report(parser, 0);
               }
-              parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+              parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
               kind = (state & 384) === 0 ? 'init' : state & 256 ? 'set' : 'get';
               properties.push(context & 2
                   ? {
@@ -7224,7 +7206,7 @@
       if ((parser.token & 67108864) === 67108864 && skipInitializer === 0) {
           return parseArrayOrObjectAssignmentPattern(parser, context, conjuncted, isPattern, inGroup, curStart, curLine, curColumn, node);
       }
-      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
       return node;
   }
   function parseSpreadOrRestElement(parser, context, scope, closingToken, isPattern, isAsync, inGroup, kind, origin, curStart, curLine, curColumn) {
@@ -7307,7 +7289,7 @@
                   }
                   conjuncted |= parser.assignable === 1 ? 4 : 8;
               }
-              parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+              parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
               if (parser.token !== closingToken && parser.token !== 19)
                   report(parser, 61);
               return context & 2
@@ -7337,7 +7319,7 @@
               conjuncted |= 8;
           }
       }
-      parser.flags = ((parser.flags | 30) ^ 30) | conjuncted;
+      parser.flags = ((parser.flags | 0x1e) ^ 0x1e) | conjuncted;
       return context & 2
           ? {
               type: isPattern ? 'RestElement' : 'SpreadElement',
