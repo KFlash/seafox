@@ -13,7 +13,464 @@ describe('Miscellaneous - Pass', () => {
     'x ([1 || 1].a = 1)',
     'x({a: 1 || 1}.a = 1)',
     'for(`${x in y}`;;);',
+    '-134.44e44',
+    '11_33',
+    '11_33.333_444',
+    '09.1_2',
+    '09_12',
+    'try { } catch (let) { }',
+    'let++;',
+    'var yield;',
+    'var foo, yield;',
+    'try { } catch (yield) { }',
+    'function yield() { }',
+    '(function yield() { })',
+    'function foo(yield) { }',
+    'function foo(bar, yield) { }',
+    'function * yield() { }',
+    'yield = 1;',
+    'var foo = yield = 1;',
+    'yield * 2;',
+    '++yield;',
+    'yield++;',
+    'yield: 34',
+    'function yield(yield) { yield: yield (yield + yield(0)); }',
+    '({ yield: 1 })',
+    '({ get yield() { 1 } })',
+    'yield(100)',
+    'yield[100]',
+    '(function * gen() { (function not_gen() {function foo(bar, yield) { }}) })',
+    '(function * gen() { (function not_gen() {function yield(yield) { yield: yield (yield + yield(0)); }}) })',
+    'function * gen() { ({ get yield() { } })  }',
+    'function * gen() { ({ [yield]: x } = { })  }',
+    'function * gen() { yield\n  }',
+    'function * gen() { yield /* comment */  }',
+    'function * gen() { (yield) \n ? yield : yield  }',
+    'function * gen() { x = class extends (a ? null : yield) { }  }',
+    'function * gen() { yield\nfor (;;) {}  }',
+    'var x = { foo: bar = 5 + baz }; ',
+    'var x = { set 1(v) {} }; ',
+    'var x = { 1: 1, set 2(v) {} }; ',
+    'var x = { *set() {} }; ',
+    'var x = { if: 4 }; ',
+    'var x = { eval: 7 }; ',
+    'var x = { arguments: 8 }; ',
+    'var x = { async : 0 }; ',
+    'var x = { *async(){} }; ',
+    'var x = { interface: 5 }; ',
+    'var x = { *async(){} }; ',
+    'var x   = { foo: 1, set bar(v) {} };',
+    'delete 1;',
+    'delete 1 + 2;',
+    'delete foo--;',
+    'delete new foo();',
+    'delete new foo(bar);',
+    'delete this;',
+    '"use strict"; delete new foo(bar);',
+    '"use strict"; delete 1;',
+    '"use strict"; delete 1 + 2;',
+    '"use strict"; delete foo--;',
+    '"use strict"; delete new foo();',
+    '"use strict"; delete this;',
     `({} + 1);`,
+    `var a = function a(a, b, c) { return a + b + c; };`,
+    `if (1) {
+      1;
+    }`,
+    `if (1) {
+      1;
+    } else if (2) {
+      2;
+    } else {
+      3;
+    }`,
+    `(function() {
+      1;
+    })();`,
+    `(function() {
+      1;
+    }).call(this);`,
+    `'\\011'`,
+    `var array = [
+      0, 42, 12345, -1, -1.1, -0.1, 864e5, .5, 1n, 1., 1.e2, 1.e+1,
+      -1.4142135623730951, 3.141592653589793,
+      0.0314e-1, 0.0314E+2, .0314e-1, .0314E+2,
+      0x0FFF, 0X7ffffffF, 0b101010, 0B101010, 0o777, 0O777
+    ];`,
+    `0777`,
+    `/42/`,
+    `/42/g`,
+    `false`,
+    `null`,
+    `{}`,
+    `({ a: 1 })`,
+    `({ a: 1, b: 2 })`,
+    `({ a: 1, b: 2, c: 1 + 1 })`,
+    `var o = {
+      set a(a) {
+        return 1;
+      }
+    };`,
+    `var o = {
+      a() {
+        return 1;
+      }
+    };`,
+    `[]`,
+    `[,,]`,
+    `[1, 2]`,
+    `var a;
+    a = 1, a -= 1, a += 1, a *= 1, a %= 1, a /= 1, a &= 1, a |= 1, a >>= 1, a >>>= 1, a <<= 1;`,
+    `var a = 1;
+    a * a;
+    a / a;
+    a % a;
+    a + a;
+    a - a;
+    a << a;
+    a >> a;
+    a >>> a;
+    a < a;
+    a > a;
+    a <= a;
+    a >= a;
+    a instanceof a;
+    a in a;
+    a == a;
+    a != a;
+    a === a;
+    a !== a;
+    a & a;
+    a ^ a;
+    a | a;
+    a && a;
+    a || a;`,
+    `var a = 1;
+    a = -a;
+    a = +a;
+    a = !a;
+    a = ~a;
+    a = ++a;
+    a = --a;
+    a = a++;
+    a = a--;
+    a = typeof a;
+    a = void a;
+    a = delete a;`,
+    `new A`,
+    `a.b.c.d[e][f + g]`,
+    '`1 + 1 = ${ 1 + 1 }`;',
+    'a`1 + 1 = ${ 1 + 1 }`;',
+    'new a`1 + 1 = ${ 1 + 1 }`;',
+    `const a = 1 + 1;`,
+    `for (i = 0, len = a.length; i < len; i++);`,
+    `for (a in b) {}`,
+    `for (let a of b) {}`,
+    `for (var i = 0; i < 10; i++) {
+      if (i === 1) {
+        continue;
+      }
+      if (i === 5) {
+        break;
+      }
+    }`,
+    `function a() {
+      return
+      1 + 1;
+    }`,
+    `try {
+      throw new Error();
+    } catch (e) {}`,
+    `switch (a) {
+    }`,
+    `while (0) {}`,
+    `(a, b, c) => 1;`,
+    '`a` + `b`',
+    `function a({ a: A = 1 + 1, b: { c } }) {}`,
+    `function a(a = 1, b = 2 + 3, c) {}`,
+    `function a([ a, b, ...c ]) {}`,
+    `function a([...a]) {}`,
+    `function a([ a = [ b = [c]]]) {}`,
+    `var {a: A, b: B = 1} = o;`,
+    `var {a: A, b: B = 1, c: { d: D = 2 + 3, e: { f = 4 + 5 } }} = o;`,
+    `var [a] = o;`,
+    `function* a() {
+      yield function*() {
+        return function*() {
+          yield 1;
+        };
+      };
+    }`,
+    `function* a() {
+      yield* yield* 1;
+    }`,
+    `var a = '\\ud842\\udfb7\\u91ce\\u5bb6\\u3067\\ud867\\ude3d';`,
+    `var a = '\\u{20Bb7}';`,
+    `function f({a, b, c} = {}) {}`,
+    `let [a] = [1];`,
+    `const f = x => x*x`,
+    `for([a,b[a],{c,d=e,[f]:[g,h().a,(1).i,...j[2]]}] in 3);`,
+    `a >>= 1`,
+    `[...a[1]] = 2;`,
+    `a >= b`,
+    `new a("aa, [bb]", 'return aa;');
+     new a("aa, {bb}", 'return aa;');
+     new a("[[aa]], [{bb}]", 'return aa;');`,
+    `(1, a.a)();`,
+    `var a, b;
+    if (a && !(a + "1") && b) { // 1
+        var c;
+        d();
+    } else {
+        e();
+    }
+
+    if (a || !!(a + "1") || b) { // 2
+        d();
+    } else {
+        var f;
+        e();
+    }`,
+    `for(var a = 1;;) { let a; }`,
+    `function a(b, c) { return b-- >= c; }`,
+    `function *a() { yield b=c, yield* d=e, f }`,
+    `void /test/`,
+    `[, a,,] = 1`,
+    `[...eval] = a`,
+    `/[a-z]/i`,
+    `function a() {
+      b();
+  }
+  if (a() || true) {
+      c();
+  }`,
+    `a(() => {})`,
+    '`\n\r\b\v\t\f\
+    \
+    `',
+    `{ let a = 1, b = 2, c = 3 }`,
+    `if (a) {
+    } else {
+        b();
+    }`,
+    `(a) => 1`,
+    `({ yield() {} })`,
+    `function a() {
+      // If foo is null or undefined, this should be an exception
+      var {a,b} = c;
+  }`,
+    `function a() {
+      (class b { });
+      class c {};
+  }`,
+    `// adapted from http://asmjs.org/spec/latest/
+    function a(b, c, d) {
+      "use asm";
+      var e = b.f.e;
+      var g = b.f.g;
+      var h = new b.i(d);
+      function j(k, l) {
+        k = k|1;
+        l = l|2;
+        var m = 0.0, n = 3, o = 4;
+        // asm.js forces byte addressing of the heap by requiring shifting by 3
+        for (n = k << 5, o = l << 6; (n|7) < (o|8); n = (n + 9)|10) {
+          m = m + +g(h[n>>11]);
+        }
+        return +m;
+      }
+      function p(k, l) {
+        k = k|12;
+        l = l|13;
+        return +e(+j(k, l) / +((l - k)|14));
+      }
+      return { p: p };
+    }
+    function q(b, c, d) {
+      var e = b.f.e;
+      var g = b.f.g;
+      var h = new b.i(d);
+      function j(k, l) {
+        k = k|15;
+        l = l|16;
+        var m = 0.0, n = 17, o = 18;
+        // asm.js forces byte addressing of the heap by requiring shifting by 3
+        for (n = k << 19, o = l << 20; (n|21) < (o|22); n = (n + 23)|24) {
+          m = m + +g(h[n>>25]);
+        }
+        return +m;
+      }
+      function p(k, l) {
+        k = k|26;
+        l = l|27;
+        return +e(+j(k, l) / +((l - k)|28));
+      }
+      return { p: p };
+    }`,
+    `var a = 'very cute';`,
+    `class a {;b(){};c(){};}`,
+    `(a, b, c, d) + e;`,
+    `({set a(b=1){}})`,
+    `let [[]]=1`,
+    `class a {static ["prototype"](){}}`,
+    `a(
+      b(c + 'd'),
+      b('d' + c)
+    );`,
+    `class a extends b { constructor() { super() } }`,
+    `if (true) a()
+    ; else;`,
+    `const {a:b} = {}`,
+    `(function() {
+      a(), 1, b();
+    }());`,
+    `(function () {
+      var a;
+      b(typeof a === 'c');
+    }());`,
+    `(function () {
+      a(typeof b !== 'c');
+    }());`,
+    `function a() { "use strict" + 1; }`,
+    `// 1.
+    if (a) {
+        {{{}}}
+        if (b) { c(); }
+        {{}}
+    } else {
+        d();
+    }
+
+    // 2.
+    if (a) {
+        for (var e = 1; e < 2; ++e)
+            if (b) c();
+    } else {
+        d();
+    }`,
+    `for(let a = 1;;);`,
+    `while (true) { break }`,
+    `function a(b, c) {
+      function d() {
+          e();
+      }
+      return b + c;
+  }`,
+    `a << b << c`,
+    `for (;;) if (a()) b(); else break;`,
+    `var { yield: a } = b;`,
+    `({ get a() { }, get a() { } })`,
+    `'use strict';
+    a.static();`,
+    `let {a,} = 1`,
+    `a: while (true) while (true) continue a;`,
+    `(function(...a){})`,
+    `function a() {
+      'use strict';
+      /* Comment */
+      }`,
+    `(function() {
+      if (a) {
+          return 1;
+          b();
+      } else {
+          c();
+      }
+      return 2;
+  }());`,
+    `(function () {
+      var a,b,c=1,d,e,f=2;
+      (a,b,c)+(d,e,f);
+  }());`,
+    `switch (a) {
+      case 1:
+        // optimize it
+        (function () {
+          b("c");
+        }());
+        b("d");
+      }`,
+    `for(a = 1;;);`,
+    `() => () => 1`,
+    `a, b`,
+    `(function () {
+      var a = {
+          'b': 1
+      };
+  }());`,
+    `({a(b,c){}})`,
+    `  -->`,
+    `09.0`,
+    `(a = b('100')) == a `,
+    `({["a"+1]:"b"})`,
+    `// Do not remove first if consequent block
+    if (a) {
+        if (b) { true; }
+    } else {
+        false;
+    }`,
+    `(function() {
+      try {
+          throw 'a';
+      } catch (b) {
+      } finally {
+          return 1;
+      }
+      c();  // This should be removed.
+  }());`,
+    `日本語 = []`,
+    `[(a) = 1] = 2`,
+    `for (;;) {
+      while (true) {
+          continue;
+      }
+  }`,
+    `// global getter to o
+    a.b = (c(), 1)`,
+    `for (;;) {
+      with (a) {
+          continue;
+      }
+  }`,
+    `(function() {
+      for (;;) {
+          continue;
+          a();  // This should be removed.
+      }
+      b();
+  }());`,
+    `switch (1) {
+      case 2:
+        a();
+        if (b) break;
+        c();
+        break;
+      case 3+4:
+        d();
+      default:
+        e();
+    }`,
+    `__proto__: while (true) { break __proto__; }`,
+    `var a = function eval() { };`,
+
+    `function a() {
+      b();
+      c();
+      return d();
+  }
+  function e() {
+      b();
+      c();
+      throw new f();
+  }`,
+    `eval = 1`,
+    `class a extends b { c() { ({d: super[e]} = f) } }`,
+    `var a = {
+      'arguments': 1,
+      'eval': 2
+  };`,
+    `a(.0)`,
+    `function a([b] = [1]) {}`,
     `for (class x { [a in b](){} }.x in c);`,
     `async ({} ? [] : 1);`,
     '({1: ({}) / (1)});',

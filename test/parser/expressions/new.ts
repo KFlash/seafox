@@ -25,6 +25,7 @@ describe('Expressions - New', () => {
     '_ => new.target',
     'new.target',
     'function d(){new.',
+    'new new',
     '0 ?? 1 && 2'
   ]) {
     it(`${arg}`, () => {
@@ -35,6 +36,871 @@ describe('Expressions - New', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `new new foo.bar.baz()(arg);`,
+      Context.OptionsNext,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'MemberExpression',
+                  object: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'foo'
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'bar'
+                    },
+                    optional: false,
+                    shortCircuited: false
+                  },
+                  computed: false,
+                  property: {
+                    type: 'Identifier',
+                    name: 'baz'
+                  },
+                  optional: false,
+                  shortCircuited: false
+                },
+                arguments: []
+              },
+              arguments: [
+                {
+                  type: 'Identifier',
+                  name: 'arg'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `new new new foo.bar.baz()(arg);`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'NewExpression',
+                  callee: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 12,
+                        end: 15,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 15
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'bar',
+                        start: 16,
+                        end: 19,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 16
+                          },
+                          end: {
+                            line: 1,
+                            column: 19
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 12,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'baz',
+                      start: 20,
+                      end: 23,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 20
+                        },
+                        end: {
+                          line: 1,
+                          column: 23
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 12,
+                    end: 23,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 23
+                      }
+                    }
+                  },
+                  arguments: [],
+                  start: 8,
+                  end: 25,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 25
+                    }
+                  }
+                },
+                arguments: [
+                  {
+                    type: 'Identifier',
+                    name: 'arg',
+                    start: 26,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 26
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  }
+                ],
+                start: 4,
+                end: 30,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 30
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `var a = new foo.bar.baz().test();
+    /**************************************************/
+    var a=new foo.bar.baz().test();
+    /**************************************************/
+    var a = new foo.bar.baz(  ).test(  );`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'NewExpression',
+                      callee: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'MemberExpression',
+                          object: {
+                            type: 'Identifier',
+                            name: 'foo',
+                            start: 12,
+                            end: 15,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 12
+                              },
+                              end: {
+                                line: 1,
+                                column: 15
+                              }
+                            }
+                          },
+                          computed: false,
+                          property: {
+                            type: 'Identifier',
+                            name: 'bar',
+                            start: 16,
+                            end: 19,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 16
+                              },
+                              end: {
+                                line: 1,
+                                column: 19
+                              }
+                            }
+                          },
+                          optional: false,
+                          shortCircuited: false,
+                          start: 12,
+                          end: 19,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 19
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'baz',
+                          start: 20,
+                          end: 23,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 20
+                            },
+                            end: {
+                              line: 1,
+                              column: 23
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 12,
+                        end: 23,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 23
+                          }
+                        }
+                      },
+                      arguments: [],
+                      start: 8,
+                      end: 25,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 25
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'test',
+                      start: 26,
+                      end: 30,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 26
+                        },
+                        end: {
+                          line: 1,
+                          column: 30
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 8,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  },
+                  arguments: [],
+                  optional: false,
+                  shortCircuited: false,
+                  start: 8,
+                  end: 32,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 32
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 32,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 32
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 33,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 33
+              }
+            }
+          },
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'NewExpression',
+                      callee: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'MemberExpression',
+                          object: {
+                            type: 'Identifier',
+                            name: 'foo',
+                            start: 105,
+                            end: 108,
+                            loc: {
+                              start: {
+                                line: 3,
+                                column: 14
+                              },
+                              end: {
+                                line: 3,
+                                column: 17
+                              }
+                            }
+                          },
+                          computed: false,
+                          property: {
+                            type: 'Identifier',
+                            name: 'bar',
+                            start: 109,
+                            end: 112,
+                            loc: {
+                              start: {
+                                line: 3,
+                                column: 18
+                              },
+                              end: {
+                                line: 3,
+                                column: 21
+                              }
+                            }
+                          },
+                          optional: false,
+                          shortCircuited: false,
+                          start: 105,
+                          end: 112,
+                          loc: {
+                            start: {
+                              line: 3,
+                              column: 14
+                            },
+                            end: {
+                              line: 3,
+                              column: 21
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'baz',
+                          start: 113,
+                          end: 116,
+                          loc: {
+                            start: {
+                              line: 3,
+                              column: 22
+                            },
+                            end: {
+                              line: 3,
+                              column: 25
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 105,
+                        end: 116,
+                        loc: {
+                          start: {
+                            line: 3,
+                            column: 14
+                          },
+                          end: {
+                            line: 3,
+                            column: 25
+                          }
+                        }
+                      },
+                      arguments: [],
+                      start: 101,
+                      end: 118,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 10
+                        },
+                        end: {
+                          line: 3,
+                          column: 27
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'test',
+                      start: 119,
+                      end: 123,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 28
+                        },
+                        end: {
+                          line: 3,
+                          column: 32
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 101,
+                    end: 123,
+                    loc: {
+                      start: {
+                        line: 3,
+                        column: 10
+                      },
+                      end: {
+                        line: 3,
+                        column: 32
+                      }
+                    }
+                  },
+                  arguments: [],
+                  optional: false,
+                  shortCircuited: false,
+                  start: 101,
+                  end: 125,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 10
+                    },
+                    end: {
+                      line: 3,
+                      column: 34
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 99,
+                  end: 100,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 8
+                    },
+                    end: {
+                      line: 3,
+                      column: 9
+                    }
+                  }
+                },
+                start: 99,
+                end: 125,
+                loc: {
+                  start: {
+                    line: 3,
+                    column: 8
+                  },
+                  end: {
+                    line: 3,
+                    column: 34
+                  }
+                }
+              }
+            ],
+            start: 95,
+            end: 126,
+            loc: {
+              start: {
+                line: 3,
+                column: 4
+              },
+              end: {
+                line: 3,
+                column: 35
+              }
+            }
+          },
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'NewExpression',
+                      callee: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'MemberExpression',
+                          object: {
+                            type: 'Identifier',
+                            name: 'foo',
+                            start: 200,
+                            end: 203,
+                            loc: {
+                              start: {
+                                line: 5,
+                                column: 16
+                              },
+                              end: {
+                                line: 5,
+                                column: 19
+                              }
+                            }
+                          },
+                          computed: false,
+                          property: {
+                            type: 'Identifier',
+                            name: 'bar',
+                            start: 204,
+                            end: 207,
+                            loc: {
+                              start: {
+                                line: 5,
+                                column: 20
+                              },
+                              end: {
+                                line: 5,
+                                column: 23
+                              }
+                            }
+                          },
+                          optional: false,
+                          shortCircuited: false,
+                          start: 200,
+                          end: 207,
+                          loc: {
+                            start: {
+                              line: 5,
+                              column: 16
+                            },
+                            end: {
+                              line: 5,
+                              column: 23
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'baz',
+                          start: 208,
+                          end: 211,
+                          loc: {
+                            start: {
+                              line: 5,
+                              column: 24
+                            },
+                            end: {
+                              line: 5,
+                              column: 27
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 200,
+                        end: 211,
+                        loc: {
+                          start: {
+                            line: 5,
+                            column: 16
+                          },
+                          end: {
+                            line: 5,
+                            column: 27
+                          }
+                        }
+                      },
+                      arguments: [],
+                      start: 196,
+                      end: 215,
+                      loc: {
+                        start: {
+                          line: 5,
+                          column: 12
+                        },
+                        end: {
+                          line: 5,
+                          column: 31
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'test',
+                      start: 216,
+                      end: 220,
+                      loc: {
+                        start: {
+                          line: 5,
+                          column: 32
+                        },
+                        end: {
+                          line: 5,
+                          column: 36
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 196,
+                    end: 220,
+                    loc: {
+                      start: {
+                        line: 5,
+                        column: 12
+                      },
+                      end: {
+                        line: 5,
+                        column: 36
+                      }
+                    }
+                  },
+                  arguments: [],
+                  optional: false,
+                  shortCircuited: false,
+                  start: 196,
+                  end: 224,
+                  loc: {
+                    start: {
+                      line: 5,
+                      column: 12
+                    },
+                    end: {
+                      line: 5,
+                      column: 40
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 192,
+                  end: 193,
+                  loc: {
+                    start: {
+                      line: 5,
+                      column: 8
+                    },
+                    end: {
+                      line: 5,
+                      column: 9
+                    }
+                  }
+                },
+                start: 192,
+                end: 224,
+                loc: {
+                  start: {
+                    line: 5,
+                    column: 8
+                  },
+                  end: {
+                    line: 5,
+                    column: 40
+                  }
+                }
+              }
+            ],
+            start: 188,
+            end: 225,
+            loc: {
+              start: {
+                line: 5,
+                column: 4
+              },
+              end: {
+                line: 5,
+                column: 41
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 225,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 5,
+            column: 41
+          }
+        }
+      }
+    ],
     [
       `function f() {class C {get x() { do { new.target } while (0) }}}`,
       Context.OptionsNext | Context.OptionsLoc,

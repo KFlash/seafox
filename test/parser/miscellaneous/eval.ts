@@ -304,6 +304,8 @@ describe('Miscellaneous - Eval and arguments', () => {
     'var x = arguments.length',
     '({arguments}) => null',
     'new arguments',
+    `let t = (arguments)
+    function* r(n, as, o, s) {  "use strict"   }`,
     'eval[0] = 1;',
     'arguments.a = 1;',
     '++arguments[0];'

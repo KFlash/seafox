@@ -17,7 +17,7 @@ describe('src/scanner/scan', () => {
   function fail(name: string, source: string, context: Context) {
     it(name, () => {
       const parser = create(source);
-      t.throws(() => scan(parser, context, source, source.length, 0, true, /* allowRegExp */ 0));
+      t.throws(() => scan(parser, context, source, 1, source.length, Token.EOF, 0, true, /* allowRegExp */ 0));
     });
   }
 
@@ -139,7 +139,7 @@ describe('src/scanner/scan', () => {
   for (const [ctx, token, op, res] of tokens) {
     it(`scans '${op}' at the end`, () => {
       const parser = create(op);
-      const found = scan(parser, ctx, op, op.length, 0, true, /* allowRegExp */ 0);
+      const found = scan(parser, ctx, op, 1, op.length, Token.EOF, 0, true, /* allowRegExp */ 0);
       t.deepEqual(
         {
           token: found,
@@ -160,7 +160,7 @@ describe('src/scanner/scan', () => {
 
     it(`scans '${op}' with more to go`, () => {
       const parser = create(`${op} rest`);
-      const found = scan(parser, ctx, op, op.length, 0, true, /* allowRegExp */ 0);
+      const found = scan(parser, ctx, op, 1, op.length, Token.EOF, 0, true, /* allowRegExp */ 0);
 
       t.deepEqual(
         {

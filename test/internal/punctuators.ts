@@ -21,7 +21,17 @@ describe('src/scanner/scan', () => {
 
         t.deepEqual(
           {
-            token: scan(parser, opts.context, opts.source, opts.source.length, 0, true, /* allowRegExp */ 0),
+            token: scan(
+              parser,
+              opts.context,
+              opts.source,
+              1,
+              opts.source.length,
+              Token.EOF,
+              0,
+              true,
+              /* allowRegExp */ 0
+            ),
             hasNext: parser.index < parser.source.length,
             line: parser.lineBase,
             column: parser.index - parser.offset
@@ -113,7 +123,7 @@ describe('src/scanner/scan', () => {
     for (const [ctx, token, op] of tokens) {
       it(`scans '${op}' at the end`, () => {
         const parser = create(op);
-        const found = scan(parser, ctx, op, op.length, 0, true, /* allowRegExp */ 0);
+        const found = scan(parser, ctx, op, 1, op.length, Token.EOF, 0, true, /* allowRegExp */ 0);
         t.deepEqual(
           {
             token: found,
@@ -132,7 +142,7 @@ describe('src/scanner/scan', () => {
 
       it(`scans '${op}' with more to go`, () => {
         const parser = create(`${op} rest`);
-        const found = scan(parser, ctx, op, op.length, 0, true, /* allowRegExp */ 0);
+        const found = scan(parser, ctx, op, 1, op.length, Token.EOF, 0, true, /* allowRegExp */ 0);
 
         t.deepEqual(
           {
@@ -153,7 +163,7 @@ describe('src/scanner/scan', () => {
 
     it("scans '.' in '..'", () => {
       const parser = create('..');
-      const found = scan(parser, Context.Empty, '..', 2, 0, true, /* allowRegExp */ 0);
+      const found = scan(parser, Context.Empty, '..', 1, 2, Token.EOF, 0, true, /* allowRegExp */ 0);
 
       t.deepEqual(
         {

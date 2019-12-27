@@ -4,6 +4,10 @@ import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Comments', () => {
   for (const arg of [
+    'x --> is eol-comment\nvar y = 37;\n',
+    '"\\n" --> is eol-comment\nvar y = 37;\n',
+    'x/* precomment */ --> is eol-comment\nvar y = 37;\n',
+    'var x = 42; --> is eol-comment\nvar y = 37;\n',
     `/*
     */ the comment should not include these characters, regardless of AnnexB extensions -->`,
     `;-->`,
@@ -66,6 +70,29 @@ describe('Miscellaneous - Comments', () => {
     '{ throw error// Comment\nerror; }',
     '{ throw error/* Multiline\nComment */error; }',
     'a(/* inner */); b(e, /* inner */)',
+    '-->',
+    '--> is eol-comment',
+    '--> is eol-comment\nvar y = 37;\n',
+    '\n --> is eol-comment\nvar y = 37;\n',
+    '\n-->is eol-comment\nvar y = 37;\n',
+    '\n-->\nvar y = 37;\n',
+    '/* precomment */ --> is eol-comment\nvar y = 37;\n',
+    '/* precomment */-->eol-comment\nvar y = 37;\n',
+    '\n/* precomment */ --> is eol-comment\nvar y = 37;\n',
+    '\n/*precomment*/-->eol-comment\nvar y = 37;\n',
+    // After first real token.
+    'var x = 42;\n--> is eol-comment\nvar y = 37;\n',
+    'var x = 42;\n/* precomment */ --> is eol-comment\nvar y = 37;\n',
+    'x/* precomment\n */ --> is eol-comment\nvar y = 37;\n',
+    'var x = 42; /* precomment\n */ --> is eol-comment\nvar y = 37;\n',
+    'var x = 42;/*\n*/-->is eol-comment\nvar y = 37;\n',
+    // With multiple comments preceding HTMLEndComment
+    '/* MLC \n */ /* SLDC */ --> is eol-comment\nvar y = 37;\n',
+    '/* MLC \n */ /* SLDC1 */ /* SLDC2 */ --> is eol-comment\nvar y = 37;\n',
+    '/* MLC1 \n */ /* MLC2 \n */ --> is eol-comment\nvar y = 37;\n',
+    '/* SLDC */ /* MLC \n */ --> is eol-comment\nvar y = 37;\n',
+    '/* MLC1 \n */ /* SLDC1 */ /* MLC2 \n */ /* SLDC2 */ --> is eol-comment\n',
+    'var y = 37;\n',
     'while (true) { continue /* Multiline\nComment */there; }',
     'while (true) { break /* Multiline\nComment */there; }',
     'while (true) { continue // Comment\nthere; }',

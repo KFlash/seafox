@@ -798,6 +798,154 @@ describe('Statements - Try', () => {
       }
     ],
     [
+      `do try {} catch {} while(x) x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'DoWhileStatement',
+            body: {
+              type: 'TryStatement',
+              block: {
+                type: 'BlockStatement',
+                body: [],
+                start: 7,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              handler: {
+                type: 'CatchClause',
+                param: null,
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 16,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                start: 10,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              finalizer: null,
+              start: 3,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 3
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            test: {
+              type: 'Identifier',
+              name: 'x',
+              start: 25,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 25
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Identifier',
+              name: 'x',
+              start: 28,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 28
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 28,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 28
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
       `try { } catch (e) { function *f(){} function *f(){} }`,
       Context.OptionsNext | Context.OptionsLoc,
       {

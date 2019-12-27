@@ -1,8 +1,7 @@
 import { ParserState } from '../parser/common';
 import { Context } from '../parser/bits';
-import { Chars } from '../chars';
-import { unicodeLookup } from './unicode';
 import { report, Errors } from '../errors';
+import { unicodeLookup, Chars } from './';
 
 export function skipHashBang(parser: ParserState, source: string): void {
   const index = parser.index;

@@ -1,7 +1,5 @@
-import { CharTypes, CharFlags } from './charClassifier';
-import { Chars } from '../chars';
 import { ParserState } from '../parser/common';
-import { toHex, fromCodePoint, readNext } from './common';
+import { Chars, toHex, fromCodePoint, readNext, CharTypes, CharFlags } from './';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import { Context, Flags } from '../parser/bits';

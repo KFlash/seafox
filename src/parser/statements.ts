@@ -310,7 +310,7 @@ export function parseNonDirectiveExpression(
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression
    */
-  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
   return parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
 }
 
@@ -444,7 +444,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 
   if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
-  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 
   parser.assignable = 1;
 
@@ -779,17 +779,7 @@ export function parseForStatementWithVariableDeclarations(
           right
         };
   }
-  init = parseAssignmentExpression(
-    parser,
-    context,
-    0,
-    parser.token === Token.Assign ? 1 : 0,
-    0,
-    init,
-    start,
-    line,
-    column
-  );
+  init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
 
   if (parser.token === Token.Comma) {
     init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
@@ -931,7 +921,7 @@ export function parseForStatement(
 
   if (parser.token === Token.InKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
-
+    if (forAwait) report(parser, Errors.Unexpected);
     reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);
@@ -963,12 +953,13 @@ export function parseForStatement(
   if (forAwait) report(parser, Errors.Unexpected);
 
   if (parser.token === Token.Assign) {
-    init = parseAssignmentExpression(parser, context, 0, 1, 0, init, start, line, column);
+    if ((token & Token.IsPatternStart) === Token.IsPatternStart) reinterpretToPattern(parser, init);
+    init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
   } else {
     if ((conjuncted & Flags.MustDestruct) === Flags.MustDestruct) {
       report(parser, Errors.CantAssignToInOfForLoop, 'loop');
     }
-    init = parseAssignmentExpression(parser, context, 0, 0, 0, init, start, line, column);
+    init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
   }
 
   if (parser.token === Token.Comma)
@@ -1619,7 +1610,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   } else {
     expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
-    expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
+    expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
   }
 
   if (parser.token === Token.Comma) {
@@ -1664,7 +1655,7 @@ export function parseExpressionOrLabelledStatement(
 
   expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
 
-  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 
   if (parser.token === Token.Comma) {
     expr = parseSequenceExpression(parser, context, expr, start, line, column);

@@ -1,12 +1,8 @@
-import { isIdentifierPart } from './charClassifier';
 import { ParserState } from '../parser/common';
 import { Token, descKeywordTable } from '../token';
 import { Context } from '../parser/bits';
-import { Chars } from '../chars';
-import { unicodeLookup } from './unicode';
-import { fromCodePoint, toHex } from './common';
 import { report, Errors } from '../errors';
-import { CharFlags, CharTypes } from './charClassifier';
+import { Chars, isIdentifierPart, CharFlags, CharTypes, fromCodePoint, toHex, unicodeLookup } from './';
 
 export function scanIdentifier(parser: ParserState, context: Context, source: string, char: number): Token {
   while (CharTypes[char] & CharFlags.IdentifierPart) {

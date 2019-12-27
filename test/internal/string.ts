@@ -147,7 +147,7 @@ describe('src/scanner/scan', () => {
   for (const [ctx, token, op, value] of tokens) {
     it(`scans '${op}' at the end`, () => {
       const parser = create(op);
-      const found = scan(parser, ctx, op, op.length, 0, true, /* allowRegExp */ 0);
+      const found = scan(parser, ctx, op, 1, op.length, Token.EOF, 0, true, /* allowRegExp */ 0);
 
       t.deepEqual(
         {
@@ -171,7 +171,7 @@ describe('src/scanner/scan', () => {
 
     it(`scans '${op}' with more to go`, () => {
       const parser = create(`${op} rest`);
-      const found = scan(parser, ctx, op, op.length, 0, true, /* allowRegExp */ 0);
+      const found = scan(parser, ctx, op, 1, op.length, Token.EOF, 0, true, /* allowRegExp */ 0);
 
       t.deepEqual(
         {

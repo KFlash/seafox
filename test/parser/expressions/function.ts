@@ -21,6 +21,13 @@ describe('Expressions - Function', () => {
     ['0, function(...x = []) {}', Context.Empty],
     ['0, function(...x = []) {};', Context.Empty],
     [`let x; { var x; }`, Context.OptionsLoc],
+
+    [`function{}`, Context.OptionsLoc],
+    [`function(){`, Context.OptionsLoc],
+    [`var a = function()`, Context.OptionsLoc],
+    [`function test() { yield while } `, Context.OptionsLoc],
+    [`function(){}`, Context.OptionsLoc],
+    [`function a(...){}`, Context.OptionsLoc],
     [`{ var x; } let x;`, Context.OptionsLoc],
     [`function foo(a, a) { }`, Context.OptionsLoc | Context.Strict | Context.Module],
     [`function foo(a) { let a; }`, Context.OptionsLoc],

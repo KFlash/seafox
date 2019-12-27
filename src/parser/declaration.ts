@@ -380,7 +380,7 @@ export function parseImportMetaDeclaration(
    *   2. LeftHandSideExpression = AssignmentExpression
    */
 
-  expr = parseAssignmentExpression(parser, context, 0, 0, 0, expr, start, line, column);
+  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 
   /**
    * ExpressionStatement[Yield, Await]:

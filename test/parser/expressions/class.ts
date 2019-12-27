@@ -598,6 +598,404 @@ describe('Expressions - Class', () => {
 
   for (const [source, ctx, expected] of [
     [
+      'f = ([cls = class {}, xCls = class X {}, xCls2 = class { static name() {} }]) => {}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'f',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 81,
+                  end: 83,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 81
+                    },
+                    end: {
+                      line: 1,
+                      column: 83
+                    }
+                  }
+                },
+                params: [
+                  {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'cls',
+                          start: 6,
+                          end: 9,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 6
+                            },
+                            end: {
+                              line: 1,
+                              column: 9
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'ClassExpression',
+                          id: null,
+                          superClass: null,
+                          body: {
+                            type: 'ClassBody',
+                            body: [],
+                            start: 18,
+                            end: 20,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 18
+                              },
+                              end: {
+                                line: 1,
+                                column: 20
+                              }
+                            }
+                          },
+                          start: 12,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        start: 6,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 6
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'xCls',
+                          start: 22,
+                          end: 26,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 22
+                            },
+                            end: {
+                              line: 1,
+                              column: 26
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'ClassExpression',
+                          id: {
+                            type: 'Identifier',
+                            name: 'X',
+                            start: 35,
+                            end: 36,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 35
+                              },
+                              end: {
+                                line: 1,
+                                column: 36
+                              }
+                            }
+                          },
+                          superClass: null,
+                          body: {
+                            type: 'ClassBody',
+                            body: [],
+                            start: 37,
+                            end: 39,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 37
+                              },
+                              end: {
+                                line: 1,
+                                column: 39
+                              }
+                            }
+                          },
+                          start: 29,
+                          end: 39,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 29
+                            },
+                            end: {
+                              line: 1,
+                              column: 39
+                            }
+                          }
+                        },
+                        start: 22,
+                        end: 39,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 22
+                          },
+                          end: {
+                            line: 1,
+                            column: 39
+                          }
+                        }
+                      },
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'xCls2',
+                          start: 41,
+                          end: 46,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 41
+                            },
+                            end: {
+                              line: 1,
+                              column: 46
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'ClassExpression',
+                          id: null,
+                          superClass: null,
+                          body: {
+                            type: 'ClassBody',
+                            body: [
+                              {
+                                type: 'MethodDefinition',
+                                kind: 'method',
+                                static: true,
+                                computed: false,
+                                key: {
+                                  type: 'Identifier',
+                                  name: 'name',
+                                  start: 64,
+                                  end: 68,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 64
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 68
+                                    }
+                                  }
+                                },
+                                value: {
+                                  type: 'FunctionExpression',
+                                  params: [],
+                                  body: {
+                                    type: 'BlockStatement',
+                                    body: [],
+                                    start: 71,
+                                    end: 73,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 71
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 73
+                                      }
+                                    }
+                                  },
+                                  async: false,
+                                  generator: false,
+                                  id: null,
+                                  start: 68,
+                                  end: 73,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 68
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 73
+                                    }
+                                  }
+                                },
+                                start: 57,
+                                end: 73,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 57
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 73
+                                  }
+                                }
+                              }
+                            ],
+                            start: 55,
+                            end: 75,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 55
+                              },
+                              end: {
+                                line: 1,
+                                column: 75
+                              }
+                            }
+                          },
+                          start: 49,
+                          end: 75,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 49
+                            },
+                            end: {
+                              line: 1,
+                              column: 75
+                            }
+                          }
+                        },
+                        start: 41,
+                        end: 75,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 41
+                          },
+                          end: {
+                            line: 1,
+                            column: 75
+                          }
+                        }
+                      }
+                    ],
+                    start: 5,
+                    end: 76,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 76
+                      }
+                    }
+                  }
+                ],
+                async: false,
+                expression: false,
+                start: 4,
+                end: 83,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 83
+                  }
+                }
+              },
+              start: 0,
+              end: 83,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 83
+                }
+              }
+            },
+            start: 0,
+            end: 83,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 83
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 83,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 83
+          }
+        }
+      }
+    ],
+    [
       'class x extends await { }',
       Context.OptionsLoc,
       {

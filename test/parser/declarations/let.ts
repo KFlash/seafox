@@ -17,6 +17,7 @@ describe('Declarations - Let', () => {
     ['let [a];', Context.Empty],
     ['let let;', Context.Empty],
     ['let let x;', Context.Empty],
+    ['let a = "test",', Context.Empty],
     ['let [o.x=1]=[]', Context.Empty],
     ['let [({x: 1})] = [];', Context.Empty],
     ['let [(x)] = [];', Context.Empty],

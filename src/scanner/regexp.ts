@@ -1,7 +1,6 @@
-import { Chars } from '../chars';
+import { Chars, isIdentifierPart, CharFlags, CharTypes } from './';
 import { ParserState } from '../parser/common';
 import { Token } from '../token';
-import { isIdentifierPart, CharFlags, CharTypes } from './charClassifier';
 import { report, Errors } from '../errors';
 import { Context } from '../parser/bits';
 

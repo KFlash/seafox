@@ -1,5 +1,5 @@
 import { unicodeLookup } from './unicode';
-import { Chars } from '../chars';
+import { Chars } from './chars';
 
 export const enum CharFlags {
   None = 0,
@@ -173,5 +173,6 @@ export function isIdentifierPart(code: number): any {
   return code <= 0x7f
     ? CharTypes[code] & CharFlags.IdentifierPart
     : (unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1 ||
-        (code === Chars.ZeroWidthJoiner || code === Chars.ZeroWidthNonJoiner);
+        code === Chars.ZeroWidthJoiner ||
+        code === Chars.ZeroWidthNonJoiner;
 }

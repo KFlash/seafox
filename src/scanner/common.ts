@@ -1,4 +1,4 @@
-import { Chars } from '../chars';
+import { Chars } from './';
 import { ParserState } from '../parser/common';
 import { report, Errors } from '../errors';
 

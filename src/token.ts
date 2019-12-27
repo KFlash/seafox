@@ -23,7 +23,7 @@ export const enum Token {
    IsAssignOp = 1 << 26,
    IsBinaryOp = (1 << 27) | IsExpressionStart,
    IsUpdateOp = (1 << 28) | IsExpressionStart,
-   IsEvalOrArguments = 1 << 29,
+   IsEvalOrArguments = 1 << 29 | IsExpressionStart,
    IsCoalesc = 1 << 30,
 
   /* Node types */

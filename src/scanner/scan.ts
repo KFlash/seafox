@@ -1,38 +1,49 @@
 import { ParserState } from '../parser/common';
 import { Context } from '../parser/bits';
 import { Token } from '../token';
-import { Chars } from '../chars';
-import { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments';
-import { scanMaybeIdentifier, scanIdentifier, scanIdentifierOrKeyword, scanUnicodeEscapeIdStart } from './identifier';
-import { scanStringLiteral } from './string';
-import { scanRegularExpression } from './regexp';
-import { scanTemplate } from './template';
-import { report, Errors } from '../errors';
-import { unicodeLookup } from './unicode';
-import { CharKinds, firstCharKinds } from './tables';
-import { fromCodePoint } from './common';
 import {
+  Chars,
+  skipSingleLineComment,
+  skipMultiLineComment,
+  skipSingleHTMLComment,
+  scanMaybeIdentifier,
+  scanIdentifier,
+  scanIdentifierOrKeyword,
+  scanUnicodeEscapeIdStart,
+  scanStringLiteral,
+  scanRegularExpression,
+  scanTemplate,
+  report,
+  Errors,
+  unicodeLookup,
+  CharKinds,
+  firstCharKinds,
+  fromCodePoint,
   scanNumber,
   scanImplicitOctalDigits,
   scanHexDigits,
   scanBinaryDigits,
   scanOctalDigits,
   scanNumberAfterDecimalPoint
-} from './numeric';
+} from './';
+
+// Note: This is a hot path, and the trick here is to assign all "static" vars outside the loop, and avoid
+// to set any vars inside the loop. Example: 'parser.source.charCodeAt' can be shortened to
+// 'source.charCodeAt' where 'parser' is the static part. 'char' is assigned outside the loop
+// to avoid 'var char =' inside the loop - which will reduce the performance by 1.2%.
 
 export function scan(
   parser: ParserState,
   context: Context,
   source: string,
+  index: number,
   length: number,
+  token: Token,
   lastIsCR: 0 | 1,
   lineStart: boolean,
   allowRegExp: 0 | 1
 ): Token {
   let char: number | null;
-  let index: number | null;
-
-  let token: Token = Token.EOF;
 
   while (parser.index < length) {
     char = source.charCodeAt(parser.index);
@@ -57,6 +68,7 @@ export function scan(
       return scanMaybeIdentifier(parser, context, source, char);
     }
 
+    // Jump table used to optimize the switch
     token = firstCharKinds[char];
 
     switch (token) {
@@ -372,5 +384,5 @@ export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 
   const { source, length, index, offset } = parser;
   parser.lastColumn = (parser.endIndex = index) - offset;
   parser.prevLinebase = parser.lineBase;
-  parser.token = scan(parser, context, source, length, /* lastIsCR */ 0, index === 0, allowRegExp);
+  parser.token = scan(parser, context, source, index, length, Token.EOF, /* lastIsCR */ 0, index === 0, allowRegExp);
 }

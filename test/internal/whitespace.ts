@@ -7,7 +7,7 @@ describe('Lexer', () => {
   function pass(name: string, opts: any) {
     it(name, () => {
       const parser = create(opts.source);
-      scan(parser, Context.Empty, opts.source, opts.source.length, 0, true, /* allowRegExp */ 0);
+      scan(parser, Context.Empty, opts.source, 1, opts.source.length, 0, 0, true, /* allowRegExp */ 0);
       t.deepEqual(
         {
           //seek: scan(parser),
