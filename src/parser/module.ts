@@ -507,7 +507,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     }
     // falls through
     default:
-      report(parser, Errors.Unexpected, KeywordDescTable[parser.token & 0xff]);
+      report(parser, Errors.Unexpected, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
   }
 
   return context & Context.OptionsLoc

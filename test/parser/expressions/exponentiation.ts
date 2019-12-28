@@ -3,6 +3,7 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Exponentiation', () => {
+
   for (const arg of [
     'delete O.p ** 10',
     'delete x ** 10',

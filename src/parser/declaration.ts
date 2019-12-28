@@ -158,6 +158,11 @@ export function parseClassDeclaration(
     if (isStrictReservedWord(parser, context, parser.token, /* inGroup */ 0)) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
+
+    if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.StrictEvalArguments);
+    }
+
     // A named class creates a new lexical scope with a const binding of the
     // class name for the "inner name".
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Class, Origin.None);

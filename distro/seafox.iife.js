@@ -4598,7 +4598,7 @@ var seafox = (function (exports) {
       if ((token & 67108864) === 67108864) {
           if (parser.assignable === 0)
               report(parser, 60);
-          const operator = KeywordDescTable[token & 0xff];
+          const operator = KeywordDescTable[token & 0b00000000000000000000000011111111];
           return parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, operator, start, line, column);
       }
       if ((token & 135266304) === 135266304) {
@@ -4620,8 +4620,10 @@ var seafox = (function (exports) {
       return parser.token === 19 ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
   }
   function parseSequenceExpression(parser, context, expr, start, line, column) {
-      const expressions = [expr];
-      while (consumeOpt(parser, context, 19, 1)) {
+      nextToken(parser, context, 1);
+      const expressions = [expr, parseExpression(parser, context, 0)];
+      while (parser.token === 19) {
+          nextToken(parser, context, 1);
           expressions.push(parseExpression(parser, context, 0));
       }
       return context & 2
@@ -4678,7 +4680,7 @@ var seafox = (function (exports) {
           }
           nextToken(parser, context, 1);
           type = t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression';
-          operator = KeywordDescTable[t & 0xff];
+          operator = KeywordDescTable[t & 0b00000000000000000000000011111111];
           right = parseBinaryExpression(parser, context, inGroup, t & prec, t, parser.start, parser.line, parser.column, parseLeftHandSideExpression(parser, context, inGroup, 1, 0));
           parser.assignable = 0;
           left =
@@ -5153,13 +5155,15 @@ var seafox = (function (exports) {
       nextToken(parser, context, 0);
       if (parser.newLine === 0) {
           if (parser.token === 1179738) {
-              if (allowLHS === 0)
-                  report(parser, 86, KeywordDescTable[parser.token & 0xff]);
+              if (allowLHS === 0) {
+                  report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+              }
               return parseFunctionExpression(parser, context, 1, curStart, curLine, curColumn);
           }
           if ((parser.token & 2162688) === 2162688) {
-              if (allowLHS === 0)
-                  report(parser, 86, KeywordDescTable[parser.token & 0xff]);
+              if (allowLHS === 0) {
+                  report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+              }
               if (canAssign === 0)
                   report(parser, 73);
               if (parser.token === 3211376)
@@ -5623,7 +5627,7 @@ var seafox = (function (exports) {
           body = parseFunctionBody(parser, (context | 134221824 | 268435456) ^
               (134221824 | 268435456), scope, void 0, 1, void 0);
           if ((parser.token & 135266304) === 135266304 && parser.newLine === 0) {
-              report(parser, 86, KeywordDescTable[parser.token & 0xff]);
+              report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
           }
           else if ((parser.token & 269484032) === 269484032) {
               report(parser, 96);
@@ -5938,7 +5942,7 @@ var seafox = (function (exports) {
   function parseUpdateExpression(parser, context, arg, start, line, column) {
       if (parser.assignable === 0)
           report(parser, 66);
-      const operator = KeywordDescTable[parser.token & 0xff];
+      const operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111];
       nextToken(parser, context, 0);
       parser.assignable = 0;
       return context & 2
@@ -5963,7 +5967,7 @@ var seafox = (function (exports) {
           report(parser, 0);
       if (inNew === 1)
           report(parser, 47);
-      const operator = KeywordDescTable[parser.token & 0xff];
+      const operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111];
       nextToken(parser, context, 1);
       const arg = parseLeftHandSideExpression(parser, context, 0, 1, 0);
       if (parser.assignable === 0) {
@@ -5991,7 +5995,7 @@ var seafox = (function (exports) {
       if (allowLHS === 0)
           report(parser, 0);
       if (inNew === 1)
-          report(parser, 48, KeywordDescTable[parser.token & 0xff]);
+          report(parser, 48, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
       const operator = parser.token;
       nextToken(parser, context, 1);
       const arg = parseLeftHandSideExpression(parser, context, inGroup, 1, 0);
@@ -6006,7 +6010,7 @@ var seafox = (function (exports) {
       return context & 2
           ? {
               type: 'UnaryExpression',
-              operator: KeywordDescTable[operator & 0xff],
+              operator: KeywordDescTable[operator & 0b00000000000000000000000011111111],
               argument: arg,
               prefix: true,
               start,
@@ -6015,7 +6019,7 @@ var seafox = (function (exports) {
           }
           : {
               type: 'UnaryExpression',
-              operator: KeywordDescTable[operator & 0xff],
+              operator: KeywordDescTable[operator & 0b00000000000000000000000011111111],
               argument: arg,
               prefix: true
           };
@@ -6141,7 +6145,7 @@ var seafox = (function (exports) {
                   left = parseSpreadOrRestElement(parser, context, scope, 21, isPattern, 0, inGroup, kind, origin, start, line, column);
                   conjuncted |= parser.flags;
                   if (parser.token !== 19 && parser.token !== 21) {
-                      report(parser, 86, KeywordDescTable[parser.token & 0xff]);
+                      report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
                   }
               }
               else {
@@ -6342,6 +6346,9 @@ var seafox = (function (exports) {
           const { token, start, line, column, tokenValue } = parser;
           if (isStrictReservedWord(parser, context, token, inGroup))
               report(parser, 26);
+          if ((parser.token & 537919488) === 537919488) {
+              report(parser, 27);
+          }
           nextToken(parser, context, 0);
           id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
       }
@@ -6414,7 +6421,9 @@ var seafox = (function (exports) {
                       }
                       break;
                   case 2162799:
-                      type |= 16 | (optionalBit(parser, context, 135314230) ? 8 : 0);
+                      if (parser.newLine === 0) {
+                          type |= 16 | (optionalBit(parser, context, 135314230) ? 8 : 0);
+                      }
                       break;
                   case 65650:
                       type |= 128;
@@ -6437,7 +6446,7 @@ var seafox = (function (exports) {
           nextToken(parser, context, 0);
       }
       else {
-          report(parser, 86, KeywordDescTable[parser.token & 0xff]);
+          report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
       }
       if (type & (8 | 16 | 384)) {
           if (parser.token & (131072 | 65536 | 262144 | 2162688)) {
@@ -6468,8 +6477,7 @@ var seafox = (function (exports) {
               }
               type |= 64;
           }
-          else if (type & (32 | 384 | 8 | 16) &&
-              parser.tokenValue === 'prototype') {
+          else if (parser.tokenValue === 'prototype' && (isStatic === 1 || type & (32 | 384 | 8 | 16))) {
               report(parser, 55);
           }
       }
@@ -6531,13 +6539,13 @@ var seafox = (function (exports) {
   function parseMethodDefinition(parser, context, kind) {
       const modifierFlags = (kind & 64) === 0 ? 31981568 : 14680064;
       context =
-          ((context | modifierFlags) ^ modifierFlags) |
+          ((context | 134221824 | 268435456 | modifierFlags) ^
+              (134221824 | 268435456 | modifierFlags)) |
               ((kind & 88) << 18) |
               100925440 |
               (kind & 16 ? 4194304 : 0) |
               (kind & 8 ? 2097152 : 0);
-      return parseFunctionLiteral(parser, (context | 134221824 | 268435456) ^
-          (134221824 | 268435456), {
+      return parseFunctionLiteral(parser, context, {
           parent: {
               parent: void 0,
               type: 2
@@ -6821,7 +6829,7 @@ var seafox = (function (exports) {
                               value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
                               conjuncted = parser.assignable === 0 ? 8 : 0;
                               if ((parser.token & 67108864) === 67108864) {
-                                  operator = KeywordDescTable[parser.token & 0xff];
+                                  operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111];
                                   value = parseAssignmentOrPattern(parser, context, isPattern, 0, value, operator, start, line, column);
                               }
                               else {
@@ -6984,7 +6992,7 @@ var seafox = (function (exports) {
                               value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
                               conjuncted = parser.assignable === 0 ? 8 : 0;
                               if ((parser.token & 67108864) === 67108864) {
-                                  operator = KeywordDescTable[parser.token & 0xff];
+                                  operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111];
                                   value = parseAssignmentOrPattern(parser, context, isPattern, 0, value, operator, start, line, column);
                               }
                               else {
@@ -7039,7 +7047,7 @@ var seafox = (function (exports) {
                           if ((parser.token & 67108864) === 67108864) {
                               conjuncted |=
                                   parser.assignable === 0 ? 8 : token === 67108896 ? 0 : 4;
-                              operator = KeywordDescTable[parser.token & 0xff];
+                              operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111];
                               value = parseAssignmentOrPattern(parser, context, isPattern, 0, value, operator, start, line, column);
                           }
                           else if (parser.token === 19 || parser.token === 16777232) {
@@ -7079,7 +7087,7 @@ var seafox = (function (exports) {
                               if ((parser.token & 67108864) === 67108864) {
                                   if (parser.token !== 67108896)
                                       conjuncted |= 8;
-                                  operator = KeywordDescTable[parser.token & 0xff];
+                                  operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111];
                                   value = parseAssignmentOrPattern(parser, context, isPattern, 0, value, operator, start, line, column);
                               }
                               else {
@@ -7152,7 +7160,7 @@ var seafox = (function (exports) {
                   }
               }
               else {
-                  report(parser, 86, KeywordDescTable[token & 0xff]);
+                  report(parser, 86, KeywordDescTable[token & 0b00000000000000000000000011111111]);
               }
               parser.flags =
                   ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
@@ -7511,6 +7519,9 @@ var seafox = (function (exports) {
           parser.token !== 131159) {
           if (isStrictReservedWord(parser, context, parser.token, 0)) {
               report(parser, 26);
+          }
+          if ((parser.token & 537919488) === 537919488) {
+              report(parser, 27);
           }
           addBlockName(parser, context, scope, parser.tokenValue, 64, 0);
           id = parseIdentifier(parser, context);
@@ -8950,7 +8961,7 @@ var seafox = (function (exports) {
               }
           }
           default:
-              report(parser, 0, KeywordDescTable[parser.token & 0xff]);
+              report(parser, 0, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
       }
       return context & 2
           ? {
