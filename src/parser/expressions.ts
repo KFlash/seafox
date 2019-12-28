@@ -2689,7 +2689,7 @@ export function parseFunctionBody(
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
 
   const body: any[] = [];
-  const prevContext = (context | Context.DisallowIn) ^ Context.DisallowIn;
+  const prevContext = context;
 
   let isStrictDirective: 0 | 1 = 0;
 
@@ -2742,7 +2742,7 @@ export function parseFunctionBody(
   parser.flags = (parser.flags | 0b00000000000000000000110011100000) ^ 0b00000000000000000000110011100000;
 
   while (parser.token !== Token.RightBrace) {
-    body.push(parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null));
+    body.push(parseStatementListItem(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, scope, Origin.TopLevel, null, null));
   }
 
   consume(parser, context, Token.RightBrace, flags & FunctionFlag.IsDeclaration ? 1 : 0);
