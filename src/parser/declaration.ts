@@ -288,7 +288,7 @@ export function parseVariableDeclarationListAndDeclarator(
           }
     );
 
-    if (parser.token !== Token.Comma) break;
+    if ((parser.token as Token) !== Token.Comma) break;
 
     nextToken(parser, context, /* allowRegExp */ 1);
   }

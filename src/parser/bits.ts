@@ -24,7 +24,7 @@ export const enum Context {
   InMethod                = 1 << 25,
   AllowNewTarget          = 1 << 26,
   InSwitch                = 1 << 27,
-  InGlobal                = 1 << 28
+  InGlobal                = 1 << 28,
 }
 
 /**

@@ -36,7 +36,7 @@ export function parseModuleItemListAndDirectives(
     while (parser.token === Token.StringLiteral) {
       const { start, line, column, isUnicodeEscape, tokenValue } = parser;
       let expression = parseLiteral(parser, context);
-      if (parser.token !== Token.Semicolon) {
+      if ((parser.token as Token) !== Token.Semicolon) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
       consumeSemicolon(parser, context);
@@ -194,7 +194,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
                 }
           );
 
-          if (parser.token !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
+          if ((parser.token as Token) !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
         }
 
         consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
@@ -267,7 +267,7 @@ export function parseExportDefaultDeclaration(
       const { tokenValue, start, line, column } = parser;
       nextToken(parser, context, /* allowRegExp */ 0);
       if (parser.newLine === 0) {
-        if (parser.token === Token.FunctionKeyword) {
+        if ((parser.token as Token) === Token.FunctionKeyword) {
           declaration = parseFunctionDeclarationRest(
             parser,
             context,
@@ -284,7 +284,7 @@ export function parseExportDefaultDeclaration(
             declaration = parseIdentifier(parser, context);
             declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
           } else {
-            if (parser.token === Token.LeftParen) {
+            if ((parser.token as Token) === Token.LeftParen) {
               declaration = parseAsyncArrowOrCallExpression(
                 parser,
                 (context | Context.DisallowIn) ^ Context.DisallowIn,
@@ -417,7 +417,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
         let exported: ESTree.Identifier | null;
 
-        if (parser.token === Token.AsKeyword) {
+        if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
           exported = parseIdentifier(parser, context);
         } else {
@@ -441,7 +441,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
               }
         );
 
-        if (parser.token !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
+        if ((parser.token as Token) !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
       }
 
       consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
@@ -491,7 +491,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     case Token.AsyncKeyword: {
       const { start, line, column } = parser;
       nextToken(parser, context, /* allowRegExp */ 0);
-      if (parser.newLine === 0 && parser.token === Token.FunctionKeyword) {
+      if (parser.newLine === 0 && (parser.token as Token) === Token.FunctionKeyword) {
         declaration = parseFunctionDeclarationRest(
           parser,
           context,
@@ -507,7 +507,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     }
     // falls through
     default:
-      report(parser, Errors.Unexpected, KeywordDescTable[parser.token & Token.Type]);
+      report(parser, Errors.Unexpected, KeywordDescTable[parser.token & 0xff]);
   }
 
   return context & Context.OptionsLoc

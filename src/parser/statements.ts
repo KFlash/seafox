@@ -603,9 +603,9 @@ export function parseForStatementWithVariableDeclarations(
           init = parseExpression(parser, context | Context.DisallowIn, 0);
 
           if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
-            if (parser.token === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
+            if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
             if (
-              (parser.token === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
+              ((parser.token as Token) === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
               context & (Context.Strict | Context.OptionsDisableWebCompat)
             ) {
               report(parser, Errors.ForInOfLoopInitializer, 'in');
@@ -656,9 +656,9 @@ export function parseForStatementWithVariableDeclarations(
           init = parseExpression(parser, context | Context.DisallowIn, 0);
 
           if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
-            if (parser.token === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
+            if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
             if (
-              (parser.token === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
+              ((parser.token as Token) === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
               context & (Context.Strict | Context.OptionsDisableWebCompat)
             ) {
               report(parser, Errors.ForInOfLoopInitializer, 'in');
@@ -691,7 +691,7 @@ export function parseForStatementWithVariableDeclarations(
 
       bindingCount++;
       parser.assignable = 1;
-      if (parser.token !== Token.Comma) break;
+      if ((parser.token as Token) !== Token.Comma) break;
 
       consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1);
     }
@@ -1120,8 +1120,8 @@ export function parseSwitchStatement(
     }
     consume(parser, context, Token.Colon, /* allowRegExp */ 1);
     while (
-      parser.token !== Token.CaseKeyword &&
-      parser.token !== Token.RightBrace &&
+      (parser.token as Token) !== Token.CaseKeyword &&
+      (parser.token as Token) !== Token.RightBrace &&
       parser.token !== Token.DefaultKeyword
     ) {
       consequent.push(
@@ -1382,7 +1382,7 @@ export function parseTryStatement(
     let param: ESTree.ArrayPattern | ESTree.ObjectPattern | ESTree.Identifier | null = null;
     let additionalScope: ScopeState = scope;
 
-    if (parser.token === Token.LeftParen) {
+    if ((parser.token as Token) === Token.LeftParen) {
       nextToken(parser, context, /* allowRegExp */ 0);
 
       scope = {

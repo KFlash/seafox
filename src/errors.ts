@@ -96,16 +96,28 @@ export const enum Errors {
   InvalidGeneratorGetter,
   IllegalUseStrict,
   StrictOctalLiteral,
-  StrictInvalidLetInExprPos
+  StrictInvalidLetInExprPos,
+  InvalidDotProperty,
+  InvalidArrowPostfix,
+  InvalidAccessedBlockBodyArrow,
+  InvalidInvokedBlockBodyArrow,
+  InvalidObjLitKeyStar,
+  InvalidSpreadInImport
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.InvalidSpreadInImport]: '... is not allowed in import()',
+  [Errors.InvalidObjLitKeyStar]: 'Invalid object literal key character after generator star',
+  [Errors.InvalidArrowPostfix]: 'An arrow function can not have a postfix update operator',
+  [Errors.InvalidAccessedBlockBodyArrow]: 'Block body arrows can not be immediately accessed without a group',
+  [Errors.InvalidInvokedBlockBodyArrow]: 'Block body arrows can not be immediately invoked without a group',
+  [Errors.InvalidDotProperty]: 'Dot property must be an identifier',
   [Errors.IllegalUseStrict]: "Illegal 'use strict' directive in function with non-simple parameter list",
   [Errors.StrictOctalLiteral]: 'Octal literals are not allowed in strict mode',
-  [Errors.StrictInvalidLetInExprPos]: 'StrictInvalidLetInExprPos',
+  [Errors.StrictInvalidLetInExprPos]: "The identifier 'let' must not be in expression position in strict mode",
   [Errors.InvalidGeneratorGetter]:
     'Calls to super must be in the "constructor" method of a class expression or class declaration that has a superclass',
   [Errors.InvalidSuperProperty]: 'Member access on super must be in a method',

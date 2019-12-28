@@ -2,191 +2,189 @@
  * The token types and attributes.
  */
 export const enum Token {
-  Type = 0xFF,
 
   /* Precedence for binary operators (always positive) */
-  InPrec = 4,
-  PrecStart = 8,
-  Precedence = 15 << PrecStart, // 8-11
+
+  Precedence = 0b00000000000000000000111100000000, // 8-11
 
    /* Attribute names */
-   Contextual = 1 << 16,
-   Keyword = 1 << 17,
-   FutureReserved = 1 << 18,
-   IsStringOrNumber = 1 << 19,
-   IsExpressionStart = 1 << 20,
-   IsIdentifier = (1 << 21) | Contextual,
-   IsInOrOf = 1 << 22, // 'in' or 'of'
-   IsLogical = 1 << 23,
-   IsAutoSemicolon = 1 << 24,
-   IsPatternStart = 1 << 25, // Start of pattern, '[' or '{'
-   IsAssignOp = 1 << 26,
-   IsBinaryOp = (1 << 27) | IsExpressionStart,
-   IsUpdateOp = (1 << 28) | IsExpressionStart,
-   IsEvalOrArguments = 1 << 29 | IsExpressionStart,
-   IsCoalesc = 1 << 30,
+   Contextual = 0b00000000000000010000000000000000,
+   Keyword = 0b00000000000000100000000000000000,
+   FutureReserved    = 0b00000000000001000000000000000000,
+   IsStringOrNumber  = 0b00000000000010000000000000000000,
+   IsExpressionStart = 0b00000000000100000000000000000000,
+   IsIdentifier = 0b00000000001000010000000000000000,
+   IsInOrOf  = 0b00000000010000000000000000000000, // 'in' or 'of'
+   IsLogical = 0b00000000100000000000000000000000,
+   IsAutoSemicolon = 0b00000001000000000000000000000000,
+   IsPatternStart = 0b00000010000000000000000000000000, // Start of pattern, '[' or '{'
+   IsAssignOp = 0b00000100000000000000000000000000,
+   IsBinaryOp = 0b00001000000100000000000000000000,
+   IsUpdateOp = 0b00010000000100000000000000000000,
+   IsEvalOrArguments = 0b00100000000100000000000000000000,
+   IsCoalesc = 0b01000000000000000000000000000000,
 
   /* Node types */
-  EOF = 0 | IsAutoSemicolon, // Pseudo
+  EOF = 0b00000001000000000000000000000000, // Pseudo
 
   /* Constants/Bindings */
-  Identifier = 1 | IsExpressionStart | IsIdentifier,
-  NumericLiteral = 2 | IsExpressionStart | IsStringOrNumber,
-  BigIntLiteral = 3 | IsExpressionStart | IsStringOrNumber,
-  StringLiteral = 4 | IsExpressionStart | IsStringOrNumber,
-  RegularExpression = 5 | IsExpressionStart,
-  FalseKeyword = 6 | Keyword | IsExpressionStart,
-  TrueKeyword = 7 | Keyword | IsExpressionStart,
-  NullKeyword = 8 | Keyword | IsExpressionStart,
+  Identifier = 0b00000000001100010000000000000001,
+  NumericLiteral = 0b00000000000110000000000000000010,
+  BigIntLiteral = 0b00000000000110000000000000000011,
+  StringLiteral = 0b00000000000110000000000000000100,
+  RegularExpression = 0b00000000000100000000000000000101,
+  FalseKeyword = 0b00000000000100100000000000000110,
+  TrueKeyword = 0b00000000000100100000000000000111,
+  NullKeyword = 0b00000000000100100000000000001000,
 
   /* Template nodes */
-  TemplateCont = 9 | IsExpressionStart,
-  TemplateTail = 10 | IsExpressionStart,
+  TemplateCont = 0b00000000000100000000000000001001,
+  TemplateTail = 0b00000000000100000000000000001010,
 
   /* Punctuators */
-  Arrow = 11, // =>
-  LeftParen = 12 | IsExpressionStart, // (
-  LeftBrace = 13 | IsExpressionStart | IsPatternStart, // {
-  Period = 14, // .
-  Ellipsis = 15, // ...
-  RightBrace = 16 | IsAutoSemicolon, // }
-  RightParen = 17, // )
-  Semicolon = 18 | IsAutoSemicolon, // ;
-  Comma = 19, // ,
-  LeftBracket = 20 | IsExpressionStart | IsPatternStart, // [
-  RightBracket = 21, // ]
-  Colon = 22, // :
-  QuestionMark = 23, // ?
-  Coalesce = 24 | IsBinaryOp | IsCoalesc | (1 << PrecStart) | (1 << (PrecStart + InPrec)), // ??
-  QuestionMarkPeriod = 25, // ?.
-  SingleQuote = 26, // '
-  DoubleQuote = 27, // "
-  JSXClose = 28, // </
-  JSXAutoClose = 29, // />
+  Arrow = 0b00000000000000000000000000001011, // =>
+  LeftParen = 0b00000000000100000000000000001100, // (
+  LeftBrace = 0b00000010000100000000000000001101, // {
+  Period = 0b00000000000000000000000000001110, // .
+  Ellipsis = 0b00000000000000000000000000001111, // ...
+  RightBrace = 0b00000001000000000000000000010000, // }
+  RightParen = 0b00000000000000000000000000010001, // )
+  Semicolon = 0b00000001000000000000000000010010, // ;
+  Comma = 0b00000000000000000000000000010011, // ,
+  LeftBracket = 0b00000010000100000000000000010100, // [
+  RightBracket = 0b00000000000000000000000000010101, // ]
+  Colon = 0b00000000000000000000000000010110, // :
+  QuestionMark = 0b00000000000000000000000000010111, // ?
+  Coalesce = 0b01001000000100000001000100011000, // ??
+  QuestionMarkPeriod = 0b00000000000000000000000000011001, // ?.
+  SingleQuote = 0b00000000000000000000000000011010, // '
+  DoubleQuote = 0b00000000000000000000000000011011, // "
+  JSXClose = 0b00000000000000000000000000011100, // </
+  JSXAutoClose = 0b00000000000000000000000000011101, // />
 
   /* Update operators */
-  Increment = 30 | IsUpdateOp, // ++
-  Decrement = 31 | IsUpdateOp, // --
+  Increment = 0b00010000000100000000000000011110, // ++
+  Decrement = 0b00010000000100000000000000011111, // --
 
   /* Assign operators */
-  Assign = 32 | IsAssignOp, // =
-  ShiftLeftAssign = 33 | IsAssignOp, // <<=
-  ShiftRightAssign = 34 | IsAssignOp, // >>=
-  LogicalShiftRightAssign = 35 | IsAssignOp, // >>>=
-  ExponentiateAssign = 36 | IsAssignOp, // **=
-  AddAssign = 37 | IsAssignOp, // +=
-  SubtractAssign = 38 | IsAssignOp, // -=
-  MultiplyAssign = 39 | IsAssignOp, // *=
-  DivideAssign = 40 | IsAssignOp | IsExpressionStart, // /=
-  ModuloAssign = 41 | IsAssignOp, // %=
-  BitwiseXorAssign = 42 | IsAssignOp, // ^=
-  BitwiseOrAssign = 43 | IsAssignOp, // |=
-  BitwiseAndAssign = 44 | IsAssignOp, // &=
+  Assign = 0b00000100000000000000000000100000, // =
+  ShiftLeftAssign = 0b00000100000000000000000000100001, // <<=
+  ShiftRightAssign = 0b00000100000000000000000000100010, // >>=
+  LogicalShiftRightAssign = 0b00000100000000000000000000100011, // >>>=
+  ExponentiateAssign = 0b00000100000000000000000000100100, // **=
+  AddAssign = 0b00000100000000000000000000100101, // +=
+  SubtractAssign = 0b00000100000000000000000000100110, // -=
+  MultiplyAssign = 0b00000100000000000000000000100111, // *=
+  DivideAssign = 0b00000100000100000000000000101000, // /=
+  ModuloAssign = 0b00000100000000000000000000101001, // %=
+  BitwiseXorAssign = 0b00000100000000000000000000101010, // ^=
+  BitwiseOrAssign = 0b00000100000000000000000000101011, // |=
+  BitwiseAndAssign = 0b00000100000000000000000000101100, // &=
 
   /* Unary/binary operators */
-  TypeofKeyword      = 45 | Keyword | IsExpressionStart,
-  DeleteKeyword      = 46 | Keyword | IsExpressionStart,
-  VoidKeyword        = 47 | Keyword | IsExpressionStart,
-  Negate             = 48 | IsExpressionStart, // !
-  Complement         = 49 | IsExpressionStart, // ~
-  Add                = 50 | IsBinaryOp | (10 << PrecStart) | (10 << (PrecStart + InPrec)), // +
-  Subtract           = 51 | IsBinaryOp | (10 << PrecStart) | (10 << (PrecStart + InPrec)), // -
-  InKeyword          = 52 | IsBinaryOp | (8 << (PrecStart + InPrec)) | Keyword | IsInOrOf,
-  InstanceofKeyword  = 53 | IsBinaryOp | (8 << PrecStart) | (8 << (PrecStart + InPrec)) | Keyword,
-  Multiply           = 54 | IsBinaryOp | (11 << PrecStart) | (11 << (PrecStart + InPrec)), // *
-  Modulo             = 55 | IsBinaryOp | (11 << PrecStart) | (11 << (PrecStart + InPrec)), // %
-  Divide             = 56 | IsBinaryOp | (11 << PrecStart) | (11 << (PrecStart + InPrec)) | IsExpressionStart, // /
-  Exponentiate       = 57 | IsBinaryOp | (12 << PrecStart) | (12 << (PrecStart + InPrec)), // **
-  LogicalAnd         = 58 | IsBinaryOp | (3 << PrecStart) | (3 << (PrecStart + InPrec)) | IsLogical, // &&
-  LogicalOr          = 59 | IsBinaryOp | (2 << PrecStart) | (2 << (PrecStart + InPrec)) | IsLogical, // ||
-  StrictEqual        = 60 | IsBinaryOp | (7 << PrecStart) | (7 << (PrecStart + InPrec)), // ===
-  StrictNotEqual     = 61 | IsBinaryOp | (7 << PrecStart) | (7 << (PrecStart + InPrec)), // !==
-  LooseEqual         = 62 | IsBinaryOp | (7 << PrecStart) | (7 << (PrecStart + InPrec)), // ==
-  LooseNotEqual      = 63 | IsBinaryOp | (7 << PrecStart) | (7 << (PrecStart + InPrec)), // !=
-  LessThanOrEqual    = 64 | IsBinaryOp | (7 << PrecStart) | (7 << (PrecStart + InPrec)), // <=
-  GreaterThanOrEqual = 65 | IsBinaryOp | (7 << PrecStart) | (7 << (PrecStart + InPrec)), // >=
-  LessThan           = 66 | IsBinaryOp | (8 << PrecStart) | (8 << (PrecStart + InPrec)) | IsExpressionStart, // <
-  GreaterThan        = 67 | IsBinaryOp | (8 << PrecStart) | (8 << (PrecStart + InPrec)), // >
-  ShiftLeft          = 68 | IsBinaryOp | (9 << PrecStart) | (9 << (PrecStart + InPrec)), // <<
-  ShiftRight         = 69 | IsBinaryOp | (9 << PrecStart) | (9 << (PrecStart + InPrec)), // >>
-  LogicalShiftRight  = 70 | IsBinaryOp | (9 << PrecStart) | (9 << (PrecStart + InPrec)), // >>>
-  BitwiseAnd         = 71 | IsBinaryOp | (6 << PrecStart) | (6 << (PrecStart + InPrec)), // &
-  BitwiseOr          = 72 | IsBinaryOp | (4 << PrecStart) | (4 << (PrecStart + InPrec)), // |
-  BitwiseXor         = 73 | IsBinaryOp | (5 << PrecStart) | (5 << (PrecStart + InPrec)), // ^
+  TypeofKeyword      = 0b00000000000100100000000000101101,
+  DeleteKeyword      = 0b00000000000100100000000000101110,
+  VoidKeyword        = 0b00000000000100100000000000101111,
+  Negate             = 0b00000000000100000000000000110000, // !
+  Complement         = 0b00000000000100000000000000110001, // ~
+  Add                = 0b00001000000100001010101000110010, // +
+  Subtract           = 0b00001000000100001010101000110011, // -
+  InKeyword          = 0b00001000010100101000000000110100,
+  InstanceofKeyword  = 0b00001000000100101000100000110101,
+  Multiply           = 0b00001000000100001011101100110110, // *
+  Modulo             = 0b00001000000100001011101100110111, // %
+  Divide             = 0b00001000000100001011101100111000, // /
+  Exponentiate       = 0b00001000000100001100110000111001, // **
+  LogicalAnd         = 0b00001000100100000011001100111010, // &&
+  LogicalOr          = 0b00001000100100000010001000111011, // ||
+  StrictEqual        = 0b00001000000100000111011100111100, // ===
+  StrictNotEqual     = 0b00001000000100000111011100111101, // !==
+  LooseEqual         = 0b00001000000100000111011100111110, // ==
+  LooseNotEqual      = 0b00001000000100000111011100111111, // !=
+  LessThanOrEqual    = 0b00001000000100000111011101000000, // <=
+  GreaterThanOrEqual = 0b00001000000100000111011101000001, // >=
+  LessThan           = 0b00001000000100001000100001000010, // <
+  GreaterThan        = 0b00001000000100001000100001000011, // >
+  ShiftLeft          = 0b00001000000100001001100101000100, // <<
+  ShiftRight         = 0b00001000000100001001100101000101, // >>
+  LogicalShiftRight  = 0b00001000000100001001100101000110, // >>>
+  BitwiseAnd         = 0b00001000000100000110011001000111, // &
+  BitwiseOr          = 0b00001000000100000100010001001000, // |
+  BitwiseXor         = 0b00001000000100000101010101001001, // ^
 
   /* Variable declaration kinds */
-  VarKeyword = 74 | IsExpressionStart | Keyword,
-  LetKeyword = 75 | IsExpressionStart | FutureReserved | IsIdentifier,
-  ConstKeyword = 76 | IsExpressionStart | Keyword,
+  VarKeyword = 0b00000000000100100000000001001010,
+  LetKeyword = 0b00000000001101010000000001001011,
+  ConstKeyword = 0b00000000000100100000000001001100,
 
   /* Other Keyword words */
-  BreakKeyword = 77 | Keyword,
-  CaseKeyword = 78 | Keyword,
-  CatchKeyword = 79 | Keyword,
-  ClassKeyword = 80 | Keyword | IsExpressionStart,
-  ContinueKeyword = 81 | Keyword,
-  DebuggerKeyword = 82 | Keyword,
-  DefaultKeyword = 83 | Keyword,
-  DoKeyword = 84 | Keyword,
-  ElseKeyword = 85 | Keyword,
-  ExportKeyword = 86 | Keyword,
-  ExtendsKeyword = 87 | Keyword,
-  FinallyKeyword = 88 | Keyword,
-  ForKeyword = 89 | Keyword,
-  FunctionKeyword = 90 | Keyword | IsExpressionStart,
-  IfKeyword = 91 | Keyword,
-  ImportKeyword = 92 | Keyword | IsExpressionStart,
-  NewKeyword = 93 | Keyword | IsExpressionStart,
-  ReturnKeyword = 94 | Keyword,
-  SuperKeyword = 95 | Keyword | IsExpressionStart,
-  SwitchKeyword = 96 | Keyword | IsExpressionStart,
-  ThisKeyword = 97 | Keyword | IsExpressionStart,
-  ThrowKeyword = 98 | Keyword | IsExpressionStart,
-  TryKeyword = 99 | Keyword,
-  WhileKeyword = 100 | Keyword,
-  WithKeyword = 101 | Keyword,
+  BreakKeyword = 0b00000000000000100000000001001101,
+  CaseKeyword = 0b00000000000000100000000001001110,
+  CatchKeyword = 0b00000000000000100000000001001111,
+  ClassKeyword = 0b00000000000100100000000001010000,
+  ContinueKeyword = 0b00000000000000100000000001010001,
+  DebuggerKeyword = 0b00000000000000100000000001010010,
+  DefaultKeyword = 0b00000000000000100000000001010011,
+  DoKeyword = 0b00000000000000100000000001010100,
+  ElseKeyword = 0b00000000000000100000000001010101,
+  ExportKeyword = 0b00000000000000100000000001010110,
+  ExtendsKeyword = 0b00000000000000100000000001010111,
+  FinallyKeyword = 0b00000000000000100000000001011000,
+  ForKeyword = 0b00000000000000100000000001011001,
+  FunctionKeyword = 0b00000000000100100000000001011010,
+  IfKeyword = 0b00000000000000100000000001011011,
+  ImportKeyword = 0b00000000000100100000000001011100,
+  NewKeyword = 0b00000000000100100000000001011101,
+  ReturnKeyword = 0b00000000000000100000000001011110,
+  SuperKeyword = 0b00000000000100100000000001011111,
+  SwitchKeyword = 0b00000000000100100000000001100000,
+  ThisKeyword = 0b00000000000100100000000001100001,
+  ThrowKeyword = 0b00000000000100100000000001100010,
+  TryKeyword = 0b00000000000000100000000001100011,
+  WhileKeyword = 0b00000000000000100000000001100100,
+  WithKeyword = 0b00000000000000100000000001100101,
 
   /* Strict mode Keyword words */
-  ImplementsKeyword = 102 | FutureReserved,
-  InterfaceKeyword = 103 | FutureReserved,
-  PackageKeyword = 104 | FutureReserved,
-  PrivateKeyword = 105 | FutureReserved,
-  ProtectedKeyword = 106 | FutureReserved,
-  PublicKeyword = 107 | FutureReserved,
-  StaticKeyword = 108 | FutureReserved,
-  YieldKeyword = 109 | FutureReserved | IsExpressionStart | IsIdentifier,
+  ImplementsKeyword = 0b00000000000001000000000001100110,
+  InterfaceKeyword = 0b00000000000001000000000001100111,
+  PackageKeyword = 0b00000000000001000000000001101000,
+  PrivateKeyword = 0b00000000000001000000000001101001,
+  ProtectedKeyword = 0b00000000000001000000000001101010,
+  PublicKeyword = 0b00000000000001000000000001101011,
+  StaticKeyword = 0b00000000000001000000000001101100,
+  YieldKeyword = 0b00000000001101010000000001101101,
 
   /* Contextual keywords */
-  AsKeyword = 110 | Contextual,
-  AsyncKeyword = 111 | Contextual | IsIdentifier,
-  AwaitKeyword = 112 | Contextual | IsExpressionStart | IsIdentifier,
-  ConstructorKeyword = 113 | Contextual,
-  GetKeyword = 114 | Contextual,
-  SetKeyword = 115 | Contextual,
-  FromKeyword = 116 | Contextual,
-  OfKeyword = 117 | Contextual | IsInOrOf,
-  EnumKeyword = 118 | Keyword,
+  AsKeyword = 0b00000000000000010000000001101110,
+  AsyncKeyword = 0b00000000001000010000000001101111,
+  AwaitKeyword = 0b00000000001100010000000001110000,
+  ConstructorKeyword = 0b00000000000000010000000001110001,
+  GetKeyword = 0b00000000000000010000000001110010,
+  SetKeyword = 0b00000000000000010000000001110011,
+  FromKeyword = 0b00000000000000010000000001110100,
+  OfKeyword = 0b00000000010000010000000001110101,
+  EnumKeyword = 0b00000000000000100000000001110110,
 
   /* Escapes */
-  EscapedIdentifier = 119 | IsIdentifier,
-  EscapedFutureReserved = 120 | IsIdentifier,
+  EscapedIdentifier = 0b00000000001000010000000001110111,
+  EscapedFutureReserved = 0b00000000001000010000000001111000,
 
   /* Others */
 
-  Error = 121,
-  CarriageReturn = 122,
-  WhiteSpace = 123,
-  LineFeed = 124,
-  LeadingZero = 125,
-  Backslash = 126,
-  Comment = 127,
-  BinaryDigits = 128,
-  HexDigits = 129,
-  OctalDigits = 130,
-  Underscore = 131,
-  IdentifierOrKeyword = 132,
-  Eval = 133 | IsIdentifier | IsEvalOrArguments,
-  Arguments = 134 | IsIdentifier | IsEvalOrArguments,
+  Error = 0b00000000000000000000000001111001,
+  CarriageReturn = 0b00000000000000000000000001111010,
+  WhiteSpace = 0b00000000000000000000000001111011,
+  LineFeed = 0b00000000000000000000000001111100,
+  LeadingZero = 0b00000000000000000000000001111101,
+  Backslash = 0b00000000000000000000000001111110,
+  Comment = 0b00000000000000000000000001111111,
+  BinaryDigits = 0b00000000000000000000000010000000,
+  HexDigits = 0b00000000000000000000000010000001,
+  OctalDigits = 0b00000000000000000000000010000010,
+  Underscore = 0b00000000000000000000000010000011,
+  IdentifierOrKeyword = 0b00000000000000000000000010000100,
+  Eval = 0b00100000001100010000000010000101,
+  Arguments = 0b00100000001100010000000010000110,
 }
 
 export const KeywordDescTable = [
