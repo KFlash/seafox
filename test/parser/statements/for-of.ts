@@ -154,6 +154,232 @@ describe('Statements - For of', () => {
 
   for (const [source, ctx, expected] of [
     [
+      'for (function () {}[`template`, (1) in true] of null) break',
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForOfStatement',
+            body: {
+              type: 'BreakStatement',
+              label: null,
+              start: 54,
+              end: 59,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 54
+                },
+                end: {
+                  line: 1,
+                  column: 59
+                }
+              }
+            },
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'FunctionExpression',
+                params: [],
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 17,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 17
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                async: false,
+                generator: false,
+                id: null,
+                start: 5,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'SequenceExpression',
+                expressions: [
+                  {
+                    type: 'TemplateLiteral',
+                    expressions: [],
+                    quasis: [
+                      {
+                        type: 'TemplateElement',
+                        value: {
+                          cooked: 'template',
+                          raw: 'template'
+                        },
+                        tail: true,
+                        start: 20,
+                        end: 30,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 20
+                          },
+                          end: {
+                            line: 1,
+                            column: 30
+                          }
+                        }
+                      }
+                    ],
+                    start: 20,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  },
+                  {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 33,
+                      end: 34,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 33
+                        },
+                        end: {
+                          line: 1,
+                          column: 34
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Literal',
+                      value: true,
+                      start: 39,
+                      end: 43,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 39
+                        },
+                        end: {
+                          line: 1,
+                          column: 43
+                        }
+                      }
+                    },
+                    operator: 'in',
+                    start: 32,
+                    end: 43,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 32
+                      },
+                      end: {
+                        line: 1,
+                        column: 43
+                      }
+                    }
+                  }
+                ],
+                start: 20,
+                end: 43,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 20
+                  },
+                  end: {
+                    line: 1,
+                    column: 43
+                  }
+                }
+              },
+              optional: false,
+              shortCircuited: false,
+              start: 5,
+              end: 44,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 44
+                }
+              }
+            },
+            right: {
+              type: 'Literal',
+              value: null,
+              start: 48,
+              end: 52,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 48
+                },
+                end: {
+                  line: 1,
+                  column: 52
+                }
+              }
+            },
+            await: false,
+            start: 0,
+            end: 59,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 59
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 59,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 59
+          }
+        }
+      }
+    ],
+    [
       `for ([ a = b = c ] of d) ;`,
       Context.OptionsNext | Context.OptionsLoc,
       {

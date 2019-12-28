@@ -30,6 +30,7 @@ import {
   parseLeftHandSideExpression,
   parseAndClassifyIdentifier,
   parseBindingPattern,
+  parseDirectives,
   parseAsyncArrowIdentifier
 } from './expressions';
 import {
@@ -49,7 +50,6 @@ import {
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
   const statements: any[] = [];
-  const allowDirectives = context & Context.OptionsDirectives;
   let isStrictDirective: 0 | 1 = 0;
 
   while (parser.token === Token.StringLiteral) {
@@ -58,6 +58,8 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
     if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
       isStrictDirective = 1;
       context |= Context.Strict;
+    } else {
+      isStrictDirective = 0;
     }
 
     if (isStrictDirective === 0) {
@@ -65,35 +67,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
     }
     consumeSemicolon(parser, context);
 
-    statements.push(
-      allowDirectives
-        ? context & Context.OptionsLoc
-          ? {
-              type: 'ExpressionStatement',
-              expression,
-              directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue,
-              start,
-              end: parser.endIndex,
-              loc: setLoc(parser, line, column)
-            }
-          : {
-              type: 'ExpressionStatement',
-              expression,
-              directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue
-            }
-        : context & Context.OptionsLoc
-        ? {
-            type: 'ExpressionStatement',
-            expression,
-            start,
-            end: parser.endIndex,
-            loc: setLoc(parser, line, column)
-          }
-        : {
-            type: 'ExpressionStatement',
-            expression
-          }
-    );
+    statements.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
   }
 
   while (parser.token !== Token.EOF) {
@@ -1107,22 +1081,24 @@ export function parseSwitchStatement(
   };
 
   while (parser.token !== Token.RightBrace) {
-    const { start, line, column } = parser;
-    let test: ESTree.Expression | null = null;
-    const consequent: ESTree.Statement[] = [];
 
-    if (consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)) {
-      test = parseExpressions(parser, context, 0);
-    } else {
-      consume(parser, context, Token.DefaultKeyword, /* allowRegExp */ 1);
-      if (seenDefault) report(parser, Errors.Unexpected);
+    const { start, line, column } = parser;
+    const consequent: ESTree.Statement[] = [];
+    const test: ESTree.Expression | null = consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)
+      ? parseExpressions(parser, context, 0)
+      : null;
+
+
+    if (parser.token === Token.DefaultKeyword) {
+      nextToken(parser, context, /* allowRegExp */ 1);
+      if (seenDefault) report(parser, Errors.MultipleDefaultsInSwitch);
       seenDefault = 1;
     }
     consume(parser, context, Token.Colon, /* allowRegExp */ 1);
+
     while (
-      (parser.token as Token) !== Token.CaseKeyword &&
-      (parser.token as Token) !== Token.RightBrace &&
-      parser.token !== Token.DefaultKeyword
+      parser.token !== Token.CaseKeyword &&
+      (parser.token as Token) !== Token.RightBrace && parser.token !== Token.DefaultKeyword
     ) {
       consequent.push(
         parseStatementListItem(parser, context | Context.InSwitch, scope, Origin.BlockStatement, labels, nestedLabels)

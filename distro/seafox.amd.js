@@ -2682,6 +2682,7 @@ define(['exports'], function (exports) { 'use strict';
   }
 
   const errorMessages = {
+      [101]: 'More than one default clause in switch statement',
       [100]: '... is not allowed in import()',
       [99]: 'Invalid object literal key character after generator star',
       [96]: 'An arrow function can not have a postfix update operator',
@@ -6266,11 +6267,9 @@ define(['exports'], function (exports) { 'use strict';
   }
   function parseFunctionBody(parser, context, scope, firstRestricted, flags, scopeError) {
       const { start, line, column } = parser;
-      context = (context | 8192) ^ 8192;
       consume(parser, context, 34603021, 1);
       const body = [];
-      const prevContext = context;
-      const allowDirectives = context & 32;
+      const prevContext = (context | 8192) ^ 8192;
       let isStrictDirective = 0;
       if (parser.token !== 16777232) {
           while (parser.token === 1572868) {
@@ -6284,37 +6283,14 @@ define(['exports'], function (exports) { 'use strict';
                   if (parser.flags & 128)
                       report(parser, 93);
               }
+              else {
+                  isStrictDirective = 0;
+              }
               if (isStrictDirective === 0) {
                   expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
               }
               consumeSemicolon(parser, context);
-              body.push(allowDirectives
-                  ? context & 2
-                      ? {
-                          type: 'ExpressionStatement',
-                          expression,
-                          directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue,
-                          start,
-                          end: parser.endIndex,
-                          loc: setLoc(parser, line, column)
-                      }
-                      : {
-                          type: 'ExpressionStatement',
-                          expression,
-                          directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue
-                      }
-                  : context & 2
-                      ? {
-                          type: 'ExpressionStatement',
-                          expression,
-                          start,
-                          end: parser.endIndex,
-                          loc: setLoc(parser, line, column)
-                      }
-                      : {
-                          type: 'ExpressionStatement',
-                          expression
-                      });
+              body.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
           }
           if (context & 1024) {
               if (firstRestricted) {
@@ -7451,6 +7427,35 @@ define(['exports'], function (exports) { 'use strict';
               meta
           };
   }
+  function parseDirectives(parser, context, isUnicodeEscape, value, expression, start, line, column) {
+      return context & 32
+          ? context & 2
+              ? {
+                  type: 'ExpressionStatement',
+                  expression,
+                  directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : value,
+                  start,
+                  end: parser.endIndex,
+                  loc: setLoc(parser, line, column)
+              }
+              : {
+                  type: 'ExpressionStatement',
+                  expression,
+                  directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : value
+              }
+          : context & 2
+              ? {
+                  type: 'ExpressionStatement',
+                  expression,
+                  start,
+                  end: parser.endIndex,
+                  loc: setLoc(parser, line, column)
+              }
+              : {
+                  type: 'ExpressionStatement',
+                  expression
+              };
+  }
 
   function parseFunctionDeclaration(parser, context, scope, flags, origin) {
       return parseFunctionDeclarationRest(parser, context, scope, flags, origin, parser.start, parser.line, parser.column);
@@ -7597,7 +7602,6 @@ define(['exports'], function (exports) { 'use strict';
 
   function parseStatementList(parser, context, scope) {
       const statements = [];
-      const allowDirectives = context & 32;
       let isStrictDirective = 0;
       while (parser.token === 1572868) {
           const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
@@ -7606,37 +7610,14 @@ define(['exports'], function (exports) { 'use strict';
               isStrictDirective = 1;
               context |= 1024;
           }
+          else {
+              isStrictDirective = 0;
+          }
           if (isStrictDirective === 0) {
               expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
           }
           consumeSemicolon(parser, context);
-          statements.push(allowDirectives
-              ? context & 2
-                  ? {
-                      type: 'ExpressionStatement',
-                      expression,
-                      directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue,
-                      start,
-                      end: parser.endIndex,
-                      loc: setLoc(parser, line, column)
-                  }
-                  : {
-                      type: 'ExpressionStatement',
-                      expression,
-                      directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue
-                  }
-              : context & 2
-                  ? {
-                      type: 'ExpressionStatement',
-                      expression,
-                      start,
-                      end: parser.endIndex,
-                      loc: setLoc(parser, line, column)
-                  }
-                  : {
-                      type: 'ExpressionStatement',
-                      expression
-                  });
+          statements.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
       }
       while (parser.token !== 16777216) {
           statements.push(parseStatementListItem(parser, context, scope, 4, null, null));
@@ -8273,21 +8254,19 @@ define(['exports'], function (exports) { 'use strict';
       };
       while (parser.token !== 16777232) {
           const { start, line, column } = parser;
-          let test = null;
           const consequent = [];
-          if (consumeOpt(parser, context, 131150, 1)) {
-              test = parseExpressions(parser, context, 0);
-          }
-          else {
-              consume(parser, context, 131155, 1);
+          const test = consumeOpt(parser, context, 131150, 1)
+              ? parseExpressions(parser, context, 0)
+              : null;
+          if (parser.token === 131155) {
+              nextToken(parser, context, 1);
               if (seenDefault)
-                  report(parser, 0);
+                  report(parser, 101);
               seenDefault = 1;
           }
           consume(parser, context, 22, 1);
           while (parser.token !== 131150 &&
-              parser.token !== 16777232 &&
-              parser.token !== 131155) {
+              parser.token !== 16777232 && parser.token !== 131155) {
               consequent.push(parseStatementListItem(parser, context | 134217728, scope, 2, labels, nestedLabels));
           }
           cases.push(context & 2

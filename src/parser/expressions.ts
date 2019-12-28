@@ -2684,13 +2684,10 @@ export function parseFunctionBody(
 ): any {
   const { start, line, column } = parser;
 
-  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
-
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
 
   const body: any[] = [];
-  const prevContext = context;
-  const allowDirectives = context & Context.OptionsDirectives;
+  const prevContext = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
   let isStrictDirective: 0 | 1 = 0;
 
@@ -2707,6 +2704,8 @@ export function parseFunctionBody(
         if (parser.flags & Flags.SimpleParameterList) report(parser, Errors.IllegalUseStrict);
 
         if (parser.flags & Flags.Octals) report(parser, Errors.StrictOctalLiteral);
+      } else {
+        isStrictDirective = 0;
       }
 
       if (isStrictDirective === 0) {
@@ -2714,35 +2713,7 @@ export function parseFunctionBody(
       }
       consumeSemicolon(parser, context);
 
-      body.push(
-        allowDirectives
-          ? context & Context.OptionsLoc
-            ? {
-                type: 'ExpressionStatement',
-                expression,
-                directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue,
-                start,
-                end: parser.endIndex,
-                loc: setLoc(parser, line, column)
-              }
-            : {
-                type: 'ExpressionStatement',
-                expression,
-                directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue
-              }
-          : context & Context.OptionsLoc
-          ? {
-              type: 'ExpressionStatement',
-              expression,
-              start,
-              end: parser.endIndex,
-              loc: setLoc(parser, line, column)
-            }
-          : {
-              type: 'ExpressionStatement',
-              expression
-            }
-      );
+      body.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
     }
 
     if (context & Context.Strict) {
@@ -4453,5 +4424,44 @@ export function parseImportMetaExpression(
         type: 'MetaProperty',
         property: parseIdentifier(parser, context),
         meta
+      };
+}
+
+export function parseDirectives(
+  parser: ParserState,
+  context: Context,
+  isUnicodeEscape: 0 | 1,
+  value: string,
+  expression: any,
+  start: number,
+  line: number,
+  column: number
+) {
+  return context & Context.OptionsDirectives
+    ? context & Context.OptionsLoc
+      ? {
+          type: 'ExpressionStatement',
+          expression,
+          directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : value,
+          start,
+          end: parser.endIndex,
+          loc: setLoc(parser, line, column)
+        }
+      : {
+          type: 'ExpressionStatement',
+          expression,
+          directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : value
+        }
+    : context & Context.OptionsLoc
+    ? {
+        type: 'ExpressionStatement',
+        expression,
+        start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'ExpressionStatement',
+        expression
       };
 }

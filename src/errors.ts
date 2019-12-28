@@ -102,13 +102,15 @@ export const enum Errors {
   InvalidAccessedBlockBodyArrow,
   InvalidInvokedBlockBodyArrow,
   InvalidObjLitKeyStar,
-  InvalidSpreadInImport
+  InvalidSpreadInImport,
+  MultipleDefaultsInSwitch
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.MultipleDefaultsInSwitch]: 'More than one default clause in switch statement',
   [Errors.InvalidSpreadInImport]: '... is not allowed in import()',
   [Errors.InvalidObjLitKeyStar]: 'Invalid object literal key character after generator star',
   [Errors.InvalidArrowPostfix]: 'An arrow function can not have a postfix update operator',
