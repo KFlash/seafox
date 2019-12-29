@@ -3,10 +3,6 @@
  */
 export const enum Token {
 
-  /* Precedence for binary operators (always positive) */
-
-  Precedence = 0b00000000000000000000111100000000, // 8-11
-
    /* Attribute names */
    Contextual        = 0b00000000000000010000000000000000,
    Keyword           = 0b00000000000000100000000000000000,

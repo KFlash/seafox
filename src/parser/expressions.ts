@@ -2790,7 +2790,7 @@ export function parseClassExpression(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   // Second set of context masks to fix 'super' edge cases
-  const inheritedContext = (context | 0x1002000) ^ 0x1002000;
+  const inheritedContext = (context | 0b00000001000000000010000000000000) ^ 0b00000001000000000010000000000000;
 
   context |= Context.Strict;
 
@@ -2883,7 +2883,7 @@ export function parseClassBody(
 
   const body: ESTree.MethodDefinition[] = [];
 
-  parser.flags = (parser.flags | Flags.HasConstructor) ^ Flags.HasConstructor;
+  parser.flags = (parser.flags | 0b00000000000000000000000000000001) ^ 0b00000000000000000000000000000001;
 
   while (parser.token !== Token.RightBrace) {
     if (parser.token === Token.Semicolon) {
@@ -2897,7 +2897,6 @@ export function parseClassBody(
         inheritedContext,
         Flags.Empty,
         null,
-        0,
         0,
         inGroup,
         PropertyKind.None,
@@ -2930,7 +2929,6 @@ export function parseClassElementList(
   inheritedContext: Context,
   conjuncted: Flags,
   key: any,
-  isStatic: 0 | 1,
   isComputed: 0 | 1,
   inGroup: 0 | 1,
   type: PropertyKind,
@@ -2946,17 +2944,16 @@ export function parseClassElementList(
     if (parser.token !== Token.LeftParen) {
       switch (token) {
         case Token.StaticKeyword:
-          if (isStatic === 0) {
+          if ((type & PropertyKind.Static) === 0) {
             return parseClassElementList(
               parser,
               context,
               inheritedContext,
               conjuncted,
               key,
-              /* isStatic */ 1,
               isComputed,
               inGroup,
-              type,
+              type | PropertyKind.Static,
               start,
               line,
               column
@@ -3006,8 +3003,8 @@ export function parseClassElementList(
 
   if (isComputed === 0) {
     if (parser.tokenValue === 'constructor') {
-      if (isStatic === 0 && parser.token === Token.LeftParen) {
-        if (type & (PropertyKind.GetSet | PropertyKind.Async | PropertyKind.Generator)) {
+      if ((type & PropertyKind.Static) === 0 && parser.token === Token.LeftParen) {
+        if ((type & 0b00000000000000000000000110011000) > 0) {
           report(parser, Errors.InvalidConstructor, 'accessor');
         }
         if ((context & Context.SuperCall) !== Context.SuperCall) {
@@ -3016,17 +3013,15 @@ export function parseClassElementList(
         }
       }
       type |= PropertyKind.Constructor;
-    } else if (
-      parser.tokenValue === 'prototype' &&
-      (isStatic === 1 ||
-        type & (PropertyKind.Static | PropertyKind.GetSet | PropertyKind.Generator | PropertyKind.Async))
-    ) {
+    } else if ((type & 0b00000000000000000000000110111000) > 0 && parser.tokenValue === 'prototype') {
       report(parser, Errors.StaticPrototype);
     }
   }
-  conjuncted = parser.flags | Flags.HasStrictReserved;
+
+  conjuncted = parser.flags;
+
   const value =
-    type & (PropertyKind.Setter | PropertyKind.Setter)
+    (type & 0b00000000000000000000000110000000) > 0
       ? parseGetterSetter(parser, context | Context.Strict, type)
       : parseMethodDefinition(parser, context | Context.Strict, type);
 
@@ -3035,7 +3030,7 @@ export function parseClassElementList(
     (Flags.StrictEvalArguments | Flags.HasStrictReserved);
 
   const kind =
-    isStatic === 0 && type & PropertyKind.Constructor
+    (type & PropertyKind.Static) === 0 && type & PropertyKind.Constructor
       ? 'constructor'
       : type & PropertyKind.Getter
       ? 'get'
@@ -3047,7 +3042,7 @@ export function parseClassElementList(
     ? {
         type: 'MethodDefinition',
         kind,
-        static: isStatic === 1,
+        static: (type & PropertyKind.Static) !== 0,
         computed: isComputed === 1,
         key,
         value,
@@ -3058,7 +3053,7 @@ export function parseClassElementList(
     : {
         type: 'MethodDefinition',
         kind,
-        static: isStatic === 1,
+        static: (type & PropertyKind.Static) !== 0,
         computed: isComputed === 1,
         key,
         value
