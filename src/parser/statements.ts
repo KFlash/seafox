@@ -35,7 +35,7 @@ import {
 } from './expressions';
 import {
   ParserState,
-  consumeSemicolon,
+  expectSemicolon,
   consume,
   consumeOpt,
   optionalBit,
@@ -65,7 +65,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
     if (isStrictDirective === 0) {
       expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
     }
-    consumeSemicolon(parser, context);
+    expectSemicolon(parser, context);
 
     statements.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
   }
@@ -483,7 +483,7 @@ export function parseReturnStatement(parser: ParserState, context: Context): EST
   const argument =
     parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context, 0);
 
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -998,7 +998,7 @@ export function parseDoWhileStatement(
   // Allow do-statements to be terminated with and without
   // semi-colons. This allows code such as 'do;while(0)return' to
   // parse, which would not be the case if we had used the
-  // consumeSemicolon() functionality here.
+  // expectSemicolon() functionality here.
   consumeOpt(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
   return context & Context.OptionsLoc
@@ -1081,13 +1081,11 @@ export function parseSwitchStatement(
   };
 
   while (parser.token !== Token.RightBrace) {
-
     const { start, line, column } = parser;
     const consequent: ESTree.Statement[] = [];
     const test: ESTree.Expression | null = consumeOpt(parser, context, Token.CaseKeyword, /* allowRegExp */ 1)
       ? parseExpressions(parser, context, 0)
       : null;
-
 
     if (parser.token === Token.DefaultKeyword) {
       nextToken(parser, context, /* allowRegExp */ 1);
@@ -1098,7 +1096,8 @@ export function parseSwitchStatement(
 
     while (
       parser.token !== Token.CaseKeyword &&
-      (parser.token as Token) !== Token.RightBrace && parser.token !== Token.DefaultKeyword
+      (parser.token as Token) !== Token.RightBrace &&
+      parser.token !== Token.DefaultKeyword
     ) {
       consequent.push(
         parseStatementListItem(parser, context | Context.InSwitch, scope, Origin.BlockStatement, labels, nestedLabels)
@@ -1217,7 +1216,7 @@ export function parseThrowStatement(parser: ParserState, context: Context): ESTr
 
   const argument: ESTree.Statement = parseExpressions(parser, context, 0);
 
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -1250,7 +1249,7 @@ export function parseBreakStatement(parser: ParserState, context: Context, label
     report(parser, Errors.InvalidBreak);
   }
 
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -1299,7 +1298,7 @@ export function parseContinueStatement(parser: ParserState, context: Context, la
       report(parser, Errors.UnknownLabel, tokenValue);
     }
   }
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -1367,12 +1366,13 @@ export function parseTryStatement(
         scopeError: void 0
       };
 
-      const kind =
-        (parser.token & Token.IsPatternStart) === Token.IsPatternStart
-          ? BindingKind.CatchPattern
-          : BindingKind.CatchIdentifier;
-
-      param = parseBindingPattern(parser, context, scope, kind, Origin.None);
+      param = parseBindingPattern(
+        parser,
+        context,
+        scope,
+        (parser.token & Token.IsPatternStart) > 0 ? BindingKind.CatchPattern : BindingKind.CatchIdentifier,
+        Origin.None
+      );
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
@@ -1481,7 +1481,7 @@ export function parseDebuggerStatement(parser: ParserState, context: Context): E
   //   'debugger' ';'
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 1);
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -1520,7 +1520,7 @@ export function parseLetIdentOrVarDeclarationStatement(
       Origin.None
     );
 
-    consumeSemicolon(parser, context);
+    expectSemicolon(parser, context);
 
     return context & Context.OptionsLoc
       ? {

@@ -1,4 +1,4 @@
-import { Token } from '../token';
+import { Token, KeywordDescTable } from '../token';
 import { nextToken } from '../scanner/scan';
 import { report, Errors } from '../errors';
 import { Context, Flags, BindingKind } from './bits';
@@ -36,11 +36,18 @@ export interface ParserState {
   };
 }
 
-export function consumeSemicolon(parser: ParserState, context: Context): void {
-  if ((parser.token & Token.IsAutoSemicolon) !== Token.IsAutoSemicolon && parser.newLine === 0) {
-    report(parser, Errors.Unexpected);
+export function expectSemicolon(parser: ParserState, context: Context): void {
+  // Check for automatic semicolon insertion according to
+  // the rules given in ECMA-262, section 7.9, page 21.
+  if (parser.token === Token.Semicolon) {
+    nextToken(parser, context, /* allowRegExp */ 1);
+    return;
   }
-  consumeOpt(parser, context, Token.Semicolon, /* allowRegExp */ 1);
+  if (parser.newLine === 1 || (parser.token & 0b00000001000000000000000000000000) > 0) {
+    return;
+  }
+
+  report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
 }
 
 export function optionalBit(parser: ParserState, context: Context, t: Token): 0 | 1 {
@@ -223,16 +230,13 @@ export function consume(parser: ParserState, context: Context, t: Token, allowRe
 export function isStrictReservedWord(parser: ParserState, context: Context, t: Token, inGroup: 0 | 1): boolean {
   if (t === Token.AwaitKeyword) {
     if (context & (Context.InAwaitContext | Context.Module)) report(parser, Errors.AwaitOutsideAsync);
-    if (inGroup === 1) parser.flags |= Flags.SeenAwait;
+    parser.flags |= inGroup === 1 ? Flags.SeenAwait : 0;
+  }
+  if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+    report(parser, Errors.StrictEvalArguments);
   }
 
-  if (t === Token.YieldKeyword && context & Context.InYieldContext) report(parser, Errors.DisallowedInContext, 'yield');
-
-  return (
-    (t & Token.Keyword) === Token.Keyword ||
-    (t & Token.FutureReserved) === Token.FutureReserved ||
-    t == Token.EscapedFutureReserved
-  );
+  return (t & Token.Keyword) > 0 || (t & Token.FutureReserved) > 0 || t == Token.EscapedFutureReserved;
 }
 
 export function validateIdentifier(parser: ParserState, context: Context, kind: BindingKind, t: Token): void {

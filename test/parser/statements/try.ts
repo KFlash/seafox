@@ -56,12 +56,12 @@ describe('Statements - Try', () => {
   }
 
   for (const [source, ctx] of [
-    //['try {} catch (arguments) { }', Context.OptionsDisableWebCompat | Context.Strict],
+    ['try {} catch (arguments) { }', Context.OptionsDisableWebCompat | Context.Strict],
     [
       'try { throw "try"; } catch (x) { for (var x = y; x !== y; x++) {}}',
       Context.OptionsDisableWebCompat | Context.Strict
     ],
-    //['try {} catch (arguments) { }', Context.Strict],
+    ['try {} catch (arguments) { }', Context.Strict],
     ['try {} catch (e) { for (var e in y) {} }', Context.OptionsDisableWebCompat],
     ['try {} catch (e) { for (var e;;) {} }', Context.OptionsDisableWebCompat],
     ['try {} catch (e) { var e = x; }', Context.OptionsDisableWebCompat],
@@ -71,7 +71,7 @@ describe('Statements - Try', () => {
     ['function f() { try {} catch (e) { function e(){} } }', Context.Strict | Context.OptionsDisableWebCompat],
     ['try {} catch (a, a) { }', Context.OptionsDisableWebCompat],
     ['try {} catch ([a,a]) { }', Context.OptionsDisableWebCompat],
-    //['try {} catch ([a] = b) { }', Context.OptionsDisableWebCompat],
+    ['try {} catch ([a] = b) { }', Context.OptionsDisableWebCompat],
     ['try {} catch (a) { const a = 1; } ', Context.OptionsDisableWebCompat],
     ['try { } catch (x) { for (var x of []) {} }', Context.OptionsDisableWebCompat],
     ['try { } catch (x) { let x; }', Context.OptionsDisableWebCompat],
@@ -143,7 +143,11 @@ describe('Statements - Try', () => {
     ['try {} catch (x) { { let x } ', Context.OptionsDisableWebCompat],
     ['try {} catch (x) { let x }', Context.OptionsDisableWebCompat],
     ['let e; try {} catch (e) { let e; }', Context.OptionsDisableWebCompat],
-    ['try {} catch (x) { { let x } ', Context.Empty],
+    ['try {} catch (x) { { let x }', Context.Empty],
+    ['try {} catch (a=a) {}', Context.Empty],
+    ['try {} catch (a=)a) {}', Context.Empty],
+    ['try {} catch ([]=a) {}', Context.Empty],
+    ['try {} catch (a)) {}', Context.Empty],
     ['try {} catch (x) { let x }', Context.Empty],
     ['try {}', Context.Empty],
     ['try ', Context.Empty],
@@ -161,6 +165,155 @@ describe('Statements - Try', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `try {} catch ([a=a]) {}`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [],
+              start: 4,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 15,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 17,
+                      end: 18,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 17
+                        },
+                        end: {
+                          line: 1,
+                          column: 18
+                        }
+                      }
+                    },
+                    start: 15,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  }
+                ],
+                start: 14,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 21,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 21
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              },
+              start: 7,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
     [
       `try {} catch (foo) { try {} catch (_) { var foo; } }`,
       Context.OptionsNext | Context.OptionsLoc,

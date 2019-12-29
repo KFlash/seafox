@@ -5,7 +5,7 @@ import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
 import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
-import { ParserState, consumeSemicolon, consume, consumeOpt, setLoc } from './common';
+import { ParserState, expectSemicolon, consume, consumeOpt, setLoc } from './common';
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,
@@ -39,7 +39,7 @@ export function parseModuleItemListAndDirectives(
       if ((parser.token as Token) !== Token.Semicolon) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
-      consumeSemicolon(parser, context);
+      expectSemicolon(parser, context);
 
       const directive = isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue;
       const type = 'ExpressionStatement';
@@ -122,7 +122,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
       if (parser.token !== Token.Comma) {
         source = parseModuleSpecifier(parser, context);
 
-        consumeSemicolon(parser, context);
+        expectSemicolon(parser, context);
 
         return context & Context.OptionsLoc
           ? {
@@ -210,7 +210,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
     source = parseModuleSpecifier(parser, context);
   }
 
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -306,7 +306,7 @@ export function parseExportDefaultDeclaration(
       break;
     default:
       declaration = parseExpression(parser, context, 0);
-      consumeSemicolon(parser, context);
+      expectSemicolon(parser, context);
   }
 
   return context & Context.OptionsLoc
@@ -369,7 +369,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
         source = parseLiteral(parser, context);
 
-        consumeSemicolon(parser, context);
+        expectSemicolon(parser, context);
 
         return context & Context.OptionsLoc
           ? {
@@ -391,7 +391,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
       source = parseLiteral(parser, context);
 
-      consumeSemicolon(parser, context);
+      expectSemicolon(parser, context);
 
       return context & Context.OptionsLoc
         ? {
@@ -450,7 +450,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         source = parseLiteral(parser, context);
       }
 
-      consumeSemicolon(parser, context);
+      expectSemicolon(parser, context);
 
       break;
     }

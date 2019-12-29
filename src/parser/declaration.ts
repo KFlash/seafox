@@ -6,7 +6,7 @@ import { ScopeState, ScopeKind, addVarName, addBlockName } from './scope';
 import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import {
   ParserState,
-  consumeSemicolon,
+  expectSemicolon,
   setLoc,
   optionalBit,
   validateFunctionName,
@@ -149,25 +149,23 @@ export function parseClassDeclaration(
 
   context |= Context.Strict;
 
-  let id: any = null;
+  let id: ESTree.Identifier | null = null;
 
   if (
     parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
     parser.token !== Token.ExtendsKeyword
   ) {
-    if (isStrictReservedWord(parser, context, parser.token, /* inGroup */ 0)) {
-      report(parser, Errors.UnexpectedStrictReserved);
-    }
+    const { token, start, line, column, tokenValue } = parser;
 
-    if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-      report(parser, Errors.StrictEvalArguments);
-    }
+    if (isStrictReservedWord(parser, context, token, 0)) report(parser, Errors.UnexpectedStrictReserved);
 
     // A named class creates a new lexical scope with a const binding of the
     // class name for the "inner name".
-    addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Class, Origin.None);
+    addBlockName(parser, context, scope, tokenValue, BindingKind.Class, Origin.None);
 
-    id = parseIdentifier(parser, context);
+    nextToken(parser, context, /* allowRegExp */ 0);
+
+    id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
   } else {
     // Only under the "export default" context, class declaration does not require the class name.
     //
@@ -216,7 +214,7 @@ export function parseVariableStatementOrLexicalDeclaration(
   nextToken(parser, context, /* allowRegExp */ 0);
   const declarations = parseVariableDeclarationListAndDeclarator(parser, context, scope, kind, origin);
 
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {

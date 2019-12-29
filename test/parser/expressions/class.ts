@@ -69,7 +69,7 @@ describe('Expressions - Class', () => {
     'class x { x = new y<a>() }',
     'class x { x = new y<a,>() }',
     'class x { x = new y<a,b>() }',
-    // 'class eval { }',
+    'class eval { }',
     'class let { }',
     'function *f(){  class yield { }  }',
     'function *f(){  class x extends yield { }  }',
@@ -132,10 +132,10 @@ describe('Expressions - Class', () => {
     '(class { static *set [x](y){}})',
     'class x { * * f(){} }',
     'class x { set set f(x){} }',
-    // 'class x { static prototype(){} }',
+    'class x { static prototype(){} }',
     'class x { static async *prototype(){} }',
     'class x { static async *prot\\u006ftype(){} }',
-    //'class x { static "prototype"(){} }',
+    'class x { static "prototype"(){} }',
     'class x {foo}',
     'class x {foo: x}',
     'class x extends await y { }',
@@ -143,13 +143,13 @@ describe('Expressions - Class', () => {
     `class x{   async static static(){}    }`,
     `class x { y }`,
     `class v extends.foo {}`,
-    // `class x { foo() { return { static foo() {} } } }`,
+    //`class x { foo() { return { static foo() {} } } }`,
     `class x {foo = x}`,
-    // `class x {    static prototype(){}    }`,
+    `class x {    static prototype(){}    }`,
     // 'class x extends`${08}`{}',
     // `class x extends (08) {}`,
     // `class x extends 08 {}`,
-    //`class X extends function(){ with(obj); } {}`,
+    `class X extends function(){ with(obj); } {}`,
     'class A extends --x {}',
     'class A extends -x {}',
     'class A extends a !== b {}',
@@ -266,10 +266,7 @@ describe('Expressions - Class', () => {
 
     it(`${arg}`, () => {
       t.throws(() => {
-        parseScript(`${arg}`),
-          {
-            OptionsDisableWebCompat: true
-          };
+        parseScript(`${arg}`), { OptionsDisableWebCompat: true };
       });
     });
 

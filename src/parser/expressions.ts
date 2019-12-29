@@ -8,7 +8,7 @@ import { ScopeState, ScopeKind, addBlockName, addVarOrBlock } from './scope';
 import { Flags, Context, BindingKind, FunctionFlag, PropertyKind, Origin } from './bits';
 import {
   ParserState,
-  consumeSemicolon,
+  expectSemicolon,
   consume,
   consumeOpt,
   setLoc,
@@ -1931,7 +1931,7 @@ export function parseExpressionStatement(
   line: number,
   column: number
 ): ESTree.ExpressionStatement {
-  consumeSemicolon(parser, context);
+  expectSemicolon(parser, context);
 
   return context & Context.OptionsLoc
     ? {
@@ -2720,7 +2720,7 @@ export function parseFunctionBody(
       if (isStrictDirective === 0) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
-      consumeSemicolon(parser, context);
+      expectSemicolon(parser, context);
 
       body.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
     }
@@ -2803,10 +2803,6 @@ export function parseClassExpression(
     const { token, start, line, column, tokenValue } = parser;
 
     if (isStrictReservedWord(parser, context, token, inGroup)) report(parser, Errors.UnexpectedStrictReserved);
-
-    if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-      report(parser, Errors.StrictEvalArguments);
-    }
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
