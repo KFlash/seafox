@@ -6,19 +6,18 @@ import { Errors, report } from '../errors';
  * Scope kinds
  */
 export const enum ScopeKind {
-  None = 0,
-  ForStatement = 1 << 0,
-  Block = 1 << 1,
-  CatchStatement = 1 << 2,
-  SwitchStatement = 1 << 3,
-  ArgList = 1 << 4,
-  TryStatement = 1 << 5,
-  CatchBlock = 1 << 6,
-  FunctionBody = 1 << 7,
-  FunctionRoot = 1 << 8,
-  FunctionParams = 1 << 9,
-  ArrowParams = 1 << 10,
-  CatchIdentifier = 1 << 11
+  None = 0b00000000000000000000000000000000,
+  ForStatement = 0b00000000000000000000000000000001,
+  Block = 0b00000000000000000000000000000010,
+  CatchStatement = 0b00000000000000000000000000000100,
+  SwitchStatement = 0b00000000000000000000000000001000,
+  TryStatement = 0b00000000000000000000000000010000,
+  CatchBlock = 0b00000000000000000000000000100000,
+  FunctionBody = 0b00000000000000000000000001000000,
+  FunctionRoot = 0b00000000000000000000000010000000,
+  FunctionParams = 0b00000000000000000000000100000000,
+  ArrowParams = 0b00000000000000000000001000000000,
+  CatchIdentifier = 0b00000000000000000000010000000000
 }
 
 /**
@@ -46,13 +45,12 @@ export interface ScopeError {
  * @param type Errors type
  */
 export function recordScopeError(parser: ParserState, type: Errors, ...params: string[]): ScopeError {
-  const { index, line, column } = parser;
   return {
     type,
     params,
-    index,
-    line,
-    column
+    index: parser.index,
+    line: parser.line,
+    column: parser.column
   };
 }
 

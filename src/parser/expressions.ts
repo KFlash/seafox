@@ -152,7 +152,6 @@ export function parseBinaryExpression(
   left: any
 ): any {
   let t: Token;
-  let type: 'LogicalExpression' | 'BinaryExpression';
   let right: ESTree.Expression;
   let operator: ESTree.LogicalOperator;
 
@@ -175,8 +174,6 @@ export function parseBinaryExpression(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    type = t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression';
-
     operator = KeywordDescTable[t & 0b00000000000000000000000011111111] as ESTree.LogicalOperator;
 
     right = parseBinaryExpression(
@@ -196,7 +193,7 @@ export function parseBinaryExpression(
     left =
       context & Context.OptionsLoc
         ? {
-            type,
+            type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
             right,
             operator,
@@ -205,7 +202,7 @@ export function parseBinaryExpression(
             loc: setLoc(parser, curLine, curColumn)
           }
         : {
-            type,
+            type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
             right,
             operator
@@ -3019,7 +3016,11 @@ export function parseClassElementList(
         }
       }
       type |= PropertyKind.Constructor;
-    } else if (parser.tokenValue === 'prototype' && (isStatic === 1 || type & (PropertyKind.Static | PropertyKind.GetSet | PropertyKind.Generator | PropertyKind.Async))) {
+    } else if (
+      parser.tokenValue === 'prototype' &&
+      (isStatic === 1 ||
+        type & (PropertyKind.Static | PropertyKind.GetSet | PropertyKind.Generator | PropertyKind.Async))
+    ) {
       report(parser, Errors.StaticPrototype);
     }
   }
