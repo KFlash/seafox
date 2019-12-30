@@ -164,14 +164,12 @@ export function scan(
         char = source.charCodeAt(index);
 
         if (char === Chars.Slash) {
-          index++; // skips: '/'
-          parser.index = skipSingleLineComment(parser, source, index);
+          parser.index = skipSingleLineComment(parser, source, ++index);
           continue;
         }
 
         if (char === Chars.Asterisk) {
-          index++; // skips: '*'
-          parser.index = skipMultiLineComment(parser, source, index);
+          parser.index = skipMultiLineComment(parser, source, ++index);
           continue;
         }
 
@@ -236,6 +234,7 @@ export function scan(
             source.charCodeAt(parser.index + 2) === Chars.Hyphen &&
             source.charCodeAt(parser.index + 1) === Chars.Hyphen
           ) {
+            // Check for <!-- comments
             parser.index = skipSingleHTMLComment(parser, context, source, parser.index + 1);
             continue;
           }

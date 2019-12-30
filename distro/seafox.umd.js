@@ -2808,15 +2808,13 @@
   }
 
   function skipHashBang(parser, source) {
-      const index = parser.index;
-      if (source.charCodeAt(index) === 35 && source.charCodeAt(index + 1) === 33) {
-          parser.index = skipSingleLineComment(parser, source, index + 1);
+      if (source.charCodeAt(parser.index) === 35 && source.charCodeAt(parser.index + 1) === 33) {
+          parser.index = skipSingleLineComment(parser, source, parser.index + 1);
       }
   }
   function skipSingleHTMLComment(parser, context, source, i) {
-      if (context & (16 | 2048)) {
+      if ((context & 0b00000000000000000000100000010000) > 0)
           report(parser, 11);
-      }
       return skipSingleLineComment(parser, source, i + 2);
   }
   function skipSingleLineComment(parser, source, i) {
@@ -2841,8 +2839,7 @@
               }
               if (char === 13) {
                   parser.lineBase++;
-                  lastIsCR = 1;
-                  parser.newLine = 1;
+                  parser.newLine = lastIsCR = 1;
                   parser.offset = i;
               }
               if (char === 10) {
@@ -3369,14 +3366,14 @@
       while (isIdentifierPart(char)) {
           switch (char) {
               case 103:
-                  if (mask & 2)
+                  if (mask & 1)
                       report(parser, 14, 'g');
-                  mask |= 2;
+                  mask |= 1;
                   break;
               case 105:
-                  if (mask & 1)
+                  if (mask & 2)
                       report(parser, 14, 'i');
-                  mask |= 1;
+                  mask |= 2;
                   break;
               case 109:
                   if (mask & 4)
@@ -3384,19 +3381,19 @@
                   mask |= 4;
                   break;
               case 117:
-                  if (mask & 16)
-                      report(parser, 14, 'g');
-                  mask |= 16;
-                  break;
-              case 121:
                   if (mask & 8)
-                      report(parser, 14, 'y');
+                      report(parser, 14, 'g');
                   mask |= 8;
                   break;
+              case 121:
+                  if (mask & 16)
+                      report(parser, 14, 'y');
+                  mask |= 16;
+                  break;
               case 115:
-                  if (mask & 12)
+                  if (mask & 32)
                       report(parser, 14, 's');
-                  mask |= 12;
+                  mask |= 32;
                   break;
               default:
                   report(parser, 13);
@@ -4153,13 +4150,11 @@
                   index = ++parser.index;
                   char = source.charCodeAt(index);
                   if (char === 47) {
-                      index++;
-                      parser.index = skipSingleLineComment(parser, source, index);
+                      parser.index = skipSingleLineComment(parser, source, ++index);
                       continue;
                   }
                   if (char === 42) {
-                      index++;
-                      parser.index = skipMultiLineComment(parser, source, index);
+                      parser.index = skipMultiLineComment(parser, source, ++index);
                       continue;
                   }
                   if (allowRegExp === 1) {

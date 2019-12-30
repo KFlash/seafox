@@ -4,20 +4,21 @@ import { report, Errors } from '../errors';
 import { unicodeLookup, Chars } from './';
 
 export function skipHashBang(parser: ParserState, source: string): void {
-  const index = parser.index;
-  if (source.charCodeAt(index) === Chars.Hash && source.charCodeAt(index + 1) === Chars.Exclamation) {
-    parser.index = skipSingleLineComment(parser, source, index + 1);
+  if (source.charCodeAt(parser.index) === Chars.Hash && source.charCodeAt(parser.index + 1) === Chars.Exclamation) {
+    parser.index = skipSingleLineComment(parser, source, parser.index + 1);
   }
 }
 
 export function skipSingleHTMLComment(parser: ParserState, context: Context, source: string, i: number): number {
-  if (context & (Context.OptionsDisableWebCompat | Context.Module)) {
-    report(parser, Errors.HtmlCommentInModule);
-  }
+  if ((context & 0b00000000000000000000100000010000) > 0) report(parser, Errors.HtmlCommentInModule);
   return skipSingleLineComment(parser, source, i + 2);
 }
 
 export function skipSingleLineComment(parser: ParserState, source: string, i: number): number {
+  // The line terminator at the end of the line is not considered
+  // to be part of the single-line comment; it is recognized
+  // separately by the lexical grammar and becomes part of the
+  // stream of input elements for the syntactic grammar
   let char = source.charCodeAt(i);
   while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0) {
     char = source.charCodeAt(++i);
@@ -42,8 +43,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, i: num
 
       if (char === Chars.CarriageReturn) {
         parser.lineBase++;
-        lastIsCR = 1;
-        parser.newLine = 1;
+        parser.newLine = lastIsCR = 1;
         parser.offset = i;
       }
 
