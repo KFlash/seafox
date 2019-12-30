@@ -11,7 +11,7 @@ export function skipHashBang(parser: ParserState, source: string): void {
 
 export function skipSingleHTMLComment(parser: ParserState, context: Context, source: string, i: number): number {
   if ((context & 0b00000000000000000000100000010000) > 0) report(parser, Errors.HtmlCommentInModule);
-  return skipSingleLineComment(parser, source, i + 2);
+  return skipSingleLineComment(parser, source, i++);
 }
 
 export function skipSingleLineComment(parser: ParserState, source: string, i: number): number {

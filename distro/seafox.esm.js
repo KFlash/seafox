@@ -2809,7 +2809,7 @@ function skipHashBang(parser, source) {
 function skipSingleHTMLComment(parser, context, source, i) {
     if ((context & 0b00000000000000000000100000010000) > 0)
         report(parser, 11);
-    return skipSingleLineComment(parser, source, i + 2);
+    return skipSingleLineComment(parser, source, i++);
 }
 function skipSingleLineComment(parser, source, i) {
     let char = source.charCodeAt(i);
@@ -3059,7 +3059,8 @@ function scanIdentifierOrKeyword(parser, context, source, char) {
     const value = source.slice(parser.start, parser.index);
     if (char > 90)
         return scanIdentifierSlowPath(parser, context, source, value, 1);
-    return descKeywordTable[(parser.tokenValue = value)] || 3211265;
+    parser.tokenValue = value;
+    return descKeywordTable[value] || 3211265;
 }
 function scanIdentifierSlowPath(parser, context, source, value, maybeKeyword) {
     let start = parser.index;
@@ -3205,7 +3206,7 @@ function scanStringLiteral(parser, context, source, quote) {
     return 1572868;
 }
 function scanEscapeSequence(parser, context, source, first) {
-    let ch = readNext(parser);
+    let ch = source.charCodeAt(++parser.index);
     switch (first) {
         case 98:
             return 8;
@@ -3223,13 +3224,14 @@ function scanEscapeSequence(parser, context, source, first) {
             let code = 0;
             if (ch === 123) {
                 let digit = toHex(source.charCodeAt(++parser.index));
+                if (digit < 0)
+                    return -4;
                 while (digit >= 0) {
-                    if (digit < 0)
-                        return -4;
                     code = (code << 4) | digit;
                     if (code > 1114111)
-                        break;
-                    digit = toHex((ch = source.charCodeAt(++parser.index)));
+                        return -5;
+                    ch = source.charCodeAt(++parser.index);
+                    digit = toHex(ch);
                 }
                 if (code < 0 || ch !== 125)
                     return -4;
@@ -3237,8 +3239,9 @@ function scanEscapeSequence(parser, context, source, first) {
                 return code;
             }
             let i = 0;
+            let digit = null;
             for (i = 0; i < 4; i++) {
-                const digit = toHex(source.charCodeAt(parser.index++));
+                digit = toHex(source.charCodeAt(parser.index++));
                 if (digit < 0)
                     return -4;
                 code = (code << 4) | digit;
@@ -3249,8 +3252,7 @@ function scanEscapeSequence(parser, context, source, first) {
             const hi = toHex(ch);
             if (hi < 0)
                 return -4;
-            const ch2 = source.charCodeAt(++parser.index);
-            const lo = toHex(ch2);
+            const lo = toHex(source.charCodeAt(++parser.index));
             if (lo < 0)
                 return -4;
             parser.index++;
@@ -4144,7 +4146,7 @@ function scan(parser, context, source, index, length, token, lastIsCR, lineStart
                 index = ++parser.index;
                 char = source.charCodeAt(index);
                 if (char === 47) {
-                    parser.index = skipSingleLineComment(parser, source, ++index);
+                    parser.index = skipSingleLineComment(parser, source, index);
                     continue;
                 }
                 if (char === 42) {
@@ -4202,7 +4204,7 @@ function scan(parser, context, source, index, length, token, lastIsCR, lineStart
                     if (parser.index < length &&
                         source.charCodeAt(parser.index + 2) === 45 &&
                         source.charCodeAt(parser.index + 1) === 45) {
-                        parser.index = skipSingleHTMLComment(parser, context, source, parser.index + 1);
+                        parser.index = skipSingleHTMLComment(parser, context, source, parser.index);
                         continue;
                     }
                 }

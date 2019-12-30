@@ -20,7 +20,8 @@ export function scanIdentifierOrKeyword(parser: ParserState, context: Context, s
   }
   const value = source.slice(parser.start, parser.index);
   if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 1);
-  return descKeywordTable[(parser.tokenValue = value)] || Token.Identifier;
+  parser.tokenValue = value;
+  return descKeywordTable[value] || Token.Identifier;
 }
 
 export function scanIdentifierSlowPath(

@@ -52,7 +52,7 @@ export function scanStringLiteral(parser: ParserState, context: Context, source:
 }
 
 export function scanEscapeSequence(parser: ParserState, context: Context, source: string, first: number): number {
-  let ch = readNext(parser);
+  let ch = source.charCodeAt(++parser.index);
 
   switch (first) {
     case Chars.LowerB:
@@ -69,39 +69,49 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
       return Chars.VerticalTab;
 
     case Chars.LowerU: {
+      // Accept both \uxxxx and \u{xxxxxx}. In the latter case, the number of
+      // hex digits between { } is arbitrary. \ and u have already been read.
       let code = 0;
       if (ch === Chars.LeftBrace) {
         // \u{N}
         let digit = toHex(source.charCodeAt(++parser.index));
+
+        if (digit < 0) return Escape.InvalidHex;
+
         while (digit >= 0) {
-          if (digit < 0) return Escape.InvalidHex;
           code = (code << 4) | digit;
-          if (code > Chars.LastUnicodeChar) break;
-          digit = toHex((ch = source.charCodeAt(++parser.index)));
+
+          if (code > Chars.LastUnicodeChar) return Escape.OutOfRange;
+
+          ch = source.charCodeAt(++parser.index);
+
+          digit = toHex(ch);
         }
-        // At least 4 characters have to be read
+        // At least 4 characters have to be scanned
         if (code < 0 || ch !== Chars.RightBrace) return Escape.InvalidHex;
 
         parser.index++; // consumes '}'
+
         return code;
       }
 
       // \uNNNN
 
       let i = 0;
+      let digit: number | null = null;
       for (i = 0; i < 4; i++) {
-        const digit = toHex(source.charCodeAt(parser.index++));
+        digit = toHex(source.charCodeAt(parser.index++));
         if (digit < 0) return Escape.InvalidHex;
         code = (code << 4) | digit;
       }
 
       return code;
     }
+
     case Chars.LowerX: {
       const hi = toHex(ch);
       if (hi < 0) return Escape.InvalidHex;
-      const ch2 = source.charCodeAt(++parser.index);
-      const lo = toHex(ch2);
+      const lo = toHex(source.charCodeAt(++parser.index));
       if (lo < 0) return Escape.InvalidHex;
       parser.index++;
       return (hi << 4) | lo;

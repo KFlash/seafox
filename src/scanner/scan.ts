@@ -164,7 +164,7 @@ export function scan(
         char = source.charCodeAt(index);
 
         if (char === Chars.Slash) {
-          parser.index = skipSingleLineComment(parser, source, ++index);
+          parser.index = skipSingleLineComment(parser, source, index);
           continue;
         }
 
@@ -235,7 +235,7 @@ export function scan(
             source.charCodeAt(parser.index + 1) === Chars.Hyphen
           ) {
             // Check for <!-- comments
-            parser.index = skipSingleHTMLComment(parser, context, source, parser.index + 1);
+            parser.index = skipSingleHTMLComment(parser, context, source, parser.index);
             continue;
           }
         }

@@ -2603,6 +2603,128 @@ describe('Expressions - Class', () => {
       }
     ],
     [
+      `class C extends (
+        a,
+        c
+      ) {
+      }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'C',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: {
+              type: 'SequenceExpression',
+              expressions: [
+                {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 26,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 8
+                    },
+                    end: {
+                      line: 2,
+                      column: 9
+                    }
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'c',
+                  start: 37,
+                  end: 38,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 8
+                    },
+                    end: {
+                      line: 3,
+                      column: 9
+                    }
+                  }
+                }
+              ],
+              start: 26,
+              end: 38,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 8
+                },
+                end: {
+                  line: 3,
+                  column: 9
+                }
+              }
+            },
+            body: {
+              type: 'ClassBody',
+              body: [],
+              start: 47,
+              end: 56,
+              loc: {
+                start: {
+                  line: 4,
+                  column: 8
+                },
+                end: {
+                  line: 5,
+                  column: 7
+                }
+              }
+            },
+            start: 0,
+            end: 56,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 5,
+                column: 7
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 56,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 5,
+            column: 7
+          }
+        }
+      }
+    ],
+    [
       `class x extends feh(await) { }`,
       Context.OptionsLoc,
       {
