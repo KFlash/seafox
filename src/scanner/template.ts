@@ -26,7 +26,7 @@ export function scanTemplate(parser: ParserState, context: Context, source: stri
         if (char >= 0x7d) {
           ret += fromCodePoint(char);
         } else {
-          const code = scanEscapeSequence(parser, context, source, char);
+          const code = scanEscapeSequence(parser, context | Context.Strict, source, char);
 
           if (code >= 0) {
             ret += fromCodePoint(code);
