@@ -3141,19 +3141,19 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     scopeError: void 0
   };
 
+  const modifierFlags =
+    (kind & PropertyKind.Constructor) === 0 ? 0b0000001111010000000_0000_00000000 : 0b0000000111000000000_0000_00000000;
+
+  context =
+    ((context | 0b0001000000000000001_0000_00000000 | Context.InGlobal | modifierFlags) ^
+      (0b0001000000000000001_0000_00000000 | Context.InGlobal | modifierFlags)) |
+    ((kind & 0b0000000000000000000_0000_01011000) << 18) |
+    0b0000110000001000000_0000_00000000 |
+    (kind & PropertyKind.Async ? Context.InAwaitContext : 0) |
+    (kind & PropertyKind.Generator ? Context.InYieldContext : 0);
+
   if (parser.token !== Token.RightParen) {
     if (kind & PropertyKind.Getter) report(parser, Errors.AccessorWrongArgs, 'Getter', 'no', 's');
-
-    const modifierFlags =
-      (kind & PropertyKind.Constructor) === 0
-        ? 0b0000001111010000000_0000_00000000
-        : 0b0000000111000000000_0000_00000000;
-
-    context =
-      ((context | modifierFlags) ^ modifierFlags) |
-      ((kind & 0b0000000000000000000_0000_01011000) << 18) |
-      0b0000110000001000000_0000_00000000 |
-      ((context | Context.DisallowIn) ^ Context.DisallowIn);
 
     let argCount = 0;
     let left: any;
@@ -3267,15 +3267,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-  const body = parseFunctionBody(
-    parser,
-    (context | 0b0001000000000000001_0000_00000000 | Context.InGlobal) ^
-      (0b0001000000000000001_0000_00000000 | Context.InGlobal),
-    scope,
-    void 0,
-    FunctionFlag.None,
-    void 0
-  );
+  const body = parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0);
 
   return context & Context.OptionsLoc
     ? {
