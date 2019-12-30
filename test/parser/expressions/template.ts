@@ -149,7 +149,7 @@ describe('Expressions - Template', () => {
                   {
                     type: 'TemplateElement',
                     value: {
-                      cooked: '\u0001',
+                      cooked: null,
                       raw: '\\01'
                     },
                     tail: true,
@@ -308,7 +308,7 @@ describe('Expressions - Template', () => {
                   {
                     type: 'TemplateElement',
                     value: {
-                      cooked: '\u0001',
+                      cooked: null,
                       raw: '\\01'
                     },
                     tail: false,
