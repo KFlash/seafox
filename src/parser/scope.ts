@@ -140,8 +140,7 @@ export function addBlockName(
   }
 
   if (
-    scope.type & ScopeKind.FunctionBody &&
-    scope.parent['#' + name] &&
+    scope.type & ScopeKind.FunctionBody && scope.parent['#' + name] &&
     (scope.parent['#' + name] & BindingKind.Tail) !== BindingKind.Tail
   ) {
     report(parser, Errors.DuplicateBinding, name);
@@ -154,7 +153,8 @@ export function addBlockName(
   }
 
   if (scope.type & ScopeKind.CatchBlock) {
-    if (scope.parent['#' + name] & 0b00000000000000000000011000000000) report(parser, Errors.ShadowedCatchClause, name);
+    if (scope.parent['#' + name] & BindingKind.CatchIdentifierOrPattern)
+      report(parser, Errors.ShadowedCatchClause, name);
   }
 
   scope['#' + name] = kind;
@@ -183,12 +183,12 @@ export function addVarName(
   while (currentScope && (currentScope.type & ScopeKind.FunctionRoot) === 0) {
     const value: ScopeKind = currentScope['#' + name];
 
-    if (value & 0b00000000000000000000000011110100) {
+    if (value & BindingKind.LexicalBinding) {
       if (
         (context & Context.OptionsDisableWebCompat) !== Context.OptionsDisableWebCompat &&
         (context & Context.Strict) === 0 &&
-        ((kind & BindingKind.FunctionStatement && value & 0b00000000000000000000000000000110) ||
-          (value & BindingKind.FunctionStatement && kind & 0b00000000000000000000000000000110))
+        ((kind & BindingKind.FunctionStatement && value & BindingKind.LexicalOrFunction) ||
+          (value & BindingKind.FunctionStatement && kind & BindingKind.LexicalOrFunction))
       ) {
       } else {
         report(parser, Errors.DuplicateBinding, name);
