@@ -106,10 +106,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
   //
   // NameSpaceImport :
   //   '*' 'as' ImportedBinding
-
-  const curStart = parser.start;
-  const curLine = parser.line;
-  const curColumn = parser.column;
+  const { start: curStart, line: curLine, column: curColumn } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
@@ -120,157 +117,185 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
   // 'import' ModuleSpecifier ';'
   if (parser.token === Token.StringLiteral) {
     source = parseLiteral(parser, context);
-  } else {
-    if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
-      const { start, line, column } = parser;
-      if (!isValidIdentifier(context, parser.token)) report(parser, Errors.UnexpectedStrictReserved);
-      if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments)
-        report(parser, Errors.StrictEvalArguments);
-      addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
-      const local = parseIdentifier(parser, context);
+    expectSemicolon(parser, context);
 
-      specifiers = [
+    return context & Context.OptionsLoc
+      ? {
+          type: 'ImportDeclaration',
+          specifiers,
+          source,
+          start: curStart,
+          end: parser.endIndex,
+          loc: setLoc(parser, curLine, curColumn)
+        }
+      : {
+          type: 'ImportDeclaration',
+          specifiers,
+          source
+        };
+  }
+
+  if ((parser.token & 0b00000000001001110000000000000000) > 0) {
+    const { token, tokenValue, start, line, column } = parser;
+
+    if (!isValidIdentifier(context, token)) report(parser, Errors.UnexpectedStrictReserved);
+
+    if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.StrictEvalArguments);
+    }
+
+    addBlockName(parser, context, scope, tokenValue, BindingKind.Let, Origin.None);
+
+    nextToken(parser, context, /* allowRegExp */ 0);
+
+    specifiers = [
+      context & Context.OptionsLoc
+        ? {
+            type: 'ImportDefaultSpecifier',
+            local: parseIdentifierFromValue(parser, context, tokenValue, start, line, column),
+            start,
+            end: parser.endIndex,
+            loc: setLoc(parser, line, column)
+          }
+        : {
+            type: 'ImportDefaultSpecifier',
+            local: parseIdentifierFromValue(parser, context, tokenValue, start, line, column)
+          }
+    ];
+
+    if (parser.token !== Token.Comma) {
+      source = parseModuleSpecifier(parser, context);
+
+      expectSemicolon(parser, context);
+
+      return context & Context.OptionsLoc
+        ? {
+            type: 'ImportDeclaration',
+            specifiers,
+            source,
+            start: curStart,
+            end: parser.endIndex,
+            loc: setLoc(parser, curLine, curColumn)
+          }
+        : {
+            type: 'ImportDeclaration',
+            specifiers,
+            source
+          };
+    }
+    nextToken(parser, context, /* allowRegExp */ 0);
+  }
+  // Parse NameSpaceImport or NamedImports if present
+  switch (parser.token) {
+    // '*'
+    case Token.Multiply:
+      const { start, line, column } = parser;
+
+      nextToken(parser, context, /* allowRegExp */ 0);
+
+      consume(parser, context, Token.AsKeyword, /* allowRegExp */ 0);
+
+      addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
+
+      specifiers.push(
         context & Context.OptionsLoc
           ? {
-              type: 'ImportDefaultSpecifier',
-              local,
+              type: 'ImportNamespaceSpecifier',
+              local: parseIdentifier(parser, context),
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
             }
           : {
-              type: 'ImportDefaultSpecifier',
-              local
+              type: 'ImportNamespaceSpecifier',
+              local: parseIdentifier(parser, context)
             }
-      ];
+      );
+      break;
 
-      if (parser.token !== Token.Comma) {
-        source = parseModuleSpecifier(parser, context);
+    // '}'
+    case Token.LeftBrace:
+      // NamedImports :
+      //   '{' '}'
+      //   '{' ImportsList '}'
+      //   '{' ImportsList ',' '}'
+      //
+      // ImportsList :
+      //   ImportSpecifier
+      //   ImportsList ',' ImportSpecifier
+      //
+      // ImportSpecifier :
+      //   BindingIdentifier
+      //   IdentifierName 'as' BindingIdentifier
 
-        expectSemicolon(parser, context);
-
-        return context & Context.OptionsLoc
-          ? {
-              type: 'ImportDeclaration',
-              specifiers,
-              source,
-              start: curStart,
-              end: parser.endIndex,
-              loc: setLoc(parser, curLine, curColumn)
-            }
-          : {
-              type: 'ImportDeclaration',
-              specifiers,
-              source
-            };
-      }
       nextToken(parser, context, /* allowRegExp */ 0);
-    }
-    // Parse NameSpaceImport or NamedImports if present
-    switch (parser.token) {
-      // '*'
-      case Token.Multiply:
-        const { start, line, column } = parser;
+
+      while ((parser.token & 0b00000000001001110000000000000000) > 0) {
+        let { start, line, column, tokenValue, token } = parser;
 
         nextToken(parser, context, /* allowRegExp */ 0);
 
-        consume(parser, context, Token.AsKeyword, /* allowRegExp */ 0);
+        const imported = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
-        addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
+        let local: ESTree.Identifier;
+
+        if ((parser.token as Token) === Token.AsKeyword) {
+          nextToken(parser, context, /* allowRegExp */ 0);
+          if ((parser.token & Token.IsStringOrNumber) > 0 || (parser.token as Token) === Token.Comma) {
+            report(parser, Errors.InvalidKeywordAsAlias);
+          } else {
+            validateIdentifier(parser, context, BindingKind.Const, parser.token);
+          }
+          tokenValue = parser.tokenValue;
+          local = parseIdentifier(parser, context);
+        } else {
+          // Keywords cannot be bound to themselves, so an import name
+          // that is a keyword is a syntax error if it is not followed
+          // by the keyword 'as'.
+          // See the ImportSpecifier production in ES6 section 15.2.2.
+
+          validateIdentifier(parser, context, BindingKind.Const, token);
+
+          if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+            report(parser, Errors.StrictEvalArguments);
+          }
+
+          local = imported;
+        }
+
+        addBlockName(parser, context, scope, tokenValue, BindingKind.Let, Origin.None);
 
         specifiers.push(
           context & Context.OptionsLoc
             ? {
-                type: 'ImportNamespaceSpecifier',
-                local: parseIdentifier(parser, context),
+                type: 'ImportSpecifier',
+                local,
+                imported,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
               }
             : {
-                type: 'ImportNamespaceSpecifier',
-                local: parseIdentifier(parser, context)
+                type: 'ImportSpecifier',
+                local,
+                imported
               }
         );
-        break;
 
-      // '}'
-      case Token.LeftBrace:
-        // NamedImports :
-        //   '{' '}'
-        //   '{' ImportsList '}'
-        //   '{' ImportsList ',' '}'
-        //
-        // ImportsList :
-        //   ImportSpecifier
-        //   ImportsList ',' ImportSpecifier
-        //
-        // ImportSpecifier :
-        //   BindingIdentifier
-        //   IdentifierName 'as' BindingIdentifier
+        if ((parser.token as Token) !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
+      }
 
-        nextToken(parser, context, /* allowRegExp */ 0);
-        while (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
-          let { start, line, column, tokenValue, token } = parser;
-          const imported = parseIdentifier(parser, context);
-          let local: ESTree.Identifier;
-
-          if (consumeOpt(parser, context, Token.AsKeyword, /* allowRegExp */ 0)) {
-            if (
-              (parser.token & Token.IsStringOrNumber) === Token.IsStringOrNumber ||
-              (parser.token as Token) === Token.Comma
-            ) {
-              report(parser, Errors.InvalidKeywordAsAlias);
-            } else {
-              validateIdentifier(parser, context, BindingKind.Const, parser.token);
-            }
-            tokenValue = parser.tokenValue;
-            local = parseIdentifier(parser, context);
-          } else {
-            // Keywords cannot be bound to themselves, so an import name
-            // that is a keyword is a syntax error if it is not followed
-            // by the keyword 'as'.
-            // See the ImportSpecifier production in ES6 section 15.2.2.
-            validateIdentifier(parser, context, BindingKind.Const, token);
-            if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments)
-              report(parser, Errors.StrictEvalArguments);
-            local = imported;
-          }
-
-          addBlockName(parser, context, scope, tokenValue, BindingKind.Let, Origin.None);
-
-          specifiers.push(
-            context & Context.OptionsLoc
-              ? {
-                  type: 'ImportSpecifier',
-                  local,
-                  imported,
-                  start,
-                  end: parser.endIndex,
-                  loc: setLoc(parser, line, column)
-                }
-              : {
-                  type: 'ImportSpecifier',
-                  local,
-                  imported
-                }
-          );
-
-          if ((parser.token as Token) !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
-        }
-
-        consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
-        break;
-      case Token.LeftParen:
-        return parseImportCallDeclaration(parser, context, curStart, curLine, curColumn) as any;
-      case Token.Period:
-        return parseImportMetaDeclaration(parser, context, curStart, curLine, curColumn) as any;
-      default:
-        report(parser, Errors.Unexpected);
-    }
-
-    source = parseModuleSpecifier(parser, context);
+      consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
+      break;
+    case Token.LeftParen:
+      return parseImportCallDeclaration(parser, context, curStart, curLine, curColumn) as any;
+    case Token.Period:
+      return parseImportMetaDeclaration(parser, context, curStart, curLine, curColumn) as any;
+    default:
+      report(parser, Errors.Unexpected);
   }
+
+  source = parseModuleSpecifier(parser, context);
 
   expectSemicolon(parser, context);
 
@@ -293,7 +318,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 export function parseModuleSpecifier(parser: ParserState, context: Context): ESTree.Literal {
   // ModuleSpecifier :
   //   StringLiteral
-  consumeOpt(parser, context, Token.FromKeyword, /* allowRegExp */ 0);
+  consume(parser, context, Token.FromKeyword, /* allowRegExp */ 0);
 
   if (parser.token !== Token.StringLiteral) report(parser, Errors.Unexpected);
 
@@ -346,11 +371,12 @@ export function parseExportDefault(
             column
           );
         } else {
-          declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
           if ((parser.token & 0b00000000001000010000000000000000) > 0) {
             declaration = parseIdentifier(parser, context);
             declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
           } else {
+            declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+
             if ((parser.token as Token) === Token.LeftParen) {
               declaration = parseAsyncArrowOrCallExpression(
                 parser,
@@ -365,6 +391,7 @@ export function parseExportDefault(
                 column
               );
             }
+
             declaration = parseMemberExpression(parser, context, declaration, 0, 0, 0, start, line, column);
             declaration = parseAssignmentExpression(parser, context, 0, 0, declaration, start, line, column);
           }
@@ -416,13 +443,15 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     case Token.Multiply: {
       nextToken(parser, context, /* allowRegExp */ 0); // Skips: '*'
 
-      if (consumeOpt(parser, context, Token.AsKeyword, /* allowRegExp */ 0)) {
+      if ((parser.token as Token) === Token.AsKeyword) {
         // 'export' '*' 'as' IdentifierName 'from' ModuleSpecifier ';'
         //
         // Desugaring:
         //   export * as x from "...";
         // ~>
         //   import * as .x from "..."; export {.x as x};
+
+        nextToken(parser, context, /* allowRegExp */ 0); // Skips: 'as'
 
         declareUnboundVariable(parser, parser.tokenValue);
 
@@ -445,11 +474,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
               }
         ];
 
-        consume(parser, context, Token.FromKeyword, /* allowRegExp */ 0);
-
-        if ((parser.token as Token) !== Token.StringLiteral) report(parser, Errors.InvalidExportImportSource, 'Export');
-
-        source = parseLiteral(parser, context);
+        source = parseModuleSpecifier(parser, context);
 
         expectSemicolon(parser, context);
 
@@ -505,8 +530,8 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       //   IdentifierName 'as' IdentifierName
       nextToken(parser, context, /* allowRegExp */ 0); // Skips: '{'
 
-      const tEN: string[] = []; // Temporary exported names
-      const tEB: string[] = []; // Temporary exported bindings
+      const exportedNames: string[] = []; // Temporary exported names
+      const exportedBindings: string[] = []; // Temporary exported bindings
 
       let local: any;
       let exported: ESTree.Identifier | null;
@@ -530,8 +555,8 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
           exported = local;
         }
 
-        tEN.push(value as string);
-        tEB.push(tokenValue);
+        exportedNames.push(value as string);
+        exportedBindings.push(tokenValue);
 
         specifiers.push(
           context & Context.OptionsLoc
@@ -556,20 +581,15 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       consume(parser, context, Token.RightBrace, /* allowRegExp */ 1);
 
       if ((parser.token as Token) === Token.FromKeyword) {
-        nextToken(parser, context, /* allowRegExp */ 0);
+        nextToken(parser, context, /* allowRegExp */ 0); // skips: 'from'
         if ((parser.token as Token) !== Token.StringLiteral) report(parser, Errors.InvalidExportImportSource, 'Export');
         source = parseLiteral(parser, context);
       } else {
-        let i = tEN.length;
+        let i = exportedNames.length;
 
         while (i--) {
-          declareUnboundVariable(parser, tEN[i]);
-        }
-
-        i = tEB.length;
-
-        while (i--) {
-          addBindingToExports(parser, tEB[i]);
+          declareUnboundVariable(parser, exportedNames[i]);
+          addBindingToExports(parser, exportedBindings[i]);
         }
       }
 

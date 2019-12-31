@@ -3,6 +3,7 @@ import * as t from 'assert';
 import { parseModule } from '../../../src/seafox';
 
 describe('Module - Export', () => {
+
   for (const [source, ctx] of [
     ['export foo;', Context.Empty],
     ['export class f {} export {f};', Context.Empty],
