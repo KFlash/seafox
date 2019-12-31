@@ -103,8 +103,8 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
   let char = source.charCodeAt((parser.index += 2));
   if (char === Chars.LeftBrace) {
     let digit = toHex(source.charCodeAt(++parser.index));
+    if (digit < 0) report(parser, Errors.InvalidHexEscapeSequence);
     while (digit >= 0) {
-      if (digit < 0) report(parser, Errors.InvalidHexEscapeSequence);
       code = (code << 4) | digit;
       if (code > Chars.LastUnicodeChar) report(parser, Errors.UnicodeOverflow);
       digit = toHex((char = source.charCodeAt(++parser.index)));

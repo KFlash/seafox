@@ -2,7 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
-import { ScopeState, ScopeKind, addVarName, addBlockName } from './scope';
+import { ScopeState, ScopeKind, addVarName, addBlockName, declareUnboundVariable } from './scope';
 import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import {
   ParserState,
@@ -94,6 +94,8 @@ export function parseFunctionDeclarationRest(
       addBlockName(parser, context, scope, tokenValue, BindingKind.FunctionLexical, origin);
     }
 
+    if (flags & FunctionFlag.Export) declareUnboundVariable(parser, tokenValue);
+
     innerScope = {
       parent: innerScope,
       type: ScopeKind.FunctionRoot,
@@ -163,6 +165,8 @@ export function parseClassDeclaration(
     // class name for the "inner name".
     addBlockName(parser, context, scope, tokenValue, BindingKind.Class, Origin.None);
 
+    if (flags & ClassFlags.Export) declareUnboundVariable(parser, tokenValue);
+
     nextToken(parser, context, /* allowRegExp */ 0);
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
@@ -219,7 +223,7 @@ export function parseVariableStatementOrLexicalDeclaration(
   return context & Context.OptionsLoc
     ? {
         type: 'VariableDeclaration',
-        kind: kind & BindingKind.Const ? 'const' : 'var',
+        kind: kind & BindingKind.Const ? 'const' : kind & BindingKind.Let ? 'let' : 'var',
         declarations,
         start,
         end: parser.endIndex,
@@ -227,7 +231,7 @@ export function parseVariableStatementOrLexicalDeclaration(
       }
     : {
         type: 'VariableDeclaration',
-        kind: kind & BindingKind.Const ? 'const' : 'var',
+        kind: kind & BindingKind.Const ? 'const' : kind & BindingKind.Let ? 'let' : 'var',
         declarations
       };
 }

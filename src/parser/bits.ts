@@ -77,6 +77,7 @@ export const enum FunctionFlag {
   AllowGenerator    = 1 << 1,
   IsAsync           = 1 << 2,
   RequireIdentifier = 1 << 3,
+  Export            = 1 << 4,
   Declaration       = IsDeclaration | AllowGenerator | RequireIdentifier
 }
 

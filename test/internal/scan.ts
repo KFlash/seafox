@@ -2,6 +2,7 @@ import * as t from 'assert';
 import { Context } from '../../src/parser/bits';
 import { scan } from '../../src/scanner/scan';
 import { create } from '../../src/parser/core';
+import { Token } from '../../src/token';
 
 describe('Lexer', () => {
   function pass(name: string, opts: any) {
@@ -337,4 +338,15 @@ describe('Lexer', () => {
       column: 1
     })
   );
+
+  function fail(name: string, source: string, context: Context) {
+    it(name, () => {
+      const parser = create(source);
+      t.throws(() => scan(parser, context, source, 1, source.length, Token.EOF, 0, true, /* allowRegExp */ 0));
+    });
+  }
+  fail('fails on -->', '-->', Context.Module | Context.Strict);
+  fail('fails on <!-- foo', '<!-- foo', Context.Module | Context.Strict);
+  fail('fails on -->', '-->', Context.OptionsDisableWebCompat);
+  fail('fails on <!-- foo', '<!-- foo', Context.OptionsDisableWebCompat);
 });

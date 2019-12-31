@@ -77,8 +77,33 @@ export function addVarOrBlock(
   } else {
     addBlockName(parser, context, scope, name, kind, origin);
   }
+  if (origin & Origin.Export) {
+    declareUnboundVariable(parser, name);
+  }
 }
 
+export function declareUnboundVariable(parser: ParserState, name: string): void {
+  if (parser.exportedNames !== void 0 && name !== '') {
+    if (parser.exportedNames['#' + name]) {
+      report(parser, Errors.DuplicateExportBinding, name);
+    }
+    parser.exportedNames['#' + name] = 1;
+  }
+}
+
+/**
+ * Appends a name to the `ExportedBindings` of the `ExportsList`,
+ *
+ * @see [Link](https://tc39.es/ecma262/$sec-exports-static-semantics-exportedbindings)
+ *
+ * @param parser Parser object
+ * @param name Exported binding name
+ */
+export function addBindingToExports(parser: ParserState, name: string): void {
+  if (parser.exportedBindings !== void 0 && name !== '') {
+    parser.exportedBindings['#' + name] = 1;
+  }
+}
 /**
  * Adds block scoped binding
  *

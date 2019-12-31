@@ -13,9 +13,9 @@ describe('Module - Import', () => {
     ["import {,} from 'a';", Context.Empty],
     ["import {b,,} from 'a';", Context.Empty],
     ['import from;', Context.Empty],
-    //    ["import {b as,} from 'a';", Context.Empty],
-    // ["import {function} from 'a';", Context.Empty],
-    //["import {a as function} from 'a';", Context.Empty],
+    ["import {b as,} from 'a';", Context.Empty],
+    ["import {function} from 'a';", Context.Empty],
+    ["import {a as function} from 'a';", Context.Empty],
     ['{import {x} from "y";}', Context.Empty],
     ['function f(){import {x} from "y";}', Context.Empty],
     ['if (x); else import {x} from "y";', Context.Empty],
@@ -24,17 +24,56 @@ describe('Module - Import', () => {
     ['do import {x} from "y"; while (x);', Context.Empty],
     ['import foo', Context.Empty],
     ['import', Context.Empty],
-    //    ['import {await} from "foo";', Context.Empty],
-    //['import {foo as await} from "foo";', Context.Empty],
-    //['import await, {x, y, z} from "foo";', Context.Empty],
-    //['import eval, {x, y, z} from "foo";', Context.Empty],
-    // ['import package, {x, y, z} from "foo";', Context.Empty],
+    ['import {await} from "foo";', Context.Empty],
+    ['import {foo as await} from "foo";', Context.Empty],
+    ['import await, {x, y, z} from "foo";', Context.Empty],
+    ['import eval, {x, y, z} from "foo";', Context.Empty],
+    ['import package, {x, y, z} from "foo";', Context.Empty],
+    ['import a, **= from "f";', Context.Empty],
+    ['import *= from "f";', Context.Empty],
+    ['import ** from "foo";', Context.Empty],
+    ['import * as let', Context.Empty],
+    ['import * as var', Context.Empty],
+    ['import * as class', Context.Empty],
+    ['function foo() { import foo from "foo.js"; }', Context.Empty],
+    ['import { foo }, bar from "foo.js";', Context.Empty],
+    ['import { foo }, from "foo.js";', Context.Empty],
+    ['import { foo }, bar from "foo.js";', Context.Empty],
+    ['import { foo }, * as ns1 from "foo.js";', Context.Empty],
+    ['import { foo }', Context.Empty],
+    ['import [ foo ] from "foo.js";', Context.Empty],
+    ['import * foo from "foo.js";', Context.Empty],
+    ['import { , foo } from "foo.js";', Context.Empty],
+    ['() => { import arrow from ""; }', Context.Empty],
+    ['try { import _try from ""; } catch(e) { }', Context.Empty],
+    ['import { foo as bar ', Context.Empty],
+    ['import { foo as bar, ', Context.Empty],
+    ['import { switch } from "module";', Context.Empty],
+    ['while(false) import { default } from "module";', Context.Empty],
+    ['import { foo, , } from "module";', Context.Empty],
+    ['import { foo as switch } from "module";', Context.Empty],
+    ['import { foo bar } from "module";', Context.Empty],
+    ['import * foo from "foo.js";', Context.Empty],
+    ['import * as new', Context.Empty],
+    ['import {;', Context.Empty],
+    ['import { };', Context.Empty],
+    ['import from;', Context.Empty],
+    ['import {x}, {y} from "foo";', Context.Empty],
+    ['import * as x, {y} from "foo";', Context.Empty],
+    ['import foo, from "foo";', Context.Empty],
+    ['import / as a from "foo";', Context.Empty],
+    ['import {b,c,,} from  "foo";', Context.Empty],
+    ['import * as a from 12', Context.Empty],
+    ['import { x }, def from "foo";', Context.Empty],
+    ['import {};', Context.Empty],
+    ['import {} from;', Context.Empty],
+    ['import package, {x, y, z} from "foo";', Context.Empty],
     ['import * from "foo"', Context.Strict | Context.Module],
     ['import * as from', Context.Strict | Context.Module],
     ['import * as x', Context.Strict | Context.Module],
-    // ['import { null } from "null"', Context.Strict | Context.Module],
-    // ['import { implements } from "null"', Context.Strict | Context.Module],
-    //  ['import { foo as switch } from "module";', Context.Strict | Context.Module],
+    ['import { null } from "null"', Context.Strict | Context.Module],
+    ['import { implements } from "null"', Context.Strict | Context.Module],
+    ['import { foo as switch } from "module";', Context.Strict | Context.Module],
     ['import { foo, , } from "module";', Context.Strict | Context.Module],
     ['import * as a in b from "foo";', Context.Strict | Context.Module],
     ["import { {} } from 'foo';", Context.Strict | Context.Module],
@@ -55,7 +94,7 @@ describe('Module - Import', () => {
     ["import {,} from 'a';", Context.Strict | Context.Module],
     ["import {b,,} from 'a';", Context.Strict | Context.Module],
     ["import * As a from 'a'", Context.Strict | Context.Module],
-    // ["import {eval} from 'x'", Context.Strict | Context.Module],
+    ["import {eval} from 'x'", Context.Strict | Context.Module],
     ['import {a b} from "foo";', Context.Strict | Context.Module],
     ['import foo, bar from "foo.js";', Context.Strict | Context.Module],
     ['import { foo }, * as ns1 from "foo.js";', Context.Strict | Context.Module],
@@ -83,10 +122,592 @@ describe('Module - Import', () => {
     });
   }
 
+  for (const arg of [
+    "import 'foo';",
+    "import { a } from 'foo';",
+    `import  * as set from "a"`,
+    "import { a, b as d, c, } from 'baz';",
+    "import * as thing from 'baz';",
+    "import thing from 'foo';",
+    "import thing, * as rest from 'foo';",
+    "import thing, { a, b, c } from 'foo';",
+    "import { arguments as a } from 'baz';",
+    "import { for as f } from 'foo';",
+    "import { yield as y } from 'foo';",
+    "import { static as s } from 'foo';",
+    "import { let as l } from 'foo';",
+    "import { q as z } from 'foo';",
+    'import { null as nil } from "bar"',
+    'import {bar, baz} from "foo";',
+    'import {bar as baz, xyz} from "foo";',
+    'import foo, {bar} from "foo";',
+    'import C from "foo";',
+    'import a, { b, c as d } from "foo"',
+    'import * as async from "async";',
+    "import foo, * as bar from 'baz';",
+    'import $ from "foo"',
+    'import {} from "foo";',
+    "import n from 'n.js';",
+    'import a from "module";',
+    'import b, * as c from "module";',
+    'import * as d from "module";',
+    'import e, {f as g, h as i, j} from "module";',
+    'import {k as l, m} from "module";',
+    'import {n, o as p} from "module";',
+    "import 'q.js';",
+    "import a, {b,c,} from 'd'",
+    "import a, {b,} from 'foo'",
+    "import {as as as} from 'as'",
+    "import a, {as} from 'foo'",
+    "import a, {function as c} from 'baz'",
+    "import a, {b as c} from 'foo'",
+    "import a, * as b from 'a'",
+    "import a, {} from 'foo'",
+    "import a from 'foo'",
+    "import * as a from 'a'",
+    "import {m as mm} from 'foo';",
+    "import {aa} from 'foo';",
+    'import { as, get, set, from } from "baz"',
+    'import icefapper from "await"',
+    "import 'foo';",
+    "import get from './get.js';",
+    "import { a } from 'foo';",
+    "import { a, b as d, c, } from 'baz';",
+    "import * as foob from 'bar.js';",
+    'import { as, get, set, from } from "baz"',
+    "import {} from 'x'",
+    "import {a} from 'x'",
+    "import {a as b} from 'x'",
+    "import {a,b,} from 'x'",
+    "import foo, * as bar from 'baz';",
+    'import $ from "foo"',
+    'import {} from "foo";',
+    "import n from 'n.js';",
+    'import a from "module";',
+    'import b, * as c from "module";',
+    "import { yield as y } from 'm.js';",
+    "import { static as s } from 'm.js';",
+    "import { yield as y } from 'foo';",
+    'import async from "foo";',
+    'import defexp, {x,} from "foo";',
+    'import { Cocoa as async } from "foo"',
+    "import 'somemodule.js';",
+    "import { } from 'm.js';",
+    "import { a } from 'm.js';",
+    "import 'foo';",
+    "import { a } from 'foo';",
+    'import { a as of } from "k";',
+    // Runtime errors
+    'import foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) {}',
+    'import { foo } from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }',
+    'import * as foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }',
+    'import { foo as foo22 } from "foo.js"; try { (() => { foo22 = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }'
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`${arg}`, {
+          disableWebCompat: false
+        });
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
     [
+      `import {x as a, z as b} from "y"`,
+      Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 13,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 21,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'z',
+                  start: 16,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                start: 16,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 29,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 29
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            start: 0,
+            end: 32,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 32
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 32,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 32
+          }
+        }
+      }
+    ],
+    [
+      `import {} from "y"`,
+      Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 15,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
+      `import "y"`,
+      Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 7,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 10,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 10
+          }
+        }
+      }
+    ],
+    [
+      `import {x, z,} from "y"`,
+      Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 8,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              {
+                type: 'ImportSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'z',
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                imported: {
+                  type: 'Identifier',
+                  name: 'z',
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'y',
+              start: 20,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 20
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `import x from 'foo';`,
+      Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 7,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              }
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo',
+              start: 14,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
+    [
       `import thing, * as rest from 'foo';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -203,7 +824,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {m as mm} from 'foo';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -305,7 +926,7 @@ describe('Module - Import', () => {
     ],
     [
       `import * as foob from 'bar.js';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -391,7 +1012,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { a } from 'm.js';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -493,7 +1114,7 @@ describe('Module - Import', () => {
     ],
     [
       `import * as foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -941,7 +1562,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {k as l, m} from "module";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1090,7 +1711,7 @@ describe('Module - Import', () => {
     ],
     [
       `import foo, {bar} from "foo";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1223,7 +1844,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { null as nil } from "bar"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1325,7 +1946,7 @@ describe('Module - Import', () => {
     ],
     [
       `import b, * as c from "module";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1442,7 +2063,7 @@ describe('Module - Import', () => {
     ],
     [
       `import x, * as ns from "foo"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1559,7 +2180,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {a, b} from "c"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1708,7 +2329,7 @@ describe('Module - Import', () => {
     ],
     [
       `import x, * as a from "y"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1825,7 +2446,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {x} from "y"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -1927,7 +2548,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {x,} from "y"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2030,7 +2651,7 @@ describe('Module - Import', () => {
 
     [
       `import {x as z} from "y"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2132,7 +2753,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {} from "foo";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2186,7 +2807,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {as as as} from 'as'`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2288,7 +2909,7 @@ describe('Module - Import', () => {
     ],
     [
       `import a, {function as c} from 'baz'`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2421,7 +3042,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { as, get, set, from } from "baz"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2664,7 +3285,7 @@ describe('Module - Import', () => {
     ],
     [
       `import $ from "foo"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2750,7 +3371,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { yield as y } from 'm.js';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2852,7 +3473,7 @@ describe('Module - Import', () => {
     ],
     [
       `import 'foo';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -2906,7 +3527,7 @@ describe('Module - Import', () => {
     ],
     [
       `import foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) {}`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -3203,7 +3824,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { foo } from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -3667,7 +4288,7 @@ describe('Module - Import', () => {
     ],
     [
       `import e, {f as g, h as i, j} from "module";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -3894,7 +4515,7 @@ describe('Module - Import', () => {
     ],
     [
       `import {n, o as p} from "module";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -4043,7 +4664,7 @@ describe('Module - Import', () => {
     ],
     [
       `import  * as croasnm from "}ë";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -4129,7 +4750,7 @@ describe('Module - Import', () => {
     ],
     [
       `import  * as set from "a"`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -4215,7 +4836,7 @@ describe('Module - Import', () => {
     ],
     [
       `import * as thing from 'baz';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -4299,94 +4920,95 @@ describe('Module - Import', () => {
         }
       }
     ],
-    /*   [
-            `import $ from "foo"`,
-            Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
-            {
-              "type": "Program",
-              "sourceType": "module",
-              "body": [
-                {
-                  "type": "ImportDeclaration",
-                  "specifiers": [
-                    {
-                      "type": "ImportDefaultSpecifier",
-                      "local": {
-                        "type": "Identifier",
-                        "name": "$",
-                        "start": 7,
-                        "end": 8,
-                        "loc": {
-                          "start": {
-                            "line": 1,
-                            "column": 7
-                          },
-                          "end": {
-                            "line": 1,
-                            "column": 8
-                          }
-                        }
-                      },
-                      "start": 7,
-                      "end": 8,
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 7
-                        },
-                        "end": {
-                          "line": 1,
-                          "column": 8
-                        }
-                      }
-                    }
-                  ],
-                  "source": {
-                    "type": "Literal",
-                    "value": "foo",
-                    "start": 14,
-                    "end": 19,
-                    "loc": {
-                      "start": {
-                        "line": 1,
-                        "column": 14
-                      },
-                      "end": {
-                        "line": 1,
-                        "column": 19
-                      }
-                    }
-                  },
-                  "start": 0,
-                  "end": 19,
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 0
+    [
+      `import $ from "foo"`,
+      Context.OptionsLoc | Context.Module | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ImportDeclaration',
+            specifiers: [
+              {
+                type: 'ImportDefaultSpecifier',
+                local: {
+                  type: 'Identifier',
+                  name: '$',
+                  start: 7,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
                     },
-                    "end": {
-                      "line": 1,
-                      "column": 19
+                    end: {
+                      line: 1,
+                      column: 8
                     }
                   }
-                }
-              ],
-              "start": 0,
-              "end": 19,
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 0
                 },
-                "end": {
-                  "line": 1,
-                  "column": 19
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
                 }
               }
-            }],*/
+            ],
+            source: {
+              type: 'Literal',
+              value: 'foo',
+              start: 14,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
     [
       `import {n, o as p} from "module";`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -4535,7 +5157,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { yield as y } from 'foo';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',
@@ -4637,7 +5259,7 @@ describe('Module - Import', () => {
     ],
     [
       `import { a } from 'foo';`,
-      Context.OptionsNext | Context.OptionsLoc | Context.Module | Context.Strict,
+      Context.OptionsLoc | Context.Module | Context.Strict,
       {
         type: 'Program',
         sourceType: 'module',

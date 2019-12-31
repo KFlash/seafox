@@ -79,6 +79,7 @@ export function scanTemplate(parser: ParserState, context: Context, source: stri
 
 function scanBadTemplate(parser: ParserState, _context: Context, source: string): number {
   let char = source.charCodeAt(parser.index);
+
   while (char !== Chars.Backtick) {
     if (char === Chars.Dollar) {
       const index = parser.index + 1;

@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Import call', () => {
   for (const arg of [
@@ -29,6 +29,12 @@ describe('Expressions - Import call', () => {
     it(`${arg}`, () => {
       t.throws(() => {
         parseScript(`${arg}`);
+      });
+    });
+
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseModule(`${arg}`);
       });
     });
   }

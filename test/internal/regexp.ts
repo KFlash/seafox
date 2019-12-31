@@ -4,16 +4,7 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-describe('src/scanner/scan', () => {
-  interface Opts {
-    source: string;
-    context: Context;
-    token: Token;
-    hasNext: boolean;
-    line: number;
-    column: number;
-  }
-
+describe('scanner - regexp', () => {
   const tokens: Array<[Context, Token, string, any]> = [
     [Context.OptionsRaw, Token.RegularExpression, '/a/', /a/],
     [Context.OptionsRaw, Token.RegularExpression, '/(\\w+)\\s(\\w+)/g', /(\w+)\s(\w+)/g],
@@ -67,4 +58,16 @@ describe('src/scanner/scan', () => {
       );
     });
   }
+
+  function fail(name: string, source: string, context: Context) {
+    it(name, () => {
+      const parser = create(source);
+      t.throws(() => scan(parser, context, source, 1, source.length, Token.EOF, 0, true, 1));
+    });
+  }
+
+  fail('fails on /a', '/a', Context.Empty);
+  fail('fails on /', '/', Context.Empty);
+  fail('fails on /\u2028', '/\u2028', Context.Empty);
+  fail('fails on /\u2029', '/\u2029', Context.Empty);
 });

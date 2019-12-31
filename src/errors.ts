@@ -103,13 +103,21 @@ export const enum Errors {
   InvalidInvokedBlockBodyArrow,
   InvalidObjLitKeyStar,
   InvalidSpreadInImport,
-  MultipleDefaultsInSwitch
+  MultipleDefaultsInSwitch,
+  DuplicateExportBinding,
+  UndeclaredExportedBinding,
+  InvalidExportImportSource,
+  InvalidKeywordAsAlias
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.InvalidExportImportSource]: '%0 source must be string',
+  [Errors.InvalidKeywordAsAlias]: 'Only a identifier can be used to indicate alias',
+  [Errors.DuplicateExportBinding]: "Cannot export a duplicate name '%0'",
+  [Errors.UndeclaredExportedBinding]: "Exported binding '%0' needs to refer to a top-level declared variable",
   [Errors.MultipleDefaultsInSwitch]: 'More than one default clause in switch statement',
   [Errors.InvalidSpreadInImport]: '... is not allowed in import()',
   [Errors.InvalidObjLitKeyStar]: 'Invalid object literal key character after generator star',

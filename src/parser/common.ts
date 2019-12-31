@@ -30,6 +30,8 @@ export interface ParserState {
   tokenRaw: string;
   assignable: 0 | 1;
   lastChar: number;
+  exportedNames: any;
+  exportedBindings: any;
   tokenRegExp: void | {
     pattern: string;
     flags: string;

@@ -70,7 +70,7 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
 
     case Chars.LowerU: {
       // Accept both \uxxxx and \u{xxxxxx}. In the latter case, the number of
-      // hex digits between { } is arbitrary. \ and u have already been read.
+      // hex digits between { } is arbitrary. \ and u have already been scanned.
       let code = 0;
       if (ch === Chars.LeftBrace) {
         // \u{N}

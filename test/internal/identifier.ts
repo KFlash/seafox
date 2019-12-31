@@ -20,7 +20,7 @@ describe('src/scanner/scan', () => {
       t.throws(() => scan(parser, context, source, 1, source.length, Token.EOF, 0, true, /* allowRegExp */ 0));
     });
   }
-
+  fail('fails on \\{4fff}', '\\{%', Context.Empty);
   fail('fails on \\{4fff}', '\\{4fff}', Context.Empty);
   fail('fails on a🀒c', 'a🀒c', Context.Empty);
   fail('fails on a😍c', 'a😍c', Context.Empty);

@@ -5,7 +5,15 @@ import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
 import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
-import { ParserState, expectSemicolon, consume, consumeOpt, setLoc } from './common';
+import {
+  ParserState,
+  expectSemicolon,
+  validateIdentifier,
+  isValidIdentifier,
+  consume,
+  consumeOpt,
+  setLoc
+} from './common';
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,
@@ -24,6 +32,7 @@ import {
   parseArrowFunction,
   parseAsyncArrowOrCallExpression
 } from './expressions';
+import { declareUnboundVariable, addBindingToExports, addBlockName } from './scope';
 
 export function parseModuleItemListAndDirectives(
   parser: ParserState,
@@ -42,11 +51,11 @@ export function parseModuleItemListAndDirectives(
       expectSemicolon(parser, context);
 
       const directive = isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue;
-      const type = 'ExpressionStatement';
+
       statements.push(
         context & Context.OptionsLoc
           ? {
-              type,
+              type: 'ExpressionStatement',
               expression,
               directive,
               start,
@@ -54,7 +63,7 @@ export function parseModuleItemListAndDirectives(
               loc: setLoc(parser, line, column)
             }
           : {
-              type,
+              type: 'ExpressionStatement',
               expression,
               directive
             }
@@ -78,12 +87,26 @@ export function parseModuleItem(parser: ParserState, context: Context, scope: Sc
     return parseExportDeclaration(parser, context, scope);
   }
   if (parser.token === Token.ImportKeyword) {
-    return parseImportDeclaration(parser, context);
+    return parseImportDeclaration(parser, context, scope);
   }
   return parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null);
 }
 
-export function parseImportDeclaration(parser: ParserState, context: Context): ESTree.ImportDeclaration {
+export function parseImportDeclaration(parser: ParserState, context: Context, scope: any): any {
+  // ImportDeclaration :
+  //   'import' ImportClause 'from' ModuleSpecifier ';'
+  //   'import' ModuleSpecifier ';'
+  //
+  // ImportClause :
+  //   ImportedDefaultBinding
+  //   NameSpaceImport
+  //   NamedImports
+  //   ImportedDefaultBinding ',' NameSpaceImport
+  //   ImportedDefaultBinding ',' NamedImports
+  //
+  // NameSpaceImport :
+  //   '*' 'as' ImportedBinding
+
   const curStart = parser.start;
   const curLine = parser.line;
   const curColumn = parser.column;
@@ -95,13 +118,15 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
   let specifiers: any = [];
 
   // 'import' ModuleSpecifier ';'
-
-  const type = 'ImportDeclaration';
   if (parser.token === Token.StringLiteral) {
     source = parseLiteral(parser, context);
   } else {
     if (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
       const { start, line, column } = parser;
+      if (!isValidIdentifier(context, parser.token)) report(parser, Errors.UnexpectedStrictReserved);
+      if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments)
+        report(parser, Errors.StrictEvalArguments);
+      addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
       const local = parseIdentifier(parser, context);
 
       specifiers = [
@@ -126,7 +151,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
 
         return context & Context.OptionsLoc
           ? {
-              type,
+              type: 'ImportDeclaration',
               specifiers,
               source,
               start: curStart,
@@ -134,7 +159,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
               loc: setLoc(parser, curLine, curColumn)
             }
           : {
-              type,
+              type: 'ImportDeclaration',
               specifiers,
               source
             };
@@ -150,6 +175,8 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
         nextToken(parser, context, /* allowRegExp */ 0);
 
         consume(parser, context, Token.AsKeyword, /* allowRegExp */ 0);
+
+        addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
 
         specifiers.push(
           context & Context.OptionsLoc
@@ -169,13 +196,48 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
 
       // '}'
       case Token.LeftBrace:
+        // NamedImports :
+        //   '{' '}'
+        //   '{' ImportsList '}'
+        //   '{' ImportsList ',' '}'
+        //
+        // ImportsList :
+        //   ImportSpecifier
+        //   ImportsList ',' ImportSpecifier
+        //
+        // ImportSpecifier :
+        //   BindingIdentifier
+        //   IdentifierName 'as' BindingIdentifier
+
         nextToken(parser, context, /* allowRegExp */ 0);
         while (parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) {
-          const { start, line, column } = parser;
+          let { start, line, column, tokenValue, token } = parser;
           const imported = parseIdentifier(parser, context);
-          const local = consumeOpt(parser, context, Token.AsKeyword, /* allowRegExp */ 0)
-            ? parseIdentifier(parser, context)
-            : imported;
+          let local: ESTree.Identifier;
+
+          if (consumeOpt(parser, context, Token.AsKeyword, /* allowRegExp */ 0)) {
+            if (
+              (parser.token & Token.IsStringOrNumber) === Token.IsStringOrNumber ||
+              (parser.token as Token) === Token.Comma
+            ) {
+              report(parser, Errors.InvalidKeywordAsAlias);
+            } else {
+              validateIdentifier(parser, context, BindingKind.Const, parser.token);
+            }
+            tokenValue = parser.tokenValue;
+            local = parseIdentifier(parser, context);
+          } else {
+            // Keywords cannot be bound to themselves, so an import name
+            // that is a keyword is a syntax error if it is not followed
+            // by the keyword 'as'.
+            // See the ImportSpecifier production in ES6 section 15.2.2.
+            validateIdentifier(parser, context, BindingKind.Const, token);
+            if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments)
+              report(parser, Errors.StrictEvalArguments);
+            local = imported;
+          }
+
+          addBlockName(parser, context, scope, tokenValue, BindingKind.Let, Origin.None);
 
           specifiers.push(
             context & Context.OptionsLoc
@@ -214,18 +276,18 @@ export function parseImportDeclaration(parser: ParserState, context: Context): E
 
   return context & Context.OptionsLoc
     ? {
-        type,
+        type: 'ImportDeclaration',
         specifiers,
         source,
         start: curStart,
         end: parser.endIndex,
         loc: setLoc(parser, curLine, curColumn)
       }
-    : ({
-        type,
+    : {
+        type: 'ImportDeclaration',
         specifiers,
         source
-      } as any);
+      };
 }
 
 export function parseModuleSpecifier(parser: ParserState, context: Context): ESTree.Literal {
@@ -238,7 +300,7 @@ export function parseModuleSpecifier(parser: ParserState, context: Context): EST
   return parseLiteral(parser, context);
 }
 
-export function parseExportDefaultDeclaration(
+export function parseExportDefault(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
@@ -246,20 +308,25 @@ export function parseExportDefaultDeclaration(
   line: number,
   column: number
 ): any {
+  // export default HoistableDeclaration[Default]
+  // export default ClassDeclaration[Default]
+  // export default [lookahead not-in {function, class}] AssignmentExpression[In] ;
   nextToken(parser, context, /* allowRegExp */ 1);
 
   let declaration: any = null;
 
   switch (parser.token) {
+    // export default HoistableDeclaration[Default]
     case Token.FunctionKeyword:
       declaration = parseFunctionDeclaration(
         parser,
         context,
         scope,
-        FunctionFlag.IsDeclaration | FunctionFlag.AllowGenerator,
+        0b00000000000000000000000000000011,
         Origin.TopLevel
       );
       break;
+    // export default ClassDeclaration[Default]
     case Token.ClassKeyword:
       declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Hoisted);
       break;
@@ -272,7 +339,7 @@ export function parseExportDefaultDeclaration(
             parser,
             context,
             scope,
-            FunctionFlag.IsAsync | FunctionFlag.IsDeclaration,
+            0b00000000000000000000000000000111,
             Origin.Export,
             start,
             line,
@@ -280,7 +347,7 @@ export function parseExportDefaultDeclaration(
           );
         } else {
           declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-          if (parser.token & Token.IsIdentifier) {
+          if ((parser.token & 0b00000000001000010000000000000000) > 0) {
             declaration = parseIdentifier(parser, context);
             declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
           } else {
@@ -309,6 +376,9 @@ export function parseExportDefaultDeclaration(
       expectSemicolon(parser, context);
   }
 
+  // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportednames
+  declareUnboundVariable(parser, 'default');
+
   return context & Context.OptionsLoc
     ? {
         type: 'ExportDefaultDeclaration',
@@ -324,6 +394,14 @@ export function parseExportDefaultDeclaration(
 }
 
 export function parseExportDeclaration(parser: ParserState, context: Context, scope: ScopeState): any {
+  // ExportDeclaration:
+  //    'export' '*' 'from' ModuleSpecifier ';'
+  //    'export' '*' 'as' IdentifierName 'from' ModuleSpecifier ';'
+  //    'export' ExportClause ('from' ModuleSpecifier)? ';'
+  //    'export' VariableStatement
+  //    'export' Declaration
+  //    'export' 'default' ... (handled in ParseExportDefault)
+
   const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 1);
@@ -334,7 +412,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
   switch (parser.token) {
     case Token.DefaultKeyword:
-      return parseExportDefaultDeclaration(parser, context, scope, start, line, column);
+      return parseExportDefault(parser, context, scope, start, line, column);
     case Token.Multiply: {
       nextToken(parser, context, /* allowRegExp */ 0); // Skips: '*'
 
@@ -345,6 +423,8 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         //   export * as x from "...";
         // ~>
         //   import * as .x from "..."; export {.x as x};
+
+        declareUnboundVariable(parser, parser.tokenValue);
 
         const exported = parseIdentifier(parser, context);
 
@@ -366,6 +446,8 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         ];
 
         consume(parser, context, Token.FromKeyword, /* allowRegExp */ 0);
+
+        if ((parser.token as Token) !== Token.StringLiteral) report(parser, Errors.InvalidExportImportSource, 'Export');
 
         source = parseLiteral(parser, context);
 
@@ -409,20 +491,47 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
           };
     }
     case Token.LeftBrace: {
+      // ExportClause :
+      //   '{' '}'
+      //   '{' ExportsList '}'
+      //   '{' ExportsList ',' '}'
+      //
+      // ExportsList :
+      //   ExportSpecifier
+      //   ExportsList ',' ExportSpecifier
+      //
+      // ExportSpecifier :
+      //   IdentifierName
+      //   IdentifierName 'as' IdentifierName
       nextToken(parser, context, /* allowRegExp */ 0); // Skips: '{'
 
-      while (parser.token & (Token.FutureReserved | Token.Keyword | Token.IsIdentifier)) {
-        const { start, line, column } = parser;
-        const local = parseIdentifier(parser, context);
+      const tEN: string[] = []; // Temporary exported names
+      const tEB: string[] = []; // Temporary exported bindings
 
-        let exported: ESTree.Identifier | null;
+      let local: any;
+      let exported: ESTree.Identifier | null;
+      let value: string | null;
+
+      while ((parser.token & 0b00000000001001110000000000000000) > 0) {
+        const { start, line, column, tokenValue } = parser;
+
+        value = tokenValue;
+
+        nextToken(parser, context, /* allowRegExp */ 0);
+
+        local = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
         if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
+          if ((parser.token & 0b00000000000010000000000000000000) > 0) report(parser, Errors.InvalidKeywordAsAlias);
+          value = parser.tokenValue;
           exported = parseIdentifier(parser, context);
         } else {
           exported = local;
         }
+
+        tEN.push(value as string);
+        tEB.push(tokenValue);
 
         specifiers.push(
           context & Context.OptionsLoc
@@ -444,10 +553,24 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         if ((parser.token as Token) !== Token.RightBrace) consume(parser, context, Token.Comma, /* allowRegExp */ 0);
       }
 
-      consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
+      consume(parser, context, Token.RightBrace, /* allowRegExp */ 1);
 
-      if (consumeOpt(parser, context, Token.FromKeyword, /* allowRegExp */ 0)) {
+      if ((parser.token as Token) === Token.FromKeyword) {
+        nextToken(parser, context, /* allowRegExp */ 0);
+        if ((parser.token as Token) !== Token.StringLiteral) report(parser, Errors.InvalidExportImportSource, 'Export');
         source = parseLiteral(parser, context);
+      } else {
+        let i = tEN.length;
+
+        while (i--) {
+          declareUnboundVariable(parser, tEN[i]);
+        }
+
+        i = tEB.length;
+
+        while (i--) {
+          addBindingToExports(parser, tEB[i]);
+        }
       }
 
       expectSemicolon(parser, context);
@@ -456,14 +579,14 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     }
 
     case Token.ClassKeyword:
-      declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Hoisted);
+      declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Export);
       break;
     case Token.FunctionKeyword:
       declaration = parseFunctionDeclaration(
         parser,
         context,
         scope,
-        FunctionFlag.IsDeclaration | FunctionFlag.AllowGenerator | FunctionFlag.RequireIdentifier,
+        0b00000000000000000000000000011011,
         Origin.TopLevel
       );
       break;
@@ -496,12 +619,13 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
           parser,
           context,
           scope,
-          FunctionFlag.IsAsync | FunctionFlag.IsDeclaration,
+          0b00000000000000000000000000001111,
           Origin.Export,
           start,
           line,
           column
         );
+        declareUnboundVariable(parser, declaration.id ? declaration.id.name : '');
         break;
       }
     }

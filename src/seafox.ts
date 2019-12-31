@@ -6,6 +6,7 @@ import { skipHashBang } from './scanner/comments';
 import { parseModuleItemListAndDirectives } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { ScopeKind } from './parser/scope';
+import { Errors, report } from './errors';
 
 /**
  * Parse a script, optionally with various options.
@@ -79,11 +80,16 @@ export function parseModule(source: string, options?: Options): Program {
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const body = parseModuleItemListAndDirectives(parser, context | Context.InGlobal, {
+  const scope = {
     parent: void 0,
     type: ScopeKind.Block
-  });
+  };
 
+  const body = parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope);
+
+  for (const key in parser.exportedBindings) {
+    if (key[0] === '#' && !(scope as any)[key]) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
+  }
   return context & Context.OptionsLoc
     ? {
         type: 'Program',
