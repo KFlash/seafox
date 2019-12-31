@@ -103,8 +103,5 @@ export const enum BindingKind {
   FunctionStatement         = 1 << 7,
   CatchPattern              = 1 << 8,
   CatchIdentifier           = 1 << 9,
-  Pattern                   = 1 << 10,
-  CatchIdentifierOrPattern  = CatchIdentifier | CatchPattern,
-  LexicalOrFunction         = Variable | FunctionLexical,
-  LexicalBinding            = Let | Const | FunctionLexical | FunctionStatement | Class
+  Pattern                   = 1 << 10
 }

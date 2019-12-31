@@ -219,7 +219,7 @@ export function parseLabelledStatement(
 
   const body =
     // Disallow if web compability is off
-    context & (Context.OptionsDisableWebCompat | Context.Strict) || parser.token !== Token.FunctionKeyword
+    (context & 0b00000000000000000000010000010000) > 0 || parser.token !== Token.FunctionKeyword
       ? parseStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl)
       : parseFunctionDeclaration(parser, context, scope, FunctionFlag.IsDeclaration, origin);
 

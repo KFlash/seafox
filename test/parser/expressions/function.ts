@@ -4,6 +4,7 @@ import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Function', () => {
   for (const [source, ctx] of [
+    [`"use strict"; function package(){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
     [`function f(...rest + x){}`, Context.Empty],
     [`function f(a, ...rest, b){}`, Context.Empty],

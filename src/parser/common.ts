@@ -3,10 +3,6 @@ import { nextToken } from '../scanner/scan';
 import { report, Errors } from '../errors';
 import { Context, Flags, BindingKind } from './bits';
 
-export function getStartLoc(parser: ParserState) {
-  return { start: parser.start, line: parser.line, column: parser.line };
-}
-
 /**
  * The parser interface.
  */
@@ -178,18 +174,14 @@ export function isExactlyStrictDirective(parser: ParserState, index: number, sta
   return true;
 }
 
-/**
- * Validates binding identifier
- *
- * @param parser Parser state
- * @param context Context masks
- * @param type Binding type
- * @param token Token
- */
+export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
+  if (parser.token !== t) report(parser, Errors.Unexpected);
+  nextToken(parser, context, allowRegExp);
+}
 
 export function validateFunctionName(parser: ParserState, context: Context, t: Token): void {
   if (context & Context.Strict) {
-    if ((t & Token.FutureReserved) === Token.FutureReserved) {
+    if ((t & Token.FutureReserved) > 0) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
     if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
@@ -197,7 +189,7 @@ export function validateFunctionName(parser: ParserState, context: Context, t: T
     }
   }
 
-  if ((t & Token.Keyword) === Token.Keyword) {
+  if ((t & Token.Keyword) > 0) {
     report(parser, Errors.KeywordNotId);
   }
 
@@ -211,22 +203,13 @@ export function validateFunctionName(parser: ParserState, context: Context, t: T
 }
 
 export function isValidIdentifier(context: Context, t: Token): boolean {
-  if (context & (Context.Strict | Context.InYieldContext)) {
-    // Module code is also "strict mode code"
-    if (context & Context.Module && t === Token.AwaitKeyword) return false;
-    if (context & Context.InYieldContext && t === Token.YieldKeyword) return false;
-    return (t & Token.IsIdentifier) === Token.IsIdentifier || (t & Token.Contextual) === Token.Contextual;
-  }
-
-  return (
-    (t & Token.IsIdentifier) === Token.IsIdentifier ||
-    (t & Token.Contextual) === Token.Contextual ||
-    (t & Token.FutureReserved) === Token.FutureReserved
-  );
-}
-export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
-  if (parser.token !== t) report(parser, Errors.Unexpected);
-  nextToken(parser, context, allowRegExp);
+  return context & (Context.Strict | Context.InYieldContext)
+    ? context & Context.Module && t === Token.AwaitKeyword
+      ? false
+      : context & Context.InYieldContext && t === Token.YieldKeyword
+      ? false
+      : (t & Token.IsIdentifier) > 0
+    : (t & Token.IsIdentifier) > 0 || (t & Token.FutureReserved) > 0;
 }
 
 export function isStrictReservedWord(parser: ParserState, context: Context, t: Token, inGroup: 0 | 1): boolean {
@@ -243,12 +226,12 @@ export function isStrictReservedWord(parser: ParserState, context: Context, t: T
 
 export function validateIdentifier(parser: ParserState, context: Context, kind: BindingKind, t: Token): void {
   if (context & Context.Strict) {
-    if ((t & Token.FutureReserved) === Token.FutureReserved) {
+    if ((t & Token.FutureReserved) > 0) {
       report(parser, Errors.UnexpectedStrictReserved);
     }
   }
 
-  if ((t & Token.Keyword) === Token.Keyword) {
+  if ((t & Token.Keyword) > 0) {
     report(parser, Errors.KeywordNotId);
   }
 

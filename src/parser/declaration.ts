@@ -74,8 +74,8 @@ export function parseFunctionDeclarationRest(
   let id: ESTree.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  // Create a new function scope
-  let innerScope: ScopeState = {
+  // Create a new parent function scope
+  let parent: ScopeState = {
     parent: void 0,
     type: ScopeKind.Block
   };
@@ -96,8 +96,8 @@ export function parseFunctionDeclarationRest(
 
     if (flags & FunctionFlag.Export) declareUnboundVariable(parser, tokenValue);
 
-    innerScope = {
-      parent: innerScope,
+    parent = {
+      parent,
       type: ScopeKind.FunctionRoot,
       scopeError: void 0
     };
@@ -108,15 +108,13 @@ export function parseFunctionDeclarationRest(
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
   }
-  context =
-    ((context | 0b0000001111011000000_0000_00000000) ^ 0b0000001111011000000_0000_00000000) |
-    Context.AllowNewTarget |
-    ((isAsync * 2 + isGenerator) << 21);
 
   return parseFunctionLiteral(
     parser,
-    context,
-    innerScope,
+    ((context | 0b0000001111011000000_0000_00000000) ^ 0b0000001111011000000_0000_00000000) |
+      Context.AllowNewTarget |
+      ((isAsync * 2 + isGenerator) << 21),
+    parent,
     id,
     firstRestricted,
     flags,
@@ -215,7 +213,9 @@ export function parseVariableStatementOrLexicalDeclaration(
   origin: Origin
 ): ESTree.VariableDeclaration {
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 0);
+
   const declarations = parseVariableDeclarationListAndDeclarator(parser, context, scope, kind, origin);
 
   expectSemicolon(parser, context);
