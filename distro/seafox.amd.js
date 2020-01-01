@@ -4815,7 +4815,7 @@ define(['exports'], function (exports) { 'use strict';
               parser.assignable = 0;
               nextToken(parser, context, 0);
               isOptional = 1;
-              if ((parser.token & (65536 | 131072 | 262144 | 2162688)) !== 0) {
+              if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                   const property = parseIdentifier(parser, context);
                   expr =
                       context & 2
@@ -5259,13 +5259,13 @@ define(['exports'], function (exports) { 'use strict';
       const params = [];
       while (parser.token !== 17) {
           const { token, tokenValue, start, line, column } = parser;
-          if (token & (2162688 | 131072 | 262144)) {
+          if ((token & 0b00000000001001110000000000000000) > 0) {
               addBlockName(parser, context, scope, tokenValue, 1, 0);
               expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column);
               if (parser.token === 17 || parser.token === 19) {
                   conjuncted |=
                       (parser.assignable === 0 ? 8 | 256 : 0) |
-                          ((token & (262144 | 537919488)) !== 0 ? 256 : 0);
+                          ((token & (262144 | 537919488)) > 0 ? 256 : 0);
               }
               else if (parser.token === 67108896) {
                   conjuncted |= 256;
@@ -5669,6 +5669,26 @@ define(['exports'], function (exports) { 'use strict';
   }
   function parseParenthesizedExpression(parser, context, inGroup, canAssign, kind, origin, curStart, curLine, curColumn) {
       nextToken(parser, context, 1);
+      parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
+      context = (context | 8192) ^ 8192;
+      let expr = [];
+      if (parser.token === 17) {
+          if (canAssign === 0)
+              report(parser, 73);
+          nextToken(parser, context, 0);
+          return parseArrowFunction(parser, context, {
+              parent: {
+                  parent: void 0,
+                  type: 2
+              },
+              type: 512,
+              scopeError: void 0
+          }, expr, 0, curStart, curLine, curColumn);
+      }
+      let expressions = [];
+      let inSequence = 0;
+      let conjuncted = 0;
+      const { start: sStart, line: sLine, column: sColumn } = parser;
       const scope = {
           parent: {
               parent: void 0,
@@ -5677,23 +5697,10 @@ define(['exports'], function (exports) { 'use strict';
           type: 512,
           scopeError: void 0
       };
-      parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
-      context = (context | 8192) ^ 8192;
-      let expr = [];
-      if (parser.token === 17) {
-          if (canAssign === 0)
-              report(parser, 73);
-          nextToken(parser, context, 0);
-          return parseArrowFunction(parser, context, scope, expr, 0, curStart, curLine, curColumn);
-      }
-      let expressions = [];
-      let isSequence = 0;
-      let conjuncted = 0;
-      const { start: sStart, line: sLine, column: sColumn } = parser;
       parser.assignable = 1;
       while (parser.token !== 17) {
           const { token, start, line, column, tokenValue } = parser;
-          if (token & (131072 | 262144 | 2162688)) {
+          if ((token & 0b00000000001001110000000000000000) > 0) {
               addBlockName(parser, context, scope, tokenValue, 1, 0);
               expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column);
               if (parser.token === 19 || parser.token === 17) {
@@ -5722,8 +5729,24 @@ define(['exports'], function (exports) { 'use strict';
                       report(parser, 64);
                   expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
                   conjuncted |= 8;
-                  if (parser.token !== 19 && parser.token !== 17) {
-                      expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+                  if ((parser.token & 0b00000100000000000000000000000000) > 0) {
+                      if (parser.assignable === 0)
+                          report(parser, 60);
+                      expr = parseAssignmentOrPattern(parser, context, 0, 0, expr, KeywordDescTable[parser.token & 0b00000000000000000000000011111111], start, line, column);
+                  }
+                  else if ((parser.token & 0b00001000000100000000000000000000) > 0) {
+                      expr = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, expr);
+                      if (parser.token === 23) {
+                          expr = parseConditionalExpression(parser, context, expr, start, line, column);
+                      }
+                  }
+                  else {
+                      if (parser.token === 23) {
+                          expr = parseConditionalExpression(parser, context, expr, start, line, column);
+                      }
+                      else {
+                          conjuncted |= parser.assignable === 0 ? 8 : 4;
+                      }
                   }
               }
           }
@@ -5731,7 +5754,7 @@ define(['exports'], function (exports) { 'use strict';
               expr = parseSpreadOrRestElement(parser, context, scope, 17, 0, 0, 0, kind, origin, start, line, column);
               if (parser.flags & 8)
                   report(parser, 63);
-              if (isSequence && (parser.token === 17 || parser.token === 19)) {
+              if (inSequence && (parser.token === 17 || parser.token === 19)) {
                   expressions.push(expr);
               }
               conjuncted |= 16 | 256;
@@ -5740,16 +5763,16 @@ define(['exports'], function (exports) { 'use strict';
           else {
               conjuncted |= 8;
               expr = parseExpression(parser, context, inGroup);
-              if (isSequence && (parser.token === 19 || parser.token === 17)) {
+              if (inSequence && (parser.token === 19 || parser.token === 17)) {
                   expressions.push(expr);
               }
               if (parser.token === 19) {
-                  if (!isSequence) {
-                      isSequence = 1;
+                  if (inSequence === 0) {
+                      inSequence = 1;
                       expressions = [expr];
                   }
               }
-              if (isSequence) {
+              if (inSequence) {
                   while (consumeOpt(parser, context, 19, 1)) {
                       expressions.push(parseExpression(parser, context, inGroup));
                   }
@@ -5772,14 +5795,14 @@ define(['exports'], function (exports) { 'use strict';
                   ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
               return expr;
           }
-          if (isSequence && (parser.token === 19 || parser.token === 17)) {
+          if (inSequence && (parser.token === 19 || parser.token === 17)) {
               expressions.push(expr);
           }
           if (parser.token !== 19)
               break;
           nextToken(parser, context, 1);
-          if (!isSequence) {
-              isSequence = 1;
+          if (!inSequence) {
+              inSequence = 1;
               expressions = [expr];
           }
           if (parser.token === 17) {
@@ -5787,7 +5810,7 @@ define(['exports'], function (exports) { 'use strict';
               break;
           }
       }
-      if (isSequence) {
+      if (inSequence) {
           parser.assignable = 0;
           expr =
               context & 2
@@ -5813,7 +5836,7 @@ define(['exports'], function (exports) { 'use strict';
           if (context & (4194304 | 2048) && conjuncted & 2048) {
               report(parser, 37);
           }
-          return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, isSequence ? expressions : [expr], canAssign, 0, curStart, curLine, curColumn);
+          return parseArrowFunctionAfterParen(parser, context, scope, conjuncted, inSequence ? expressions : [expr], canAssign, 0, curStart, curLine, curColumn);
       }
       else if (conjuncted & 16) {
           report(parser, 75);
@@ -6093,11 +6116,11 @@ define(['exports'], function (exports) { 'use strict';
                       left = parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, '=', start, line, column);
                   }
                   else if (parser.token === 19 || parser.token === 21) {
-                      if (parser.assignable === 0) {
-                          conjuncted |= 8;
+                      if (parser.assignable === 1) {
+                          addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
                       }
                       else {
-                          addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
+                          conjuncted |= 8;
                       }
                   }
                   else {
@@ -6108,12 +6131,26 @@ define(['exports'], function (exports) { 'use strict';
                                   ? 8
                                   : 0;
                       left = parseMemberExpression(parser, context, left, 0, 0, 0, start, line, column);
-                      if (parser.token !== 19 && parser.token !== 21) {
-                          conjuncted |= parser.token !== 67108896 ? 8 : 0;
-                          left = parseAssignmentExpression(parser, context, isPattern, 0, left, start, line, column);
+                      if ((parser.token & 0b00000100000000000000000000000000) > 0) {
+                          if (parser.assignable === 0)
+                              report(parser, 60);
+                          left = parseAssignmentOrPattern(parser, context, isPattern, 0, left, KeywordDescTable[parser.token & 0b00000000000000000000000011111111], start, line, column);
+                      }
+                      else if ((parser.token & 0b00001000000100000000000000000000) > 0) {
+                          conjuncted |= 8;
+                          left = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, left);
+                          if (parser.token === 23) {
+                              left = parseConditionalExpression(parser, context, left, start, line, column);
+                          }
                       }
                       else {
-                          conjuncted |= parser.assignable === 0 ? 8 : 4;
+                          if (parser.token === 23) {
+                              conjuncted |= 8;
+                              left = parseConditionalExpression(parser, context, left, start, line, column);
+                          }
+                          else {
+                              conjuncted |= parser.assignable === 0 ? 8 : 4;
+                          }
                       }
                   }
               }
@@ -6227,7 +6264,7 @@ define(['exports'], function (exports) { 'use strict';
           parent: void 0,
           type: 2
       };
-      if ((parser.token & (65536 | 131072 | 262144 | 2162688)) !== 0) {
+      if ((parser.token & 0b00000000001001110000000000000000) > 0) {
           scope = {
               parent: {
                   parent: void 0,
@@ -6256,8 +6293,7 @@ define(['exports'], function (exports) { 'use strict';
           scopeError: void 0
       };
       const params = parseFormalParams(parser, context | 8388608, scope, 1, 0, isMethod);
-      const body = parseFunctionBody(parser, (context | 268435456 | 134217728 | 131072) ^
-          (268435456 | 134217728 | 131072), {
+      const body = parseFunctionBody(parser, (context | 0b00011000000000100000000000000000) ^ 0b00011000000000100000000000000000, {
           parent: scope,
           type: 64,
           scopeError: void 0
@@ -6268,8 +6304,8 @@ define(['exports'], function (exports) { 'use strict';
               type,
               params,
               body,
-              async: (context & 4194304) !== 0,
-              generator: (context & 2097152) !== 0,
+              async: (context & 4194304) > 0,
+              generator: (context & 2097152) > 0,
               id,
               start,
               end: parser.endIndex,
@@ -6279,8 +6315,8 @@ define(['exports'], function (exports) { 'use strict';
               type,
               params,
               body,
-              async: (context & 4194304) !== 0,
-              generator: (context & 2097152) !== 0,
+              async: (context & 4194304) > 0,
+              generator: (context & 2097152) > 0,
               id
           };
   }
@@ -6420,7 +6456,7 @@ define(['exports'], function (exports) { 'use strict';
   }
   function parseClassElementList(parser, context, inheritedContext, conjuncted, key, isComputed, inGroup, type, curStart, curLine, curColumn) {
       const { token, start, line, column } = parser;
-      if (token & (131072 | 65536 | 262144 | 2162688)) {
+      if ((token & 0b00000000001001110000000000000000) > 0) {
           key = parseIdentifier(parser, context);
           if (parser.token !== 1048588) {
               switch (token) {
@@ -6458,7 +6494,7 @@ define(['exports'], function (exports) { 'use strict';
           report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
       }
       if (type & (8 | 16 | 384)) {
-          if (parser.token & (131072 | 65536 | 262144 | 2162688)) {
+          if ((parser.token & 0b00000000001001110000000000000000) > 0) {
               key = parseIdentifier(parser, context);
           }
           else if ((parser.token & 524288) === 524288) {
@@ -6508,7 +6544,7 @@ define(['exports'], function (exports) { 'use strict';
           ? {
               type: 'MethodDefinition',
               kind,
-              static: (type & 32) !== 0,
+              static: (type & 32) > 0,
               computed: isComputed === 1,
               key,
               value,
@@ -6519,7 +6555,7 @@ define(['exports'], function (exports) { 'use strict';
           : {
               type: 'MethodDefinition',
               kind,
-              static: (type & 32) !== 0,
+              static: (type & 32) > 0,
               computed: isComputed === 1,
               key,
               value
@@ -6592,7 +6628,7 @@ define(['exports'], function (exports) { 'use strict';
           let isSimpleParameterList = 0;
           while (parser.token !== 17) {
               const { start, line, column, token, tokenValue } = parser;
-              if (parser.token & (131072 | 262144 | 2162688)) {
+              if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                   if ((context & 1024) !== 1024) {
                       parser.flags |=
                           ((token & 262144) === 262144 ? 64 : 0) |
@@ -6673,7 +6709,7 @@ define(['exports'], function (exports) { 'use strict';
       while (parser.token !== 17) {
           let left;
           const { start, line, column, token, tokenValue } = parser;
-          if (token & (131072 | 262144 | 2162688)) {
+          if ((token & 0b00000000001001110000000000000000) > 0) {
               if ((context & 1024) !== 1024) {
                   parser.flags |=
                       ((token & 262144) === 262144 ? 64 : 0) |
@@ -6749,7 +6785,7 @@ define(['exports'], function (exports) { 'use strict';
           }
           else {
               state = 0;
-              if (token & (65536 | 131072 | 262144 | 2162688)) {
+              if ((token & 0b00000000001001110000000000000000) > 0) {
                   key = parseIdentifier(parser, context);
                   if (parser.token === 19 ||
                       parser.token === 16777232 ||
@@ -6777,7 +6813,7 @@ define(['exports'], function (exports) { 'use strict';
                       const { start, line, column } = parser;
                       if (tokenValue === '__proto__')
                           prototypeCount++;
-                      if (parser.token & (65536 | 131072 | 262144 | 2162688)) {
+                      if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                           const { token: tokenAfterColon, tokenValue: valueAfterColon } = parser;
                           value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
                           const { token } = parser;
@@ -6789,7 +6825,7 @@ define(['exports'], function (exports) { 'use strict';
                                   if (parser.assignable === 0) {
                                       conjuncted |= 8;
                                   }
-                                  else if ((tokenAfterColon & (65536 | 2162688)) !== 0) {
+                                  else if ((tokenAfterColon & (65536 | 2162688)) > 0) {
                                       addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                                   }
                               }
@@ -6882,7 +6918,7 @@ define(['exports'], function (exports) { 'use strict';
                       key = parseComputedPropertyName(parser, context, 0);
                       value = parseMethodDefinition(parser, context, state);
                   }
-                  else if (parser.token & (131072 | 262144 | 65536 | 2162688)) {
+                  else if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                       conjuncted |= 8;
                       key = parseIdentifier(parser, context);
                       if (token === 2162799)
@@ -6911,7 +6947,7 @@ define(['exports'], function (exports) { 'use strict';
                       nextToken(parser, context, 0);
                       state |=
                           8 | 1 | (token === 2162799 ? 16 : 0);
-                      if (parser.token & (131072 | 262144 | 65536 | 2162688)) {
+                      if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                           key = parseIdentifier(parser, context);
                       }
                       else if ((parser.token & 524288) === 524288) {
@@ -6953,7 +6989,7 @@ define(['exports'], function (exports) { 'use strict';
                       const { start, line, column } = parser;
                       if (tokenValue === '__proto__')
                           prototypeCount++;
-                      if (parser.token & (65536 | 2162688)) {
+                      if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                           value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
                           const { token, tokenValue: valueAfterColon } = parser;
                           value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
@@ -7048,7 +7084,7 @@ define(['exports'], function (exports) { 'use strict';
                   if (parser.token === 22) {
                       nextToken(parser, context, 1);
                       const { start, line, column, tokenValue, token: tokenAfterColon } = parser;
-                      if (parser.token & (131072 | 262144 | 2162688)) {
+                      if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                           value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
                           const { token } = parser;
                           value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
@@ -7063,7 +7099,7 @@ define(['exports'], function (exports) { 'use strict';
                                   if (parser.assignable === 0) {
                                       conjuncted |= 8;
                                   }
-                                  else if (scope && (tokenAfterColon & 2162688) === 2162688) {
+                                  else if ((tokenAfterColon & 2162688) === 2162688) {
                                       addVarOrBlock(parser, context, scope, tokenValue, type, origin);
                                   }
                               }
@@ -7140,7 +7176,7 @@ define(['exports'], function (exports) { 'use strict';
               else if (token === 135314230) {
                   consume(parser, context, 135314230, 0);
                   state |= 8;
-                  if (parser.token & (131072 | 262144 | 2162688)) {
+                  if ((parser.token & 0b00000000001001110000000000000000) > 0) {
                       key = parseIdentifier(parser, context);
                       state |= 1;
                       if (parser.token === 1048588) {
@@ -7228,7 +7264,7 @@ define(['exports'], function (exports) { 'use strict';
       let argument;
       let conjuncted = 0;
       const { start, line, column, token, tokenValue } = parser;
-      if (token & (131072 | 262144 | 65536 | 2162688)) {
+      if ((token & 0b00000000001001110000000000000000) > 0) {
           parser.assignable = 1;
           argument = parsePrimaryExpression(parser, context, kind, 0, 1, 1, inGroup, start, line, column);
           const isClosingTokenOrComma = parser.token === closingToken || parser.token === 19;
@@ -7410,7 +7446,7 @@ define(['exports'], function (exports) { 'use strict';
   }
   function parseBindingPattern(parser, context, scope, kind, origin) {
       const { tokenValue, start, line, column, token } = parser;
-      if ((token & (131072 | 262144 | 2162688)) !== 0) {
+      if ((token & 0b00000000001001110000000000000000) > 0) {
           return parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, kind, origin, start, line, column, 1);
       }
       if ((parser.token & 33554432) !== 33554432)
