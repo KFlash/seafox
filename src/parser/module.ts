@@ -1,19 +1,11 @@
-import { ScopeState } from './scope';
+import { ScopeState, declareUnboundVariable, addBindingToExports, addBlockName } from './scope';
 import { nextToken } from '../scanner/scan';
 import { Token, KeywordDescTable } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
-import { parseNonDirectiveExpression, parseStatementListItem } from './statements';
-import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
-import {
-  ParserState,
-  expectSemicolon,
-  validateIdentifier,
-  isValidIdentifier,
-  consume,
-  consumeOpt,
-  setLoc
-} from './common';
+import { parseStatementListItem } from './statements';
+import { Context, BindingKind, ClassFlags, Origin } from './bits';
+import { ParserState, expectSemicolon, validateIdentifier, isValidIdentifier, consume, setLoc } from './common';
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,
@@ -29,10 +21,10 @@ import {
   parseMemberExpression,
   parseAssignmentExpression,
   parseIdentifierFromValue,
+  parseNonDirectiveExpression,
   parseArrowFunction,
   parseAsyncArrowOrCallExpression
 } from './expressions';
-import { declareUnboundVariable, addBindingToExports, addBlockName } from './scope';
 
 export function parseModuleItemListAndDirectives(
   parser: ParserState,

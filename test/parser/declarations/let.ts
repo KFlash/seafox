@@ -130,7 +130,7 @@ describe('Declarations - Let', () => {
     ['let [...[ x ] = []] = [];', Context.Empty],
     ['let [...[ x ] = []] = [];', Context.Empty],
     ['let [...{ x } = []] = [];', Context.Empty],
-    //['let\nlet', Context.Empty],
+    ['let\nlet', Context.Empty],
     ['do let [x] = 0; while (false);', Context.Empty],
     ['if (x) let [x] = y; else x;', Context.Empty],
     ['do let [] while (a);', Context.Empty],

@@ -31,6 +31,7 @@ import {
   parseAndClassifyIdentifier,
   parseBindingPattern,
   parseDirectives,
+  parseNonDirectiveExpression,
   parseAsyncArrowIdentifier
 } from './expressions';
 import {
@@ -38,7 +39,6 @@ import {
   expectSemicolon,
   consume,
   consumeOpt,
-  optionalBit,
   setLoc,
   isValidBreakLabel,
   reinterpretToPattern,
@@ -251,41 +251,6 @@ export function parseImportCallOrForbidImport(parser: ParserState, context: Cont
     default:
       report(parser, Errors.InvalidImportExportSloppy, 'import');
   }
-}
-
-export function parseNonDirectiveExpression(
-  parser: ParserState,
-  context: Context,
-  expr: any,
-  start: number,
-  line: number,
-  column: number
-): any {
-  /** MemberExpression :
-   *   1. PrimaryExpression
-   *   2. MemberExpression [ AssignmentExpression ]
-   *   3. MemberExpression . IdentifierName
-   *   4. MemberExpression TemplateLiteral
-   *
-   * CallExpression :
-   *   1. MemberExpression Arguments
-   *   2. CallExpression ImportCall
-   *   3. CallExpression Arguments
-   *   4. CallExpression [ AssignmentExpression ]
-   *   5. CallExpression . IdentifierName
-   *   6. CallExpression TemplateLiteral
-   *
-   *  UpdateExpression ::
-   *   ('++' | '--')? LeftHandSideExpression
-   *
-   */
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
-  /** AssignmentExpression :
-   *   1. ConditionalExpression
-   *   2. LeftHandSideExpression = AssignmentExpression
-   */
-  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
-  return parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
 }
 
 export function parseAsyncArrowOrAsyncFunctionDeclaration(

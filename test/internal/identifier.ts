@@ -130,10 +130,29 @@ describe('src/scanner/scan', () => {
     [Context.OptionsRaw, Token.Identifier, 'a፰', 'a፰'],
     [Context.OptionsRaw, Token.Identifier, '$00xxx\\u0069\\u0524\\u{20BB7}', '$00xxxiԤη'],
     [Context.OptionsRaw, Token.Identifier, 'Ф', 'Ф'],
+    [Context.OptionsRaw, Token.Identifier, '𞸀', '𞸀'],
+    [Context.OptionsRaw, Token.Identifier, '_𞸃', '_𞸃'],
+    [Context.OptionsRaw, Token.Identifier, '𞸆_$', '𞸆_$'],
+    [Context.OptionsRaw, Token.Identifier, '𐊧', '𐊧'],
+    [Context.OptionsRaw, Token.Identifier, 'Ƞ', 'Ƞ'],
+    [Context.OptionsRaw, Token.Identifier, 'ȡ', 'ȡ'],
+    [Context.OptionsRaw, Token.Identifier, 'ƌ', 'ƌ'],
+    [Context.OptionsRaw, Token.Identifier, 'ἇἐ', 'ἇἐ'],
+    [Context.OptionsRaw, Token.Identifier, 'ῴῶ', 'ῴῶ'],
+    [Context.OptionsRaw, Token.Identifier, 'ṁ', 'ṁ'],
+    [Context.OptionsRaw, Token.Identifier, 'ẕ', 'ẕ'],
+    [Context.OptionsRaw, Token.Identifier, 'ӡ', 'ӡ'],
+    [Context.OptionsRaw, Token.Identifier, 'ӽ', 'ӽ'],
+    [Context.OptionsRaw, Token.Identifier, 'ⲏⲑⲓⲕⲗⲙⲛⲝ', 'ⲏⲑⲓⲕⲗⲙⲛⲝ'],
+    [Context.OptionsRaw, Token.Identifier, 'ǆ', 'ǆ'],
+    [Context.OptionsRaw, Token.Identifier, 'ᶚ', 'ᶚ'],
+    [Context.OptionsRaw, Token.Identifier, 'ꚁ', 'ꚁ'],
+    [Context.OptionsRaw, Token.Identifier, 'ꚃ', 'ꚃ'],
     [Context.OptionsRaw, Token.Identifier, '俿abc', '俿abc'],
     [Context.OptionsRaw, Token.Identifier, 'Ȁ', 'Ȁ'],
     [Context.OptionsRaw, Token.Identifier, '\\u{4fff}', '俿'],
-    [Context.OptionsRaw, Token.Identifier, '\\u{1EE00}', '{Ȁ']
+    [Context.OptionsRaw, Token.Identifier, '\\u{1EE00}', '{Ȁ'],
+    [Context.OptionsRaw, Token.Identifier, '_\\u{1EE03}', '_{ȃ']
   ];
 
   for (const [ctx, token, op, res] of tokens) {

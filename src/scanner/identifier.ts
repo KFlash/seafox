@@ -138,17 +138,3 @@ export function scanUnicodeEscapeIdStart(parser: ParserState, context: Context, 
   parser.index++; // skip: '\'
   report(parser, Errors.InvalidUnicodeEscapeSequence);
 }
-
-export function scanMaybeIdentifier(parser: ParserState, context: Context, source: string, char: number): any {
-  if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
-    if ((char & 0xfc00) === 0xdc00) {
-      char = ((char & 0x3ff) << 10) | (char & 0x3ff) | 0x10000;
-      if (((unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1) === 0) {
-        report(parser, Errors.IllegalCaracter, fromCodePoint(char));
-      }
-      parser.index++;
-    }
-    return scanIdentifierSlowPath(parser, context, source, '', /* maybeKeyword */ 0);
-  }
-  report(parser, Errors.IllegalCaracter, fromCodePoint(char));
-}

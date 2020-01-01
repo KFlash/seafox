@@ -22,8 +22,7 @@ import {
   parseExpressionStatement,
   parseAssignmentExpression,
   parseImportMetaExpression,
-  parseExpression,
-  parseIdentifier
+  parseExpression
 } from './expressions';
 
 /**

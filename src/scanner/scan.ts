@@ -6,7 +6,7 @@ import {
   skipSingleLineComment,
   skipMultiLineComment,
   skipSingleHTMLComment,
-  scanMaybeIdentifier,
+  scanIdentifierSlowPath,
   scanIdentifier,
   scanIdentifierOrKeyword,
   scanUnicodeEscapeIdStart,
@@ -65,7 +65,10 @@ export function scan(
         continue;
       }
 
-      return scanMaybeIdentifier(parser, context, source, char);
+      if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
+        return scanIdentifierSlowPath(parser, context, source, '', /* maybeKeyword */ 0);
+      }
+      report(parser, Errors.IllegalCaracter, fromCodePoint(char));
     }
 
     // Jump table used to optimize the switch

@@ -13,8 +13,19 @@ describe('Expressions - Async', () => {
     ['async let {}', Context.Empty],
     ['async let {} = y', Context.Empty],
     ['async let {x} = y', Context.Empty],
+    ['({async get foo() { }})', Context.Empty],
+    ['({async set foo(value) { }})', Context.Empty],
+    ['({async foo() { var await }})', Context.Empty],
+    ['({async foo(await) { }})', Context.Empty],
+    ['({async foo() { return {await} }})', Context.Empty],
+    ['({async foo: 1})', Context.Empty],
+    ['class A {static async\nfoo() { }}', Context.Empty],
+    ['class A {async constructor() { }}', Context.Empty],
+    ['async function wrap() {\n(a = await b) => a\n}', Context.Empty],
+    ['async function wrap() {\n({a = await b} = obj) => a\n}', Context.Empty],
     ['class X { async(async => {}) {} }', Context.Empty],
     ['foo(async[])', Context.Empty],
+    ['(async\nfunction foo() { })', Context.Empty],
     ['var O = { async method() {var [ await ] = 1;}', Context.Empty],
     ['function f() {for (let in {}) {}}', Context.Strict],
     ['async while (1) {}', Context.Empty]
@@ -31,6 +42,353 @@ describe('Expressions - Async', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `async function await() { }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 23,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 23
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'await',
+              start: 15,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
+    [
+      `({async await() { }})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'await',
+                    start: 8,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 16,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 16
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    async: true,
+                    generator: false,
+                    id: null,
+                    start: 13,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: true,
+                  shorthand: false,
+                  start: 2,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `(async function foo(a) { await a })`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'FunctionExpression',
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 20,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 20
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                }
+              ],
+              body: {
+                type: 'BlockStatement',
+                body: [
+                  {
+                    type: 'ExpressionStatement',
+                    expression: {
+                      type: 'AwaitExpression',
+                      argument: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 31,
+                        end: 32,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 31
+                          },
+                          end: {
+                            line: 1,
+                            column: 32
+                          }
+                        }
+                      },
+                      start: 25,
+                      end: 32,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 25
+                        },
+                        end: {
+                          line: 1,
+                          column: 32
+                        }
+                      }
+                    },
+                    start: 25,
+                    end: 32,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 25
+                      },
+                      end: {
+                        line: 1,
+                        column: 32
+                      }
+                    }
+                  }
+                ],
+                start: 23,
+                end: 34,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 23
+                  },
+                  end: {
+                    line: 1,
+                    column: 34
+                  }
+                }
+              },
+              async: true,
+              generator: false,
+              id: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 16,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              },
+              start: 1,
+              end: 34,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 34
+                }
+              }
+            },
+            start: 0,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 35,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 35
+          }
+        }
+      }
+    ],
     [
       `async: function f() {}`,
       Context.OptionsLoc,
@@ -252,6 +610,174 @@ describe('Expressions - Async', () => {
           end: {
             line: 1,
             column: 27
+          }
+        }
+      }
+    ],
+    [
+      `(async() => { await 4 ** 2 })()`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'BlockStatement',
+                  body: [
+                    {
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'BinaryExpression',
+                        left: {
+                          type: 'AwaitExpression',
+                          argument: {
+                            type: 'Literal',
+                            value: 4,
+                            start: 20,
+                            end: 21,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 20
+                              },
+                              end: {
+                                line: 1,
+                                column: 21
+                              }
+                            }
+                          },
+                          start: 14,
+                          end: 21,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 14
+                            },
+                            end: {
+                              line: 1,
+                              column: 21
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: 2,
+                          start: 25,
+                          end: 26,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 25
+                            },
+                            end: {
+                              line: 1,
+                              column: 26
+                            }
+                          }
+                        },
+                        operator: '**',
+                        start: 14,
+                        end: 26,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 14
+                          },
+                          end: {
+                            line: 1,
+                            column: 26
+                          }
+                        }
+                      },
+                      start: 14,
+                      end: 26,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 26
+                        }
+                      }
+                    }
+                  ],
+                  start: 12,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 28
+                    }
+                  }
+                },
+                params: [],
+                async: true,
+                expression: false,
+                start: 1,
+                end: 28,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 28
+                  }
+                }
+              },
+              arguments: [],
+              optional: false,
+              shortCircuited: false,
+              start: 0,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
           }
         }
       }

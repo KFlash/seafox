@@ -3,6 +3,14 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Array', () => {
+  /* function convertDecimalToBinary(digit: any, groups: boolean): string {
+    let res = '';
+    for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
+    // Makes a groups of 8 bits
+    if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, "_");
+    return res;
+}
+console.log(convertDecimalToBinary(2555904, false))*/
   for (const arg of [
     '[(x.y) = [1/42]/=2]',
     '[[[[[[[[[[[[[[[[[[[[{a=b}]]]]]]]]]]]]]]]]]]]]',
@@ -256,8 +264,6469 @@ describe('Expressions - Array', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `[a.b / c]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 1,
+                      end: 2,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 2
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 3,
+                      end: 4,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 4
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'c',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  operator: '/',
+                  start: 1,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      `[...{a: 0}.x] = [];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'a',
+                              start: 5,
+                              end: 6,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 5
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 6
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: 0,
+                              start: 8,
+                              end: 9,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 8
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 9
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: false,
+                            start: 5,
+                            end: 9,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 5
+                              },
+                              end: {
+                                line: 1,
+                                column: 9
+                              }
+                            }
+                          }
+                        ],
+                        start: 4,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 11,
+                        end: 12,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 12
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 4,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 16,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              start: 0,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
+    [
+      `[{a: 0}.x] = [];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ObjectExpression',
+                      properties: [
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'a',
+                            start: 2,
+                            end: 3,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 2
+                              },
+                              end: {
+                                line: 1,
+                                column: 3
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: 0,
+                            start: 5,
+                            end: 6,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 5
+                              },
+                              end: {
+                                line: 1,
+                                column: 6
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: false,
+                          start: 2,
+                          end: 6,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 6
+                            }
+                          }
+                        }
+                      ],
+                      start: 1,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 13,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              start: 0,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `[...[0].x] = [];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ArrayExpression',
+                        elements: [
+                          {
+                            type: 'Literal',
+                            value: 0,
+                            start: 5,
+                            end: 6,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 5
+                              },
+                              end: {
+                                line: 1,
+                                column: 6
+                              }
+                            }
+                          }
+                        ],
+                        start: 4,
+                        end: 7,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 7
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 4,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 13,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              start: 0,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `[...[x[yield]]] =[101];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'ArrayPattern',
+                      elements: [
+                        {
+                          type: 'MemberExpression',
+                          object: {
+                            type: 'Identifier',
+                            name: 'x',
+                            start: 5,
+                            end: 6,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 5
+                              },
+                              end: {
+                                line: 1,
+                                column: 6
+                              }
+                            }
+                          },
+                          computed: true,
+                          property: {
+                            type: 'Identifier',
+                            name: 'yield',
+                            start: 7,
+                            end: 12,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 7
+                              },
+                              end: {
+                                line: 1,
+                                column: 12
+                              }
+                            }
+                          },
+                          optional: false,
+                          shortCircuited: false,
+                          start: 5,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 5
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        }
+                      ],
+                      start: 4,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [
+                  {
+                    type: 'Literal',
+                    value: 101,
+                    start: 18,
+                    end: 21,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 21
+                      }
+                    }
+                  }
+                ],
+                start: 17,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              },
+              start: 0,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `[[a] ? x : bcd]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ConditionalExpression',
+                  test: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 2,
+                        end: 3,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 3
+                          }
+                        }
+                      }
+                    ],
+                    start: 1,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  consequent: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  alternate: {
+                    type: 'Identifier',
+                    name: 'bcd',
+                    start: 11,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `[[a] / bcd]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 2,
+                        end: 3,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 3
+                          }
+                        }
+                      }
+                    ],
+                    start: 1,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'bcd',
+                    start: 7,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  operator: '/',
+                  start: 1,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 11,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `[({a})]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ObjectExpression',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 3,
+                        end: 4,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 3
+                          },
+                          end: {
+                            line: 1,
+                            column: 4
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 3,
+                        end: 4,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 3
+                          },
+                          end: {
+                            line: 1,
+                            column: 4
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 3,
+                      end: 4,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 4
+                        }
+                      }
+                    }
+                  ],
+                  start: 2,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 7,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 7
+          }
+        }
+      }
+    ],
+    [
+      `[{eval}.x] = [];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ObjectExpression',
+                      properties: [
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'eval',
+                            start: 2,
+                            end: 6,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 2
+                              },
+                              end: {
+                                line: 1,
+                                column: 6
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Identifier',
+                            name: 'eval',
+                            start: 2,
+                            end: 6,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 2
+                              },
+                              end: {
+                                line: 1,
+                                column: 6
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: true,
+                          start: 2,
+                          end: 6,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 6
+                            }
+                          }
+                        }
+                      ],
+                      start: 1,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 13,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              start: 0,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `({...{b: 0}.x} = {});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ObjectPattern',
+                properties: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 6,
+                              end: 7,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 6
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 7
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: 0,
+                              start: 9,
+                              end: 10,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 9
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 10
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: false,
+                            start: 6,
+                            end: 10,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 6
+                              },
+                              end: {
+                                line: 1,
+                                column: 10
+                              }
+                            }
+                          }
+                        ],
+                        start: 5,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 5,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 2,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  }
+                ],
+                start: 1,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ObjectExpression',
+                properties: [],
+                start: 17,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              },
+              start: 1,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `[...rest, ,1]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'SpreadElement',
+                  argument: {
+                    type: 'Identifier',
+                    name: 'rest',
+                    start: 4,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                null,
+                {
+                  type: 'Literal',
+                  value: 1,
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `[a, b.c.d = (a) / 2 ] = [10, 20];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 1,
+                    end: 2,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 2
+                      }
+                    }
+                  },
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'Identifier',
+                          name: 'b',
+                          start: 4,
+                          end: 5,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 4
+                            },
+                            end: {
+                              line: 1,
+                              column: 5
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'c',
+                          start: 6,
+                          end: 7,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 6
+                            },
+                            end: {
+                              line: 1,
+                              column: 7
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 4,
+                        end: 7,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 7
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'd',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 4,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'BinaryExpression',
+                      left: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 13,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 13
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      },
+                      right: {
+                        type: 'Literal',
+                        value: 2,
+                        start: 18,
+                        end: 19,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 18
+                          },
+                          end: {
+                            line: 1,
+                            column: 19
+                          }
+                        }
+                      },
+                      operator: '/',
+                      start: 12,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    start: 4,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 21,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 21
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [
+                  {
+                    type: 'Literal',
+                    value: 10,
+                    start: 25,
+                    end: 27,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 25
+                      },
+                      end: {
+                        line: 1,
+                        column: 27
+                      }
+                    }
+                  },
+                  {
+                    type: 'Literal',
+                    value: 20,
+                    start: 29,
+                    end: 31,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 29
+                      },
+                      end: {
+                        line: 1,
+                        column: 31
+                      }
+                    }
+                  }
+                ],
+                start: 24,
+                end: 32,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 24
+                  },
+                  end: {
+                    line: 1,
+                    column: 32
+                  }
+                }
+              },
+              start: 0,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            start: 0,
+            end: 33,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 33
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 33,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 33
+          }
+        }
+      }
+    ],
+    [
+      `[a=5, b=(async)] = ([1]);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 1,
+                      end: 2,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 2
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Literal',
+                      value: 5,
+                      start: 3,
+                      end: 4,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 4
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 6,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'async',
+                      start: 9,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 9
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 6,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [
+                  {
+                    type: 'Literal',
+                    value: 1,
+                    start: 21,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 21
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  }
+                ],
+                start: 20,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 20
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              },
+              start: 0,
+              end: 24,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 24
+                }
+              }
+            },
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      `[a, ...b] = [1, 2, ...(c / 2)];`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 1,
+                    end: 2,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 2
+                      }
+                    }
+                  },
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 7,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    start: 4,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [
+                  {
+                    type: 'Literal',
+                    value: 1,
+                    start: 13,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  {
+                    type: 'Literal',
+                    value: 2,
+                    start: 16,
+                    end: 17,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 16
+                      },
+                      end: {
+                        line: 1,
+                        column: 17
+                      }
+                    }
+                  },
+                  {
+                    type: 'SpreadElement',
+                    argument: {
+                      type: 'BinaryExpression',
+                      left: {
+                        type: 'Identifier',
+                        name: 'c',
+                        start: 23,
+                        end: 24,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 23
+                          },
+                          end: {
+                            line: 1,
+                            column: 24
+                          }
+                        }
+                      },
+                      right: {
+                        type: 'Literal',
+                        value: 2,
+                        start: 27,
+                        end: 28,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 27
+                          },
+                          end: {
+                            line: 1,
+                            column: 28
+                          }
+                        }
+                      },
+                      operator: '/',
+                      start: 23,
+                      end: 28,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 28
+                        }
+                      }
+                    },
+                    start: 19,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  }
+                ],
+                start: 12,
+                end: 30,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 30
+                  }
+                }
+              },
+              start: 0,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `[[[a.b =[{ x: x.b }]]]]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ArrayExpression',
+                  elements: [
+                    {
+                      type: 'ArrayExpression',
+                      elements: [
+                        {
+                          type: 'AssignmentExpression',
+                          left: {
+                            type: 'MemberExpression',
+                            object: {
+                              type: 'Identifier',
+                              name: 'a',
+                              start: 3,
+                              end: 4,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 3
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 4
+                                }
+                              }
+                            },
+                            computed: false,
+                            property: {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 5,
+                              end: 6,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 5
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 6
+                                }
+                              }
+                            },
+                            optional: false,
+                            shortCircuited: false,
+                            start: 3,
+                            end: 6,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 3
+                              },
+                              end: {
+                                line: 1,
+                                column: 6
+                              }
+                            }
+                          },
+                          operator: '=',
+                          right: {
+                            type: 'ArrayExpression',
+                            elements: [
+                              {
+                                type: 'ObjectExpression',
+                                properties: [
+                                  {
+                                    type: 'Property',
+                                    key: {
+                                      type: 'Identifier',
+                                      name: 'x',
+                                      start: 11,
+                                      end: 12,
+                                      loc: {
+                                        start: {
+                                          line: 1,
+                                          column: 11
+                                        },
+                                        end: {
+                                          line: 1,
+                                          column: 12
+                                        }
+                                      }
+                                    },
+                                    value: {
+                                      type: 'MemberExpression',
+                                      object: {
+                                        type: 'Identifier',
+                                        name: 'x',
+                                        start: 14,
+                                        end: 15,
+                                        loc: {
+                                          start: {
+                                            line: 1,
+                                            column: 14
+                                          },
+                                          end: {
+                                            line: 1,
+                                            column: 15
+                                          }
+                                        }
+                                      },
+                                      computed: false,
+                                      property: {
+                                        type: 'Identifier',
+                                        name: 'b',
+                                        start: 16,
+                                        end: 17,
+                                        loc: {
+                                          start: {
+                                            line: 1,
+                                            column: 16
+                                          },
+                                          end: {
+                                            line: 1,
+                                            column: 17
+                                          }
+                                        }
+                                      },
+                                      optional: false,
+                                      shortCircuited: false,
+                                      start: 14,
+                                      end: 17,
+                                      loc: {
+                                        start: {
+                                          line: 1,
+                                          column: 14
+                                        },
+                                        end: {
+                                          line: 1,
+                                          column: 17
+                                        }
+                                      }
+                                    },
+                                    kind: 'init',
+                                    computed: false,
+                                    method: false,
+                                    shorthand: false,
+                                    start: 11,
+                                    end: 17,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 11
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 17
+                                      }
+                                    }
+                                  }
+                                ],
+                                start: 9,
+                                end: 19,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 9
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 19
+                                  }
+                                }
+                              }
+                            ],
+                            start: 8,
+                            end: 20,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 8
+                              },
+                              end: {
+                                line: 1,
+                                column: 20
+                              }
+                            }
+                          },
+                          start: 3,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 3
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        }
+                      ],
+                      start: 2,
+                      end: 21,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 21
+                        }
+                      }
+                    }
+                  ],
+                  start: 1,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `[[[a.b =[{ x: x.b }]]] = abc]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'ArrayPattern',
+                        elements: [
+                          {
+                            type: 'AssignmentPattern',
+                            left: {
+                              type: 'MemberExpression',
+                              object: {
+                                type: 'Identifier',
+                                name: 'a',
+                                start: 3,
+                                end: 4,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 3
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 4
+                                  }
+                                }
+                              },
+                              computed: false,
+                              property: {
+                                type: 'Identifier',
+                                name: 'b',
+                                start: 5,
+                                end: 6,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 5
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 6
+                                  }
+                                }
+                              },
+                              optional: false,
+                              shortCircuited: false,
+                              start: 3,
+                              end: 6,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 3
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 6
+                                }
+                              }
+                            },
+                            right: {
+                              type: 'ArrayExpression',
+                              elements: [
+                                {
+                                  type: 'ObjectExpression',
+                                  properties: [
+                                    {
+                                      type: 'Property',
+                                      key: {
+                                        type: 'Identifier',
+                                        name: 'x',
+                                        start: 11,
+                                        end: 12,
+                                        loc: {
+                                          start: {
+                                            line: 1,
+                                            column: 11
+                                          },
+                                          end: {
+                                            line: 1,
+                                            column: 12
+                                          }
+                                        }
+                                      },
+                                      value: {
+                                        type: 'MemberExpression',
+                                        object: {
+                                          type: 'Identifier',
+                                          name: 'x',
+                                          start: 14,
+                                          end: 15,
+                                          loc: {
+                                            start: {
+                                              line: 1,
+                                              column: 14
+                                            },
+                                            end: {
+                                              line: 1,
+                                              column: 15
+                                            }
+                                          }
+                                        },
+                                        computed: false,
+                                        property: {
+                                          type: 'Identifier',
+                                          name: 'b',
+                                          start: 16,
+                                          end: 17,
+                                          loc: {
+                                            start: {
+                                              line: 1,
+                                              column: 16
+                                            },
+                                            end: {
+                                              line: 1,
+                                              column: 17
+                                            }
+                                          }
+                                        },
+                                        optional: false,
+                                        shortCircuited: false,
+                                        start: 14,
+                                        end: 17,
+                                        loc: {
+                                          start: {
+                                            line: 1,
+                                            column: 14
+                                          },
+                                          end: {
+                                            line: 1,
+                                            column: 17
+                                          }
+                                        }
+                                      },
+                                      kind: 'init',
+                                      computed: false,
+                                      method: false,
+                                      shorthand: false,
+                                      start: 11,
+                                      end: 17,
+                                      loc: {
+                                        start: {
+                                          line: 1,
+                                          column: 11
+                                        },
+                                        end: {
+                                          line: 1,
+                                          column: 17
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  start: 9,
+                                  end: 19,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 9
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 19
+                                    }
+                                  }
+                                }
+                              ],
+                              start: 8,
+                              end: 20,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 8
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 20
+                                }
+                              }
+                            },
+                            start: 3,
+                            end: 20,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 3
+                              },
+                              end: {
+                                line: 1,
+                                column: 20
+                              }
+                            }
+                          }
+                        ],
+                        start: 2,
+                        end: 21,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 21
+                          }
+                        }
+                      }
+                    ],
+                    start: 1,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'Identifier',
+                    name: 'abc',
+                    start: 25,
+                    end: 28,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 25
+                      },
+                      end: {
+                        line: 1,
+                        column: 28
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 28
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `[(a) = (b)]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 2,
+                    end: 3,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 3
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'Identifier',
+                    name: 'b',
+                    start: 8,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 11,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `[(x), y] = x;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 2,
+                    end: 3,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 3
+                      }
+                    }
+                  },
+                  {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 6,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'x',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `[x.y = 42]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 1,
+                      end: 2,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 2
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 3,
+                      end: 4,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 4
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'Literal',
+                    value: 42,
+                    start: 7,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 10,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 10
+          }
+        }
+      }
+    ],
+    [
+      `[{}[x ? y : z] += a]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ObjectExpression',
+                      properties: [],
+                      start: 1,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: true,
+                    property: {
+                      type: 'ConditionalExpression',
+                      test: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 4,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      },
+                      consequent: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      alternate: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      start: 4,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  operator: '+=',
+                  right: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 18,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
+    [
+      `[{}[x ? y : z] += a]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ObjectExpression',
+                      properties: [],
+                      start: 1,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: true,
+                    property: {
+                      type: 'ConditionalExpression',
+                      test: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 4,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      },
+                      consequent: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      alternate: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      start: 4,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  operator: '+=',
+                  right: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 18,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
+    [
+      `[ c.d === (e ? f : g )]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 2,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'd',
+                      start: 4,
+                      end: 5,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 5
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'ConditionalExpression',
+                    test: {
+                      type: 'Identifier',
+                      name: 'e',
+                      start: 11,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 11
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    consequent: {
+                      type: 'Identifier',
+                      name: 'f',
+                      start: 15,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    alternate: {
+                      type: 'Identifier',
+                      name: 'g',
+                      start: 19,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    },
+                    start: 11,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  operator: '===',
+                  start: 2,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `[([3].c.d) === e ? f : g /= 1]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ConditionalExpression',
+                  test: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'ArrayExpression',
+                          elements: [
+                            {
+                              type: 'Literal',
+                              value: 3,
+                              start: 3,
+                              end: 4,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 3
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 4
+                                }
+                              }
+                            }
+                          ],
+                          start: 2,
+                          end: 5,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 5
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'c',
+                          start: 6,
+                          end: 7,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 6
+                            },
+                            end: {
+                              line: 1,
+                              column: 7
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 2,
+                        end: 7,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 7
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'd',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 2,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'e',
+                      start: 15,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    operator: '===',
+                    start: 1,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  consequent: {
+                    type: 'Identifier',
+                    name: 'f',
+                    start: 19,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  alternate: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'g',
+                      start: 23,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    operator: '/=',
+                    right: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 28,
+                      end: 29,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 28
+                        },
+                        end: {
+                          line: 1,
+                          column: 29
+                        }
+                      }
+                    },
+                    start: 23,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 29,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 29
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 30,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 30
+          }
+        }
+      }
+    ],
+    [
+      `[{}[x ? {zzz} : (z)] /= a]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ObjectExpression',
+                      properties: [],
+                      start: 1,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: true,
+                    property: {
+                      type: 'ConditionalExpression',
+                      test: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 4,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      },
+                      consequent: {
+                        type: 'ObjectExpression',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'zzz',
+                              start: 9,
+                              end: 12,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 9
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 12
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Identifier',
+                              name: 'zzz',
+                              start: 9,
+                              end: 12,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 9
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 12
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: true,
+                            start: 9,
+                            end: 12,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 9
+                              },
+                              end: {
+                                line: 1,
+                                column: 12
+                              }
+                            }
+                          }
+                        ],
+                        start: 8,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      alternate: {
+                        type: 'Identifier',
+                        name: 'z',
+                        start: 17,
+                        end: 18,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 17
+                          },
+                          end: {
+                            line: 1,
+                            column: 18
+                          }
+                        }
+                      },
+                      start: 4,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 1,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  operator: '/=',
+                  right: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 24,
+                    end: 25,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 24
+                      },
+                      end: {
+                        line: 1,
+                        column: 25
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 25,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 25
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
+    [
+      `[...{}[x ? y : z] += a]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'SpreadElement',
+                  argument: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [],
+                        start: 4,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      computed: true,
+                      property: {
+                        type: 'ConditionalExpression',
+                        test: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 7,
+                          end: 8,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 7
+                            },
+                            end: {
+                              line: 1,
+                              column: 8
+                            }
+                          }
+                        },
+                        consequent: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 11,
+                          end: 12,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 11
+                            },
+                            end: {
+                              line: 1,
+                              column: 12
+                            }
+                          }
+                        },
+                        alternate: {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 15,
+                          end: 16,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 15
+                            },
+                            end: {
+                              line: 1,
+                              column: 16
+                            }
+                          }
+                        },
+                        start: 7,
+                        end: 16,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 16
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 4,
+                      end: 17,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 17
+                        }
+                      }
+                    },
+                    operator: '+=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 21,
+                      end: 22,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 21
+                        },
+                        end: {
+                          line: 1,
+                          column: 22
+                        }
+                      }
+                    },
+                    start: 4,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `[ c.d === (e ? f : g ) ? x : y]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ConditionalExpression',
+                  test: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'c',
+                        start: 2,
+                        end: 3,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 3
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'd',
+                        start: 4,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 2,
+                      end: 5,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 5
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'ConditionalExpression',
+                      test: {
+                        type: 'Identifier',
+                        name: 'e',
+                        start: 11,
+                        end: 12,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 12
+                          }
+                        }
+                      },
+                      consequent: {
+                        type: 'Identifier',
+                        name: 'f',
+                        start: 15,
+                        end: 16,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 16
+                          }
+                        }
+                      },
+                      alternate: {
+                        type: 'Identifier',
+                        name: 'g',
+                        start: 19,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      start: 11,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 11
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    },
+                    operator: '===',
+                    start: 2,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  consequent: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 25,
+                    end: 26,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 25
+                      },
+                      end: {
+                        line: 1,
+                        column: 26
+                      }
+                    }
+                  },
+                  alternate: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 29,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 29
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  },
+                  start: 2,
+                  end: 30,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 30
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `[(x.y) = [1/42]]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 2,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 4,
+                      end: 5,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 5
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'BinaryExpression',
+                        left: {
+                          type: 'Literal',
+                          value: 1,
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: 42,
+                          start: 12,
+                          end: 14,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 14
+                            }
+                          }
+                        },
+                        operator: '/',
+                        start: 10,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      }
+                    ],
+                    start: 9,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `[(x.y) = [1/42]]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 2,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 4,
+                      end: 5,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 5
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'BinaryExpression',
+                        left: {
+                          type: 'Literal',
+                          value: 1,
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: 42,
+                          start: 12,
+                          end: 14,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 14
+                            }
+                          }
+                        },
+                        operator: '/',
+                        start: 10,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      }
+                    ],
+                    start: 9,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `([(x), y] = x);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  }
+                ],
+                start: 1,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'x',
+                start: 12,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `[(a), ] = x;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 2,
+                    end: 3,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 3
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'x',
+                start: 10,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `[(x.y) = 42]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 2,
+                      end: 3,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 3
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 4,
+                      end: 5,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 5
+                        }
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'Literal',
+                    value: 42,
+                    start: 9,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `[([b].c.d) === e ? f : g ]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ConditionalExpression',
+                  test: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'ArrayExpression',
+                          elements: [
+                            {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 3,
+                              end: 4,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 3
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 4
+                                }
+                              }
+                            }
+                          ],
+                          start: 2,
+                          end: 5,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 5
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'c',
+                          start: 6,
+                          end: 7,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 6
+                            },
+                            end: {
+                              line: 1,
+                              column: 7
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 2,
+                        end: 7,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 7
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'd',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 2,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'e',
+                      start: 15,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    operator: '===',
+                    start: 1,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  consequent: {
+                    type: 'Identifier',
+                    name: 'f',
+                    start: 19,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  alternate: {
+                    type: 'Identifier',
+                    name: 'g',
+                    start: 23,
+                    end: 24,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 24
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 24,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 24
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
+    [
+      `[([b].c.d) === e ? f : g /= 1]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'ConditionalExpression',
+                  test: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'ArrayExpression',
+                          elements: [
+                            {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 3,
+                              end: 4,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 3
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 4
+                                }
+                              }
+                            }
+                          ],
+                          start: 2,
+                          end: 5,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 5
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'c',
+                          start: 6,
+                          end: 7,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 6
+                            },
+                            end: {
+                              line: 1,
+                              column: 7
+                            }
+                          }
+                        },
+                        optional: false,
+                        shortCircuited: false,
+                        start: 2,
+                        end: 7,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 7
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'd',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 2,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'e',
+                      start: 15,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    operator: '===',
+                    start: 1,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  consequent: {
+                    type: 'Identifier',
+                    name: 'f',
+                    start: 19,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  alternate: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'g',
+                      start: 23,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    operator: '/=',
+                    right: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 28,
+                      end: 29,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 28
+                        },
+                        end: {
+                          line: 1,
+                          column: 29
+                        }
+                      }
+                    },
+                    start: 23,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 29,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 29
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 30,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 30
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 30,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 30
+          }
+        }
+      }
+    ],
+    [
+      `[...{}[x ? {zzz} : (z)] /= a]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'SpreadElement',
+                  argument: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [],
+                        start: 4,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      computed: true,
+                      property: {
+                        type: 'ConditionalExpression',
+                        test: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 7,
+                          end: 8,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 7
+                            },
+                            end: {
+                              line: 1,
+                              column: 8
+                            }
+                          }
+                        },
+                        consequent: {
+                          type: 'ObjectExpression',
+                          properties: [
+                            {
+                              type: 'Property',
+                              key: {
+                                type: 'Identifier',
+                                name: 'zzz',
+                                start: 12,
+                                end: 15,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 12
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 15
+                                  }
+                                }
+                              },
+                              value: {
+                                type: 'Identifier',
+                                name: 'zzz',
+                                start: 12,
+                                end: 15,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 12
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 15
+                                  }
+                                }
+                              },
+                              kind: 'init',
+                              computed: false,
+                              method: false,
+                              shorthand: true,
+                              start: 12,
+                              end: 15,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 12
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 15
+                                }
+                              }
+                            }
+                          ],
+                          start: 11,
+                          end: 16,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 11
+                            },
+                            end: {
+                              line: 1,
+                              column: 16
+                            }
+                          }
+                        },
+                        alternate: {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 20,
+                          end: 21,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 20
+                            },
+                            end: {
+                              line: 1,
+                              column: 21
+                            }
+                          }
+                        },
+                        start: 7,
+                        end: 22,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 22
+                          }
+                        }
+                      },
+                      optional: false,
+                      shortCircuited: false,
+                      start: 4,
+                      end: 23,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 23
+                        }
+                      }
+                    },
+                    operator: '/=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 27,
+                      end: 28,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 27
+                        },
+                        end: {
+                          line: 1,
+                          column: 28
+                        }
+                      }
+                    },
+                    start: 4,
+                    end: 28,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 28
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 28
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `[(x), async] = await;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 2,
+                    end: 3,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 3
+                      }
+                    }
+                  },
+                  {
+                    type: 'Identifier',
+                    name: 'async',
+                    start: 6,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'await',
+                start: 15,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 15
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              },
+              start: 0,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
       `[async ()=>x]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -345,7 +6814,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[class{}]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -432,7 +6901,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[function(){}]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -521,7 +6990,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[null]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -591,7 +7060,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[].length]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -695,7 +7164,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[x].length]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -816,7 +7285,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[x].length] = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -969,7 +7438,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x = true] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1102,7 +7571,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[x = true] = true] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1283,7 +7752,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...a.b] = c`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1434,7 +7903,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...await]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1519,7 +7988,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[((((((x.y))))))] = obj`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1655,7 +8124,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(x.y)] = obj`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1791,7 +8260,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[y<t]({}=y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1960,7 +8429,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `y(y/=x,{}=x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2128,7 +8597,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(a)] = b;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2230,7 +8699,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...(a)] = b;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2347,7 +8816,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(a) = b] = c;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2480,7 +8949,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a, [b = 1, c] = [,2]] = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2711,7 +9180,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[a]]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2813,7 +9282,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{a}]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2950,7 +9419,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[...{x}, ...y, [...[z]]]]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3200,7 +9669,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[00664]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3270,7 +9739,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[0098]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3340,7 +9809,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `\u2003[]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         body: [
           {
@@ -3393,7 +9862,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[0x2003]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3463,7 +9932,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[0b1011n]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3534,7 +10003,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `(foo, [bar, baz] = doo);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3685,7 +10154,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a,b=[x,y]] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3867,7 +10336,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[.../x/]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3956,7 +10425,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{x:y}/y]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4125,7 +10594,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[.../x//y]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -4246,7 +10715,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[.../x/+y]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -4367,7 +10836,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{x}/y]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4537,7 +11006,7 @@ describe('Expressions - Array', () => {
 
     [
       '[function(){}.length] = x',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4692,7 +11161,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[`x`.length] = x',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4850,7 +11319,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[x()[y] = a + b] = z',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5067,7 +11536,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[new x().y = a] = z',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5250,7 +11719,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[new x().y = a] = z',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5433,7 +11902,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[foo = A] = arr;',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5566,7 +12035,7 @@ describe('Expressions - Array', () => {
     ],
     [
       'function *f(){ return [...yield x]; }',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5718,7 +12187,7 @@ describe('Expressions - Array', () => {
     ],
     [
       'function *f(){ return [...yield]; }',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5855,7 +12324,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[x, ...z + arr, y]',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6004,7 +12473,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[x, y, ...z]',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6121,7 +12590,7 @@ describe('Expressions - Array', () => {
     ],
     [
       '[`a${5}b`.length] = x',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6316,7 +12785,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `["X".length] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6452,7 +12921,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x()[y]] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6606,7 +13075,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x()[y] = a ] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6791,7 +13260,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[new x()[y]] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6943,7 +13412,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[new x()[y] = a + b] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7158,7 +13627,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x().y = a] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7343,7 +13812,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x().y = a + b] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7560,7 +14029,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x.y] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7696,7 +14165,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x.y = a + b] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7895,7 +14364,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[new x().y] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8047,7 +14516,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[new x().y = a + b] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8262,7 +14731,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x, y, ...z] = obj`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8411,7 +14880,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...true]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8496,7 +14965,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[50..foo] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8632,7 +15101,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[][x]] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8768,7 +15237,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[..."foo".bar] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8919,7 +15388,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `x, [foo, bar] = doo`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9070,7 +15539,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a, b] = c = d`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9220,7 +15689,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[foo] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9322,7 +15791,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[.../x//yield]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -9443,7 +15912,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[foo = A, bar = B] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9623,7 +16092,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `x, [foo = y, bar] = doo`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9805,7 +16274,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `function* g() {   [...{ x = yield }] = y   }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10057,7 +16526,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[false]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10127,7 +16596,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[void x]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10214,7 +16683,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(x) = y = (z) => (a)]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10383,7 +16852,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[x] = true] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10533,7 +17002,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `["foo".foo] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10669,7 +17138,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `result = [...{ x = yield }] = y;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10901,7 +17370,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{a=0},{a=0}] = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11185,7 +17654,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[...a[x]]] = 1`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11368,7 +17837,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `for([a,b[a],{c,d=e,[f]:[g,h().a,(0).k,...i[0]]}] in 0);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11920,7 +18389,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[ [ foo().x = 10 ] = {} ]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12122,7 +18591,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x, y, ...z = 1]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12271,7 +18740,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...z = 1]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12388,7 +18857,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `function a([x, , [, z]]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12529,7 +18998,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a,,b] = array;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12648,7 +19117,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x = 10, y, z] = a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12813,7 +19282,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[ok.v] = 20;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12949,7 +19418,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{a = 0}] = [{}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13151,7 +19620,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{a = 0}] = [{}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13353,7 +19822,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `function f([...[{a = 0}]]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13574,7 +20043,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[arguments] = []`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13676,7 +20145,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[ x ]] = [ , ];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13795,7 +20264,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[ x ]] = [undefined];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13931,7 +20400,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[ x ]] = [null];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14067,7 +20536,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[a] = 1]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14201,7 +20670,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[ x = 5 ] ] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14366,7 +20835,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `function foo([x] = [1]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14520,7 +20989,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `function foo([x = 1] = [2]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14705,7 +21174,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[[[z++]]]]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14843,7 +21312,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[1, 2, 3, ...[]]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14976,7 +21445,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[1, 2, ...target = source]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15125,7 +21594,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[5, ...[6, 7, 8], 9]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15291,7 +21760,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[() => {}]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15379,7 +21848,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[abc => {}]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15484,7 +21953,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[this];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15553,7 +22022,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[,,x]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15625,7 +22094,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x().y] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15779,7 +22248,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a[x.y]] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15949,7 +22418,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x.y = a] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16116,7 +22585,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a[x.y] = a] = z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16317,7 +22786,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[foo, [x,y,z], bar = B] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16531,7 +23000,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[foo, [[[[[[[[[[[[[x,y,z]]]]]]]]]]]]], bar = B] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16949,7 +23418,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[foo, [x,y = 20,z], bar = B] = arr;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17194,7 +23663,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `foo([a, b] = arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17347,7 +23816,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `foo([a, b] = arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17500,7 +23969,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...x.list];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17619,7 +24088,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...x = y];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17736,7 +24205,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...x += y];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17853,7 +24322,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[x].map(y, z)];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18040,7 +24509,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[x].map(y, z)[x]] = a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18293,7 +24762,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x.y = z]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18429,7 +24898,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[please, {[make]: it}, stop] = bwahahahaha`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18615,7 +25084,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[pweeze = [pretty] = please, {[make]: it}, stop] = bwahahahaha`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18881,7 +25350,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `log({foo: [bar]} = obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19070,7 +25539,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{a = b} = c];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19271,7 +25740,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...x.list] = a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19422,7 +25891,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[, x,,] = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19526,7 +25995,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[x]] = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19660,7 +26129,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{x = 1}] = [{}]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19877,7 +26346,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x, ...{0: y}] = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20062,7 +26531,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(a)] = 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20164,7 +26633,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `({x} = 0)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20301,7 +26770,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[ x = "x" in {} ] = value;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20466,7 +26935,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `a = [ a = x += 1, b = x *= 2 ] = value;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20742,7 +27211,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{ x }] = [null];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20913,7 +27382,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{ x }] = [ , ];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21067,7 +27536,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `a = [[x[yield]]] = 123;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21252,7 +27721,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `a = [{ x }] =  [{ x: 2 }];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21507,7 +27976,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `a = [...[x]] = [ , ];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21673,7 +28142,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `a = [...{ 0: x, length }] = [undefined]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21942,7 +28411,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `a = [...[x[yield]]] = [2020];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22159,7 +28628,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[[[[[[[[[[[[[[[[[[[{a=b[0]}]]]]]]]]]]]]]]]]]]]]=0;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22707,7 +29176,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[ { x = 10 } = {} ]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22892,7 +29361,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[ { x : foo()[y] = 10 } = {} ]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23129,7 +29598,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `h = ([...[{a = 0}]]) => {};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23381,7 +29850,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `function f1({a} = {a:1}, b, [c] = [2]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23702,7 +30171,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{a}] = [{}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23888,7 +30357,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{x : [{y:{z = 1}, z1 = 2}] }, {x2 = 3}, {x3 : {y3:[{z3 = 4}]}} ] = [{x:[{y:{}}]}, {}, {x3:{y3:[{}]}}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -24886,7 +31355,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[...[...a]]] = [[[]]];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25101,7 +31570,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{}.length] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25237,7 +31706,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[..."f".toString()]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25374,7 +31843,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...(x)]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25459,7 +31928,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[..."x".y]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25578,7 +32047,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `(x|y)^y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25695,7 +32164,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{a = b}] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25895,7 +32364,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[..."x" + y]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -26012,7 +32481,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[1,2,3,4,5]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26146,7 +32615,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[5..length] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26282,7 +32751,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{}.x] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26418,7 +32887,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[{}[x]] = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26554,7 +33023,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a, ...b] = [1, 2, ...c];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26751,7 +33220,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a, b] = f(() => { [a, b.c] = [d.e, (f.g) = h]; });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27186,7 +33655,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[[a.b =[{ x: x.b }]]] = abc]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27490,7 +33959,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(x), y = x] = x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27639,7 +34108,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `["b" === e ? f : g ]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27788,7 +34257,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x.y = 42]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27924,7 +34393,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `([(x), y] = x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28042,7 +34511,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[[[[[[a=b] = c] = c] = c] = c] = c] = c] = [[[[[[[a=b] = c]]] = c] = c] = c] = c;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28769,7 +35238,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[5[foo]] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28905,7 +35374,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[,,,,,,,,[5, ...[6, 7, 8], 9],,,,,,,,,,,,,,,,,]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29112,7 +35581,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `([...x=y])`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29229,7 +35698,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[(a)] = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29331,7 +35800,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...[{a: b}.c]] = [];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29551,7 +36020,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a.b=[c.d]=e] = f;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29801,7 +36270,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `([a=[b.c]=d]) => e;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30020,7 +36489,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[3456789n]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30091,7 +36560,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[[...a]]]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30210,7 +36679,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...a]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30295,7 +36764,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[,]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30348,7 +36817,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[,,,]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30401,7 +36870,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x,,,]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30473,7 +36942,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30543,7 +37012,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[a * 1]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30645,7 +37114,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[7 * 1]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30747,7 +37216,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[,x]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30818,7 +37287,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[x,]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30888,7 +37357,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30941,7 +37410,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[the, yellow, parrot, is, noisy]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -31075,7 +37544,7 @@ describe('Expressions - Array', () => {
     ],
     [
       `[[a]]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',

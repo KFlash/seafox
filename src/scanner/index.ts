@@ -1,6 +1,11 @@
 export { CharTypes, CharFlags, isIdentifierPart, isIdentifierStart } from './charClassifier';
 export { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments';
-export { scanMaybeIdentifier, scanIdentifier, scanIdentifierOrKeyword, scanUnicodeEscapeIdStart } from './identifier';
+export {
+  scanIdentifierSlowPath,
+  scanIdentifier,
+  scanIdentifierOrKeyword,
+  scanUnicodeEscapeIdStart
+} from './identifier';
 export { scanStringLiteral } from './string';
 export { scanRegularExpression } from './regexp';
 export { scanTemplate } from './template';
