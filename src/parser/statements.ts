@@ -468,7 +468,6 @@ export function parseForStatementWithVariableDeclarations(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  _forAwait: any,
   labels: any,
   curStart: number,
   curLine: number,
@@ -766,7 +765,7 @@ export function parseForStatement(
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  const forAwait =
+  const isAwait =
     (context & Context.InAwaitContext) > 0 && consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
@@ -794,7 +793,6 @@ export function parseForStatement(
       parser,
       context,
       scope,
-      forAwait,
       labels,
       curStart,
       curLine,
@@ -820,13 +818,13 @@ export function parseForStatement(
 
     conjuncted = parser.flags;
   } else if (token === Token.Semicolon) {
-    if (forAwait) report(parser, Errors.Unexpected);
+    if (isAwait === 1) report(parser, Errors.Unexpected);
   } else {
     init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, 0, /* allowLHS */ 1, 1);
   }
 
   if (parser.token === Token.OfKeyword) {
-    if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, forAwait ? 'await' : 'of');
+    if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, isAwait === 1 ? 'await' : 'of');
 
     reinterpretToPattern(parser, init);
 
@@ -844,7 +842,7 @@ export function parseForStatement(
           body,
           left: init,
           right,
-          await: forAwait,
+          await: isAwait === 1,
           start: curStart,
           end: parser.endIndex,
           loc: setLoc(parser, curLine, curColumn)
@@ -854,13 +852,13 @@ export function parseForStatement(
           body,
           left: init,
           right,
-          await: forAwait
+          await: isAwait === 1
         };
   }
 
   if (parser.token === Token.InKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
-    if (forAwait) report(parser, Errors.Unexpected);
+    if (isAwait === 1) report(parser, Errors.Unexpected);
     reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);
@@ -889,7 +887,7 @@ export function parseForStatement(
         };
   }
 
-  if (forAwait) report(parser, Errors.Unexpected);
+  if (isAwait === 1) report(parser, Errors.Unexpected);
 
   if (parser.token === Token.Assign) {
     if ((token & Token.IsPatternStart) === Token.IsPatternStart) reinterpretToPattern(parser, init);

@@ -4,14 +4,7 @@ import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, ScopeKind, addVarName, addBlockName, declareUnboundVariable } from './scope';
 import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
-import {
-  ParserState,
-  expectSemicolon,
-  setLoc,
-  optionalBit,
-  validateFunctionName,
-  isStrictReservedWord
-} from './common';
+import { ParserState, expectSemicolon, setLoc, validateFunctionName, isStrictReservedWord, consumeOpt } from './common';
 import {
   parseFunctionLiteral,
   parseClassDeclarationOrExpressionRest,
@@ -67,7 +60,8 @@ export function parseFunctionDeclarationRest(
 ): ESTree.FunctionDeclaration {
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const isGenerator = flags & FunctionFlag.AllowGenerator ? optionalBit(parser, context, Token.Multiply) : 0;
+  const isGenerator =
+    flags & FunctionFlag.AllowGenerator ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0) : 0;
   const isAsync = flags & FunctionFlag.IsAsync ? 1 : 0;
 
   let id: ESTree.Identifier | null = null;

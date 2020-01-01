@@ -48,16 +48,10 @@ export function expectSemicolon(parser: ParserState, context: Context): void {
   report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
 }
 
-export function optionalBit(parser: ParserState, context: Context, t: Token): 0 | 1 {
+export function consumeOpt(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): 0 | 1 {
   if (parser.token !== t) return 0;
-  nextToken(parser, context, /* allowRegExp */ 0);
-  return 1;
-}
-
-export function consumeOpt(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): boolean {
-  if (parser.token !== t) return false;
   nextToken(parser, context, allowRegExp);
-  return true;
+  return 1;
 }
 
 export function setLoc(parser: ParserState, line: number, column: number): any {
