@@ -59,7 +59,7 @@ export function parseFunctionDeclarationRest(
   column: number
 ): ESTree.FunctionDeclaration {
   nextToken(parser, context, /* allowRegExp */ 1);
-
+  // Annex B.3.4 doesn't allow generators functions
   const isGenerator =
     flags & FunctionFlag.AllowGenerator ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0) : 0;
   const isAsync = flags & FunctionFlag.IsAsync ? 1 : 0;

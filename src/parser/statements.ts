@@ -764,7 +764,7 @@ export function parseForStatement(
   const { start: curStart, line: curLine, column: curColumn } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
-
+  // Create a lexical scope node around the whole ForStatement
   const isAwait =
     (context & Context.InAwaitContext) > 0 && consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
 
