@@ -1039,7 +1039,7 @@ export function parseSwitchStatement(
 
   scope = {
     parent: scope,
-    type: ScopeKind.SwitchStatement,
+    type: ScopeKind.None,
     scopeError: void 0
   };
 
@@ -1052,7 +1052,7 @@ export function parseSwitchStatement(
 
     if (parser.token === Token.DefaultKeyword) {
       nextToken(parser, context, /* allowRegExp */ 1);
-      if (seenDefault) report(parser, Errors.MultipleDefaultsInSwitch);
+      if (seenDefault === 1) report(parser, Errors.MultipleDefaultsInSwitch);
       seenDefault = 1;
     }
     consume(parser, context, Token.Colon, /* allowRegExp */ 1);

@@ -10,7 +10,6 @@ export const enum ScopeKind {
   ForStatement = 0b00000000000000000000000000000001,
   Block = 0b00000000000000000000000000000010,
   CatchStatement = 0b00000000000000000000000000000100,
-  SwitchStatement = 0b00000000000000000000000000001000,
   TryStatement = 0b00000000000000000000000000010000,
   CatchBlock = 0b00000000000000000000000000100000,
   FunctionBody = 0b00000000000000000000000001000000,
@@ -130,31 +129,25 @@ export function addBlockName(
     if (kind & BindingKind.ArgumentList) {
       scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
     } else if (
-      (context & Context.OptionsDisableWebCompat) !== Context.OptionsDisableWebCompat &&
-      value & BindingKind.FunctionLexical &&
-      origin & Origin.BlockStatement
+      context & Context.OptionsDisableWebCompat ||
+      (value & BindingKind.FunctionLexical) === 0 ||
+      (origin & Origin.BlockStatement) === 0
     ) {
-    } else {
       report(parser, Errors.DuplicateBinding, name);
     }
   }
+  const parent = scope.parent;
 
   if (
-    scope.type & ScopeKind.FunctionBody && scope.parent['#' + name] &&
-    (scope.parent['#' + name] & BindingKind.Tail) !== BindingKind.Tail
+    scope.type & ScopeKind.FunctionBody &&
+    parent['#' + name] &&
+    (parent['#' + name] & BindingKind.Tail) !== BindingKind.Tail
   ) {
     report(parser, Errors.DuplicateBinding, name);
   }
 
-  if (scope.type & ScopeKind.ArrowParams && value && (value & BindingKind.Tail) !== BindingKind.Tail) {
-    if ((kind & BindingKind.ArgumentList) === BindingKind.ArgumentList) {
-      scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
-    }
-  }
-
-  if (scope.type & ScopeKind.CatchBlock) {
-    if (scope.parent['#' + name] & BindingKind.CatchIdentifierOrPattern)
-      report(parser, Errors.ShadowedCatchClause, name);
+  if (scope.type & ScopeKind.CatchBlock && (parent['#' + name] & 0b00000000000000000000001100000000) > 0) {
+    report(parser, Errors.ShadowedCatchClause, name);
   }
 
   scope['#' + name] = kind;
@@ -172,41 +165,41 @@ export function addBlockName(
 export function addVarName(
   parser: ParserState,
   context: Context,
-  scope: ScopeState,
+  curScope: ScopeState,
   name: string,
   kind: BindingKind
 ): void {
-  if (scope === void 0) return;
+  if (curScope === void 0) return;
 
-  let currentScope: any = scope;
+  let scope: any = curScope;
 
-  while (currentScope && (currentScope.type & ScopeKind.FunctionRoot) === 0) {
-    const value: ScopeKind = currentScope['#' + name];
+  while (scope && (scope.type & ScopeKind.FunctionRoot) === 0) {
+    const value: ScopeKind = scope['#' + name];
 
-    if (value & BindingKind.LexicalBinding) {
+    if ((value & 0b00000000000000000000000011110100) > 0) {
       if (
-        (context & Context.OptionsDisableWebCompat) !== Context.OptionsDisableWebCompat &&
-        (context & Context.Strict) === 0 &&
-        ((kind & BindingKind.FunctionStatement && value & BindingKind.LexicalOrFunction) ||
-          (value & BindingKind.FunctionStatement && kind & BindingKind.LexicalOrFunction))
+        (context & 0b00000000000000000000010000010000) === 0 &&
+        ((kind & BindingKind.FunctionStatement && (value & 0b00000000000000000000000000000110) > 0) ||
+          (value & BindingKind.FunctionStatement && (kind & 0b00000000000000000000000000000110) > 0))
       ) {
       } else {
         report(parser, Errors.DuplicateBinding, name);
       }
     }
-    if (currentScope === scope) {
-      if (value & BindingKind.ArgumentList && kind & BindingKind.ArgumentList) {
-        currentScope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
-      }
-    }
-    if (value & (BindingKind.CatchIdentifier | BindingKind.CatchPattern)) {
-      if (context & (Context.Strict | Context.OptionsDisableWebCompat) || (value & BindingKind.CatchIdentifier) === 0) {
-        report(parser, Errors.DuplicateBinding, name);
-      }
+
+    if (value & BindingKind.ArgumentList && kind & BindingKind.ArgumentList && scope === curScope) {
+      scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
     }
 
-    currentScope['#' + name] = kind;
+    if (
+      (value & 0b00000000000000000000001100000000) > 0 &&
+      ((context & 0b00000000000000000000010000010000) > 0 || (value & BindingKind.CatchIdentifier) === 0)
+    ) {
+      report(parser, Errors.DuplicateBinding, name);
+    }
 
-    currentScope = currentScope.parent;
+    scope['#' + name] = kind;
+
+    scope = scope.parent;
   }
 }

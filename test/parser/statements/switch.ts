@@ -2,7 +2,17 @@ import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
+function convertDecimalToBinary(digit: any, groups: boolean): string {
+  let res = '';
+  for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
+  // Makes a groups of 8 bits
+  if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, "_");
+  return res;
+}
+
 describe('Statements - Switch', () => {
+
+ console.log(convertDecimalToBinary(244, false));
   for (const [source, ctx] of [
     [`switch (x) {case a: function f(){}; break; case b: let f; break; }`, Context.OptionsDisableWebCompat],
     [`switch (x) { case a: let foo; break; case b: let foo; break; }`, Context.OptionsDisableWebCompat],
@@ -15,6 +25,10 @@ describe('Statements - Switch', () => {
     ['switch (x) { case a: const foo = x; break; case b: var foo = x; break; }', Context.OptionsDisableWebCompat],
     ['switch (x) { case a: var foo = x; break; case b: const foo = x; break; }', Context.OptionsDisableWebCompat],
     ['switch (x) { case 0: var foo = 1 } let foo = 1;', Context.OptionsDisableWebCompat],
+
+    ['switch (0) { case 1: class f {} default: let f }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: class f {} default: let f }', Context.Empty],
+
     ['switch (x) {case a: const f = x; break; case b: function f(){}; break; }', Context.OptionsDisableWebCompat],
     ['switch (x) {case a: async function f(){}; break; case b: let f; break; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: async function* f() {} default: async function f() {} }', Context.OptionsDisableWebCompat],
@@ -36,6 +50,9 @@ describe('Statements - Switch', () => {
     ['switch (0) { case 1: const f = 0; default: var f }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function f() {} default: function f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function* f() {} default: class f {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: function* f() {} default: class f {} }', Context.Empty],
+    ['switch (0) { case 1: function* f() {} default: var f }', Context.Empty],
+    ['switch (0) { case 1: function* f() {} default: var f }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: let f; default: async function* f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: var f; default: const f = 0 }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: var f; default: let f }', Context.OptionsDisableWebCompat],
@@ -58,37 +75,24 @@ describe('Statements - Switch', () => {
     ['switch (0) { case 1: class f {} default: var f; }', Context.Empty],
     ['switch (0) { case 1: function f() {} default: const f = 0; }', Context.Empty],
     ['switch (0) { case 1: function f() {} default: let f; }', Context.Empty],
-    [
-      'switch (0) { case 1: async function* f() {} default: let f; }',
-      Context.OptionsDisableWebCompat | Context.Strict | Context.Module
-    ],
-    [
-      'switch (0) { case 1: class f {} default: let f; }',
-      Context.OptionsDisableWebCompat | Context.Strict | Context.Module
-    ],
-    [
-      'switch (0) { case 1: class f {} default: var f; }',
-      Context.OptionsDisableWebCompat | Context.Strict | Context.Module
-    ],
-    [
-      'switch (0) { case 1: function f() {} default: const f = 0; }',
-      Context.OptionsDisableWebCompat | Context.Strict | Context.Module
-    ],
-    [
-      'switch (0) { case 1: function f() {} default: let f; }',
-      Context.OptionsDisableWebCompat | Context.Strict | Context.Module
-    ],
+    ['switch (0) { case 1: async function* f() {} default: let f; }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: class f {} default: let f; }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: function f() {} default: const f = 0; }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: function f() {} default: let f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: async function* f() {} default: let f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: let f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: var f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function f() {} default: const f = 0; }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: function f() {} default: const f = 0; }', Context.Empty],
     ['switch (0) { case 1: function f() {} default: let f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function f() {} default: var f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function* f() {} default: class f {}; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function* f() {} default: function f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: let f; default: let f; }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: let f; default: let f; }', Context.Empty],
     ['switch (0) { case 1: var f; default: let f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: let f; default: class f {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: let f; default: class f {} }', Context.Empty],
     ['switch (0) { case 1: let f; default: const f = 0 }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: let f; default: function* f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: let f; default: let f }', Context.OptionsDisableWebCompat],
@@ -99,7 +103,8 @@ describe('Statements - Switch', () => {
     ['switch (0) { case 1: function f() {} default: async function f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function f() {} default: async function* f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: const f = 0; default: class f {} }', Context.OptionsDisableWebCompat],
-    ['switch (0) { case 1: const f = 0; default: async function* f() {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: const f = 0; default: class f {} }', Context.Empty],
+    ['switch (0) { case 1: const f = 0; default: class f {} }', Context.Strict],
     ['switch (0) { case 1: var f = 0; default: async function* f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: let f = 0; default: var f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: var f = 0; default: let f; }', Context.OptionsDisableWebCompat],
@@ -112,6 +117,7 @@ describe('Statements - Switch', () => {
     ['switch (0) { case 1: const f = 0; x; default: let {f} = x; } var {f} = f', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: class f {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: async function* f() {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: class f {} default: async function* f() {} }', Context.Empty],
     ['switch (0) { case 1: async function* f() {} default: var f }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: async function* f() {} default: async function* f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: async function f() {} default: let f }', Context.OptionsDisableWebCompat],
@@ -119,6 +125,7 @@ describe('Statements - Switch', () => {
     ['switch (x) {case a: function f(){}; break; case b: function f(){}; break; }', Context.OptionsDisableWebCompat],
     ['switch (0) { default: let f; if (false) ; else function f() {  } }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: async function* f() {} default: var f; }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: async function* f() {} default: var f; }', Context.Empty],
     ['switch (0) { case 1: class f {} default: class f {}; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: const f = 0; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: function f() {} }', Context.OptionsDisableWebCompat],
@@ -132,6 +139,7 @@ describe('Statements - Switch', () => {
     ['switch (0) { case 1: const f = 0; default: const f = 0; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: const f = 0; default: function f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: const f = 0; default: function* f() {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: const f = 0; default: function* f() {} }', Context.Empty],
     ['switch (0) { case 1: const f = 0; default: let f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: const f = 0; default: var f; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function* f() {} default: async function f() {} }', Context.OptionsDisableWebCompat],
@@ -142,22 +150,20 @@ describe('Statements - Switch', () => {
     ['switch (0) { case 1: var f; default: class f {}; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: var f; default: const f = 0; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: var f; default: function f() {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: var f; default: function f() {} }', Context.Empty],
     ['switch (0) { case 1: var f; default: function* f() {} }', Context.OptionsDisableWebCompat],
     ['switch (0) { default: let f; if (false) ; else function f() {  } }', Context.OptionsDisableWebCompat],
     ['switch(0) { case 0: let a; case 1: let a; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: function f() {} default: var f }', Context.OptionsDisableWebCompat],
-    ['switch(0) { case 0: let a; default: let a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { default: let a; case 0: let a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { case 0: let a; case 1: var a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { case 0: let a; default: let a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { default: let a; case 0: let a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { case 0: let a; case 1: var a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { case 0: var a; case 1: let a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { case 0: var a; default: let a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { default: let a; case 0: var a; }', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-    ['switch(0) { case 0: let a; default: let a; }', Context.OptionsDisableWebCompat],
-    ['switch(0) { default: let a; case 0: let a; }', Context.OptionsDisableWebCompat],
     ['switch(0) { case 0: let a; case 1: var a; }', Context.OptionsDisableWebCompat],
+    ['switch(0) { case 0: let a; case 1: var a; }', Context.Empty],
+    ['switch(0) { default: let a; case 0: let a; }', Context.OptionsDisableWebCompat],
+    ['switch(0) { case 0: var a; case 1: let a; }', Context.Empty],
+    ['switch(0) { case 0: var a; default: let a; }', Context.Empty],
+    ['switch(0) { default: let a; case 0: var a; }', Context.OptionsDisableWebCompat],
+    ['switch(0) { case 0: let a; default: let a; }', Context.OptionsDisableWebCompat],
+    ['switch(0) { case 0: let a; default: let a; }', Context.Empty],
+    ['switch(0) { default: let a; case 0: let a; }', Context.Empty],
     ['switch(0) { case 0: var a; case 1: let a; }', Context.OptionsDisableWebCompat],
     ['switch(0) { case 0: var a; default: let a; }', Context.OptionsDisableWebCompat],
     ['switch(0) { default: let a; case 0: var a; }', Context.OptionsDisableWebCompat],
@@ -190,14 +196,151 @@ describe('Statements - Switch', () => {
       t.throws(() => {
         parseScript(source as string, {
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
-          module: ((ctx as any) & Context.Module) !== 0
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `switch (true) { case true: function g() {} }`,
+      Context.OptionsNext | Context.OptionsLoc | Context.Strict,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'SwitchStatement',
+            discriminant: {
+              type: 'Literal',
+              value: true,
+              start: 8,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            cases: [
+              {
+                type: 'SwitchCase',
+                test: {
+                  type: 'Literal',
+                  value: true,
+                  start: 21,
+                  end: 25,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 25
+                    }
+                  }
+                },
+                consequent: [
+                  {
+                    type: 'FunctionDeclaration',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 40,
+                      end: 42,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 40
+                        },
+                        end: {
+                          line: 1,
+                          column: 42
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: {
+                      type: 'Identifier',
+                      name: 'g',
+                      start: 36,
+                      end: 37,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 36
+                        },
+                        end: {
+                          line: 1,
+                          column: 37
+                        }
+                      }
+                    },
+                    start: 27,
+                    end: 42,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 27
+                      },
+                      end: {
+                        line: 1,
+                        column: 42
+                      }
+                    }
+                  }
+                ],
+                start: 16,
+                end: 42,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 42
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 44,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 44
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 44,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 44
+          }
+        }
+      }
+    ],
     [
       `switch (x) { default: function *f(){} function *f(){} }`,
       Context.OptionsNext | Context.OptionsLoc,

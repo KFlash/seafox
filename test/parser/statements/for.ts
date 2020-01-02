@@ -21,6 +21,8 @@ describe('Statements - For', () => {
     ['for (const x = 1;;) { var x = 2 }', Context.OptionsDisableWebCompat],
     ['for (const x of y) var foo = 1; let foo = 1;', Context.Empty],
     ['for (const x in y) var foo = 1; let foo = 1;', Context.Empty],
+    ['for (;false;) function g() {}', Context.Empty],
+    ['for (;false;) function g() {}', Context.OptionsDisableWebCompat],
     ['for (let x;;) { var x; }', Context.OptionsDisableWebCompat],
     ['for (let x;;) { var x; }', Context.OptionsDisableWebCompat],
     ['for (let x;;) { var x; }', Context.OptionsDisableWebCompat],

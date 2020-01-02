@@ -15,6 +15,7 @@ describe('Statements - If', () => {
     [`if (x) {} else if (y) {} else var foo = 1; let foo = 1;`, Context.Empty],
     [`if (x) { if (y) var foo = 1; } let foo = 1;`, Context.Empty],
     ['if (true) class C {} else class D {}', Context.OptionsDisableWebCompat],
+    ['if (true) function g() {}', Context.Strict],
     ['if true;', Context.Empty],
     ['if(!(1))', Context.Empty],
     ['if(!(true))', Context.Empty],
@@ -33,8 +34,7 @@ describe('Statements - If', () => {
       t.throws(() => {
         parseScript(source as string, {
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
-          module: ((ctx as any) & Context.Module) !== 0
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });

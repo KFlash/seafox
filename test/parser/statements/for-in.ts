@@ -12,6 +12,8 @@ describe('Statements - For in', () => {
     ['for ([{x:a.b}]=x in x) ;', Context.Empty],
     ['for ({x=y}=x in x) ;', Context.Empty],
     ['for ({x,...x}=x in x) ;', Context.Empty],
+    ['for (let x = 3 in {}) { }', Context.Empty],
+    ['for (let x = 3, y in {}) { }', Context.Empty],
     ['for ({x:a.b}=x in x) ;', Context.Empty],
     ['for (a += b in x);', Context.Empty],
     ['for ({ m() {} } in {}) {}', Context.Empty],

@@ -166,8 +166,1296 @@ describe('Statements - Try', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `try { throw [,]; } catch ([x = 23]) {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ThrowStatement',
+                  argument: {
+                    type: 'ArrayExpression',
+                    elements: [null],
+                    start: 12,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  start: 6,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 4,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 27,
+                      end: 28,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 27
+                        },
+                        end: {
+                          line: 1,
+                          column: 28
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Literal',
+                      value: 23,
+                      start: 31,
+                      end: 33,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 31
+                        },
+                        end: {
+                          line: 1,
+                          column: 33
+                        }
+                      }
+                    },
+                    start: 27,
+                    end: 33,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 27
+                      },
+                      end: {
+                        line: 1,
+                        column: 33
+                      }
+                    }
+                  }
+                ],
+                start: 26,
+                end: 34,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 26
+                  },
+                  end: {
+                    line: 1,
+                    column: 34
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 36,
+                end: 38,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 36
+                  },
+                  end: {
+                    line: 1,
+                    column: 38
+                  }
+                }
+              },
+              start: 19,
+              end: 38,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 38
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 38,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 38
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 38,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 38
+          }
+        }
+      }
+    ],
+    [
+      `try { throw [3, 4, 5]; } catch ([...[x, y, z]]) {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ThrowStatement',
+                  argument: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Literal',
+                        value: 3,
+                        start: 13,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 13
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      },
+                      {
+                        type: 'Literal',
+                        value: 4,
+                        start: 16,
+                        end: 17,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 16
+                          },
+                          end: {
+                            line: 1,
+                            column: 17
+                          }
+                        }
+                      },
+                      {
+                        type: 'Literal',
+                        value: 5,
+                        start: 19,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      }
+                    ],
+                    start: 12,
+                    end: 21,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 21
+                      }
+                    }
+                  },
+                  start: 6,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                }
+              ],
+              start: 4,
+              end: 24,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 24
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'ArrayPattern',
+                      elements: [
+                        {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 37,
+                          end: 38,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 37
+                            },
+                            end: {
+                              line: 1,
+                              column: 38
+                            }
+                          }
+                        },
+                        {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 40,
+                          end: 41,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 40
+                            },
+                            end: {
+                              line: 1,
+                              column: 41
+                            }
+                          }
+                        },
+                        {
+                          type: 'Identifier',
+                          name: 'z',
+                          start: 43,
+                          end: 44,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 43
+                            },
+                            end: {
+                              line: 1,
+                              column: 44
+                            }
+                          }
+                        }
+                      ],
+                      start: 36,
+                      end: 45,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 36
+                        },
+                        end: {
+                          line: 1,
+                          column: 45
+                        }
+                      }
+                    },
+                    start: 33,
+                    end: 45,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 33
+                      },
+                      end: {
+                        line: 1,
+                        column: 45
+                      }
+                    }
+                  }
+                ],
+                start: 32,
+                end: 46,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 32
+                  },
+                  end: {
+                    line: 1,
+                    column: 46
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 48,
+                end: 50,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 48
+                  },
+                  end: {
+                    line: 1,
+                    column: 50
+                  }
+                }
+              },
+              start: 25,
+              end: 50,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 25
+                },
+                end: {
+                  line: 1,
+                  column: 50
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 50,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 50
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 50,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 50
+          }
+        }
+      }
+    ],
+    [
+      `try { throw x; } catch ([...[]]) {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ThrowStatement',
+                  argument: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 12,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  start: 6,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 4,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'ArrayPattern',
+                      elements: [],
+                      start: 28,
+                      end: 30,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 28
+                        },
+                        end: {
+                          line: 1,
+                          column: 30
+                        }
+                      }
+                    },
+                    start: 25,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 25
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  }
+                ],
+                start: 24,
+                end: 31,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 24
+                  },
+                  end: {
+                    line: 1,
+                    column: 31
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 33,
+                end: 35,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 33
+                  },
+                  end: {
+                    line: 1,
+                    column: 35
+                  }
+                }
+              },
+              start: 17,
+              end: 35,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 35
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 35,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 35
+          }
+        }
+      }
+    ],
+    [
+      `try { throw { w: { x: undefined, z: 7 } }; } catch ({ w: { x, y, z } = { x: 4, y: 5, z: 6 } }) {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ThrowStatement',
+                  argument: {
+                    type: 'ObjectExpression',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'w',
+                          start: 14,
+                          end: 15,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 14
+                            },
+                            end: {
+                              line: 1,
+                              column: 15
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'ObjectExpression',
+                          properties: [
+                            {
+                              type: 'Property',
+                              key: {
+                                type: 'Identifier',
+                                name: 'x',
+                                start: 19,
+                                end: 20,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 19
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 20
+                                  }
+                                }
+                              },
+                              value: {
+                                type: 'Identifier',
+                                name: 'undefined',
+                                start: 22,
+                                end: 31,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 22
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 31
+                                  }
+                                }
+                              },
+                              kind: 'init',
+                              computed: false,
+                              method: false,
+                              shorthand: false,
+                              start: 19,
+                              end: 31,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 19
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 31
+                                }
+                              }
+                            },
+                            {
+                              type: 'Property',
+                              key: {
+                                type: 'Identifier',
+                                name: 'z',
+                                start: 33,
+                                end: 34,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 33
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 34
+                                  }
+                                }
+                              },
+                              value: {
+                                type: 'Literal',
+                                value: 7,
+                                start: 36,
+                                end: 37,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 36
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 37
+                                  }
+                                }
+                              },
+                              kind: 'init',
+                              computed: false,
+                              method: false,
+                              shorthand: false,
+                              start: 33,
+                              end: 37,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 33
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 37
+                                }
+                              }
+                            }
+                          ],
+                          start: 17,
+                          end: 39,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 17
+                            },
+                            end: {
+                              line: 1,
+                              column: 39
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 14,
+                        end: 39,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 14
+                          },
+                          end: {
+                            line: 1,
+                            column: 39
+                          }
+                        }
+                      }
+                    ],
+                    start: 12,
+                    end: 41,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 41
+                      }
+                    }
+                  },
+                  start: 6,
+                  end: 42,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 42
+                    }
+                  }
+                }
+              ],
+              start: 4,
+              end: 44,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 44
+                }
+              }
+            },
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'ObjectPattern',
+                properties: [
+                  {
+                    type: 'Property',
+                    key: {
+                      type: 'Identifier',
+                      name: 'w',
+                      start: 54,
+                      end: 55,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 54
+                        },
+                        end: {
+                          line: 1,
+                          column: 55
+                        }
+                      }
+                    },
+                    value: {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'ObjectPattern',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'x',
+                              start: 59,
+                              end: 60,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 59
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 60
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Identifier',
+                              name: 'x',
+                              start: 59,
+                              end: 60,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 59
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 60
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: true,
+                            start: 59,
+                            end: 60,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 59
+                              },
+                              end: {
+                                line: 1,
+                                column: 60
+                              }
+                            }
+                          },
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'y',
+                              start: 62,
+                              end: 63,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 62
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 63
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Identifier',
+                              name: 'y',
+                              start: 62,
+                              end: 63,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 62
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 63
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: true,
+                            start: 62,
+                            end: 63,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 62
+                              },
+                              end: {
+                                line: 1,
+                                column: 63
+                              }
+                            }
+                          },
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'z',
+                              start: 65,
+                              end: 66,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 65
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 66
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Identifier',
+                              name: 'z',
+                              start: 65,
+                              end: 66,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 65
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 66
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: true,
+                            start: 65,
+                            end: 66,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 65
+                              },
+                              end: {
+                                line: 1,
+                                column: 66
+                              }
+                            }
+                          }
+                        ],
+                        start: 57,
+                        end: 68,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 57
+                          },
+                          end: {
+                            line: 1,
+                            column: 68
+                          }
+                        }
+                      },
+                      right: {
+                        type: 'ObjectExpression',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'x',
+                              start: 73,
+                              end: 74,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 73
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 74
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: 4,
+                              start: 76,
+                              end: 77,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 76
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 77
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: false,
+                            start: 73,
+                            end: 77,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 73
+                              },
+                              end: {
+                                line: 1,
+                                column: 77
+                              }
+                            }
+                          },
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'y',
+                              start: 79,
+                              end: 80,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 79
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 80
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: 5,
+                              start: 82,
+                              end: 83,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 82
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 83
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: false,
+                            start: 79,
+                            end: 83,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 79
+                              },
+                              end: {
+                                line: 1,
+                                column: 83
+                              }
+                            }
+                          },
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'z',
+                              start: 85,
+                              end: 86,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 85
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 86
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: 6,
+                              start: 88,
+                              end: 89,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 88
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 89
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: false,
+                            start: 85,
+                            end: 89,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 85
+                              },
+                              end: {
+                                line: 1,
+                                column: 89
+                              }
+                            }
+                          }
+                        ],
+                        start: 71,
+                        end: 91,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 71
+                          },
+                          end: {
+                            line: 1,
+                            column: 91
+                          }
+                        }
+                      },
+                      start: 57,
+                      end: 91,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 57
+                        },
+                        end: {
+                          line: 1,
+                          column: 91
+                        }
+                      }
+                    },
+                    kind: 'init',
+                    computed: false,
+                    method: false,
+                    shorthand: false,
+                    start: 54,
+                    end: 91,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 54
+                      },
+                      end: {
+                        line: 1,
+                        column: 91
+                      }
+                    }
+                  }
+                ],
+                start: 52,
+                end: 93,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 52
+                  },
+                  end: {
+                    line: 1,
+                    column: 93
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 95,
+                end: 97,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 95
+                  },
+                  end: {
+                    line: 1,
+                    column: 97
+                  }
+                }
+              },
+              start: 45,
+              end: 97,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 45
+                },
+                end: {
+                  line: 1,
+                  column: 97
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 97,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 97
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 97,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 97
+          }
+        }
+      }
+    ],
+    [
       `try {} catch ([a=a]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -316,7 +1604,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) { try {} catch (_) { var foo; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -548,7 +1836,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { async function f(){} async function f(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -750,7 +2038,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { async function *f(){} async function *f(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -952,7 +2240,7 @@ describe('Statements - Try', () => {
     ],
     [
       `do try {} catch {} while(x) x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1100,7 +2388,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { function *f(){} function *f(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1302,7 +2590,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } finally { async function f(){} async function f(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1473,7 +2761,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } finally { function f(){} function f(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1644,7 +2932,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } finally { const y = x }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1780,7 +3068,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { const y = x }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1948,7 +3236,7 @@ describe('Statements - Try', () => {
     [
       `try {} catch (foo) { { let foo; } }
     try {} catch (foo) { { let foo; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2264,7 +3552,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) { function x() { var foo; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2467,7 +3755,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) { function x(foo) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2636,7 +3924,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch(x) { x = 0; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2801,7 +4089,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch(x) { with ({}) { x = 1; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3015,7 +4303,7 @@ describe('Statements - Try', () => {
     [
       `try {} catch(x) { with ({}) { x = 1; } }
     try {} catch(x) { with ({}) { x = 1; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3419,7 +4707,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) {} var foo;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3570,7 +4858,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (a) { { const a = b; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3754,7 +5042,7 @@ describe('Statements - Try', () => {
     ],
     [
       `var foo; try {} catch (_) { const foo = 1; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3971,7 +5259,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) { { let foo; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4141,7 +5429,7 @@ describe('Statements - Try', () => {
     [
       `try {} catch (foo) { { let foo; } }
     try {} catch (foo) { { let foo; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4457,7 +5745,7 @@ describe('Statements - Try', () => {
     ],
     [
       `var foo; try {} catch (_) { let foo; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4659,7 +5947,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { { let e = x; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4843,7 +6131,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) {} let foo;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4994,7 +6282,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { let b = x; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5161,7 +6449,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (const e in y) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5360,7 +6648,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (let e of y) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5561,7 +6849,7 @@ describe('Statements - Try', () => {
 
     [
       `try {} catch (e) { var e = x; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5728,7 +7016,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (var e;;) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5913,7 +7201,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (let e;;) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6098,7 +7386,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (let e in y) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6297,7 +7585,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (const e in y) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6496,7 +7784,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { f; } catch (exception) { err1 = exception; } switch (1) { case 1: function f() {  } } try { f; } catch (exception) { err2 = exception; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6984,7 +8272,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { throw {}; } catch ({ f }) { if (true) function f() {  } else function _f() {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7301,7 +8589,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch(e){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7402,7 +8690,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch({e}){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7555,7 +8843,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch([e]){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7673,7 +8961,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch({e=x}){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7857,7 +9145,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch {} finally {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -7958,7 +9246,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { var x; for (var y of []) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8208,7 +9496,7 @@ describe('Statements - Try', () => {
     ],
     [
       `function __f_3() { try { __f_3(); } catch(e) { eval("let fun = ({a} = {a: 30}) => {"); } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8477,7 +9765,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { throw null; } catch (f) {if (false) ; else function f() { return 123; }}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8739,7 +10027,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try{}catch(a){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8840,7 +10128,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (eval) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8941,7 +10229,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { say(e) }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9109,7 +10397,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch ([a = 0]) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9258,7 +10546,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (e) { let a; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9410,7 +10698,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { throw [1, 2, 3]; } catch ([...x]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9624,7 +10912,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {try { let e; } catch { let e; } finally { let e; }} catch (e) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -9958,7 +11246,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {try { } catch { } finally { }} catch ({e}) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -10191,7 +11479,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch(x) { x = 0; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10356,7 +11644,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch(x) { with ({}) { x = 1; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10569,7 +11857,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (let e = 1;;) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10769,7 +12057,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch ([a,b,c]) { }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10919,7 +12207,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) {} var foo;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11070,7 +12358,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { throw null; } catch ({}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11203,7 +12491,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try { } catch (a) { { const a = b; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11387,7 +12675,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch(e) { try {} catch (e) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11568,7 +12856,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) { { let foo; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11737,7 +13025,7 @@ describe('Statements - Try', () => {
     ],
     [
       `var foo; try {} catch (_) { let foo; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11939,7 +13227,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { { let e = x; } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12123,7 +13411,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (foo) {} let foo;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12274,7 +13562,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { let b = x; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12441,7 +13729,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (const e in y) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12640,7 +13928,7 @@ describe('Statements - Try', () => {
     ],
     [
       `try {} catch (e) { for (let e of y) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
