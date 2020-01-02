@@ -125,7 +125,7 @@ export function addBlockName(
 
   const value = scope['#' + name];
 
-  if (value && (value & BindingKind.Tail) !== BindingKind.Tail) {
+  if (value && (value & 0b00000000000000000000000000001000) === 0) {
     if (kind & BindingKind.ArgumentList) {
       scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
     } else if (
@@ -141,7 +141,7 @@ export function addBlockName(
   if (
     scope.type & ScopeKind.FunctionBody &&
     parent['#' + name] &&
-    (parent['#' + name] & BindingKind.Tail) !== BindingKind.Tail
+    (parent['#' + name] & 0b00000000000000000000000000001000) === 0
   ) {
     report(parser, Errors.DuplicateBinding, name);
   }

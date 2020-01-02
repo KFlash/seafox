@@ -2,17 +2,7 @@ import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
-function convertDecimalToBinary(digit: any, groups: boolean): string {
-  let res = '';
-  for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
-  // Makes a groups of 8 bits
-  if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, "_");
-  return res;
-}
-
 describe('Statements - Switch', () => {
-
- console.log(convertDecimalToBinary(244, false));
   for (const [source, ctx] of [
     [`switch (x) {case a: function f(){}; break; case b: let f; break; }`, Context.OptionsDisableWebCompat],
     [`switch (x) { case a: let foo; break; case b: let foo; break; }`, Context.OptionsDisableWebCompat],
