@@ -612,6 +612,7 @@ export function parseTemplateElement(parser: ParserState, context: Context, tail
         tail
       };
 }
+
 export function parseYieldExpression(
   parser: ParserState,
   context: Context,
@@ -1574,7 +1575,7 @@ export function parseBigIntLiteral(
     : {
         type: 'BigIntLiteral',
         value: null,
-        bigint,
+        bigint
       };
 }
 
@@ -1648,23 +1649,28 @@ export function parseArrowFunction(
       void 0
     );
 
-    if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp && parser.newLine === 0) {
-      report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
-    } else if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
-      report(parser, Errors.InvalidArrowPostfix);
+    if (parser.newLine === 0) {
+      if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+      }
+      if (parser.token === Token.LeftBracket || parser.token === Token.LeftParen) {
+        report(parser, Errors.InvalidInvokedBlockBodyArrow);
+      }
     } else {
-      switch (parser.token) {
-        case Token.Period:
-        case Token.LeftBracket:
-        case Token.TemplateTail:
-        case Token.QuestionMark:
-          report(parser, Errors.InvalidAccessedBlockBodyArrow);
-        case Token.LeftParen:
-          report(parser, Errors.InvalidInvokedBlockBodyArrow);
-        default: // ignore
+      if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
+        report(parser, Errors.InvalidArrowPostfix);
+      } else {
+        switch (parser.token) {
+          case Token.Period:
+          case Token.TemplateTail:
+          case Token.QuestionMark:
+            report(parser, Errors.InvalidAccessedBlockBodyArrow);
+          default: // ignore
+        }
       }
     }
   }
+
   parser.assignable = 0;
   return context & Context.OptionsLoc
     ? {

@@ -333,8 +333,9 @@ export function parseExportDefault(
   let declaration: any = null;
 
   switch (parser.token) {
-    // export default HoistableDeclaration[Default]
     case Token.FunctionKeyword:
+      // export default function foo () {}
+      // export default function () {}
       declaration = parseFunctionDeclaration(
         parser,
         context,
@@ -343,11 +344,15 @@ export function parseExportDefault(
         Origin.TopLevel
       );
       break;
-    // export default ClassDeclaration[Default]
+
     case Token.ClassKeyword:
+      // export default class foo {}
       declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Hoisted);
       break;
     case Token.AsyncKeyword:
+      // export default async function f () {}
+      // export default async function () {}
+      // export default async x => x
       const { tokenValue, start, line, column } = parser;
       nextToken(parser, context, /* allowRegExp */ 0);
       if (parser.newLine === 0) {
@@ -391,6 +396,9 @@ export function parseExportDefault(
       }
       break;
     default:
+      // export default {};
+      // export default [];
+      // export default (1 + 2);
       declaration = parseExpression(parser, context, 0);
       expectSemicolon(parser, context);
   }
@@ -433,6 +441,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     case Token.DefaultKeyword:
       return parseExportDefault(parser, context, scope, start, line, column);
     case Token.Multiply: {
+      // export * from 'foo';
       nextToken(parser, context, /* allowRegExp */ 0); // Skips: '*'
 
       if ((parser.token as Token) === Token.AsKeyword) {
@@ -625,7 +634,9 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       break;
     case Token.AsyncKeyword: {
       const { start, line, column } = parser;
+
       nextToken(parser, context, /* allowRegExp */ 0);
+
       if (parser.newLine === 0 && (parser.token as Token) === Token.FunctionKeyword) {
         declaration = parseFunctionDeclarationRest(
           parser,
@@ -637,7 +648,6 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
           line,
           column
         );
-        declareUnboundVariable(parser, declaration.id ? declaration.id.name : '');
         break;
       }
     }

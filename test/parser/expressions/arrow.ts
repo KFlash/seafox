@@ -483,6 +483,472 @@ describe('Expressions - Arrow', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `const a = () => {}
+      [a]`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        body: [
+          {
+            declarations: [
+              {
+                end: 28,
+                id: {
+                  end: 7,
+                  loc: {
+                    end: {
+                      column: 7,
+                      line: 1
+                    },
+                    start: {
+                      column: 6,
+                      line: 1
+                    }
+                  },
+                  name: 'a',
+                  start: 6,
+                  type: 'Identifier'
+                },
+                init: {
+                  computed: true,
+                  end: 28,
+                  loc: {
+                    end: {
+                      column: 9,
+                      line: 2
+                    },
+                    start: {
+                      column: 10,
+                      line: 1
+                    }
+                  },
+                  object: {
+                    async: false,
+                    body: {
+                      body: [],
+                      end: 18,
+                      loc: {
+                        end: {
+                          column: 18,
+                          line: 1
+                        },
+                        start: {
+                          column: 16,
+                          line: 1
+                        }
+                      },
+                      start: 16,
+                      type: 'BlockStatement'
+                    },
+                    end: 18,
+                    expression: false,
+                    loc: {
+                      end: {
+                        column: 18,
+                        line: 1
+                      },
+                      start: {
+                        column: 10,
+                        line: 1
+                      }
+                    },
+                    params: [],
+                    start: 10,
+                    type: 'ArrowFunctionExpression'
+                  },
+                  optional: false,
+                  property: {
+                    end: 27,
+                    loc: {
+                      end: {
+                        column: 8,
+                        line: 2
+                      },
+                      start: {
+                        column: 7,
+                        line: 2
+                      }
+                    },
+                    name: 'a',
+                    start: 26,
+                    type: 'Identifier'
+                  },
+                  shortCircuited: false,
+                  start: 10,
+                  type: 'MemberExpression'
+                },
+                loc: {
+                  end: {
+                    column: 9,
+                    line: 2
+                  },
+                  start: {
+                    column: 6,
+                    line: 1
+                  }
+                },
+                start: 6,
+                type: 'VariableDeclarator'
+              }
+            ],
+            end: 28,
+            kind: 'const',
+            loc: {
+              end: {
+                column: 9,
+                line: 2
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'VariableDeclaration'
+          }
+        ],
+        end: 28,
+        loc: {
+          end: {
+            column: 9,
+            line: 2
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `const a = () => { alert("hi") }
+
+  (a && a()) || alert("howdy");`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        body: [
+          {
+            declarations: [
+              {
+                end: 63,
+                id: {
+                  end: 7,
+                  loc: {
+                    end: {
+                      column: 7,
+                      line: 1
+                    },
+                    start: {
+                      column: 6,
+                      line: 1
+                    }
+                  },
+                  name: 'a',
+                  start: 6,
+                  type: 'Identifier'
+                },
+                init: {
+                  end: 63,
+                  left: {
+                    arguments: [
+                      {
+                        end: 44,
+                        left: {
+                          end: 37,
+                          loc: {
+                            end: {
+                              column: 4,
+                              line: 3
+                            },
+                            start: {
+                              column: 3,
+                              line: 3
+                            }
+                          },
+                          name: 'a',
+                          start: 36,
+                          type: 'Identifier'
+                        },
+                        loc: {
+                          end: {
+                            column: 11,
+                            line: 3
+                          },
+                          start: {
+                            column: 3,
+                            line: 3
+                          }
+                        },
+                        operator: '&&',
+                        right: {
+                          arguments: [],
+                          callee: {
+                            end: 42,
+                            loc: {
+                              end: {
+                                column: 9,
+                                line: 3
+                              },
+                              start: {
+                                column: 8,
+                                line: 3
+                              }
+                            },
+                            name: 'a',
+                            start: 41,
+                            type: 'Identifier'
+                          },
+                          end: 44,
+                          loc: {
+                            end: {
+                              column: 11,
+                              line: 3
+                            },
+                            start: {
+                              column: 8,
+                              line: 3
+                            }
+                          },
+                          optional: false,
+                          shortCircuited: false,
+                          start: 41,
+                          type: 'CallExpression'
+                        },
+                        start: 36,
+                        type: 'LogicalExpression'
+                      }
+                    ],
+                    callee: {
+                      async: false,
+                      body: {
+                        body: [
+                          {
+                            end: 29,
+                            expression: {
+                              arguments: [
+                                {
+                                  end: 28,
+                                  loc: {
+                                    end: {
+                                      column: 28,
+                                      line: 1
+                                    },
+                                    start: {
+                                      column: 24,
+                                      line: 1
+                                    }
+                                  },
+                                  start: 24,
+                                  type: 'Literal',
+                                  value: 'hi'
+                                }
+                              ],
+                              callee: {
+                                end: 23,
+                                loc: {
+                                  end: {
+                                    column: 23,
+                                    line: 1
+                                  },
+                                  start: {
+                                    column: 18,
+                                    line: 1
+                                  }
+                                },
+                                name: 'alert',
+                                start: 18,
+                                type: 'Identifier'
+                              },
+                              end: 29,
+                              loc: {
+                                end: {
+                                  column: 29,
+                                  line: 1
+                                },
+                                start: {
+                                  column: 18,
+                                  line: 1
+                                }
+                              },
+                              optional: false,
+                              shortCircuited: false,
+                              start: 18,
+                              type: 'CallExpression'
+                            },
+                            loc: {
+                              end: {
+                                column: 29,
+                                line: 1
+                              },
+                              start: {
+                                column: 18,
+                                line: 1
+                              }
+                            },
+                            start: 18,
+                            type: 'ExpressionStatement'
+                          }
+                        ],
+                        end: 31,
+                        loc: {
+                          end: {
+                            column: 31,
+                            line: 1
+                          },
+                          start: {
+                            column: 16,
+                            line: 1
+                          }
+                        },
+                        start: 16,
+                        type: 'BlockStatement'
+                      },
+                      end: 31,
+                      expression: false,
+                      loc: {
+                        end: {
+                          column: 31,
+                          line: 1
+                        },
+                        start: {
+                          column: 10,
+                          line: 1
+                        }
+                      },
+                      params: [],
+                      start: 10,
+                      type: 'ArrowFunctionExpression'
+                    },
+                    end: 45,
+                    loc: {
+                      end: {
+                        column: 12,
+                        line: 3
+                      },
+                      start: {
+                        column: 10,
+                        line: 1
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 10,
+                    type: 'CallExpression'
+                  },
+                  loc: {
+                    end: {
+                      column: 30,
+                      line: 3
+                    },
+                    start: {
+                      column: 10,
+                      line: 1
+                    }
+                  },
+                  operator: '||',
+                  right: {
+                    arguments: [
+                      {
+                        end: 62,
+                        loc: {
+                          end: {
+                            column: 29,
+                            line: 3
+                          },
+                          start: {
+                            column: 22,
+                            line: 3
+                          }
+                        },
+                        start: 55,
+                        type: 'Literal',
+                        value: 'howdy'
+                      }
+                    ],
+                    callee: {
+                      end: 54,
+                      loc: {
+                        end: {
+                          column: 21,
+                          line: 3
+                        },
+                        start: {
+                          column: 16,
+                          line: 3
+                        }
+                      },
+                      name: 'alert',
+                      start: 49,
+                      type: 'Identifier'
+                    },
+                    end: 63,
+                    loc: {
+                      end: {
+                        column: 30,
+                        line: 3
+                      },
+                      start: {
+                        column: 16,
+                        line: 3
+                      }
+                    },
+                    optional: false,
+                    shortCircuited: false,
+                    start: 49,
+                    type: 'CallExpression'
+                  },
+                  start: 10,
+                  type: 'LogicalExpression'
+                },
+                loc: {
+                  end: {
+                    column: 30,
+                    line: 3
+                  },
+                  start: {
+                    column: 6,
+                    line: 1
+                  }
+                },
+                start: 6,
+                type: 'VariableDeclarator'
+              }
+            ],
+            end: 64,
+            kind: 'const',
+            loc: {
+              end: {
+                column: 31,
+                line: 3
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'VariableDeclaration'
+          }
+        ],
+        end: 64,
+        loc: {
+          end: {
+            column: 31,
+            line: 3
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
       `({})=>0`,
       Context.OptionsNext | Context.OptionsLoc,
       {

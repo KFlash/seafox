@@ -11,7 +11,7 @@ function convertDecimalToBinary(digit: any, groups: boolean): string {
 }
 
 describe('Statements - Switch', () => {
-  console.log(convertDecimalToBinary(16, false));
+  console.log(convertDecimalToBinary(8192, false));
   for (const [source, ctx] of [
     [`switch (x) {case a: function f(){}; break; case b: let f; break; }`, Context.OptionsDisableWebCompat],
     [`switch (x) { case a: let foo; break; case b: let foo; break; }`, Context.OptionsDisableWebCompat],

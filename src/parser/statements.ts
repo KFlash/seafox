@@ -149,34 +149,34 @@ export function parseStatement(
       return parseEmptyStatement(parser, context);
     case Token.ReturnKeyword:
       return parseReturnStatement(parser, context);
+    case Token.BreakKeyword:
+      return parseBreakStatement(parser, context, labels);
+    case Token.DebuggerKeyword:
+      return parseDebuggerStatement(parser, context);
+    case Token.ContinueKeyword:
+      return parseContinueStatement(parser, context, labels);
     case Token.ForKeyword:
       return parseForStatement(parser, context, scope, labels);
     case Token.DoKeyword:
       return parseDoWhileStatement(parser, context, scope, labels, nestedLabels);
-    case Token.WhileKeyword:
-      return parseWhileStatement(parser, context, scope, labels, nestedLabels);
+    case Token.IfKeyword:
+      return parseIfStatement(parser, context, scope, labels);
     case Token.SwitchKeyword:
       return parseSwitchStatement(parser, context, scope, labels, nestedLabels);
     case Token.ThrowKeyword:
       return parseThrowStatement(parser, context);
-    case Token.BreakKeyword:
-      return parseBreakStatement(parser, context, labels);
-    case Token.ContinueKeyword:
-      return parseContinueStatement(parser, context, labels);
     case Token.TryKeyword:
       return parseTryStatement(parser, context, scope, labels);
-    case Token.IfKeyword:
-      return parseIfStatement(parser, context, scope, labels);
-    case Token.WithKeyword:
-      return parseWithStatement(parser, context, scope, labels, nestedLabels);
-    case Token.DebuggerKeyword:
-      return parseDebuggerStatement(parser, context);
     case Token.AsyncKeyword:
       return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 0);
+    case Token.WhileKeyword:
+      return parseWhileStatement(parser, context, scope, labels, nestedLabels);
+    case Token.WithKeyword:
+      return parseWithStatement(parser, context, scope, labels, nestedLabels);
     case Token.FunctionKeyword:
       report(
         parser,
-        context & (Context.OptionsDisableWebCompat | Context.Strict) ? Errors.StrictFunction : Errors.SloppyFunction
+        (context & 0b00000000000000000000010000010000) > 0 ? Errors.StrictFunction : Errors.SloppyFunction
       );
     case Token.ClassKeyword:
       report(parser, Errors.ClassForbiddenAsStatement);
@@ -303,13 +303,17 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 
     // async Identifier => ...
 
-    if ((parser.token & Token.IsIdentifier) === Token.IsIdentifier) {
-      if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
+    if ((parser.token & 0b00000000001000010000000000000000) > 0) {
+      if ((context & 0b00000000001000000000010000000000) > 0 && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
       }
 
       if (parser.token === Token.AwaitKeyword) report(parser, Errors.UnexpectedLetStrictReserved);
-      if (context & Context.Strict && (parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+
+      if (
+        context & Context.Strict &&
+        (parser.token & 0b00100000000100000000000000000000) === 0b00100000000100000000000000000000
+      ) {
         report(parser, Errors.Unexpected);
       }
 
@@ -344,7 +348,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
   if (parser.token === Token.LeftParen) {
     expr = parseAsyncArrowOrCallExpression(
       parser,
-      (context | Context.DisallowIn) ^ Context.DisallowIn,
+      (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
       expr,
       1,
       asyncNewLine,
@@ -538,7 +542,7 @@ export function parseForStatementWithVariableDeclarations(
 
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
-          init = parseExpression(parser, context | Context.DisallowIn, 0);
+          init = parseExpression(parser, context | 0b00000000000000000010000000000000, 0);
 
           if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
             if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
@@ -560,7 +564,7 @@ export function parseForStatementWithVariableDeclarations(
           parser.token === Token.LeftBracket
             ? parseArrayExpressionOrPattern(
                 parser,
-                context | Context.DisallowIn,
+                context | 0b00000000000000000010000000000000,
                 scope,
                 1,
                 1,
@@ -573,7 +577,7 @@ export function parseForStatementWithVariableDeclarations(
               )
             : parseObjectLiteralOrPattern(
                 parser,
-                context | Context.DisallowIn,
+                context | 0b00000000000000000010000000000000,
                 scope,
                 1,
                 1,
@@ -591,7 +595,7 @@ export function parseForStatementWithVariableDeclarations(
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
-          init = parseExpression(parser, context | Context.DisallowIn, 0);
+          init = parseExpression(parser, context | 0b00000000000000000010000000000000, 0);
 
           if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
             if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
@@ -820,7 +824,7 @@ export function parseForStatement(
   } else if (token === Token.Semicolon) {
     if (isAwait === 1) report(parser, Errors.Unexpected);
   } else {
-    init = parseLeftHandSideExpression(parser, context | Context.DisallowIn, 0, /* allowLHS */ 1, 1);
+    init = parseLeftHandSideExpression(parser, context | 0b00000000000000000010000000000000, 0, /* allowLHS */ 1, 1);
   }
 
   if (parser.token === Token.OfKeyword) {
@@ -992,7 +996,11 @@ export function parseWhileStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+  const test = parseExpressions(
+    parser,
+    (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
+    0
+  );
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabels, 0);
 
@@ -1114,7 +1122,11 @@ export function parseIfStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+  const test = parseExpressions(
+    parser,
+    (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
+    0
+  );
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
