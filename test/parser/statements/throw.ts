@@ -23,6 +23,159 @@ describe('Statements - Throw', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `throw ((((((d = null)))) ? (((--r))) : ((/|[--]*||[^\\u2B7a+-?]+|(?!)/giy))));`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ThrowStatement',
+            argument: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'AssignmentExpression',
+                left: {
+                  type: 'Identifier',
+                  name: 'd',
+                  start: 12,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                operator: '=',
+                right: {
+                  type: 'Literal',
+                  value: null,
+                  start: 16,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 12,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              },
+              consequent: {
+                type: 'UpdateExpression',
+                argument: {
+                  type: 'Identifier',
+                  name: 'r',
+                  start: 32,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 32
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                },
+                operator: '--',
+                prefix: true,
+                start: 30,
+                end: 33,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 30
+                  },
+                  end: {
+                    line: 1,
+                    column: 33
+                  }
+                }
+              },
+              alternate: {
+                type: 'Literal',
+                value: /|[--]*||[^\u2B7a+-?]+|(?!)/giy,
+                regex: {
+                  pattern: '|[--]*||[^\\u2B7a+-?]+|(?!)',
+                  flags: 'giy'
+                },
+                start: 41,
+                end: 72,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 41
+                  },
+                  end: {
+                    line: 1,
+                    column: 72
+                  }
+                }
+              },
+              start: 8,
+              end: 74,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 74
+                }
+              }
+            },
+            start: 0,
+            end: 77,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 77
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 77,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 77
+          }
+        }
+      }
+    ],
+    [
       `throw /(?=[^\\x4f-\\xF5(-)])/imy`,
       Context.OptionsNext | Context.OptionsLoc,
       {

@@ -1650,27 +1650,33 @@ export function parseArrowFunction(
     );
 
     if (parser.newLine === 0) {
-      if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
+
+      const { token } = parser;
+
+      if ((token & Token.IsBinaryOp) === Token.IsBinaryOp) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
       }
-      if (parser.token === Token.LeftBracket || parser.token === Token.LeftParen) {
-        report(parser, Errors.InvalidInvokedBlockBodyArrow);
+
+      switch (token) {
+        case Token.Period:
+        case Token.LeftBracket:
+        case Token.TemplateTail:
+        case Token.QuestionMark:
+          report(parser, Errors.InvalidAccessedBlockBodyArrow);
+        case Token.LeftParen:
+            report(parser, Errors.InvalidInvokedBlockBodyArrow);
+        default: // ignore
       }
     } else {
-      if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
-        report(parser, Errors.InvalidArrowPostfix);
-      } else {
-        switch (parser.token) {
-          case Token.Period:
-          case Token.TemplateTail:
-          case Token.QuestionMark:
-            report(parser, Errors.InvalidAccessedBlockBodyArrow);
-          default: // ignore
-        }
+      switch (parser.token) {
+        case Token.Period:
+        case Token.QuestionMark:
+        case Token.Exponentiate:
+          report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+        default: // ignore
       }
     }
   }
-
   parser.assignable = 0;
   return context & Context.OptionsLoc
     ? {

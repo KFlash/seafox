@@ -6,9 +6,8 @@ describe('Statements - Do while', () => {
   for (const [source, ctx] of [
     ['do foo while (bar);', Context.OptionsDisableWebCompat],
     ['do async \n f(){}; while (y)', Context.OptionsDisableWebCompat],
-    //['do async \n () => x; while(y)', Context.Empty],
-    //['do async () \n => x; while(y)', Context.Empty],
     ['do let x = 1; while (false)', Context.Empty],
+    ['do async \n f(){}; while (y)', Context.Empty],
     ['do x, y while (z)', Context.Empty],
     ['do foo while (bar);', Context.Empty],
     ['do ()=>x while(c)', Context.Empty],

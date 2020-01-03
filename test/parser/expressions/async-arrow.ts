@@ -317,6 +317,32 @@ describe('Expressions - Async arrow', () => {
     ['async (x, y) => {}`foo`', Context.Empty],
     ['async (x) => {}`foo`', Context.Empty],
     ['async => {}`foo`', Context.Empty],
+    ['async => {} ++foo', Context.Empty],
+    ['async => {}.foo', Context.Empty],
+    [`async => {}.foo`, Context.Empty],
+    [
+      `async => {}
+    .foo`,
+      Context.Empty
+    ],
+    [`async => {} ? foo `, Context.Empty],
+    [`async => {} ? foo : bar`, Context.Empty],
+    [
+      `async => {}
+    ? foo : bar`,
+      Context.Empty
+    ],
+    ['async => {} - foo', Context.Empty],
+    [
+      `async => {}
+    / foo`,
+      Context.Empty
+    ],
+    [
+      `async => {}
+    ** foo`,
+      Context.Empty
+    ],
     ['async x => {}`foo`', Context.Empty],
     ['async => {}[foo]', Context.Empty],
     ['async x => {}[foo]', Context.Empty],
