@@ -1624,7 +1624,9 @@ export function parseArrowFunction(
 ): ESTree.ArrowFunctionExpression {
   if (parser.newLine === 1) report(parser, Errors.InvalidLineBreak);
 
-  // If next token is not `=>`, it's a syntax error
+  // ASI inserts `;` after arrow parameters if a line terminator is found.
+  // `=> ...` is never a valid expression, so report as syntax error.
+  // If next token is not `=>`, it's a syntax error anyways.
   consume(parser, context, Token.Arrow, /* allowRegExp */ 1);
 
   context = ((context | 0b0000000111100000000_0000_00000000) ^ 0b0000000111100000000_0000_00000000) | (isAsync << 22);
@@ -1650,10 +1652,9 @@ export function parseArrowFunction(
     );
 
     if (parser.newLine === 0) {
-
       const { token } = parser;
 
-      if ((token & Token.IsBinaryOp) === Token.IsBinaryOp) {
+      if ((token & 0b00001000000100000000000000000000) > 0) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
       }
 
@@ -1664,7 +1665,7 @@ export function parseArrowFunction(
         case Token.QuestionMark:
           report(parser, Errors.InvalidAccessedBlockBodyArrow);
         case Token.LeftParen:
-            report(parser, Errors.InvalidInvokedBlockBodyArrow);
+          report(parser, Errors.InvalidInvokedBlockBodyArrow);
         default: // ignore
       }
     } else {
