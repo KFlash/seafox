@@ -3,6 +3,16 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Class', () => {
+  function convertDecimalToBinary(digit: any, groups: boolean): string {
+    let res = '';
+    for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
+    // Makes a groups of 8 bits
+    if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, '_');
+    return res;
+  }
+
+  console.log(convertDecimalToBinary(408, false));
+
   for (const arg of [
     'class C {} class C {}',
     'class A { static f(a, a){} }',
