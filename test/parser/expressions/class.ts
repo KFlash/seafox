@@ -2985,6 +2985,147 @@ describe('Expressions - Class', () => {
       }
     ],
     [
+      `class a { 1n() {} }`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            body: {
+              body: [
+                {
+                  computed: false,
+                  end: 17,
+                  key: {
+                    bigint: '1n',
+                    end: 12,
+                    loc: {
+                      end: {
+                        column: 12,
+                        line: 1
+                      },
+                      start: {
+                        column: 10,
+                        line: 1
+                      }
+                    },
+                    start: 10,
+                    type: 'BigIntLiteral',
+                    value: null
+                  },
+                  kind: 'method',
+                  loc: {
+                    end: {
+                      column: 17,
+                      line: 1
+                    },
+                    start: {
+                      column: 10,
+                      line: 1
+                    }
+                  },
+                  start: 10,
+                  static: false,
+                  type: 'MethodDefinition',
+                  value: {
+                    async: false,
+                    body: {
+                      body: [],
+                      end: 17,
+                      loc: {
+                        end: {
+                          column: 17,
+                          line: 1
+                        },
+                        start: {
+                          column: 15,
+                          line: 1
+                        }
+                      },
+                      start: 15,
+                      type: 'BlockStatement'
+                    },
+                    end: 17,
+                    generator: false,
+                    id: null,
+                    loc: {
+                      end: {
+                        column: 17,
+                        line: 1
+                      },
+                      start: {
+                        column: 12,
+                        line: 1
+                      }
+                    },
+                    params: [],
+                    start: 12,
+                    type: 'FunctionExpression'
+                  }
+                }
+              ],
+              end: 19,
+              loc: {
+                end: {
+                  column: 19,
+                  line: 1
+                },
+                start: {
+                  column: 8,
+                  line: 1
+                }
+              },
+              start: 8,
+              type: 'ClassBody'
+            },
+            end: 19,
+            id: {
+              end: 7,
+              loc: {
+                end: {
+                  column: 7,
+                  line: 1
+                },
+                start: {
+                  column: 6,
+                  line: 1
+                }
+              },
+              name: 'a',
+              start: 6,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 19,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            superClass: null,
+            type: 'ClassDeclaration'
+          }
+        ],
+        end: 19,
+        loc: {
+          end: {
+            column: 19,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
       `(class A {*foo(){}})`,
       Context.OptionsLoc,
       {

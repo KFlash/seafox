@@ -263,7 +263,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 ): ESTree.ExpressionStatement | ESTree.LabeledStatement | ESTree.FunctionDeclaration {
   const { token, tokenValue, start, line, column } = parser;
 
-  nextToken(parser, context, /* allowRegExp */ 0);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
 
   if (parser.token === Token.Colon) {
     return parseLabelledStatement(
@@ -1127,7 +1127,7 @@ export function parseIfStatement(
     (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
     0
   );
-  consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
+  consume(parser, context, Token.RightParen | Context.AllowEscapedKeyword, /* allowRegExp */ 1);
   const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
     ? parseConsequentOrAlternative(parser, context, scope, labels)

@@ -7,7 +7,7 @@ import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import { ParserState, expectSemicolon, setLoc, validateFunctionName, isStrictReservedWord, consumeOpt } from './common';
 import {
   parseFunctionLiteral,
-  parseClassDeclarationOrExpressionRest,
+  parseClassTail,
   parseIdentifierFromValue,
   parseBindingPattern,
   parseImportExpression,
@@ -135,7 +135,7 @@ export function parseClassDeclaration(
 ): ESTree.ClassDeclaration {
   const { start, line, column } = parser;
 
-  nextToken(parser, context, /* allowRegExp */ 0);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
 
   // Second set of context masks to fix 'super' edge cases
   const inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
@@ -176,7 +176,7 @@ export function parseClassDeclaration(
     if ((flags & ClassFlags.Hoisted) === 0) report(parser, Errors.DeclNoName, 'Class');
   }
 
-  return parseClassDeclarationOrExpressionRest(
+  return parseClassTail(
     parser,
     context,
     inheritedContext,
@@ -207,7 +207,7 @@ export function parseVariableStatementOrLexicalDeclaration(
 ): ESTree.VariableDeclaration {
   const { start, line, column } = parser;
 
-  nextToken(parser, context, /* allowRegExp */ 0);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
 
   const declarations = parseVariableDeclarationListAndDeclarator(parser, context, scope, kind, origin);
 

@@ -218,7 +218,7 @@ export function parseMemberExpression(
   switch (parser.token) {
     /* Property */
     case Token.Period: {
-      nextToken(parser, context, /* allowRegExp */ 0);
+      nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
 
       parser.assignable = 1;
 
@@ -873,7 +873,7 @@ export function parsePrimaryExpression(
       );
 
     case Token.BigIntLiteral:
-      return parseBigIntLiteral(parser, context, start, line, column);
+      return parseBigIntLiteral(parser, context);
     case Token.NewKeyword:
       return parseNewExpression(parser, context, inGroup, start, line, column);
     case Token.ClassKeyword:
@@ -1550,13 +1550,8 @@ export function parseRegExpLiteral(
       };
 }
 
-export function parseBigIntLiteral(
-  parser: ParserState,
-  context: Context,
-  start: number,
-  line: number,
-  column: number
-): any {
+export function parseBigIntLiteral(parser: ParserState, context: Context): any {
+  const { start, line, column } = parser;
   const bigint = parser.source.slice(start, parser.index);
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -1710,7 +1705,7 @@ export function parseParenthesizedExpression(
   curLine: number,
   curColumn: number
 ): ESTree.Expression {
-  nextToken(parser, context, /* allowRegExp */ 1);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 1);
 
   parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
 
@@ -2642,7 +2637,7 @@ export function parseFunctionExpression(
   line: number,
   column: number
 ): ESTree.FunctionExpression {
-  nextToken(parser, context, /* allowRegExp */ 1);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 1);
 
   const isGenerator = consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0);
   const generatorAndAsyncFlags = (isAsync * 2 + isGenerator) << 21;
@@ -2773,7 +2768,7 @@ export function parseFunctionBody(
 ): any {
   const { start, line, column } = parser;
 
-  consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
+  consume(parser, context | Context.AllowEscapedKeyword, Token.LeftBrace, /* allowRegExp */ 1);
 
   const body: any[] = [];
   const prevContext = context;
@@ -2888,7 +2883,7 @@ export function parseClassExpression(
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
   }
-  return parseClassDeclarationOrExpressionRest(
+  return parseClassTail(
     parser,
     context,
     inheritedContext,
@@ -2902,7 +2897,7 @@ export function parseClassExpression(
   ) as ESTree.ClassExpression;
 }
 
-export function parseClassDeclarationOrExpressionRest(
+export function parseClassTail(
   parser: ParserState,
   context: Context,
   inheritedContext: Context,
@@ -2917,6 +2912,8 @@ export function parseClassDeclarationOrExpressionRest(
   let superClass: ESTree.Expression | null = null;
 
   if (parser.token === Token.ExtendsKeyword) {
+    // ClassHeritage[opt] { ClassBody[opt] }
+
     nextToken(parser, context, /* allowRegExp */ 1);
 
     superClass = parseLeftHandSideExpression(parser, context, inGroup, 0, /* allowLHS */ 0);
@@ -2955,17 +2952,17 @@ export function parseClassBody(
 ): ESTree.ClassBody {
   const { start, line, column } = parser;
 
-  consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
+  consume(parser, context | Context.AllowEscapedKeyword, Token.LeftBrace, /* allowRegExp */ 1);
 
   const body: ESTree.MethodDefinition[] = [];
 
   parser.flags = (parser.flags | 0b00000000000000000000000000000001) ^ 0b00000000000000000000000000000001;
 
+  while (parser.token === Token.Semicolon) {
+    nextToken(parser, context, /* allowRegExp */ 0);
+  }
+
   while (parser.token !== Token.RightBrace) {
-    if (parser.token === Token.Semicolon) {
-      nextToken(parser, context, /* allowRegExp */ 0);
-      continue;
-    }
     body.push(
       parseClassElementList(
         parser,
@@ -2981,9 +2978,13 @@ export function parseClassBody(
         parser.column
       )
     );
+
+    if ((parser.token as Token) === Token.Semicolon) {
+      nextToken(parser, context, /* allowRegExp */ 0);
+    }
   }
 
-  consume(parser, context, Token.RightBrace, isDecl ? 1 : 0);
+  consume(parser, context, Token.RightBrace, /* allowRegExp */ isDecl ? 1 : 0);
 
   return context & Context.OptionsLoc
     ? {
@@ -3015,7 +3016,7 @@ export function parseClassElementList(
   const { token, start, line, column } = parser;
 
   if ((token & 0b00000000001001110000000000000000) > 0) {
-    key = parseIdentifier(parser, context);
+    key = parseIdentifier(parser, context | Context.AllowEscapedKeyword);
 
     if (parser.token !== Token.LeftParen) {
       switch (token) {
@@ -3056,16 +3057,26 @@ export function parseClassElementList(
         default: // ignore
       }
     }
-  } else if ((token & Token.IsStringOrNumber) === Token.IsStringOrNumber) {
-    key = parseLiteral(parser, context);
-  } else if (token === Token.LeftBracket) {
-    isComputed = 1;
-    key = parseComputedPropertyName(parser, inheritedContext, inGroup);
-  } else if (token === Token.Multiply) {
-    type |= PropertyKind.Generator;
-    nextToken(parser, context, /* allowRegExp */ 0); // skip: '*'
   } else {
-    report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+    switch (token) {
+      case Token.NumericLiteral:
+      case Token.StringLiteral:
+        key = parseLiteral(parser, context);
+        break;
+      case Token.BigIntLiteral:
+        key = parseBigIntLiteral(parser, context);
+        break;
+      case Token.LeftBracket:
+        isComputed = 1;
+        key = parseComputedPropertyName(parser, inheritedContext, inGroup);
+        break;
+      case Token.Multiply:
+        type |= PropertyKind.Generator;
+        nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0); // skip: '*'
+        break;
+      default:
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+    }
   }
 
   if (type & (PropertyKind.Generator | PropertyKind.Async | PropertyKind.GetSet)) {
@@ -3257,7 +3268,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
           scope,
           token,
           tokenValue,
-          kind | BindingKind.ArgumentList,
+          BindingKind.ArgumentList,
           Origin.None,
           start,
           line,
@@ -3342,20 +3353,18 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
 
     if (scope && scope.scopeError !== void 0) reportScopeError(scope.scopeError);
 
-    if (isSimpleParameterList === 1) parser.flags |= Flags.SimpleParameterList;
+    parser.flags |= isSimpleParameterList === 1 ? Flags.SimpleParameterList : 0;
   } else if (kind & PropertyKind.Setter) {
     report(parser, Errors.AccessorWrongArgs, 'Setter', 'one', '');
   }
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-  const body = parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0);
-
   return context & Context.OptionsLoc
     ? {
         type: 'FunctionExpression',
         params,
-        body,
+        body: parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0),
         async: (kind & PropertyKind.Async) === 1,
         generator: (kind & PropertyKind.Generator) === 1,
         id: null,
@@ -3366,7 +3375,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     : {
         type: 'FunctionExpression',
         params,
-        body,
+        body: parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0),
         async: (kind & PropertyKind.Async) === 1,
         generator: (kind & PropertyKind.Generator) === 1,
         id: null
@@ -3558,7 +3567,7 @@ export function parseObjectLiteralOrPattern(
   curLine: number,
   curColumn: number
 ): any {
-  nextToken(parser, context, /* allowRegExp */ 0); // skips: '{'
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0); // skips: '{'
 
   const properties: any[] = [];
 
@@ -3772,6 +3781,9 @@ export function parseObjectLiteralOrPattern(
         } else if ((parser.token & 0b00000000001001110000000000000000) > 0) {
           conjuncted |= Flags.NotDestructible;
 
+          if ((parser.token as Token) === Token.AsyncKeyword) {
+            state |= PropertyKind.Async;
+          }
           key = parseIdentifier(parser, context);
 
           if (token === Token.AsyncKeyword) state |= PropertyKind.Async;

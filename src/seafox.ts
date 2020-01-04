@@ -27,7 +27,7 @@ export function parseScript(source: string, options?: Options): Program {
 
   skipHashBang(parser, source);
 
-  nextToken(parser, context, /* allowRegExp */ 1);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 1);
 
   const body = parseStatementList(parser, context | Context.InGlobal, {
     parent: void 0,
@@ -78,7 +78,7 @@ export function parseModule(source: string, options?: Options): Program {
 
   skipHashBang(parser, source);
 
-  nextToken(parser, context, /* allowRegExp */ 1);
+  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 1);
 
   const scope = {
     parent: void 0,

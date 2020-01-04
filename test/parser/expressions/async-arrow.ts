@@ -59,6 +59,12 @@ describe('Expressions - Async arrow', () => {
     ['async(...a)`template-head${c}`=>{}', Context.Empty],
     ['async(...a)?c:d=>{}=>{};', Context.Empty],
     ['async (...a)?c:d=>{}=>{}', Context.Empty],
+    ['async ([a = yield b]) => x', Context.Empty],
+    ['async ([a = yield]) => x', Context.Strict],
+    ['async ({a = yield b}) => x', Context.Empty],
+    ['async ({a = yield b}) => x', Context.Strict],
+    ['async ({a: b = yield c}) => x', Context.Empty],
+    ['async ({a = yield}) => x', Context.Strict],
     ['async (...a)[1]=>{};', Context.Empty],
     ['async (a,...b)`template-head${c}`=>{}', Context.Empty],
     ['async (a,...b)`${c}template-tail`=>{};', Context.Empty],
@@ -74,6 +80,7 @@ describe('Expressions - Async arrow', () => {
     ['async (a, 32) => {}', Context.Empty],
     ['async if => {}', Context.Empty],
     ['async (if) => {}', Context.Empty],
+    ['async (a = yield b) => x', Context.Empty],
     ['async (a, if) => {}', Context.Empty],
     ['async a + b => {}', Context.Empty],
     ['async (a + b) => {}', Context.Empty],
@@ -308,6 +315,9 @@ describe('Expressions - Async arrow', () => {
     ['async async => {}()', Context.Empty],
     ['delete async async => {}', Context.Empty],
     ['++async () => ok', Context.Empty],
+    ['async x => async ({a = await c})', Context.Empty],
+    ['async x => async ({a = await c})', Context.Empty],
+    ['async x => async ({a: b = await})', Context.Empty],
     ['++async async => {}', Context.Empty],
     ['++async x => ok', Context.Empty],
     ['++(x, y) => ok', Context.Empty],
@@ -377,6 +387,415 @@ describe('Expressions - Async arrow', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `async (a = yield) => x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Identifier',
+                name: 'x',
+                start: 21,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 21
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'AssignmentPattern',
+                  left: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'yield',
+                    start: 11,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  start: 7,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
+              start: 0,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      `async (...yield) => x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Identifier',
+                name: 'x',
+                start: 20,
+                end: 21,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 20
+                  },
+                  end: {
+                    line: 1,
+                    column: 21
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'RestElement',
+                  argument: {
+                    type: 'Identifier',
+                    name: 'yield',
+                    start: 10,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 10
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  start: 7,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
+              start: 0,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `async x => async ([a = await b])`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'CallExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'async',
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                arguments: [
+                  {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'AssignmentExpression',
+                        left: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 19,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 19
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        operator: '=',
+                        right: {
+                          type: 'AwaitExpression',
+                          argument: {
+                            type: 'Identifier',
+                            name: 'b',
+                            start: 29,
+                            end: 30,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 29
+                              },
+                              end: {
+                                line: 1,
+                                column: 30
+                              }
+                            }
+                          },
+                          start: 23,
+                          end: 30,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 23
+                            },
+                            end: {
+                              line: 1,
+                              column: 30
+                            }
+                          }
+                        },
+                        start: 19,
+                        end: 30,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 30
+                          }
+                        }
+                      }
+                    ],
+                    start: 18,
+                    end: 31,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 31
+                      }
+                    }
+                  }
+                ],
+                optional: false,
+                shortCircuited: false,
+                start: 11,
+                end: 32,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 32
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 6,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
+              start: 0,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            start: 0,
+            end: 32,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 32
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 32,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 32
+          }
+        }
+      }
+    ],
     [
       `(async => {})[foo]`,
       Context.OptionsNext | Context.OptionsLoc,
@@ -579,6 +998,265 @@ describe('Expressions - Async arrow', () => {
                   }
                 }
               ],
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `async ({a: b = yield}) => x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Identifier',
+                name: 'x',
+                start: 26,
+                end: 27,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 26
+                  },
+                  end: {
+                    line: 1,
+                    column: 27
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'b',
+                          start: 11,
+                          end: 12,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 11
+                            },
+                            end: {
+                              line: 1,
+                              column: 12
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'yield',
+                          start: 15,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 15
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        start: 11,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 8,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    }
+                  ],
+                  start: 7,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
+              start: 0,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 0,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 27,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 27
+          }
+        }
+      }
+    ],
+    [
+      `async yield => x`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Identifier',
+                name: 'x',
+                start: 15,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 15
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'yield',
+                  start: 6,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
               start: 0,
               end: 16,
               loc: {

@@ -10,6 +10,7 @@ export const enum Context {
   OptionsDisableWebCompat = 1 << 4,
   OptionsDirectives       = 1 << 5,
   OptionsGlobalReturn     = 1 << 6,
+  AllowEscapedKeyword  = 1 << 9,
   Strict                  = 1 << 10,
   Module                  = 1 << 11, // Current code should be parsed as a module body
   DisallowIn              = 1 << 13,

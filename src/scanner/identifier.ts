@@ -9,7 +9,7 @@ export function scanIdentifier(parser: ParserState, context: Context, source: st
     char = source.charCodeAt(++parser.index);
   }
   const value = source.slice(parser.start, parser.index);
-  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 0);
+  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 0, 0);
   parser.tokenValue = value;
   return Token.Identifier;
 }
@@ -19,7 +19,7 @@ export function scanIdentifierOrKeyword(parser: ParserState, context: Context, s
     char = source.charCodeAt(++parser.index);
   }
   const value = source.slice(parser.start, parser.index);
-  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 1);
+  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 1, 0);
   parser.tokenValue = value;
   return descKeywordTable[value] || Token.Identifier;
 }
@@ -29,10 +29,10 @@ export function scanIdentifierSlowPath(
   context: Context,
   source: string,
   value: string,
-  maybeKeyword: 0 | 1
+  maybeKeyword: 0 | 1,
+  escaped: 0 | 1
 ): Token {
   let start = parser.index;
-  let escaped: 0 | 1 = 0;
   let char = source.charCodeAt(parser.index);
   let code: number | null = null;
 
@@ -75,11 +75,13 @@ export function scanIdentifierSlowPath(
 
     if (escaped === 0) return token;
 
-    if ((token & Token.FutureReserved) === Token.FutureReserved) {
-      return Token.EscapedFutureReserved;
-    }
-    if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
-      return Token.EscapedFutureReserved;
+    if (context & Context.AllowEscapedKeyword) {
+      if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
+        return Token.EscapedFutureReserved;
+      }
+      if (token === void 0) return Token.Identifier;
+
+      return token;
     }
 
     return Token.EscapedIdentifier;
@@ -133,7 +135,7 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
 export function scanUnicodeEscapeIdStart(parser: ParserState, context: Context, source: string): Token {
   const cookedChar = scanUnicodeEscape(parser, source);
   if (isIdentifierPart(cookedChar)) {
-    return scanIdentifierSlowPath(parser, context, source, fromCodePoint(cookedChar), /* maybeKeyword */ 1);
+    return scanIdentifierSlowPath(parser, context, source, fromCodePoint(cookedChar), /* maybeKeyword */ 1, 1);
   }
   parser.index++; // skip: '\'
   report(parser, Errors.InvalidUnicodeEscapeSequence);
