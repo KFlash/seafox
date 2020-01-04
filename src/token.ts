@@ -1,6 +1,3 @@
-/**
- * The token types and attributes.
- */
 export const enum Token {
 
    /* Attribute names */
@@ -21,7 +18,7 @@ export const enum Token {
    IsCoalesc         = 0b01000000000000000000000000000000,
 
   /* Node types */
-  EOF                = 0b00000001000000000000000000000000, // Pseudo
+  EOF                = 0b00000001000000000000000000000000,
 
   /* Constants/Bindings */
   Identifier        = 0b00000000001100010000000000000001,
