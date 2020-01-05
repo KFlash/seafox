@@ -364,7 +364,7 @@ export function parseMemberExpression(
           ? {
               type: 'ChainingExpression',
               base: expr,
-              chain: parseMemberOrCallChain(parser, context, [], start, line, column),
+              chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column),
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -372,7 +372,7 @@ export function parseMemberExpression(
           : {
               type: 'ChainingExpression',
               base: expr,
-              chain: parseMemberOrCallChain(parser, context, [], start, line, column)
+              chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column)
             },
         inGroup,
         start,
@@ -390,11 +390,11 @@ export function parseMemberOrCallChain(
   parser: ParserState,
   context: Context,
   chain: any,
+  optional: 0 | 1,
   start: number,
   line: number,
   column: number
 ): (ESTree.MemberChain | ESTree.CallChain)[] {
-
   switch (parser.token) {
     /* Property */
     case Token.Period:
@@ -409,8 +409,8 @@ export function parseMemberOrCallChain(
           ? {
               type: 'MemberChain',
               computed: false,
-              property: parseIdentifier(parser, context),
               optional: false,
+              property: parseIdentifier(parser, context),
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -418,11 +418,11 @@ export function parseMemberOrCallChain(
           : {
               type: 'MemberChain',
               computed: false,
-              property: parseIdentifier(parser, context),
-              optional: false
+              optional: false,
+              property: parseIdentifier(parser, context)
             }
       );
-      return parseMemberOrCallChain(parser, context, chain, start, line, column);
+      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
 
     /* Property */
     case Token.LeftBracket: {
@@ -432,7 +432,7 @@ export function parseMemberOrCallChain(
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
-      parser.assignable = 1;
+      parser.assignable = 0;
 
       chain.push(
         context & Context.OptionsLoc
@@ -453,7 +453,7 @@ export function parseMemberOrCallChain(
             }
       );
 
-      return parseMemberOrCallChain(parser, context, chain, start, line, column);
+      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
     }
     /* Call */
     case Token.LeftParen:
@@ -477,25 +477,31 @@ export function parseMemberOrCallChain(
               optional: true
             }
       );
-      return parseMemberOrCallChain(parser, context, chain, start, line, column);
+      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
 
     case Token.TemplateTail:
     case Token.TemplateCont:
       report(parser, Errors.OptionalChainingNoTemplate);
+
     /* Optional Property */
     case Token.QuestionMarkPeriod:
       nextToken(parser, context, 0);
+
+      // '[x?.?.y = 1]'
+      if (optional === 1) report(parser, Errors.Unexpected);
+
+      parser.assignable = 0;
     // falls through
+
     default:
       if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-        const property = parseIdentifier(parser, context);
-
+        parser.assignable = 0;
         chain.push(
           context & Context.OptionsLoc
             ? {
                 type: 'MemberChain',
                 computed: false,
-                property,
+                property: parseIdentifier(parser, context),
                 optional: true,
                 start,
                 end: parser.endIndex,
@@ -504,15 +510,15 @@ export function parseMemberOrCallChain(
             : {
                 type: 'MemberChain',
                 computed: false,
-                property,
+                property: parseIdentifier(parser, context),
                 optional: true
               }
         );
-        return parseMemberOrCallChain(parser, context, chain, start, line, column);
+        return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
       }
-
-      return chain;
   }
+
+  return chain;
 }
 
 export function parseArguments(
