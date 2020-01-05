@@ -3057,7 +3057,7 @@
       char = source.charCodeAt(++parser.index);
     }
     const value = source.slice(parser.start, parser.index);
-    if (char > 90) return scanIdentifierSlowPath(parser, context, source, value, 0);
+    if (char > 90) return scanIdentifierSlowPath(parser, context, source, value, 0, 0);
     parser.tokenValue = value;
     return 3211265;
   }
@@ -3066,13 +3066,12 @@
       char = source.charCodeAt(++parser.index);
     }
     const value = source.slice(parser.start, parser.index);
-    if (char > 90) return scanIdentifierSlowPath(parser, context, source, value, 1);
+    if (char > 90) return scanIdentifierSlowPath(parser, context, source, value, 1, 0);
     parser.tokenValue = value;
     return descKeywordTable[value] || 3211265;
   }
-  function scanIdentifierSlowPath(parser, context, source, value, maybeKeyword) {
+  function scanIdentifierSlowPath(parser, _context, source, value, maybeKeyword, escaped) {
     let start = parser.index;
-    let escaped = 0;
     let char = source.charCodeAt(parser.index);
     let code = null;
     while (parser.index < parser.length) {
@@ -3107,13 +3106,7 @@
       const token = descKeywordTable[parser.tokenValue];
       if (token === void 0) return 3211265;
       if (escaped === 0) return token;
-      if ((token & 262144) === 262144) {
-        return 2162808;
-      }
-      if (context & 1024 && (token === 3473483 || token === 262252)) {
-        return 2162808;
-      }
-      return 2162807;
+      return token;
     }
     return 3211265;
   }
@@ -3147,7 +3140,7 @@
   function scanUnicodeEscapeIdStart(parser, context, source) {
     const cookedChar = scanUnicodeEscape(parser, source);
     if (isIdentifierPart(cookedChar)) {
-      return scanIdentifierSlowPath(parser, context, source, fromCodePoint(cookedChar), 1);
+      return scanIdentifierSlowPath(parser, context, source, fromCodePoint(cookedChar), 1, 1);
     }
     parser.index++;
     report(parser, 19);
@@ -3976,7 +3969,7 @@
     if (CharTypes[char] & (2 | 1)) {
       report(parser, 1);
     }
-    return 1572867;
+    return 1048579;
   }
 
   function scan(parser, context, source, index, length, token, lastIsCR, lineStart, allowRegExp) {
@@ -3998,7 +3991,7 @@
           continue;
         }
         if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
-          return scanIdentifierSlowPath(parser, context, source, '', 0);
+          return scanIdentifierSlowPath(parser, context, source, '', 0, 0);
         }
         report(parser, 20, fromCodePoint(char));
       }
@@ -4501,21 +4494,29 @@
   }
 
   function parseAssignmentExpression(parser, context, isPattern, inGroup, left, start, line, column) {
-    const token = parser.token;
-    if ((token & 67108864) === 67108864) {
+    if ((parser.token & 0b00000100000000000000000000000000) > 0) {
       if (parser.assignable === 0) report(parser, 60);
-      const operator = KeywordDescTable[token & 0b00000000000000000000000011111111];
-      return parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, operator, start, line, column);
+      return parseAssignmentOrPattern(
+        parser,
+        context,
+        isPattern,
+        inGroup,
+        left,
+        KeywordDescTable[parser.token & 0b00000000000000000000000011111111],
+        start,
+        line,
+        column
+      );
     }
-    if ((token & 0b00001000000100000000000000000000) > 0) {
-      left = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, left);
+    if ((parser.token & 0b00001000000100000000000000000000) > 0) {
+      left = parseBinaryExpression(parser, context, inGroup, 4, parser.token, start, line, column, left);
     }
     return parser.token === 23 ? parseConditionalExpression(parser, context, left, start, line, column) : left;
   }
   function parseExpression(parser, context, inGroup) {
     const { start, line, column } = parser;
     let expr = parsePrimaryExpression(parser, context, 0, 0, 1, 1, inGroup, start, line, column);
-    expr = parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, inGroup, start, line, column);
     return parseAssignmentExpression(parser, context, 0, inGroup, expr, start, line, column);
   }
   function parseExpressions(parser, context, inGroup) {
@@ -4616,13 +4617,13 @@
     }
     return left;
   }
-  function parseMemberExpression(parser, context, expr, isOptional, isShortCircuited, inGroup, start, line, column) {
+  function parseMemberExpression(parser, context, expr, inGroup, start, line, column) {
     if ((parser.token & 269484032) === 269484032) {
       return parser.newLine === 0 ? parseUpdateExpression(parser, context, expr, start, line, column) : expr;
     }
     switch (parser.token) {
       case 14: {
-        nextToken(parser, context, 0);
+        nextToken(parser, context | 512, 0);
         parser.assignable = 1;
         if ((parser.token & 0b00000000001001110000000000000000) === 0) report(parser, 95);
         const property = parseIdentifier(parser, context);
@@ -4635,8 +4636,6 @@
                 object: expr,
                 computed: false,
                 property,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
@@ -4645,12 +4644,8 @@
                 type: 'MemberExpression',
                 object: expr,
                 computed: false,
-                property,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1
+                property
               },
-          0,
-          isOptional,
           inGroup,
           start,
           line,
@@ -4671,8 +4666,6 @@
                 object: expr,
                 computed: true,
                 property,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
@@ -4681,12 +4674,8 @@
                 type: 'MemberExpression',
                 object: expr,
                 computed: true,
-                property,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1
+                property
               },
-          0,
-          isShortCircuited,
           inGroup,
           start,
           line,
@@ -4704,8 +4693,6 @@
                 type: 'CallExpression',
                 callee: expr,
                 arguments: args,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
@@ -4713,45 +4700,39 @@
             : {
                 type: 'CallExpression',
                 callee: expr,
-                arguments: args,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1
+                arguments: args
               },
-          0,
-          isOptional,
           inGroup,
           start,
           line,
           column
         );
       }
-      case 1048586:
-      case 1048585: {
-        if (isShortCircuited === 1) report(parser, 6);
+      case 1048586: {
         parser.assignable = 0;
-        const quasi =
-          parser.token === 1048585
-            ? parseTemplate(parser, context | 65536, start, line, column)
-            : parseTemplateLiteral(parser, context);
         return parseMemberExpression(
           parser,
           context,
-          context & 2
-            ? {
-                type: 'TaggedTemplateExpression',
-                tag: expr,
-                quasi,
-                start,
-                end: parser.endIndex,
-                loc: setLoc(parser, line, column)
-              }
-            : {
-                type: 'TaggedTemplateExpression',
-                tag: expr,
-                quasi
-              },
-          isOptional,
-          isShortCircuited,
+          parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
+          inGroup,
+          start,
+          line,
+          column
+        );
+      }
+      case 1048585: {
+        return parseMemberExpression(
+          parser,
+          context,
+          parseTemplateExpression(
+            parser,
+            context,
+            expr,
+            parseTemplate(parser, context | 65536, start, line, column),
+            start,
+            line,
+            column
+          ),
           inGroup,
           start,
           line,
@@ -4759,41 +4740,137 @@
         );
       }
       case 25: {
-        if (isOptional === 1) report(parser, 0);
-        parser.assignable = 0;
         nextToken(parser, context, 0);
-        isOptional = 1;
+        parser.assignable = 0;
+        return parseMemberExpression(
+          parser,
+          context,
+          context & 2
+            ? {
+                type: 'ChainingExpression',
+                base: expr,
+                chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column),
+                start,
+                end: parser.endIndex,
+                loc: setLoc(parser, line, column)
+              }
+            : {
+                type: 'ChainingExpression',
+                base: expr,
+                chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column)
+              },
+          inGroup,
+          start,
+          line,
+          column
+        );
+      }
+      default:
+        return expr;
+    }
+  }
+  function parseMemberOrCallChain(parser, context, chain, optional, start, line, column) {
+    switch (parser.token) {
+      case 14:
+        nextToken(parser, context | 512, 0);
+        parser.assignable = 0;
+        if ((parser.token & 0b00000000001001110000000000000000) === 0) report(parser, 95);
+        chain.push(
+          context & 2
+            ? {
+                type: 'MemberChain',
+                computed: false,
+                optional: false,
+                property: parseIdentifier(parser, context),
+                start,
+                end: parser.endIndex,
+                loc: setLoc(parser, line, column)
+              }
+            : {
+                type: 'MemberChain',
+                computed: false,
+                optional: false,
+                property: parseIdentifier(parser, context)
+              }
+        );
+        return parseMemberOrCallChain(parser, context, chain, 0, start, line, column);
+      case 34603028: {
+        nextToken(parser, context, 1);
+        const property = parseExpressions(parser, (context | 8192) ^ 8192, 0);
+        consume(parser, context, 21, 0);
+        parser.assignable = 0;
+        chain.push(
+          context & 2
+            ? {
+                type: 'MemberChain',
+                computed: true,
+                property,
+                optional: false,
+                start,
+                end: parser.endIndex,
+                loc: setLoc(parser, line, column)
+              }
+            : {
+                type: 'MemberChain',
+                computed: true,
+                property,
+                optional: false
+              }
+        );
+        return parseMemberOrCallChain(parser, context, chain, 0, start, line, column);
+      }
+      case 1048588:
+        const args = parseArguments(parser, context, 0);
+        parser.assignable = 0;
+        chain.push(
+          context & 2
+            ? {
+                type: 'CallChain',
+                arguments: args,
+                optional: true,
+                start,
+                end: parser.endIndex,
+                loc: setLoc(parser, line, column)
+              }
+            : {
+                type: 'CallChain',
+                arguments: args,
+                optional: true
+              }
+        );
+        return parseMemberOrCallChain(parser, context, chain, 0, start, line, column);
+      case 1048586:
+      case 1048585:
+        report(parser, 6);
+      case 25:
+        nextToken(parser, context, 0);
+        if (optional === 1) report(parser, 0);
+        parser.assignable = 0;
+      default:
         if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-          const property = parseIdentifier(parser, context);
-          expr =
+          parser.assignable = 0;
+          chain.push(
             context & 2
               ? {
-                  type: 'MemberExpression',
-                  object: expr,
+                  type: 'MemberChain',
                   computed: false,
-                  property,
-                  optional: isOptional === 1,
-                  shortCircuited: isShortCircuited === 1,
+                  property: parseIdentifier(parser, context),
+                  optional: true,
                   start,
                   end: parser.endIndex,
                   loc: setLoc(parser, line, column)
                 }
               : {
-                  type: 'MemberExpression',
-                  object: expr,
+                  type: 'MemberChain',
                   computed: false,
-                  property,
-                  optional: isOptional === 1,
-                  shortCircuited: isShortCircuited === 1
-                };
-          isOptional = 0;
-          isShortCircuited = 1;
+                  property: parseIdentifier(parser, context),
+                  optional: true
+                }
+          );
+          return parseMemberOrCallChain(parser, context, chain, 0, start, line, column);
         }
-        return parseMemberExpression(parser, context, expr, isOptional, isShortCircuited, inGroup, start, line, column);
-      }
-      default:
-        return expr;
     }
+    return chain;
   }
   function parseArguments(parser, context, inGroup) {
     nextToken(parser, context, 1);
@@ -4981,7 +5058,7 @@
     let expr = parseIdentifier(parser, context);
     parser.assignable = 1;
     if (parser.token === 11) {
-      const conjuncted = (parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
+      const mutualFlag = (parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
       const scope = {
         parent: {
           parent: void 0,
@@ -4992,7 +5069,7 @@
       };
       addBlockName(parser, context, scope, parser.tokenValue, 1, 0);
       expr = parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
-      parser.flags |= conjuncted;
+      parser.flags |= mutualFlag;
     }
     return expr;
   }
@@ -5073,8 +5150,8 @@
         return parseObjectLiteral(parser, context, canAssign ? 0 : 1, inGroup, start, line, column);
       case 1048588:
         return parseParenthesizedExpression(parser, context, inGroup, canAssign, 1, 0, start, line, column);
-      case 1572867:
-        return parseBigIntLiteral(parser, context, start, line, column);
+      case 1048579:
+        return parseBigIntLiteral(parser, context);
       case 1179741:
         return parseNewExpression(parser, context, inGroup, start, line, column);
       case 1179728:
@@ -5217,8 +5294,6 @@
             type: 'CallExpression',
             callee,
             arguments: [],
-            optional: false,
-            shortCircuited: false,
             start,
             end: parser.endIndex,
             loc: setLoc(parser, line, column)
@@ -5226,14 +5301,12 @@
         : {
             type: 'CallExpression',
             callee,
-            arguments: [],
-            optional: false,
-            shortCircuited: false
+            arguments: []
           };
     }
     parser.flags = (parser.flags | 0b00000000000000000000010100000000) ^ (0b00000000000000000000010100000000 | 1024);
     let expr = null;
-    let conjuncted = 0;
+    let mutualFlag = 0;
     const params = [];
     while (parser.token !== 17) {
       const { token, tokenValue, start, line, column } = parser;
@@ -5241,13 +5314,13 @@
         addBlockName(parser, context, scope, tokenValue, 1, 0);
         expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column);
         if (parser.token === 17 || parser.token === 19) {
-          conjuncted |= (parser.assignable === 0 ? 8 | 256 : 0) | ((token & (262144 | 537919488)) > 0 ? 256 : 0);
+          mutualFlag |= (parser.assignable === 0 ? 8 | 256 : 0) | ((token & (262144 | 537919488)) > 0 ? 256 : 0);
         } else if (parser.token === 67108896) {
-          conjuncted |= 256;
+          mutualFlag |= 256;
           expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
         } else {
-          conjuncted |= 8;
-          expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+          mutualFlag |= 8;
+          expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
           expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
         }
       } else if (token & 33554432) {
@@ -5255,11 +5328,11 @@
           parser.token === 34603021
             ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column)
             : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column);
-        conjuncted |= parser.flags | 256;
+        mutualFlag |= parser.flags | 256;
         if (parser.token !== 17 && parser.token !== 19) {
-          if (conjuncted & 16) report(parser, 64);
-          expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
-          conjuncted |= 8;
+          if (mutualFlag & 16) report(parser, 64);
+          expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+          mutualFlag |= 8;
           if ((parser.token & 135266304) === 135266304) {
             expr = parseBinaryExpression(parser, context, 0, 4, token, start, line, column, expr);
           }
@@ -5269,7 +5342,7 @@
         }
       } else if (token === 15) {
         expr = parseSpreadOrRestElement(parser, context, scope, 17, 0, 1, 1, kind, origin, start, line, column);
-        conjuncted |= (parser.token === 17 ? 0 : 8) | (parser.flags | 256);
+        mutualFlag |= (parser.token === 17 ? 0 : 8) | (parser.flags | 256);
       } else {
         expr = parseExpression(parser, context, 0);
         params.push(expr);
@@ -5278,15 +5351,13 @@
         }
         consume(parser, context, 17, 0);
         parser.flags =
-          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted | 8;
+          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag | 8;
         parser.assignable = 0;
         return context & 2
           ? {
               type: 'CallExpression',
               callee,
               arguments: params,
-              optional: false,
-              shortCircuited: false,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -5294,9 +5365,7 @@
           : {
               type: 'CallExpression',
               callee,
-              arguments: params,
-              optional: false,
-              shortCircuited: false
+              arguments: params
             };
       }
       params.push(expr);
@@ -5304,14 +5373,14 @@
       nextToken(parser, context, 1);
     }
     consume(parser, context, 17, 0);
-    conjuncted |= (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048 ? 2048 : 0);
+    mutualFlag |= (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048 ? 2048 : 0);
     if (parser.token === 11) {
       if (parser.flags & 2048) report(parser, 37);
       return parseArrowFunctionAfterParen(
         parser,
         context,
         scope,
-        conjuncted,
+        mutualFlag,
         params,
         canAssign,
         1,
@@ -5321,15 +5390,13 @@
       );
     }
     parser.flags = (parser.flags | 0b00000000000000000000110000000000) ^ 0b00000000000000000000110000000000;
-    if (conjuncted & 16) report(parser, 58);
+    if (mutualFlag & 16) report(parser, 58);
     parser.assignable = 0;
     return context & 2
       ? {
           type: 'CallExpression',
           callee,
           arguments: params,
-          optional: false,
-          shortCircuited: false,
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
@@ -5337,22 +5404,20 @@
       : {
           type: 'CallExpression',
           callee,
-          arguments: params,
-          optional: false,
-          shortCircuited: false
+          arguments: params
         };
   }
   function parseImportCallOrMetaExpression(parser, context, inNew, start, line, column) {
     const tokenValue = parser.tokenValue;
     nextToken(parser, context, 1);
     let expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-    if (parser.token === 14) {
-      return parseImportMetaExpression(parser, context, expr, start, line, column);
+    if (parser.token !== 14) {
+      if (inNew === 1) report(parser, 51);
+      expr = parseImportExpression(parser, context, start, line, column);
+      parser.assignable = 0;
+      return parseMemberExpression(parser, context, expr, 0, start, line, column);
     }
-    if (inNew === 1) report(parser, 51);
-    expr = parseImportExpression(parser, context, start, line, column);
-    parser.assignable = 0;
-    return parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    return parseImportMetaExpression(parser, context, expr, start, line, column);
   }
   function parseNewExpression(parser, context, inGroup, curStart, curLine, curColumn) {
     nextToken(parser, context, 1);
@@ -5419,8 +5484,6 @@
                 object: expr,
                 computed: false,
                 property,
-                optional: false,
-                shortCircuited: false,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
@@ -5429,9 +5492,7 @@
                 type: 'MemberExpression',
                 object: expr,
                 computed: false,
-                property,
-                optional: false,
-                shortCircuited: false
+                property
               },
           start,
           line,
@@ -5452,8 +5513,6 @@
                 object: expr,
                 computed: true,
                 property,
-                optional: false,
-                shortCircuited: false,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
@@ -5462,9 +5521,7 @@
                 type: 'MemberExpression',
                 object: expr,
                 computed: true,
-                property,
-                optional: false,
-                shortCircuited: false
+                property
               },
           start,
           line,
@@ -5473,31 +5530,33 @@
       }
       case 25:
         report(parser, 46);
-      case 1048585:
-      case 1048586: {
+      case 1048585: {
         parser.assignable = 0;
-        const quasi =
-          parser.token === 1048585
-            ? parseTemplate(parser, context | 65536, start, line, column)
-            : parseTemplateLiteral(parser, context);
         return parseNewMemberExpression(
           parser,
           context,
           inGroup,
-          context & 2
-            ? {
-                type: 'TaggedTemplateExpression',
-                tag: expr,
-                quasi,
-                start: start,
-                end: parser.endIndex,
-                loc: setLoc(parser, line, column)
-              }
-            : {
-                type: 'TaggedTemplateExpression',
-                tag: expr,
-                quasi
-              },
+          parseTemplateExpression(
+            parser,
+            context,
+            expr,
+            parseTemplate(parser, context | 65536, start, line, column),
+            start,
+            line,
+            column
+          ),
+          start,
+          line,
+          column
+        );
+      }
+      case 1048586: {
+        parser.assignable = 0;
+        return parseNewMemberExpression(
+          parser,
+          context,
+          inGroup,
+          parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
           start,
           line,
           column
@@ -5506,6 +5565,22 @@
       default:
         return expr;
     }
+  }
+  function parseTemplateExpression(parser, context, tag, quasi, start, line, column) {
+    return context & 2
+      ? {
+          type: 'TaggedTemplateExpression',
+          tag,
+          quasi,
+          start: start,
+          end: parser.endIndex,
+          loc: setLoc(parser, line, column)
+        }
+      : {
+          type: 'TaggedTemplateExpression',
+          tag,
+          quasi
+        };
   }
   function parseSuperExpression(parser, context, start, line, column) {
     nextToken(parser, context, 0);
@@ -5567,7 +5642,8 @@
           regex: tokenRegExp
         };
   }
-  function parseBigIntLiteral(parser, context, start, line, column) {
+  function parseBigIntLiteral(parser, context) {
+    const { start, line, column } = parser;
     const bigint = parser.source.slice(start, parser.index);
     nextToken(parser, context, 0);
     parser.assignable = 0;
@@ -5590,7 +5666,7 @@
     parser,
     context,
     scope,
-    conjuncted,
+    mutualFlag,
     params,
     canAssign,
     isAsync,
@@ -5598,14 +5674,14 @@
     line,
     column
   ) {
-    if (conjuncted & (4 | 8)) {
+    if (mutualFlag & (4 | 8)) {
       report(parser, 71);
     }
-    if (context & (1024 | 2097152) && conjuncted & 1024) {
+    if (context & (1024 | 2097152) && mutualFlag & 1024) {
       report(parser, 36);
     }
     parser.flags =
-      ((parser.flags | 0b00000000000000000000110000011110) ^ 0b00000000000000000000110000011110) | conjuncted;
+      ((parser.flags | 0b00000000000000000000110000011110) ^ 0b00000000000000000000110000011110) | mutualFlag;
     if (canAssign === 0) report(parser, 73);
     let i = params.length;
     while (i--) {
@@ -5685,7 +5761,7 @@
     curLine,
     curColumn
   ) {
-    nextToken(parser, context, 1);
+    nextToken(parser, context | 512, 1);
     parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
     context = (context | 8192) ^ 8192;
     let expr = [];
@@ -5712,7 +5788,7 @@
     }
     let expressions = [];
     let inSequence = 0;
-    let conjuncted = 0;
+    let mutualFlag = 0;
     const { start: sStart, line: sLine, column: sColumn } = parser;
     const scope = {
       parent: {
@@ -5729,13 +5805,13 @@
         addBlockName(parser, context, scope, tokenValue, 1, 0);
         expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column);
         if (parser.token === 19 || parser.token === 17) {
-          conjuncted |=
+          mutualFlag |=
             (parser.assignable === 1 ? 0 : 8 | 256) |
             ((token & 537919488) === 537919488 ? 256 : 0) |
             ((token & 262144) === 262144 ? 256 : 0);
         } else {
-          conjuncted |= parser.token === 67108896 ? 256 : 8;
-          expr = parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
+          mutualFlag |= parser.token === 67108896 ? 256 : 8;
+          expr = parseMemberExpression(parser, context, expr, inGroup, start, line, column);
           if (parser.token !== 17 && parser.token !== 19) {
             expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
           }
@@ -5745,12 +5821,12 @@
           parser.token === 34603021
             ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column)
             : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column);
-        conjuncted |= parser.flags | 256;
+        mutualFlag |= parser.flags | 256;
         parser.assignable = 0;
         if (parser.token !== 19 && parser.token !== 17) {
-          if (conjuncted & 16) report(parser, 64);
-          expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
-          conjuncted |= 8;
+          if (mutualFlag & 16) report(parser, 64);
+          expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+          mutualFlag |= 8;
           if ((parser.token & 0b00000100000000000000000000000000) > 0) {
             if (parser.assignable === 0) report(parser, 60);
             expr = parseAssignmentOrPattern(
@@ -5773,7 +5849,7 @@
             if (parser.token === 23) {
               expr = parseConditionalExpression(parser, context, expr, start, line, column);
             } else {
-              conjuncted |= parser.assignable === 0 ? 8 : 4;
+              mutualFlag |= parser.assignable === 0 ? 8 : 4;
             }
           }
         }
@@ -5783,10 +5859,10 @@
         if (inSequence && (parser.token === 17 || parser.token === 19)) {
           expressions.push(expr);
         }
-        conjuncted |= 16 | 256;
+        mutualFlag |= 16 | 256;
         break;
       } else {
-        conjuncted |= 8;
+        mutualFlag |= 8;
         expr = parseExpression(parser, context, inGroup);
         if (inSequence && (parser.token === 19 || parser.token === 17)) {
           expressions.push(expr);
@@ -5817,7 +5893,7 @@
         }
         consume(parser, context, 17, 0);
         parser.flags =
-          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
         return expr;
       }
       if (inSequence && (parser.token === 19 || parser.token === 17)) {
@@ -5830,7 +5906,7 @@
         expressions = [expr];
       }
       if (parser.token === 17) {
-        conjuncted |= 16;
+        mutualFlag |= 16;
         break;
       }
     }
@@ -5851,19 +5927,19 @@
             };
     }
     consume(parser, context, 17, 0);
-    if (conjuncted & 8 && conjuncted & 16) {
+    if (mutualFlag & 8 && mutualFlag & 16) {
       report(parser, 62);
     }
-    conjuncted |= (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048 ? 2048 : 0);
+    mutualFlag |= (parser.flags & 1024 ? 1024 : 0) | (parser.flags & 2048 ? 2048 : 0);
     if (parser.token === 11) {
-      if (context & (4194304 | 2048) && conjuncted & 2048) {
+      if (context & (4194304 | 2048) && mutualFlag & 2048) {
         report(parser, 37);
       }
       return parseArrowFunctionAfterParen(
         parser,
         context,
         scope,
-        conjuncted,
+        mutualFlag,
         inSequence ? expressions : [expr],
         canAssign,
         0,
@@ -5871,11 +5947,11 @@
         curLine,
         curColumn
       );
-    } else if (conjuncted & 16) {
+    } else if (mutualFlag & 16) {
       report(parser, 75);
     }
     parser.flags =
-      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
     return expr;
   }
   function parseExpressionStatement(parser, context, expression, start, line, column) {
@@ -5896,7 +5972,7 @@
   function parseLeftHandSideExpression(parser, context, inGroup, allowLHS, canAssign) {
     const { start, line, column } = parser;
     const expr = parsePrimaryExpression(parser, context, 0, 0, allowLHS, canAssign, inGroup, start, line, column);
-    return parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
+    return parseMemberExpression(parser, context, expr, inGroup, start, line, column);
   }
   function parseIdentifier(parser, context) {
     const { tokenValue: name, start, line, column } = parser;
@@ -6151,7 +6227,7 @@
   ) {
     nextToken(parser, context, 1);
     const elements = [];
-    let conjuncted = 0;
+    let mutualFlag = 0;
     context = (context | 8192) ^ 8192;
     while (parser.token !== 21) {
       if (consumeOpt(parser, context, 19, 1)) {
@@ -6168,11 +6244,11 @@
             if (parser.assignable === 1) {
               addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
             } else {
-              conjuncted |= 8;
+              mutualFlag |= 8;
             }
           } else {
-            conjuncted |= kind & 1 ? 4 : (kind & 8) !== 8 ? 8 : 0;
-            left = parseMemberExpression(parser, context, left, 0, 0, 0, start, line, column);
+            mutualFlag |= kind & 1 ? 4 : (kind & 8) !== 8 ? 8 : 0;
+            left = parseMemberExpression(parser, context, left, 0, start, line, column);
             if ((parser.token & 0b00000100000000000000000000000000) > 0) {
               if (parser.assignable === 0) report(parser, 60);
               left = parseAssignmentOrPattern(
@@ -6187,17 +6263,17 @@
                 column
               );
             } else if ((parser.token & 0b00001000000100000000000000000000) > 0) {
-              conjuncted |= 8;
+              mutualFlag |= 8;
               left = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, left);
               if (parser.token === 23) {
                 left = parseConditionalExpression(parser, context, left, start, line, column);
               }
             } else {
               if (parser.token === 23) {
-                conjuncted |= 8;
+                mutualFlag |= 8;
                 left = parseConditionalExpression(parser, context, left, start, line, column);
               } else {
-                conjuncted |= parser.assignable === 0 ? 8 : 4;
+                mutualFlag |= parser.assignable === 0 ? 8 : 4;
               }
             }
           }
@@ -6218,12 +6294,12 @@
                   line,
                   column
                 );
-          conjuncted |= parser.flags;
-          parser.assignable = conjuncted & 8 ? 0 : 1;
+          mutualFlag |= parser.flags;
+          parser.assignable = mutualFlag & 8 ? 0 : 1;
           if (parser.token !== 19 && parser.token !== 21) {
-            if (conjuncted & 16) report(parser, 56);
-            left = parseMemberExpression(parser, context, left, 0, 0, 0, start, line, column);
-            conjuncted = parser.assignable === 0 ? 8 : 0;
+            if (mutualFlag & 16) report(parser, 56);
+            left = parseMemberExpression(parser, context, left, 0, start, line, column);
+            mutualFlag = parser.assignable === 0 ? 8 : 0;
             if ((parser.token & 0b00000100000000000000000000000000) > 0) {
               if (parser.assignable === 0) report(parser, 60);
               left = parseAssignmentOrPattern(
@@ -6246,11 +6322,11 @@
               if (parser.token === 23) {
                 left = parseConditionalExpression(parser, context, left, start, line, column);
               } else {
-                conjuncted |= parser.assignable === 0 ? 8 : 4;
+                mutualFlag |= parser.assignable === 0 ? 8 : 4;
               }
             }
           } else {
-            conjuncted |= conjuncted & 8 ? 8 : 0;
+            mutualFlag |= mutualFlag & 8 ? 8 : 0;
           }
         } else if (token === 15) {
           left = parseSpreadOrRestElement(
@@ -6270,16 +6346,16 @@
           if (parser.token !== 19 && parser.token !== 21) {
             report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
           }
-          conjuncted |= parser.flags;
+          mutualFlag |= parser.flags;
         } else {
           left = parseLeftHandSideExpression(parser, context, 0, 1, 1);
           if (parser.token !== 19 && parser.token !== 21) {
             left = parseAssignmentExpression(parser, context, isPattern, 0, left, start, line, column);
-            conjuncted |= (kind & 0b00000000000000000000000000001001) === 0 && token === 1048588 ? 8 : 0;
+            mutualFlag |= (kind & 0b00000000000000000000000000001001) === 0 && token === 1048588 ? 8 : 0;
           } else if (parser.assignable === 0) {
-            conjuncted |= 8;
+            mutualFlag |= 8;
           } else if (token === 1048588) {
-            conjuncted |= parser.assignable === 1 && kind & (8 | 1) ? 4 : 8;
+            mutualFlag |= parser.assignable === 1 && kind & (8 | 1) ? 4 : 8;
           }
         }
         elements.push(left);
@@ -6305,7 +6381,7 @@
       return parseArrayOrObjectAssignmentPattern(
         parser,
         context,
-        conjuncted,
+        mutualFlag,
         isPattern,
         inGroup,
         curStart,
@@ -6315,13 +6391,13 @@
       );
     }
     parser.flags =
-      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
     return node;
   }
   function parseArrayOrObjectAssignmentPattern(
     parser,
     context,
-    conjuncted,
+    mutualFlag,
     isPattern,
     inGroup,
     start,
@@ -6330,16 +6406,16 @@
     left
   ) {
     if (parser.token !== 67108896) report(parser, 60);
-    if ((conjuncted & 8) === 8) report(parser, 60);
+    if ((mutualFlag & 8) === 8) report(parser, 60);
     if (isPattern === 0) reinterpretToPattern(parser, left);
     const node = parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, '=', start, line, column);
     parser.flags =
       ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) |
-      ((conjuncted | 0x210) ^ 0x210);
+      ((mutualFlag | 0x210) ^ 0x210);
     return node;
   }
   function parseFunctionExpression(parser, context, isAsync, start, line, column) {
-    nextToken(parser, context, 1);
+    nextToken(parser, context | 512, 1);
     const isGenerator = consumeOpt(parser, context, 135314230, 0);
     const generatorAndAsyncFlags = (isAsync * 2 + isGenerator) << 21;
     let id = null;
@@ -6434,7 +6510,7 @@
   }
   function parseFunctionBody(parser, context, scope, firstRestricted, flags, scopeError) {
     const { start, line, column } = parser;
-    consume(parser, context, 34603021, 1);
+    consume(parser, context | 512, 34603021, 1);
     const body = [];
     const prevContext = context;
     let isStrictDirective = 0;
@@ -6502,7 +6578,7 @@
       nextToken(parser, context, 0);
       id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
     }
-    return parseClassDeclarationOrExpressionRest(
+    return parseClassTail(
       parser,
       context,
       inheritedContext,
@@ -6515,18 +6591,7 @@
       curColumn
     );
   }
-  function parseClassDeclarationOrExpressionRest(
-    parser,
-    context,
-    inheritedContext,
-    id,
-    inGroup,
-    isDecl,
-    type,
-    start,
-    line,
-    column
-  ) {
+  function parseClassTail(parser, context, inheritedContext, id, inGroup, isDecl, type, start, line, column) {
     let superClass = null;
     if (parser.token === 131159) {
       nextToken(parser, context, 1);
@@ -6556,14 +6621,13 @@
   }
   function parseClassBody(parser, context, inheritedContext, isDecl, inGroup) {
     const { start, line, column } = parser;
-    consume(parser, context, 34603021, 1);
+    consume(parser, context | 512, 34603021, 1);
     const body = [];
     parser.flags = (parser.flags | 0b00000000000000000000000000000001) ^ 0b00000000000000000000000000000001;
+    while (parser.token === 16777234) {
+      nextToken(parser, context, 0);
+    }
     while (parser.token !== 16777232) {
-      if (parser.token === 16777234) {
-        nextToken(parser, context, 0);
-        continue;
-      }
       body.push(
         parseClassElementList(
           parser,
@@ -6579,6 +6643,9 @@
           parser.column
         )
       );
+      while (parser.token === 16777234) {
+        nextToken(parser, context, 0);
+      }
     }
     consume(parser, context, 16777232, isDecl ? 1 : 0);
     return context & 2
@@ -6598,7 +6665,7 @@
     parser,
     context,
     inheritedContext,
-    conjuncted,
+    mutualFlag,
     key,
     isComputed,
     inGroup,
@@ -6609,7 +6676,7 @@
   ) {
     const { token, start, line, column } = parser;
     if ((token & 0b00000000001001110000000000000000) > 0) {
-      key = parseIdentifier(parser, context);
+      key = parseIdentifier(parser, context | 512);
       if (parser.token !== 1048588) {
         switch (token) {
           case 262252:
@@ -6618,7 +6685,7 @@
                 parser,
                 context,
                 inheritedContext,
-                conjuncted,
+                mutualFlag,
                 key,
                 isComputed,
                 inGroup,
@@ -6642,25 +6709,37 @@
             break;
         }
       }
-    } else if ((token & 524288) === 524288) {
-      key = parseLiteral(parser, context);
-    } else if (token === 34603028) {
-      isComputed = 1;
-      key = parseComputedPropertyName(parser, inheritedContext, inGroup);
-    } else if (token === 135314230) {
-      type |= 8;
-      nextToken(parser, context, 0);
     } else {
-      report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+      switch (token) {
+        case 1572866:
+        case 1572868:
+          key = parseLiteral(parser, context);
+          break;
+        case 1048579:
+          key = parseBigIntLiteral(parser, context);
+          break;
+        case 34603028:
+          isComputed = 1;
+          key = parseComputedPropertyName(parser, inheritedContext, inGroup);
+          break;
+        case 135314230:
+          type |= 8;
+          nextToken(parser, context | 512, 0);
+          break;
+        default:
+          report(parser, 86, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+      }
     }
-    if (type & (8 | 16 | 384)) {
+    if ((type & 0b00000000000000000000000110011000) > 0) {
       if ((parser.token & 0b00000000001001110000000000000000) > 0) {
         key = parseIdentifier(parser, context);
-      } else if ((parser.token & 524288) === 524288) {
+      } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
         key = parseLiteral(parser, context);
       } else if (parser.token === 34603028) {
         isComputed = 1;
         key = parseComputedPropertyName(parser, context, 0);
+      } else if (parser.token === 1048579) {
+        key = parseBigIntLiteral(parser, context);
       } else report(parser, 52);
     }
     if (isComputed === 0) {
@@ -6679,12 +6758,12 @@
         report(parser, 55);
       }
     }
-    conjuncted = parser.flags;
+    mutualFlag = parser.flags;
     const value =
       (type & 0b00000000000000000000000110000000) > 0
         ? parseGetterSetter(parser, context | 1024, type)
         : parseMethodDefinition(parser, context | 1024, type);
-    parser.flags = (conjuncted | 32 | 64) ^ (32 | 64);
+    parser.flags = (mutualFlag | 32 | 64) ^ (32 | 64);
     const kind = (type & 32) === 0 && type & 64 ? 'constructor' : type & 128 ? 'get' : type & 256 ? 'set' : 'method';
     return context & 2
       ? {
@@ -6787,19 +6866,7 @@
           if ((context & 1024) !== 1024) {
             parser.flags |= ((token & 262144) === 262144 ? 64 : 0) | ((token & 537919488) === 537919488 ? 32 : 0);
           }
-          left = parseAndClassifyIdentifier(
-            parser,
-            context,
-            scope,
-            token,
-            tokenValue,
-            kind | 1,
-            0,
-            start,
-            line,
-            column,
-            0
-          );
+          left = parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, 1, 0, start, line, column, 0);
         } else {
           if (parser.token === 34603028) {
             left = parseArrayExpressionOrPattern(parser, context, scope, 1, 1, 0, 1, 0, start, line, column);
@@ -6829,17 +6896,16 @@
         report(parser, 38, 'Setter', 'one', '');
       }
       if (scope && scope.scopeError !== void 0) reportScopeError(scope.scopeError);
-      if (isSimpleParameterList === 1) parser.flags |= 256;
+      parser.flags |= isSimpleParameterList === 1 ? 256 : 0;
     } else if (kind & 256) {
       report(parser, 38, 'Setter', 'one', '');
     }
     consume(parser, context, 17, 0);
-    const body = parseFunctionBody(parser, context, scope, void 0, 0, void 0);
     return context & 2
       ? {
           type: 'FunctionExpression',
           params,
-          body,
+          body: parseFunctionBody(parser, context, scope, void 0, 0, void 0),
           async: (kind & 16) === 1,
           generator: (kind & 8) === 1,
           id: null,
@@ -6850,7 +6916,7 @@
       : {
           type: 'FunctionExpression',
           params,
-          body,
+          body: parseFunctionBody(parser, context, scope, void 0, 0, void 0),
           async: (kind & 16) === 1,
           generator: (kind & 8) === 1,
           id: null
@@ -6952,10 +7018,10 @@
     curLine,
     curColumn
   ) {
-    nextToken(parser, context, 0);
+    nextToken(parser, context | 512, 0);
     const properties = [];
     context = (context | 8192) ^ 8192;
-    let conjuncted = 0;
+    let mutualFlag = 0;
     let prototypeCount = 0;
     let key = null;
     let value;
@@ -6988,16 +7054,16 @@
           if (parser.token === 19 || parser.token === 16777232 || parser.token === 67108896) {
             state |= 4;
             if (context & 1024 && (token & 537919488) === 537919488) {
-              conjuncted |= 8;
+              mutualFlag |= 8;
             } else {
               validateIdentifier(parser, context, type, token);
             }
             addVarOrBlock(parser, context, scope, tokenValue, type, origin);
             if (parser.token === 67108896) {
-              conjuncted |= 16;
+              mutualFlag |= 16;
               value = parseAssignmentOrPattern(parser, context, isPattern, inGroup, key, '=', start, line, column);
             } else {
-              conjuncted |= inGroup === 1 && token === 3211376 ? 2048 : 0;
+              mutualFlag |= inGroup === 1 && token === 3211376 ? 2048 : 0;
               value = key;
             }
           } else if (parser.token === 22) {
@@ -7008,28 +7074,28 @@
               const { token: tokenAfterColon, tokenValue: valueAfterColon } = parser;
               value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
               const { token } = parser;
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
               if (parser.token === 19 || parser.token === 16777232) {
                 if (token === 67108896 || token === 16777232 || token === 19) {
                   if (parser.assignable === 0) {
-                    conjuncted |= 8;
+                    mutualFlag |= 8;
                   } else if ((tokenAfterColon & 0b00000000001000010000000000000000) > 0) {
                     addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                   }
                 } else {
-                  conjuncted |= parser.assignable === 1 ? 4 : 8;
+                  mutualFlag |= parser.assignable === 1 ? 4 : 8;
                 }
               } else if ((parser.token & 67108864) === 67108864) {
                 if (parser.assignable === 0) {
-                  conjuncted |= 8;
+                  mutualFlag |= 8;
                 } else if (token !== 67108896) {
-                  conjuncted |= 4;
+                  mutualFlag |= 4;
                 } else {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
                 value = parseAssignmentExpression(parser, context, isPattern, inGroup, value, start, line, column);
               } else {
-                conjuncted |= 8;
+                mutualFlag |= 8;
                 if ((parser.token & 135266304) === 135266304) {
                   value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value);
                 }
@@ -7066,15 +7132,15 @@
                       line,
                       column
                     );
-              conjuncted = parser.flags;
-              parser.assignable = conjuncted & 8 ? 0 : 1;
+              mutualFlag = parser.flags;
+              parser.assignable = mutualFlag & 8 ? 0 : 1;
               if (parser.token === 19 || parser.token === 16777232) {
-                if (parser.assignable === 0) conjuncted |= 8;
+                if (parser.assignable === 0) mutualFlag |= 8;
               } else if (parser.flags & 16) {
                 report(parser, 56);
               } else {
-                value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
-                conjuncted = parser.assignable === 0 ? 8 : 0;
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? 8 : 0;
                 if ((parser.token & 67108864) === 67108864) {
                   value = parseAssignmentOrPattern(
                     parser,
@@ -7094,31 +7160,34 @@
                   if (parser.token === 23) {
                     value = parseConditionalExpression(parser, context, value, start, line, column);
                   }
-                  conjuncted |= parser.assignable === 0 ? 8 : 4;
+                  mutualFlag |= parser.assignable === 0 ? 8 : 4;
                 }
               }
             } else {
               value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
-              conjuncted |= parser.assignable === 1 ? 4 : 8;
+              mutualFlag |= parser.assignable === 1 ? 4 : 8;
               if (parser.token === 19 || parser.token === 16777232) {
-                if (parser.assignable === 0) conjuncted |= 8;
+                if (parser.assignable === 0) mutualFlag |= 8;
               } else {
-                value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
-                conjuncted = parser.assignable === 0 ? 8 : 0;
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? 8 : 0;
                 if (parser.token !== 19 && token !== 16777232) {
-                  if (parser.token !== 67108896) conjuncted |= 8;
+                  if (parser.token !== 67108896) mutualFlag |= 8;
                   value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
                 }
               }
             }
           } else if (parser.token === 34603028) {
-            conjuncted |= 8;
+            mutualFlag |= 8;
             state |= token === 2162799 ? 16 : 0;
             state |= (token === 65650 ? 128 : token === 65651 ? 256 : 1) | 2;
             key = parseComputedPropertyName(parser, context, 0);
             value = parseMethodDefinition(parser, context, state);
           } else if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-            conjuncted |= 8;
+            mutualFlag |= 8;
+            if (parser.token === 2162799) {
+              state |= 16;
+            }
             key = parseIdentifier(parser, context);
             if (token === 2162799) state |= 16;
             state |= token === 65650 ? 128 : token === 65651 ? 256 : 1;
@@ -7127,14 +7196,14 @@
                 ? parseGetterSetter(parser, context, state)
                 : parseMethodDefinition(parser, context, state);
           } else if (parser.token === 1048588) {
-            conjuncted |= 8;
+            mutualFlag |= 8;
             state |= 1;
             value = parseMethodDefinition(parser, context, state);
           } else if (parser.token === 135314230) {
             if (token === 65650 || token === 65651) {
               report(parser, 91);
             }
-            conjuncted |= 8;
+            mutualFlag |= 8;
             nextToken(parser, context, 0);
             state |= 8 | 1 | (token === 2162799 ? 16 : 0);
             if ((parser.token & 0b00000000001001110000000000000000) > 0) {
@@ -7151,7 +7220,7 @@
           } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
             if (token === 2162799) state |= 16;
             state |= token === 65650 ? 128 : token === 65651 ? 256 : 1;
-            conjuncted |= 8;
+            mutualFlag |= 8;
             key = parseLiteral(parser, context);
             value =
               (state & 0b00000000000000000000000110000000) > 0
@@ -7169,22 +7238,22 @@
             if ((parser.token & 0b00000000001001110000000000000000) > 0) {
               value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
               const { token, tokenValue: valueAfterColon } = parser;
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
               if (parser.token === 19 || parser.token === 16777232) {
                 if (token === 67108896 || token === 16777232 || token === 19) {
                   if (parser.assignable === 0) {
-                    conjuncted |= 8;
+                    mutualFlag |= 8;
                   } else if (scope) {
                     addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                   }
                 } else {
-                  conjuncted |= parser.assignable === 1 ? 4 : 8;
+                  mutualFlag |= parser.assignable === 1 ? 4 : 8;
                 }
               } else if (parser.token === 67108896) {
-                conjuncted |= parser.assignable === 0 ? 8 : 0;
+                mutualFlag |= parser.assignable === 0 ? 8 : 0;
                 value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
               } else {
-                conjuncted |= 8;
+                mutualFlag |= 8;
                 value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
               }
             } else if ((parser.token & 0b00000010000000000000000000000000) > 0) {
@@ -7216,15 +7285,15 @@
                       line,
                       column
                     );
-              conjuncted = parser.flags;
-              parser.assignable = conjuncted & 8 ? 0 : 1;
+              mutualFlag = parser.flags;
+              parser.assignable = mutualFlag & 8 ? 0 : 1;
               if (parser.token === 19 || parser.token === 16777232) {
-                if (parser.assignable === 0) conjuncted |= 8;
+                if (parser.assignable === 0) mutualFlag |= 8;
               } else if (parser.flags & 16) {
                 report(parser, 56);
               } else {
-                value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
-                conjuncted = parser.assignable === 0 ? 8 : 0;
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? 8 : 0;
                 if ((parser.token & 0b00000100000000000000000000000000) > 0) {
                   value = parseAssignmentOrPattern(
                     parser,
@@ -7244,21 +7313,21 @@
                   if (parser.token === 23) {
                     value = parseConditionalExpression(parser, context, value, start, line, column);
                   }
-                  conjuncted |= parser.assignable === 0 ? 8 : 4;
+                  mutualFlag |= parser.assignable === 0 ? 8 : 4;
                 }
               }
             } else {
               value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
-              conjuncted |= parser.assignable === 1 ? 4 : 8;
+              mutualFlag |= parser.assignable === 1 ? 4 : 8;
               if (parser.token === 19 || parser.token === 16777232) {
                 if (parser.assignable === 0) {
-                  conjuncted |= 8;
+                  mutualFlag |= 8;
                 }
               } else {
-                value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
-                conjuncted = parser.assignable === 0 ? 8 : 0;
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? 8 : 0;
                 if (parser.token !== 19 && parser.token !== 16777232) {
-                  if (parser.token !== 67108896) conjuncted |= 8;
+                  if (parser.token !== 67108896) mutualFlag |= 8;
                   value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
                 }
               }
@@ -7266,7 +7335,7 @@
           } else if (parser.token === 1048588) {
             state |= 1;
             value = parseMethodDefinition(parser, context, state);
-            conjuncted |= 8;
+            mutualFlag |= 8;
           } else {
             report(parser, 0);
           }
@@ -7279,9 +7348,9 @@
             if ((parser.token & 0b00000000001001110000000000000000) > 0) {
               value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
               const { token } = parser;
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
               if ((parser.token & 0b00000100000000000000000000000000) > 0) {
-                conjuncted |= parser.assignable === 0 ? 8 : token === 67108896 ? 0 : 4;
+                mutualFlag |= parser.assignable === 0 ? 8 : token === 67108896 ? 0 : 4;
                 value = parseAssignmentOrPattern(
                   parser,
                   context,
@@ -7296,15 +7365,15 @@
               } else if (parser.token === 19 || parser.token === 16777232) {
                 if (token === 67108896 || token === 16777232 || token === 19) {
                   if (parser.assignable === 0) {
-                    conjuncted |= 8;
+                    mutualFlag |= 8;
                   } else if ((tokenAfterColon & 2162688) === 2162688) {
                     addVarOrBlock(parser, context, scope, tokenValue, type, origin);
                   }
                 } else {
-                  conjuncted |= parser.assignable === 1 ? 4 : 8;
+                  mutualFlag |= parser.assignable === 1 ? 4 : 8;
                 }
               } else {
-                conjuncted |= 8;
+                mutualFlag |= 8;
                 value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
               }
             } else if ((parser.token & 33554432) === 33554432) {
@@ -7336,16 +7405,16 @@
                       line,
                       column
                     );
-              conjuncted = parser.flags;
-              parser.assignable = conjuncted & 8 ? 0 : 1;
+              mutualFlag = parser.flags;
+              parser.assignable = mutualFlag & 8 ? 0 : 1;
               if (parser.token === 19 || parser.token === 16777232) {
-                if (parser.assignable === 0) conjuncted |= 8;
+                if (parser.assignable === 0) mutualFlag |= 8;
               } else {
-                if (conjuncted & 16) report(parser, 58);
-                value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
-                conjuncted = parser.assignable === 0 ? conjuncted | 8 : 0;
+                if (mutualFlag & 16) report(parser, 58);
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? mutualFlag | 8 : 0;
                 if ((parser.token & 67108864) === 67108864) {
-                  if (parser.token !== 67108896) conjuncted |= 8;
+                  if (parser.token !== 67108896) mutualFlag |= 8;
                   value = parseAssignmentOrPattern(
                     parser,
                     context,
@@ -7364,28 +7433,28 @@
                   if (parser.token === 23) {
                     value = parseConditionalExpression(parser, context, value, start, line, column);
                   }
-                  conjuncted |= parser.assignable === 0 ? 8 : 4;
+                  mutualFlag |= parser.assignable === 0 ? 8 : 4;
                 }
               }
             } else {
               value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
-              conjuncted |= parser.assignable === 1 ? 4 : 8;
+              mutualFlag |= parser.assignable === 1 ? 4 : 8;
               if (parser.token === 19 || parser.token === 16777232) {
-                if (parser.assignable === 0) conjuncted |= 8;
+                if (parser.assignable === 0) mutualFlag |= 8;
               } else {
-                value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
-                conjuncted = parser.assignable === 1 ? 0 : 8;
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 1 ? 0 : 8;
                 if (parser.token !== 19 && parser.token !== 16777232) {
-                  if (parser.token !== 67108896) conjuncted |= 8;
+                  if (parser.token !== 67108896) mutualFlag |= 8;
                   value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
                 }
               }
             }
           } else if (parser.token === 1048588) {
             state |= 1;
-            conjuncted |= parser.flags & 2048 ? 2048 : 0;
+            mutualFlag |= parser.flags & 2048 ? 2048 : 0;
             value = parseMethodDefinition(parser, context, state);
-            conjuncted |= 8;
+            mutualFlag |= 8;
           } else {
             report(parser, 59);
           }
@@ -7396,29 +7465,143 @@
             key = parseIdentifier(parser, context);
             state |= 1;
             if (parser.token === 1048588) {
-              conjuncted |= 8;
+              mutualFlag |= 8;
               value = parseMethodDefinition(parser, context, state);
             } else {
               report(parser, 0);
             }
-          } else if ((parser.token & 524288) === 524288) {
+          } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
             key = parseLiteral(parser, context);
             state |= 1;
             value = parseMethodDefinition(parser, context, state);
-            conjuncted |= 8;
+            mutualFlag |= 8;
           } else if (parser.token === 34603028) {
             state |= 2 | 1;
             key = parseComputedPropertyName(parser, context, 0);
             value = parseMethodDefinition(parser, context, state);
-            conjuncted |= 8;
+            mutualFlag |= 8;
+          } else if (parser.token === 1048579) {
+            key = parseBigIntLiteral(parser, context);
+            state |= 1;
+            value = parseMethodDefinition(parser, context, state);
+            mutualFlag |= 8;
           } else {
             report(parser, 99);
+          }
+        } else if (parser.token === 1048579) {
+          key = parseBigIntLiteral(parser, context);
+          if (parser.token === 22) {
+            nextToken(parser, context, 1);
+            const { start, line, column } = parser;
+            if ((parser.token & 0b00000000001001110000000000000000) > 0) {
+              value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
+              const { token, tokenValue: valueAfterColon } = parser;
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              if (parser.token === 19 || parser.token === 16777232) {
+                if (token === 67108896 || token === 16777232 || token === 19) {
+                  if (parser.assignable === 0) {
+                    mutualFlag |= 8;
+                  } else if (scope) {
+                    addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
+                  }
+                } else {
+                  mutualFlag |= parser.assignable === 1 ? 4 : 8;
+                }
+              } else if (parser.token === 67108896) {
+                mutualFlag |= parser.assignable === 0 ? 8 : 0;
+                value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
+              } else {
+                mutualFlag |= 8;
+                value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
+              }
+            } else if ((parser.token & 0b00000010000000000000000000000000) > 0) {
+              value =
+                parser.token === 34603021
+                  ? parseObjectLiteralOrPattern(
+                      parser,
+                      context,
+                      scope,
+                      0,
+                      isPattern,
+                      0,
+                      type,
+                      origin,
+                      start,
+                      line,
+                      column
+                    )
+                  : parseArrayExpressionOrPattern(
+                      parser,
+                      context,
+                      scope,
+                      0,
+                      isPattern,
+                      inGroup,
+                      type,
+                      origin,
+                      start,
+                      line,
+                      column
+                    );
+              mutualFlag = parser.flags;
+              parser.assignable = mutualFlag & 8 ? 0 : 1;
+              if (parser.token === 19 || parser.token === 16777232) {
+                if (parser.assignable === 0) mutualFlag |= 8;
+              } else if (parser.flags & 16) {
+                report(parser, 56);
+              } else {
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? 8 : 0;
+                if ((parser.token & 0b00000100000000000000000000000000) > 0) {
+                  value = parseAssignmentOrPattern(
+                    parser,
+                    context,
+                    isPattern,
+                    0,
+                    value,
+                    KeywordDescTable[parser.token & 0b00000000000000000000000011111111],
+                    start,
+                    line,
+                    column
+                  );
+                } else {
+                  if ((parser.token & 0b00001000000100000000000000000000) > 0) {
+                    value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value);
+                  }
+                  if (parser.token === 23) {
+                    value = parseConditionalExpression(parser, context, value, start, line, column);
+                  }
+                  mutualFlag |= parser.assignable === 0 ? 8 : 4;
+                }
+              }
+            } else {
+              value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
+              mutualFlag |= parser.assignable === 1 ? 4 : 8;
+              if (parser.token === 19 || parser.token === 16777232) {
+                if (parser.assignable === 0) {
+                  mutualFlag |= 8;
+                }
+              } else {
+                value = parseMemberExpression(parser, context, value, 0, start, line, column);
+                mutualFlag = parser.assignable === 0 ? 8 : 0;
+                if (parser.token !== 19 && parser.token !== 16777232) {
+                  if (parser.token !== 67108896) mutualFlag |= 8;
+                  value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
+                }
+              }
+            }
+          } else if (parser.token === 1048588) {
+            state |= 1;
+            value = parseMethodDefinition(parser, context, state);
+            mutualFlag |= 8;
+          } else {
+            report(parser, 0);
           }
         } else {
           report(parser, 86, KeywordDescTable[token & 0b00000000000000000000000011111111]);
         }
         parser.flags =
-          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
         kind = (state & 0b00000000000000000000000110000000) === 0 ? 'init' : state & 256 ? 'set' : 'get';
         properties.push(
           context & 2
@@ -7445,12 +7628,12 @@
               }
         );
       }
-      conjuncted |= parser.flags;
+      mutualFlag |= parser.flags;
       if (parser.token !== 19) break;
       nextToken(parser, context, 0);
     }
     consume(parser, context, 16777232, 0);
-    if (prototypeCount > 1) conjuncted |= 512;
+    if (prototypeCount > 1) mutualFlag |= 512;
     const node =
       context & 2
         ? {
@@ -7468,7 +7651,7 @@
       return parseArrayOrObjectAssignmentPattern(
         parser,
         context,
-        conjuncted,
+        mutualFlag,
         isPattern,
         inGroup,
         curStart,
@@ -7478,7 +7661,7 @@
       );
     }
     parser.flags =
-      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
     return node;
   }
   function parseSpreadOrRestElement(
@@ -7497,24 +7680,24 @@
   ) {
     nextToken(parser, context, 1);
     let argument;
-    let conjuncted = 0;
+    let mutualFlag = 0;
     const { start, line, column, token, tokenValue } = parser;
     if ((token & 0b00000000001001110000000000000000) > 0) {
       parser.assignable = 1;
       argument = parsePrimaryExpression(parser, context, kind, 0, 1, 1, inGroup, start, line, column);
       const isClosingTokenOrComma = parser.token === closingToken || parser.token === 19;
-      argument = parseMemberExpression(parser, context, argument, 0, 0, 0, start, line, column);
+      argument = parseMemberExpression(parser, context, argument, 0, start, line, column);
       if (parser.token !== 19 && parser.token !== closingToken) {
         if (parser.assignable === 0 && parser.token === 67108896) report(parser, 56);
-        conjuncted |= 8;
+        mutualFlag |= 8;
         argument = parseAssignmentExpression(parser, context, isPattern, 0, argument, start, line, column);
       }
       if (parser.assignable === 0) {
-        conjuncted |= 8;
+        mutualFlag |= 8;
       } else if (isClosingTokenOrComma) {
         addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
       } else {
-        conjuncted |= 4;
+        mutualFlag |= 4;
       }
     } else {
       if (token === closingToken) {
@@ -7528,10 +7711,10 @@
         const token = parser.token;
         if (token !== 67108896 && token !== closingToken && token !== 19) {
           if (parser.flags & 16) report(parser, 56);
-          argument = parseMemberExpression(parser, context, argument, 0, 0, 0, start, line, column);
-          conjuncted |= parser.assignable === 0 ? 8 : 0;
+          argument = parseMemberExpression(parser, context, argument, 0, start, line, column);
+          mutualFlag |= parser.assignable === 0 ? 8 : 0;
           if ((parser.token & 67108864) === 67108864) {
-            if (parser.token !== 67108896) conjuncted |= 8;
+            if (parser.token !== 67108896) mutualFlag |= 8;
             argument = parseAssignmentExpression(parser, context, isPattern, 0, argument, start, line, column);
           } else {
             if ((parser.token & 135266304) === 135266304) {
@@ -7540,29 +7723,29 @@
             if (parser.token === 23) {
               argument = parseConditionalExpression(parser, context, argument, start, line, column);
             }
-            conjuncted |= parser.assignable === 0 ? 8 : 4;
+            mutualFlag |= parser.assignable === 0 ? 8 : 4;
           }
         } else {
-          conjuncted |= closingToken === 16777232 && token !== 67108896 ? 8 : parser.flags;
+          mutualFlag |= closingToken === 16777232 && token !== 67108896 ? 8 : parser.flags;
         }
       } else {
-        conjuncted |= 4;
+        mutualFlag |= 4;
         argument = parseLeftHandSideExpression(parser, context, 0, 1, 1);
         const token = parser.token;
         if (token === 67108896 && token !== closingToken && token !== 19) {
           if (parser.assignable === 0) report(parser, 60);
           argument = parseAssignmentExpression(parser, context, isPattern, 0, argument, start, line, column);
-          conjuncted |= 8;
+          mutualFlag |= 8;
         } else {
           if (token === 19) {
-            conjuncted |= 8;
+            mutualFlag |= 8;
           } else if (token !== closingToken) {
             argument = parseAssignmentExpression(parser, context, 0, 0, argument, start, line, column);
           }
-          conjuncted |= parser.assignable === 1 ? 4 : 8;
+          mutualFlag |= parser.assignable === 1 ? 4 : 8;
         }
         parser.flags =
-          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+          ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
         if (parser.token !== closingToken && parser.token !== 19) report(parser, 61);
         return context & 2
           ? {
@@ -7579,17 +7762,17 @@
       }
     }
     if (parser.token !== closingToken) {
-      if (kind & 1) conjuncted |= isAsync ? 8 : 4;
+      if (kind & 1) mutualFlag |= isAsync ? 8 : 4;
       if (parser.token === 67108896) {
-        if (conjuncted & 8) report(parser, 60);
+        if (mutualFlag & 8) report(parser, 60);
         argument = parseAssignmentOrPattern(parser, context, isPattern, 0, argument, '=', curStart, curLine, curColumn);
-        conjuncted = 8;
+        mutualFlag = 8;
       } else {
-        conjuncted |= 8;
+        mutualFlag |= 8;
       }
     }
     parser.flags =
-      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | conjuncted;
+      ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
     return context & 2
       ? {
           type: isPattern ? 'RestElement' : 'SpreadElement',
@@ -7747,7 +7930,7 @@
         };
   }
   function parseNonDirectiveExpression(parser, context, expr, start, line, column) {
-    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
     expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
     return parser.token === 19 ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
   }
@@ -7810,7 +7993,7 @@
   }
   function parseClassDeclaration(parser, context, scope, flags) {
     const { start, line, column } = parser;
-    nextToken(parser, context, 0);
+    nextToken(parser, context | 512, 0);
     const inheritedContext = (context | 16777216) ^ 16777216;
     context |= 1024;
     let id = null;
@@ -7824,22 +8007,11 @@
     } else {
       if ((flags & 1) === 0) report(parser, 32, 'Class');
     }
-    return parseClassDeclarationOrExpressionRest(
-      parser,
-      context,
-      inheritedContext,
-      id,
-      0,
-      1,
-      'ClassDeclaration',
-      start,
-      line,
-      column
-    );
+    return parseClassTail(parser, context, inheritedContext, id, 0, 1, 'ClassDeclaration', start, line, column);
   }
   function parseVariableStatementOrLexicalDeclaration(parser, context, scope, kind, origin) {
     const { start, line, column } = parser;
-    nextToken(parser, context, 0);
+    nextToken(parser, context | 512, 0);
     const declarations = parseVariableDeclarationListAndDeclarator(parser, context, scope, kind, origin);
     expectSemicolon(parser, context);
     return context & 2
@@ -7896,7 +8068,7 @@
   }
   function parseImportCallDeclaration(parser, context, start, line, column) {
     let expr = parseImportExpression(parser, context, start, line, column);
-    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
     return parseExpressionStatement(parser, context, expr, start, line, column);
   }
   function parseImportMetaDeclaration(parser, context, start, line, column) {
@@ -7914,7 +8086,7 @@
             name: 'import'
           };
     expr = parseImportMetaExpression(parser, context, expr, start, line, column);
-    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
     expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
     return parseExpressionStatement(parser, context, expr, start, line, column);
   }
@@ -8163,7 +8335,7 @@
       }
       parser.assignable = 1;
     }
-    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
     if (parser.token === 19) expr = parseSequenceExpression(parser, context, expr, start, line, column);
     expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
     parser.assignable = 1;
@@ -8246,7 +8418,7 @@
         if (context & 1024) report(parser, 40);
         init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
         parser.assignable = 1;
-        init = parseMemberExpression(parser, context, init, 0, 0, 0, start, line, column);
+        init = parseMemberExpression(parser, context, init, 0, start, line, column);
         isLet = true;
       }
     } else {
@@ -8480,7 +8652,7 @@
         report(parser, 68);
       }
       parser.assignable = (conjuncted & 8) === 8 ? 0 : 1;
-      init = parseMemberExpression(parser, context, init, 0, 0, 0, parser.start, parser.line, parser.column);
+      init = parseMemberExpression(parser, context, init, 0, parser.start, parser.line, parser.column);
       conjuncted = parser.flags;
     } else if (token === 16777234) {
       if (isAwait === 1) report(parser, 0);
@@ -9002,7 +9174,7 @@
         column
       );
     } else {
-      expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+      expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
       expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
     }
     if (parser.token === 19) {
@@ -9031,7 +9203,7 @@
         column
       );
     }
-    expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
     expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
     if (parser.token === 19) {
       expr = parseSequenceExpression(parser, context, expr, start, line, column);
@@ -9286,7 +9458,7 @@
                   column
                 );
               }
-              declaration = parseMemberExpression(parser, context, declaration, 0, 0, 0, start, line, column);
+              declaration = parseMemberExpression(parser, context, declaration, 0, start, line, column);
               declaration = parseAssignmentExpression(parser, context, 0, 0, declaration, start, line, column);
             }
           }
@@ -9497,7 +9669,7 @@
     }
     const parser = create(source);
     skipHashBang(parser, source);
-    nextToken(parser, context, 1);
+    nextToken(parser, context | 512, 1);
     const body = parseStatementList(parser, context | 268435456, {
       parent: void 0,
       type: 2
@@ -9538,7 +9710,7 @@
     }
     const parser = create(source);
     skipHashBang(parser, source);
-    nextToken(parser, context, 1);
+    nextToken(parser, context | 512, 1);
     const scope = {
       parent: void 0,
       type: 2
