@@ -3705,8 +3705,7 @@ describe('Miscellaneous - Comments', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 59,
                         end: 70,
                         loc: {
@@ -3737,8 +3736,7 @@ describe('Miscellaneous - Comments', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 59,
                       end: 73,
                       loc: {
@@ -3821,8 +3819,7 @@ describe('Miscellaneous - Comments', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 83,
                       end: 89,
                       loc: {
@@ -7234,8 +7231,7 @@ describe('Miscellaneous - Comments', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 4,
                       loc: {
@@ -7401,8 +7397,7 @@ describe('Miscellaneous - Comments', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 5,
                       loc: {
@@ -7573,8 +7568,7 @@ describe('Miscellaneous - Comments', () => {
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 8,
                             end: 12,
                             loc: {
@@ -8035,8 +8029,7 @@ describe('Miscellaneous - Comments', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 8,
                       loc: {
@@ -8270,8 +8263,7 @@ describe('Miscellaneous - Comments', () => {
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 13,
                             end: 17,
                             loc: {

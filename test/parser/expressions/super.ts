@@ -304,8 +304,7 @@ describe('Expressions - Super', () => {
                               elements: [
                                 {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Super',
                                     start: 27,
@@ -654,8 +653,7 @@ describe('Expressions - Super', () => {
                             operator: '=',
                             left: {
                               type: 'MemberExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 26,
                               end: 33,
                               loc: {
@@ -805,8 +803,7 @@ describe('Expressions - Super', () => {
                           },
                           argument: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 61,
                             end: 68,
                             loc: {
@@ -1021,8 +1018,7 @@ describe('Expressions - Super', () => {
                           params: [],
                           body: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 105,
                             end: 114,
                             loc: {
@@ -1102,8 +1098,7 @@ describe('Expressions - Super', () => {
                           },
                           argument: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 125,
                             end: 128,
                             loc: {
@@ -1246,8 +1241,7 @@ describe('Expressions - Super', () => {
                                 computed: true,
                                 key: {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Super',
                                     start: 40,
@@ -1577,8 +1571,7 @@ describe('Expressions - Super', () => {
                                         type: 'NewExpression',
                                         callee: {
                                           type: 'MemberExpression',
-                                          optional: false,
-                                          shortCircuited: false,
+
                                           object: {
                                             type: 'Super',
                                             start: 47,
@@ -1931,8 +1924,7 @@ describe('Expressions - Super', () => {
                                       },
                                       right: {
                                         type: 'MemberExpression',
-                                        optional: false,
-                                        shortCircuited: false,
+
                                         object: {
                                           type: 'Super',
                                           start: 42,
@@ -2211,8 +2203,7 @@ describe('Expressions - Super', () => {
                             type: 'NewExpression',
                             callee: {
                               type: 'MemberExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               object: {
                                 type: 'Super',
                                 start: 29,
@@ -2430,8 +2421,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Super',
                               start: 17,
@@ -2652,8 +2642,7 @@ describe('Expressions - Super', () => {
                             type: 'ArrowFunctionExpression',
                             body: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               callee: {
                                 type: 'Super',
                                 start: 48,
@@ -2909,8 +2898,7 @@ describe('Expressions - Super', () => {
                                 },
                                 right: {
                                   type: 'CallExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   callee: {
                                     type: 'Super',
                                     start: 45,
@@ -3146,8 +3134,7 @@ describe('Expressions - Super', () => {
                               type: 'ArrowFunctionExpression',
                               body: {
                                 type: 'MemberExpression',
-                                optional: false,
-                                shortCircuited: false,
+
                                 object: {
                                   type: 'Super',
                                   start: 46,
@@ -3384,8 +3371,7 @@ describe('Expressions - Super', () => {
                               type: 'ArrowFunctionExpression',
                               body: {
                                 type: 'MemberExpression',
-                                optional: false,
-                                shortCircuited: false,
+
                                 object: {
                                   type: 'Super',
                                   start: 23,
@@ -3658,8 +3644,7 @@ describe('Expressions - Super', () => {
                                   },
                                   right: {
                                     type: 'MemberExpression',
-                                    optional: false,
-                                    shortCircuited: false,
+
                                     object: {
                                       type: 'Super',
                                       start: 22,
@@ -3924,8 +3909,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Identifier',
                               name: 'log',
@@ -3945,8 +3929,7 @@ describe('Expressions - Super', () => {
                             arguments: [
                               {
                                 type: 'MemberExpression',
-                                optional: false,
-                                shortCircuited: false,
+
                                 object: {
                                   type: 'Super',
                                   start: 40,
@@ -4023,8 +4006,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 52,
@@ -4240,8 +4222,7 @@ describe('Expressions - Super', () => {
                         },
                         right: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           callee: {
                             type: 'Super',
                             start: 36,
@@ -4494,8 +4475,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 44,
@@ -4711,8 +4691,7 @@ describe('Expressions - Super', () => {
                         },
                         right: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           callee: {
                             type: 'Super',
                             start: 36,
@@ -4964,8 +4943,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 36,
@@ -5012,8 +4990,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 45,
@@ -5220,8 +5197,7 @@ describe('Expressions - Super', () => {
                               type: 'ArrowFunctionExpression',
                               body: {
                                 type: 'CallExpression',
-                                optional: false,
-                                shortCircuited: false,
+
                                 callee: {
                                   type: 'Super',
                                   start: 54,
@@ -5441,8 +5417,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Super',
                               start: 25,
@@ -5864,8 +5839,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Super',
                               start: 25,
@@ -6302,8 +6276,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Identifier',
                               name: 'log',
@@ -6367,8 +6340,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 47,
@@ -6571,8 +6543,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 36,
@@ -6888,8 +6859,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 52,
@@ -7092,8 +7062,7 @@ describe('Expressions - Super', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Super',
                               start: 36,

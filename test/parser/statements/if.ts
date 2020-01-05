@@ -471,8 +471,7 @@ describe('Statements - If', () => {
                                   type: 'ExpressionStatement',
                                   expression: {
                                     type: 'CallExpression',
-                                    optional: false,
-                                    shortCircuited: false,
+
                                     callee: {
                                       type: 'Identifier',
                                       name: 'hi',
@@ -1458,8 +1457,7 @@ describe('Statements - If', () => {
               type: 'ExpressionStatement',
               expression: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'b',
@@ -1679,8 +1677,7 @@ describe('Statements - If', () => {
                   type: 'ExpressionStatement',
                   expression: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'eval',

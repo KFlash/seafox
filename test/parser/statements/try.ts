@@ -9516,8 +9516,7 @@ describe('Statements - Try', () => {
                         type: 'ExpressionStatement',
                         expression: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           callee: {
                             type: 'Identifier',
                             name: '__f_3',
@@ -9600,8 +9599,7 @@ describe('Statements - Try', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Identifier',
                               name: 'eval',
@@ -10277,8 +10275,7 @@ describe('Statements - Try', () => {
                     type: 'ExpressionStatement',
                     expression: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'Identifier',
                         name: 'say',

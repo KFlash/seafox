@@ -4188,8 +4188,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -4340,8 +4339,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -4492,8 +4490,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -4644,8 +4641,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -4796,8 +4792,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -4948,8 +4943,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -5550,8 +5544,7 @@ describe('Miscellaneous - Precedence', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'foo',

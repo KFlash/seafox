@@ -389,7 +389,7 @@ export function parseExportDefault(
               );
             }
 
-            declaration = parseMemberExpression(parser, context, declaration, 0, 0, 0, start, line, column);
+            declaration = parseMemberExpression(parser, context, declaration, 0, start, line, column);
             declaration = parseAssignmentExpression(parser, context, 0, 0, declaration, start, line, column);
           }
         }

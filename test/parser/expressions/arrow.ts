@@ -554,7 +554,7 @@ describe('Expressions - Arrow', () => {
                     start: 10,
                     type: 'ArrowFunctionExpression'
                   },
-                  optional: false,
+
                   property: {
                     end: 27,
                     loc: {
@@ -571,7 +571,7 @@ describe('Expressions - Arrow', () => {
                     start: 26,
                     type: 'Identifier'
                   },
-                  shortCircuited: false,
+
                   start: 10,
                   type: 'MemberExpression'
                 },
@@ -710,8 +710,7 @@ describe('Expressions - Arrow', () => {
                               line: 3
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 41,
                           type: 'CallExpression'
                         },
@@ -771,8 +770,7 @@ describe('Expressions - Arrow', () => {
                                   line: 1
                                 }
                               },
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 18,
                               type: 'CallExpression'
                             },
@@ -831,8 +829,7 @@ describe('Expressions - Arrow', () => {
                         line: 1
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 10,
                     type: 'CallExpression'
                   },
@@ -893,8 +890,7 @@ describe('Expressions - Arrow', () => {
                         line: 3
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 49,
                     type: 'CallExpression'
                   },
@@ -1345,8 +1341,7 @@ describe('Expressions - Arrow', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 24,
                         end: 32,
                         loc: {
@@ -1525,8 +1520,7 @@ describe('Expressions - Arrow', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 11,
                   loc: {
@@ -1713,8 +1707,7 @@ describe('Expressions - Arrow', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 15,
                   loc: {
@@ -1933,8 +1926,7 @@ describe('Expressions - Arrow', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 27,
                   loc: {
@@ -2105,8 +2097,7 @@ describe('Expressions - Arrow', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 6,
                 end: 16,
                 loc: {
@@ -2279,8 +2270,7 @@ describe('Expressions - Arrow', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 6,
                 end: 20,
                 loc: {
@@ -2519,8 +2509,7 @@ describe('Expressions - Arrow', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 23,
               loc: {
@@ -2809,8 +2798,7 @@ describe('Expressions - Arrow', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 42,
               loc: {
@@ -3031,8 +3019,7 @@ describe('Expressions - Arrow', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 35,
                   loc: {
@@ -4418,8 +4405,7 @@ describe('Expressions - Arrow', () => {
                                     }
                                   }
                                 ],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 23,
                                 end: 27,
                                 loc: {
@@ -4451,8 +4437,7 @@ describe('Expressions - Arrow', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 22,
                               end: 31,
                               loc: {
@@ -4500,8 +4485,7 @@ describe('Expressions - Arrow', () => {
                             }
                           }
                         ],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 17,
                         end: 32,
                         loc: {
@@ -4610,8 +4594,7 @@ describe('Expressions - Arrow', () => {
                                       }
                                     }
                                   ],
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 43,
                                   end: 47,
                                   loc: {
@@ -4643,8 +4626,7 @@ describe('Expressions - Arrow', () => {
                                     }
                                   }
                                 ],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 42,
                                 end: 51,
                                 loc: {
@@ -4692,8 +4674,7 @@ describe('Expressions - Arrow', () => {
                               }
                             }
                           ],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 37,
                           end: 52,
                           loc: {
@@ -4741,8 +4722,7 @@ describe('Expressions - Arrow', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 13,
                     end: 53,
                     loc: {
@@ -5065,8 +5045,7 @@ describe('Expressions - Arrow', () => {
                                     }
                                   }
                                 ],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 15,
                                 end: 39,
                                 loc: {
@@ -5081,8 +5060,7 @@ describe('Expressions - Arrow', () => {
                                 }
                               },
                               arguments: [],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 15,
                               end: 41,
                               loc: {
@@ -5247,8 +5225,7 @@ describe('Expressions - Arrow', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 75,
               loc: {
@@ -5340,8 +5317,7 @@ describe('Expressions - Arrow', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 11,
                   loc: {
@@ -6639,8 +6615,7 @@ describe('Expressions - Arrow', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 16,
               loc: {
@@ -8717,8 +8692,7 @@ describe('Expressions - Arrow', () => {
                   }
                 },
                 arguments: [],
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 11,
                 loc: {
@@ -10714,8 +10688,7 @@ describe('Expressions - Arrow', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 20,
               end: 36,
               loc: {
@@ -10814,8 +10787,7 @@ describe('Expressions - Arrow', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 38,
               end: 59,
               loc: {
@@ -10936,8 +10908,7 @@ describe('Expressions - Arrow', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 12,
               loc: {
@@ -14641,8 +14612,7 @@ describe('Expressions - Arrow', () => {
               type: 'ArrowFunctionExpression',
               body: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'let',

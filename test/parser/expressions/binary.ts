@@ -1423,8 +1423,7 @@ describe('Expressions - Binary', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'UnaryExpression',
                 operator: '-',
@@ -1529,8 +1528,7 @@ describe('Expressions - Binary', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'UnaryExpression',
                   operator: '-',
@@ -1716,8 +1714,7 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 7,
                 loc: {
@@ -1852,8 +1849,7 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 7,
                 loc: {
@@ -1988,8 +1984,7 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 2,
                 end: 9,
                 loc: {
@@ -2193,8 +2188,7 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 7,
               loc: {
@@ -2299,8 +2293,7 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 7,
                 loc: {
@@ -2420,8 +2413,7 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 2,
                 end: 9,
                 loc: {
@@ -2524,8 +2516,7 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 2,
                 end: 8,
                 loc: {
@@ -2626,8 +2617,7 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 7,
               loc: {
@@ -3448,8 +3438,7 @@ describe('Expressions - Binary', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'UnaryExpression',
                   operator: '-',
@@ -3568,12 +3557,10 @@ describe('Expressions - Binary', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'UnaryExpression',
                   operator: '-',
@@ -3692,8 +3679,7 @@ describe('Expressions - Binary', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,
@@ -3811,8 +3797,7 @@ describe('Expressions - Binary', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,
@@ -3913,12 +3898,10 @@ describe('Expressions - Binary', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,
@@ -4020,8 +4003,7 @@ describe('Expressions - Binary', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,
@@ -6372,8 +6354,7 @@ describe('Expressions - Binary', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'UnaryExpression',
                   operator: '-',
@@ -6493,8 +6474,7 @@ describe('Expressions - Binary', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,
@@ -6597,16 +6577,13 @@ describe('Expressions - Binary', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'UnaryExpression',
                       operator: '-',
@@ -6770,8 +6747,7 @@ describe('Expressions - Binary', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,

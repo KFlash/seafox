@@ -432,7 +432,7 @@ describe('Expressions - Await', () => {
     'import await, {x, y, z} from "foo"',
     'import await, {x, y, z,} from "foo"',
     'import await, * as foo from "foo"',
-    'import {await} from "foo";',
+    'import {await} from "foo";'
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
@@ -884,8 +884,7 @@ describe('Expressions - Await', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 17,
                   end: 53,
                   loc: {
@@ -1724,8 +1723,7 @@ describe('Expressions - Await', () => {
                                   }
                                 }
                               },
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 22,
                               end: 25,
                               loc: {
@@ -1757,8 +1755,7 @@ describe('Expressions - Await', () => {
                                 }
                               }
                             ],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 22,
                             end: 32,
                             loc: {
@@ -1829,8 +1826,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 36,
               loc: {
@@ -2134,8 +2130,7 @@ describe('Expressions - Await', () => {
                                     }
                                   }
                                 },
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 41,
                                 end: 79,
                                 loc: {
@@ -2185,8 +2180,7 @@ describe('Expressions - Await', () => {
                                       }
                                     }
                                   },
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 80,
                                   end: 91,
                                   loc: {
@@ -2201,8 +2195,7 @@ describe('Expressions - Await', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 41,
                               end: 92,
                               loc: {
@@ -2478,8 +2471,7 @@ describe('Expressions - Await', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 30,
                       end: 36,
                       loc: {
@@ -3134,8 +3126,7 @@ describe('Expressions - Await', () => {
                                 }
                               }
                             ],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 40,
                             end: 56,
                             loc: {
@@ -3421,8 +3412,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 41,
               loc: {
@@ -3532,8 +3522,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 37,
                           end: 40,
                           loc: {
@@ -3596,8 +3585,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 54,
                           end: 57,
                           loc: {
@@ -3660,8 +3648,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 71,
                           end: 74,
                           loc: {
@@ -3724,8 +3711,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 88,
                           end: 91,
                           loc: {
@@ -3788,8 +3774,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 105,
                           end: 108,
                           loc: {
@@ -3852,8 +3837,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 122,
                           end: 125,
                           loc: {
@@ -3916,8 +3900,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 139,
                           end: 142,
                           loc: {
@@ -3980,8 +3963,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 156,
                           end: 159,
                           loc: {
@@ -4044,8 +4026,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 173,
                           end: 176,
                           loc: {
@@ -4106,8 +4087,7 @@ describe('Expressions - Await', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 191,
                         end: 194,
                         loc: {
@@ -4259,8 +4239,7 @@ describe('Expressions - Await', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 50,
                           end: 60,
                           loc: {
@@ -4632,8 +4611,7 @@ describe('Expressions - Await', () => {
                                 }
                               }
                             ],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 95,
                             end: 115,
                             loc: {
@@ -6444,8 +6422,7 @@ describe('Expressions - Await', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 16,
                     end: 26,
                     loc: {
@@ -9271,8 +9248,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 8,
               loc: {
@@ -9377,8 +9353,7 @@ describe('Expressions - Await', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 5,
                   end: 13,
                   loc: {
@@ -9393,8 +9368,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -9481,8 +9455,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 12,
               loc: {
@@ -10978,8 +10951,7 @@ describe('Expressions - Await', () => {
                                           }
                                         }
                                       ],
-                                      optional: false,
-                                      shortCircuited: false,
+
                                       start: 46,
                                       end: 58,
                                       loc: {
@@ -11066,8 +11038,7 @@ describe('Expressions - Await', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 24,
                     end: 61,
                     loc: {
@@ -11423,8 +11394,7 @@ describe('Expressions - Await', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 24,
                     end: 47,
                     loc: {
@@ -11761,8 +11731,7 @@ describe('Expressions - Await', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 24,
                     end: 47,
                     loc: {
@@ -11995,8 +11964,7 @@ describe('Expressions - Await', () => {
                                           }
                                         }
                                       ],
-                                      optional: false,
-                                      shortCircuited: false,
+
                                       start: 46,
                                       end: 58,
                                       loc: {
@@ -12083,8 +12051,7 @@ describe('Expressions - Await', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 24,
                     end: 61,
                     loc: {
@@ -12248,8 +12215,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -12336,8 +12302,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 13,
               loc: {
@@ -12439,8 +12404,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 16,
               loc: {
@@ -12576,8 +12540,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 19,
               loc: {
@@ -12716,8 +12679,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 15,
               loc: {
@@ -12888,8 +12850,7 @@ describe('Expressions - Await', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 22,
               loc: {
@@ -13057,8 +13018,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 11,
                 end: 34,
                 loc: {
@@ -13291,8 +13251,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 11,
                 end: 44,
                 loc: {
@@ -13540,8 +13499,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 11,
                 end: 49,
                 loc: {
@@ -13774,8 +13732,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 18,
                 end: 46,
                 loc: {
@@ -14027,8 +13984,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 18,
                 end: 45,
                 loc: {
@@ -14197,8 +14153,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 11,
                 end: 30,
                 loc: {
@@ -14384,8 +14339,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 11,
                 end: 32,
                 loc: {
@@ -14606,8 +14560,7 @@ describe('Expressions - Await', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 11,
                 end: 35,
                 loc: {
@@ -16035,8 +15988,7 @@ describe('Expressions - Await', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 24,
                     end: 47,
                     loc: {

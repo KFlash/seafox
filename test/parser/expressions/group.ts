@@ -1187,8 +1187,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 1,
                 end: 6,
                 loc: {
@@ -1330,8 +1329,7 @@ describe('Expressions - Group', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 5,
                           end: 8,
                           loc: {
@@ -1511,8 +1509,7 @@ describe('Expressions - Group', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 6,
                   end: 15,
                   loc: {
@@ -1527,8 +1524,7 @@ describe('Expressions - Group', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 6,
               end: 16,
               loc: {
@@ -1614,8 +1610,7 @@ describe('Expressions - Group', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 1,
               end: 6,
               loc: {
@@ -1786,8 +1781,7 @@ describe('Expressions - Group', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 1,
               end: 6,
               loc: {
@@ -2475,8 +2469,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 8,
                 end: 15,
                 loc: {
@@ -2582,8 +2575,7 @@ describe('Expressions - Group', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 9,
                     end: 16,
                     loc: {
@@ -3082,8 +3074,7 @@ describe('Expressions - Group', () => {
                         elements: [
                           {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'x',
@@ -3684,8 +3675,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ArrayExpression',
                         elements: [],
@@ -3867,8 +3857,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ObjectExpression',
                         properties: [],
@@ -4018,8 +4007,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ArrayExpression',
                         elements: [
@@ -4032,8 +4020,7 @@ describe('Expressions - Group', () => {
                                   type: 'RestElement',
                                   argument: {
                                     type: 'MemberExpression',
-                                    optional: false,
-                                    shortCircuited: false,
+
                                     object: {
                                       type: 'ObjectExpression',
                                       properties: [],
@@ -4072,8 +4059,7 @@ describe('Expressions - Group', () => {
                                       operator: '=',
                                       right: {
                                         type: 'MemberExpression',
-                                        optional: false,
-                                        shortCircuited: false,
+
                                         object: {
                                           type: 'Identifier',
                                           name: 'y',
@@ -4350,8 +4336,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ArrayExpression',
                         elements: [],
@@ -4517,8 +4502,7 @@ describe('Expressions - Group', () => {
             },
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 31,
               loc: {
@@ -5538,8 +5522,7 @@ describe('Expressions - Group', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'a',
@@ -5699,8 +5682,7 @@ describe('Expressions - Group', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'a',
@@ -7390,8 +7372,7 @@ describe('Expressions - Group', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'NewExpression',
                 callee: {
@@ -7662,8 +7643,7 @@ describe('Expressions - Group', () => {
                                   }
                                 }
                               },
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 5,
                               end: 8,
                               loc: {
@@ -8092,8 +8072,7 @@ describe('Expressions - Group', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'y',
@@ -8502,8 +8481,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ObjectExpression',
                         properties: [
@@ -10902,8 +10880,7 @@ describe('Expressions - Group', () => {
                           elements: [
                             {
                               type: 'MemberExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               object: {
                                 type: 'Identifier',
                                 name: 'b',
@@ -11100,8 +11077,7 @@ describe('Expressions - Group', () => {
                       },
                       value: {
                         type: 'MemberExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         object: {
                           type: 'Identifier',
                           name: 'y',
@@ -11320,8 +11296,7 @@ describe('Expressions - Group', () => {
               operator: 'delete',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: /a/g,
@@ -11425,8 +11400,7 @@ describe('Expressions - Group', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'foo',
@@ -11733,8 +11707,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 1,
                 end: 12,
                 loc: {
@@ -11819,8 +11792,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [
@@ -11953,8 +11925,7 @@ describe('Expressions - Group', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [
@@ -12499,8 +12470,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -13382,8 +13352,7 @@ describe('Expressions - Group', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 9,
                           end: 12,
                           loc: {
@@ -13651,8 +13620,7 @@ describe('Expressions - Group', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 7,
                         end: 12,
                         loc: {
@@ -13683,8 +13651,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 7,
                       end: 15,
                       loc: {
@@ -13891,8 +13858,7 @@ describe('Expressions - Group', () => {
                               }
                             },
                             arguments: [],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 14,
                             end: 19,
                             loc: {
@@ -13923,8 +13889,7 @@ describe('Expressions - Group', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 14,
                           end: 21,
                           loc: {
@@ -14976,8 +14941,7 @@ describe('Expressions - Group', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 3,
                         end: 8,
                         loc: {
@@ -15008,8 +14972,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 11,
                       loc: {
@@ -15207,8 +15170,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 6,
                       loc: {
@@ -15406,8 +15368,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 7,
                       loc: {
@@ -15596,8 +15557,7 @@ describe('Expressions - Group', () => {
                                 }
                               },
                               arguments: [],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 5,
                               end: 10,
                               loc: {
@@ -15628,8 +15588,7 @@ describe('Expressions - Group', () => {
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 5,
                             end: 12,
                             loc: {
@@ -16255,8 +16214,7 @@ describe('Expressions - Group', () => {
                         }
                       },
                       arguments: [],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 8,
                       loc: {
@@ -16442,8 +16400,7 @@ describe('Expressions - Group', () => {
                         }
                       },
                       arguments: [],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 8,
                       loc: {
@@ -16629,8 +16586,7 @@ describe('Expressions - Group', () => {
                         }
                       },
                       arguments: [],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 8,
                       loc: {
@@ -16665,8 +16621,7 @@ describe('Expressions - Group', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 12,
                         end: 17,
                         loc: {
@@ -16697,8 +16652,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 12,
                       end: 21,
                       loc: {
@@ -17117,8 +17071,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 5,
                       end: 23,
                       loc: {
@@ -17472,8 +17425,7 @@ describe('Expressions - Group', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 29,
                     loc: {
@@ -17922,8 +17874,7 @@ describe('Expressions - Group', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 5,
                     loc: {
@@ -18213,8 +18164,7 @@ describe('Expressions - Group', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 5,
                       end: 8,
                       loc: {
@@ -18806,8 +18756,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 1,
                 end: 4,
                 loc: {
@@ -18911,8 +18860,7 @@ describe('Expressions - Group', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 1,
                   end: 4,
                   loc: {
@@ -18943,8 +18891,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 1,
                 end: 6,
                 loc: {
@@ -19062,8 +19009,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 1,
                 end: 7,
                 loc: {
@@ -19181,8 +19127,7 @@ describe('Expressions - Group', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 1,
                 end: 6,
                 loc: {
@@ -19688,8 +19633,7 @@ describe('Expressions - Group', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 6,
               loc: {
@@ -21244,8 +21188,7 @@ describe('Expressions - Group', () => {
                           type: 'RestElement',
                           argument: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'x',
@@ -21422,8 +21365,7 @@ describe('Expressions - Group', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'foo',
@@ -21897,8 +21839,7 @@ describe('Expressions - Group', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -22278,8 +22219,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -22397,8 +22337,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -22516,24 +22455,19 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'MemberExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         object: {
                           type: 'Identifier',
                           name: 'a',
@@ -22739,8 +22673,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ThisExpression',
                   start: 1,
@@ -22857,8 +22790,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ThisExpression',
                   start: 1,
@@ -23313,8 +23245,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -23432,8 +23363,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -23807,8 +23737,7 @@ describe('Expressions - Group', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [],
@@ -24101,8 +24030,7 @@ describe('Expressions - Group', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -24237,12 +24165,10 @@ describe('Expressions - Group', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'Identifier',
                         name: 'target',
@@ -24276,8 +24202,7 @@ describe('Expressions - Group', () => {
                     computed: true,
                     property: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'Identifier',
                         name: 'targetKey',
@@ -24406,8 +24331,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [],
@@ -24525,8 +24449,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [
@@ -24661,8 +24584,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [],
@@ -24904,12 +24826,10 @@ describe('Expressions - Group', () => {
                   },
                   value: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ArrayExpression',
                         elements: [
@@ -25438,12 +25358,10 @@ describe('Expressions - Group', () => {
                   },
                   value: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ObjectExpression',
                         properties: [
@@ -28242,8 +28160,7 @@ describe('Expressions - Group', () => {
               type: 'BinaryExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [
@@ -29550,8 +29467,7 @@ describe('Expressions - Group', () => {
               operator: 'delete',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: /a/,
@@ -29706,8 +29622,7 @@ describe('Expressions - Group', () => {
                             type: 'AssignmentExpression',
                             left: {
                               type: 'MemberExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               object: {
                                 type: 'Super',
                                 start: 26,
@@ -29894,8 +29809,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ThisExpression',
                   start: 1,
@@ -30012,8 +29926,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'async',
@@ -30131,8 +30044,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'let',
@@ -31208,8 +31120,7 @@ describe('Expressions - Group', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',

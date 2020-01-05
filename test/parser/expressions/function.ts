@@ -398,8 +398,7 @@ describe('Expressions - Function', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -5130,8 +5129,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -7273,8 +7271,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [],
@@ -7807,8 +7804,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [
@@ -8132,8 +8128,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [
@@ -8404,8 +8399,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [
@@ -8627,8 +8621,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [
@@ -8917,8 +8910,7 @@ describe('Expressions - Function', () => {
                           type: 'ExpressionStatement',
                           expression: {
                             type: 'CallExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             callee: {
                               type: 'Identifier',
                               name: 'f',
@@ -9087,8 +9079,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [],
@@ -9343,8 +9334,7 @@ describe('Expressions - Function', () => {
                       type: 'ExpressionStatement',
                       expression: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'FunctionExpression',
                           params: [],
@@ -9420,8 +9410,7 @@ describe('Expressions - Function', () => {
                                 type: 'ExpressionStatement',
                                 expression: {
                                   type: 'CallExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   callee: {
                                     type: 'FunctionExpression',
                                     params: [],
@@ -9717,8 +9706,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'FunctionExpression',
                 params: [],
@@ -9973,8 +9961,7 @@ describe('Expressions - Function', () => {
                       type: 'ExpressionStatement',
                       expression: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'FunctionExpression',
                           params: [],
@@ -10050,8 +10037,7 @@ describe('Expressions - Function', () => {
                                 type: 'ExpressionStatement',
                                 expression: {
                                   type: 'CallExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   callee: {
                                     type: 'ArrowFunctionExpression',
                                     body: {
@@ -10627,8 +10613,7 @@ describe('Expressions - Function', () => {
                       type: 'ExpressionStatement',
                       expression: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'g',
@@ -10735,8 +10720,7 @@ describe('Expressions - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'f',

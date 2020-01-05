@@ -312,8 +312,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 4,
                     loc: {
@@ -502,8 +501,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 12,
                       loc: {
@@ -703,8 +701,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 9,
                     loc: {
@@ -858,8 +855,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 9,
                       loc: {
@@ -1012,8 +1008,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 5,
                           end: 13,
                           loc: {
@@ -1619,8 +1614,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 9,
                     loc: {
@@ -1809,8 +1803,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 5,
                       end: 13,
                       loc: {
@@ -2080,8 +2073,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 4,
                         end: 7,
                         loc: {
@@ -2112,8 +2104,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 9,
                       loc: {
@@ -2774,8 +2765,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 3,
                             end: 6,
                             loc: {
@@ -2849,8 +2839,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                           }
                                         }
                                       },
-                                      optional: false,
-                                      shortCircuited: false,
+
                                       start: 14,
                                       end: 17,
                                       loc: {
@@ -3049,8 +3038,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                   }
                                 }
                               },
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 3,
                               end: 6,
                               loc: {
@@ -3123,8 +3111,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                             }
                                           }
                                         },
-                                        optional: false,
-                                        shortCircuited: false,
+
                                         start: 14,
                                         end: 17,
                                         loc: {
@@ -3565,8 +3552,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 4,
                     loc: {
@@ -3748,8 +3734,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 14,
                     loc: {
@@ -3931,8 +3916,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 14,
                     loc: {
@@ -4067,8 +4051,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 5,
                     loc: {
@@ -4271,8 +4254,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 2,
                         end: 7,
                         loc: {
@@ -4303,8 +4285,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 2,
                       end: 9,
                       loc: {
@@ -4615,8 +4596,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 20,
                     loc: {
@@ -4800,8 +4780,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 17,
                       loc: {
@@ -4951,8 +4930,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 2,
                       end: 5,
                       loc: {
@@ -5179,8 +5157,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 5,
                     loc: {
@@ -5364,8 +5341,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 5,
                     loc: {
@@ -5769,8 +5745,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 5,
                     loc: {
@@ -5926,8 +5901,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 2,
                         end: 7,
                         loc: {
@@ -5958,8 +5932,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 2,
                       end: 9,
                       loc: {
@@ -6160,8 +6133,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 2,
                         end: 7,
                         loc: {
@@ -6192,8 +6164,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 2,
                       end: 9,
                       loc: {
@@ -6506,8 +6477,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 23,
                       loc: {
@@ -7105,8 +7075,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 1,
                   end: 10,
                   loc: {
@@ -7226,8 +7195,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 1,
                   end: 11,
                   loc: {
@@ -7349,8 +7317,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 11,
                     loc: {
@@ -7801,8 +7768,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 7,
                       loc: {
@@ -8035,8 +8001,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 7,
                     end: 10,
                     loc: {
@@ -8171,8 +8136,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 5,
                     loc: {
@@ -8384,8 +8348,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 11,
               loc: {
@@ -8552,8 +8515,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 12,
               loc: {
@@ -11072,8 +11034,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 20,
                     loc: {
@@ -11230,8 +11191,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 11,
                     loc: {
@@ -11354,8 +11314,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 1,
                         end: 4,
                         loc: {
@@ -11386,8 +11345,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 7,
                       loc: {
@@ -11601,8 +11559,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 10,
                       loc: {
@@ -11784,8 +11741,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 10,
                       loc: {
@@ -12604,8 +12560,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'TemplateLiteral',
                       expressions: [
@@ -12799,8 +12754,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 'X',
@@ -12935,12 +12889,10 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'Identifier',
                         name: 'x',
@@ -13091,12 +13043,10 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'x',
@@ -13274,8 +13224,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'NewExpression',
                       callee: {
@@ -13428,8 +13377,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'NewExpression',
                         callee: {
@@ -13643,12 +13591,10 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'x',
@@ -13828,12 +13774,10 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'x',
@@ -14043,8 +13987,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'x',
@@ -14181,8 +14124,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -14378,8 +14320,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'NewExpression',
                       callee: {
@@ -14532,8 +14473,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'NewExpression',
                         callee: {
@@ -14979,8 +14919,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 50,
@@ -15115,8 +15054,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'ArrayExpression',
                       elements: [],
@@ -15253,8 +15191,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Literal',
                         value: 'foo',
@@ -17016,8 +16953,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 'foo',
@@ -17708,8 +17644,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 8,
                             end: 12,
                             loc: {
@@ -17913,8 +17848,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 7,
                   end: 11,
                   loc: {
@@ -18122,8 +18056,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                 }
                               },
                               arguments: [],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 26,
                               end: 29,
                               loc: {
@@ -18154,8 +18087,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 26,
                             end: 31,
                             loc: {
@@ -18204,8 +18136,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 32,
                             end: 37,
                             loc: {
@@ -18256,8 +18187,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                   }
                                 }
                               },
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 41,
                               end: 45,
                               loc: {
@@ -18427,8 +18357,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                               }
                             },
                             arguments: [],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 4,
                             end: 9,
                             loc: {
@@ -18459,8 +18388,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 4,
                           end: 11,
                           loc: {
@@ -19329,8 +19257,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 5,
                     loc: {
@@ -22127,8 +22054,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       },
                       arguments: [],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 4,
                       loc: {
@@ -22159,8 +22085,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 6,
                     loc: {
@@ -22314,8 +22239,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 3,
                       end: 6,
                       loc: {
@@ -22329,8 +22253,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 7,
                     loc: {
@@ -22467,8 +22390,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 4,
                       loc: {
@@ -22653,8 +22575,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 3,
                         end: 6,
                         loc: {
@@ -22668,8 +22589,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 7,
                       loc: {
@@ -23771,8 +23691,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -23924,8 +23843,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -24016,8 +23934,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 4,
                     end: 10,
                     loc: {
@@ -24388,8 +24305,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 11,
                       loc: {
@@ -24437,8 +24353,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 4,
                     end: 17,
                     loc: {
@@ -24579,8 +24494,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 4,
                           end: 11,
                           loc: {
@@ -24628,8 +24542,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             }
                           }
                         ],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 4,
                         end: 17,
                         loc: {
@@ -24660,8 +24573,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 4,
                       end: 20,
                       loc: {
@@ -24809,8 +24721,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 4,
                     loc: {
@@ -25494,8 +25405,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 23,
               loc: {
@@ -25756,8 +25666,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -27572,8 +27481,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                       elements: [
                         {
                           type: 'MemberExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           object: {
                             type: 'Identifier',
                             name: 'x',
@@ -28449,8 +28357,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         elements: [
                           {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'x',
@@ -28777,8 +28684,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                                                                                             }
                                                                                                           }
                                                                                                         },
-                                                                                                        optional: false,
-                                                                                                        shortCircuited: false,
+
                                                                                                         start: 23,
                                                                                                         end: 27,
                                                                                                         loc: {
@@ -29398,12 +29304,10 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               callee: {
                                 type: 'Identifier',
                                 name: 'foo',
@@ -31584,8 +31488,6 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
                     object: {
                       type: 'ObjectExpression',
                       properties: [],
@@ -31720,12 +31622,10 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   type: 'SpreadElement',
                   argument: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Literal',
                         value: 'f',
@@ -31942,8 +31842,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   type: 'SpreadElement',
                   argument: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 'x',
@@ -32629,8 +32528,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 5,
@@ -32765,8 +32663,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'ObjectExpression',
                       properties: [],
@@ -32901,8 +32798,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'ObjectExpression',
                       properties: [],
@@ -33281,8 +33177,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
               operator: '=',
               right: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'f',
@@ -33330,8 +33225,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                 },
                                 {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Identifier',
                                     name: 'b',
@@ -33398,8 +33292,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                               elements: [
                                 {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Identifier',
                                     name: 'd',
@@ -33450,8 +33343,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                   type: 'AssignmentExpression',
                                   left: {
                                     type: 'MemberExpression',
-                                    optional: false,
-                                    shortCircuited: false,
+
                                     object: {
                                       type: 'Identifier',
                                       name: 'f',
@@ -33677,8 +33569,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                             type: 'AssignmentPattern',
                             left: {
                               type: 'MemberExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               object: {
                                 type: 'Identifier',
                                 name: 'a',
@@ -33751,8 +33642,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                                       },
                                       value: {
                                         type: 'MemberExpression',
-                                        optional: false,
-                                        shortCircuited: false,
+
                                         object: {
                                           type: 'Identifier',
                                           name: 'x',
@@ -34271,8 +34161,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                   type: 'AssignmentExpression',
                   left: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'x',
@@ -35252,8 +35141,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 5,
@@ -35819,8 +35707,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                       elements: [
                         {
                           type: 'MemberExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           object: {
                             type: 'ObjectExpression',
                             properties: [
@@ -36036,8 +35923,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'a',
@@ -36091,8 +35977,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                         elements: [
                           {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'c',
@@ -36324,8 +36209,7 @@ console.log(convertDecimalToBinary(2555904, false))*/
                           elements: [
                             {
                               type: 'MemberExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               object: {
                                 type: 'Identifier',
                                 name: 'b',

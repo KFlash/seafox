@@ -674,8 +674,7 @@ describe('Statements - For', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 18,
                     loc: {
@@ -1013,8 +1012,7 @@ describe('Statements - For', () => {
                             }
                           },
                           arguments: [],
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 15,
                           end: 39,
                           loc: {
@@ -1452,8 +1450,7 @@ describe('Statements - For', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 16,
               loc: {
@@ -1620,8 +1617,7 @@ describe('Statements - For', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -4182,8 +4178,7 @@ describe('Statements - For', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 9,
                     end: 12,
                     loc: {
@@ -4319,8 +4314,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 11,
                 loc: {
@@ -4455,8 +4449,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 11,
                 loc: {
@@ -5250,8 +5243,7 @@ describe('Statements - For', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 16,
               loc: {
@@ -5389,8 +5381,7 @@ describe('Statements - For', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 16,
               loc: {
@@ -5542,8 +5533,7 @@ describe('Statements - For', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 16,
               loc: {
@@ -7250,8 +7240,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 5,
                 end: 14,
                 loc: {
@@ -8819,8 +8808,7 @@ describe('Statements - For', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 6,
                   end: 9,
                   loc: {
@@ -8988,8 +8976,7 @@ describe('Statements - For', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 9,
                     end: 12,
                     loc: {
@@ -9156,8 +9143,7 @@ describe('Statements - For', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 6,
                   end: 9,
                   loc: {
@@ -9326,8 +9312,7 @@ describe('Statements - For', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 9,
                     end: 12,
                     loc: {
@@ -9515,8 +9500,7 @@ describe('Statements - For', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 9,
                       end: 12,
                       loc: {
@@ -9578,8 +9562,7 @@ describe('Statements - For', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 13,
               end: 17,
               loc: {
@@ -10742,8 +10725,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [],
@@ -10894,8 +10876,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [],
@@ -11046,8 +11027,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [],
@@ -11198,8 +11178,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [],
@@ -11350,8 +11329,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [],
@@ -11502,8 +11480,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [],
@@ -12136,8 +12113,7 @@ describe('Statements - For', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'x',
@@ -12438,8 +12414,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: 'foo',
@@ -13352,8 +13327,7 @@ describe('Statements - For', () => {
                         },
                         value: {
                           type: 'MemberExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           object: {
                             type: 'Identifier',
                             name: 'a',
@@ -13951,8 +13925,7 @@ describe('Statements - For', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [],
@@ -14085,12 +14058,10 @@ describe('Statements - For', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'a',
@@ -14310,8 +14281,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -15141,8 +15111,7 @@ describe('Statements - For', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'a',
@@ -15259,8 +15228,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'x',
@@ -18665,8 +18633,7 @@ describe('Statements - For', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [],
@@ -18783,8 +18750,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -19400,8 +19366,7 @@ describe('Statements - For', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [],
@@ -19537,8 +19502,7 @@ describe('Statements - For', () => {
               elements: [
                 {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'x',
@@ -19893,8 +19857,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ObjectExpression',
                 properties: [],
@@ -20102,8 +20065,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrowFunctionExpression',
                 body: {
@@ -21711,8 +21673,7 @@ describe('Statements - For', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -22005,8 +21966,7 @@ describe('Statements - For', () => {
             },
             init: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'let',
@@ -22112,8 +22072,7 @@ describe('Statements - For', () => {
                   }
                 },
                 arguments: [],
-                optional: false,
-                shortCircuited: false,
+
                 start: 5,
                 end: 10,
                 loc: {
@@ -22144,8 +22103,7 @@ describe('Statements - For', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -22919,8 +22877,7 @@ describe('Statements - For', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -24332,8 +24289,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 9,
                 loc: {
@@ -24484,8 +24440,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 10,
                 loc: {
@@ -24636,8 +24591,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 10,
                 loc: {
@@ -24788,8 +24742,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 9,
                 loc: {
@@ -24940,8 +24893,7 @@ describe('Statements - For', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 10,
                 loc: {

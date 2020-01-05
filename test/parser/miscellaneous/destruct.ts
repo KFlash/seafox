@@ -8307,8 +8307,7 @@ describe('Miscellaneous - Destructuibility', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'ok',
@@ -9481,8 +9480,7 @@ describe('Miscellaneous - Destructuibility', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'ObjectExpression',
                 properties: [],
@@ -10018,8 +10016,7 @@ describe('Miscellaneous - Destructuibility', () => {
                       type: 'RestElement',
                       argument: {
                         type: 'MemberExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         object: {
                           type: 'Identifier',
                           name: 'x',
@@ -10684,8 +10681,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   elements: [
                     {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -13807,8 +13803,7 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'RestElement',
                           argument: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'a',
@@ -14186,8 +14181,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     type: 'AssignmentPattern',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -14802,8 +14796,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   },
                   argument: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 37,
                     end: 41,
                     loc: {
@@ -15165,8 +15158,7 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'RestElement',
                           argument: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'a',
@@ -15683,8 +15675,7 @@ describe('Miscellaneous - Destructuibility', () => {
                                                                                                       right: {
                                                                                                         type:
                                                                                                           'MemberExpression',
-                                                                                                        optional: false,
-                                                                                                        shortCircuited: false,
+
                                                                                                         object: {
                                                                                                           type:
                                                                                                             'Identifier',
@@ -16954,8 +16945,7 @@ describe('Miscellaneous - Destructuibility', () => {
                         },
                         argument: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 55,
                           end: 58,
                           loc: {
@@ -18015,14 +18005,12 @@ describe('Miscellaneous - Destructuibility', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'ArrowFunctionExpression',
                 body: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'a',
@@ -18393,8 +18381,7 @@ describe('Miscellaneous - Destructuibility', () => {
               type: 'BinaryExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [
@@ -18699,14 +18686,12 @@ describe('Miscellaneous - Destructuibility', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'ArrowFunctionExpression',
                 body: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'a',
@@ -19528,12 +19513,10 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               callee: {
                                 type: 'Identifier',
                                 name: 'foo',
@@ -20188,12 +20171,10 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               callee: {
                                 type: 'Identifier',
                                 name: 'foo',
@@ -20425,8 +20406,7 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'y',
@@ -20621,8 +20601,7 @@ describe('Miscellaneous - Destructuibility', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'ObjectExpression',
                       properties: [
@@ -21379,12 +21358,10 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               callee: {
                                 type: 'Identifier',
                                 name: 'foo',
@@ -21616,12 +21593,10 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
+
                               callee: {
                                 type: 'Identifier',
                                 name: 'foo',
@@ -27970,8 +27945,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   },
                   argument: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 35,
                     end: 39,
                     loc: {
@@ -28040,8 +28014,7 @@ describe('Miscellaneous - Destructuibility', () => {
               elements: [
                 {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'ArrowFunctionExpression',
                     body: {
@@ -28213,8 +28186,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'ArrowFunctionExpression',
                       body: {
@@ -28385,8 +28357,7 @@ describe('Miscellaneous - Destructuibility', () => {
               elements: [
                 {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'ArrowFunctionExpression',
                     body: {
@@ -28661,8 +28632,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   type: 'SpreadElement',
                   argument: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'c',
@@ -28779,8 +28749,7 @@ describe('Miscellaneous - Destructuibility', () => {
                 type: 'AssignmentExpression',
                 left: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'x',
@@ -31506,8 +31475,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'a',
@@ -31722,8 +31690,7 @@ describe('Miscellaneous - Destructuibility', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -31860,8 +31827,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     type: 'RestElement',
                     argument: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ThisExpression',
                         start: 4,
@@ -32026,8 +31992,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'ObjectExpression',
                         properties: [
@@ -32231,8 +32196,7 @@ describe('Miscellaneous - Destructuibility', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'ObjectExpression',
                       properties: [
@@ -33475,12 +33439,10 @@ describe('Miscellaneous - Destructuibility', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'foo',
@@ -33578,12 +33540,10 @@ describe('Miscellaneous - Destructuibility', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'foo',
@@ -35138,8 +35098,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     type: 'Property',
                     key: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'Identifier',
                         name: 'foo2',
@@ -35348,8 +35307,7 @@ describe('Miscellaneous - Destructuibility', () => {
                         type: 'Property',
                         key: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
+
                           callee: {
                             type: 'Identifier',
                             name: 'foo2',
@@ -36571,8 +36529,7 @@ describe('Miscellaneous - Destructuibility', () => {
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'x',
@@ -36896,8 +36853,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   type: 'Property',
                   key: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'a',
@@ -37510,8 +37466,7 @@ describe('Miscellaneous - Destructuibility', () => {
                           type: 'AssignmentPattern',
                           left: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             object: {
                               type: 'Identifier',
                               name: 'b',
@@ -38004,8 +37959,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     operator: '/',
                     right: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 18,
                       end: 31,
                       loc: {
@@ -38020,8 +37974,7 @@ describe('Miscellaneous - Destructuibility', () => {
                       },
                       callee: {
                         type: 'MemberExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 18,
                         end: 22,
                         loc: {
@@ -38102,8 +38055,7 @@ describe('Miscellaneous - Destructuibility', () => {
                           },
                           right: {
                             type: 'MemberExpression',
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 27,
                             end: 30,
                             loc: {
@@ -38276,8 +38228,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     operator: '/',
                     right: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 18,
                       end: 48,
                       loc: {
@@ -38292,8 +38243,7 @@ describe('Miscellaneous - Destructuibility', () => {
                       },
                       callee: {
                         type: 'MemberExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 18,
                         end: 22,
                         loc: {
@@ -38404,8 +38354,7 @@ describe('Miscellaneous - Destructuibility', () => {
                               elements: [
                                 {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 33,
                                   end: 36,
                                   loc: {
@@ -38502,8 +38451,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     type: 'AssignmentExpression',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'a',
@@ -38941,8 +38889,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     type: 'AssignmentExpression',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'b',
@@ -39011,8 +38958,7 @@ describe('Miscellaneous - Destructuibility', () => {
                       type: 'ArrowFunctionExpression',
                       body: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'eval',
@@ -39191,8 +39137,7 @@ describe('Miscellaneous - Destructuibility', () => {
                     type: 'AssignmentExpression',
                     left: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'a',
@@ -39261,8 +39206,7 @@ describe('Miscellaneous - Destructuibility', () => {
                       type: 'ArrowFunctionExpression',
                       body: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         callee: {
                           type: 'Identifier',
                           name: 'eval',
@@ -39900,8 +39844,7 @@ describe('Miscellaneous - Destructuibility', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [
@@ -40359,8 +40302,7 @@ describe('Miscellaneous - Destructuibility', () => {
                   elements: [
                     {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'x',
@@ -40503,28 +40445,22 @@ describe('Miscellaneous - Destructuibility', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'CallExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       callee: {
                         type: 'MemberExpression',
-                        optional: false,
-                        shortCircuited: false,
+
                         object: {
                           type: 'Identifier',
                           name: 'C',

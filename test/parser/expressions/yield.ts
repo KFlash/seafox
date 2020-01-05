@@ -1313,8 +1313,7 @@ describe('Expressions - Yield', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 11,
                         end: 104,
                         loc: {
@@ -1342,8 +1341,7 @@ describe('Expressions - Yield', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 6,
                   end: 105,
                   loc: {
@@ -1358,8 +1356,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 106,
               loc: {
@@ -1611,8 +1608,7 @@ describe('Expressions - Yield', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 5,
                     end: 50,
                     loc: {
@@ -1640,8 +1636,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 51,
               loc: {
@@ -2152,8 +2147,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 67,
                                 end: 70,
                                 loc: {
@@ -2217,8 +2211,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 94,
                                 end: 97,
                                 loc: {
@@ -2282,8 +2275,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 121,
                                 end: 124,
                                 loc: {
@@ -2347,8 +2339,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 148,
                                 end: 151,
                                 loc: {
@@ -2412,8 +2403,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 175,
                                 end: 178,
                                 loc: {
@@ -2477,8 +2467,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 202,
                                 end: 205,
                                 loc: {
@@ -2542,8 +2531,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 229,
                                 end: 232,
                                 loc: {
@@ -2607,8 +2595,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 256,
                                 end: 259,
                                 loc: {
@@ -2672,8 +2659,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 283,
                                 end: 286,
                                 loc: {
@@ -2735,8 +2721,7 @@ describe('Expressions - Yield', () => {
                                 }
                               },
                               arguments: [],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 311,
                               end: 314,
                               loc: {
@@ -2794,8 +2779,7 @@ describe('Expressions - Yield', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 12,
                   end: 332,
                   loc: {
@@ -3124,8 +3108,7 @@ describe('Expressions - Yield', () => {
                                                   }
                                                 }
                                               },
-                                              optional: false,
-                                              shortCircuited: false,
+
                                               start: 261,
                                               end: 268,
                                               loc: {
@@ -3140,8 +3123,7 @@ describe('Expressions - Yield', () => {
                                               }
                                             },
                                             arguments: [],
-                                            optional: false,
-                                            shortCircuited: false,
+
                                             start: 261,
                                             end: 270,
                                             loc: {
@@ -3366,8 +3348,7 @@ describe('Expressions - Yield', () => {
                                         }
                                       }
                                     },
-                                    optional: false,
-                                    shortCircuited: false,
+
                                     start: 352,
                                     end: 355,
                                     loc: {
@@ -3382,8 +3363,7 @@ describe('Expressions - Yield', () => {
                                     }
                                   },
                                   arguments: [],
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 352,
                                   end: 357,
                                   loc: {
@@ -3414,8 +3394,7 @@ describe('Expressions - Yield', () => {
                                     }
                                   }
                                 },
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 352,
                                 end: 362,
                                 loc: {
@@ -3430,8 +3409,7 @@ describe('Expressions - Yield', () => {
                                 }
                               },
                               arguments: [],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 352,
                               end: 364,
                               loc: {
@@ -3462,8 +3440,7 @@ describe('Expressions - Yield', () => {
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 352,
                             end: 370,
                             loc: {
@@ -3478,8 +3455,7 @@ describe('Expressions - Yield', () => {
                             }
                           }
                         ],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 335,
                         end: 371,
                         loc: {
@@ -3552,8 +3528,7 @@ describe('Expressions - Yield', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 393,
               loc: {
@@ -3807,8 +3782,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 38,
                       end: 46,
                       loc: {
@@ -3840,8 +3814,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 38,
                     end: 51,
                     loc: {
@@ -3954,8 +3927,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 106,
                       end: 114,
                       loc: {
@@ -3987,8 +3959,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 106,
                     end: 119,
                     loc: {
@@ -4101,8 +4072,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 174,
                       end: 182,
                       loc: {
@@ -4134,8 +4104,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 174,
                     end: 187,
                     loc: {
@@ -4248,8 +4217,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 242,
                       end: 250,
                       loc: {
@@ -4281,8 +4249,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 242,
                     end: 258,
                     loc: {
@@ -6060,8 +6027,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 27,
                       end: 36,
                       loc: {
@@ -6268,8 +6234,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 27,
                       end: 36,
                       loc: {
@@ -6606,8 +6571,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 18,
                     end: 58,
                     loc: {
@@ -7913,8 +7877,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 31,
                               end: 44,
                               loc: {
@@ -8235,8 +8198,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 30,
                               end: 43,
                               loc: {
@@ -8557,8 +8519,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 30,
                               end: 43,
                               loc: {
@@ -8879,8 +8840,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 34,
                               end: 47,
                               loc: {
@@ -9440,8 +9400,7 @@ describe('Expressions - Yield', () => {
                                   }
                                 }
                               ],
-                              optional: false,
-                              shortCircuited: false,
+
                               start: 30,
                               end: 43,
                               loc: {
@@ -9674,8 +9633,7 @@ describe('Expressions - Yield', () => {
                                 }
                               }
                             ],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 21,
                             end: 34,
                             loc: {
@@ -10067,8 +10025,7 @@ describe('Expressions - Yield', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 7,
                     end: 52,
                     loc: {
@@ -10096,8 +10053,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 53,
               loc: {
@@ -10238,8 +10194,7 @@ describe('Expressions - Yield', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 29,
                   loc: {
@@ -10270,8 +10225,7 @@ describe('Expressions - Yield', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 34,
                 loc: {
@@ -10286,8 +10240,7 @@ describe('Expressions - Yield', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 36,
               loc: {
@@ -11140,8 +11093,7 @@ describe('Expressions - Yield', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 286,
                     end: 291,
                     loc: {
@@ -15803,8 +15755,7 @@ describe('Expressions - Yield', () => {
                             }
                           }
                         ],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 25,
                         end: 40,
                         loc: {
@@ -16034,8 +15985,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 36,
                     loc: {
@@ -16273,8 +16223,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 41,
                     loc: {
@@ -16462,8 +16411,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 34,
                     loc: {
@@ -16686,8 +16634,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 39,
                     loc: {
@@ -16858,8 +16805,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 16,
                     end: 33,
                     loc: {
@@ -17085,8 +17031,7 @@ describe('Expressions - Yield', () => {
                                 }
                               }
                             ],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 31,
                             end: 46,
                             loc: {
@@ -17128,8 +17073,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 16,
                     end: 47,
                     loc: {
@@ -17315,8 +17259,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 34,
                     loc: {
@@ -17663,8 +17606,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 21,
               loc: {
@@ -17909,8 +17851,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 32,
                     loc: {
@@ -18049,8 +17990,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 28,
                     loc: {
@@ -18184,8 +18124,7 @@ describe('Expressions - Yield', () => {
                   }
                 },
                 arguments: [],
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 14,
                 loc: {
@@ -18697,8 +18636,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -18785,8 +18723,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 13,
               loc: {
@@ -20036,8 +19973,7 @@ describe('Expressions - Yield', () => {
                                             }
                                           }
                                         },
-                                        optional: false,
-                                        shortCircuited: false,
+
                                         start: 59,
                                         end: 65,
                                         loc: {
@@ -20156,8 +20092,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 24,
                       end: 72,
                       loc: {
@@ -20189,8 +20124,7 @@ describe('Expressions - Yield', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 24,
                     end: 75,
                     loc: {
@@ -22167,8 +22101,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 23,
                       end: 35,
                       loc: {
@@ -24224,8 +24157,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 16,
                       end: 42,
                       loc: {
@@ -24443,8 +24375,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 16,
                       end: 37,
                       loc: {
@@ -24708,8 +24639,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 13,
               loc: {
@@ -24828,8 +24758,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -25250,8 +25179,7 @@ describe('Expressions - Yield', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 21,
               loc: {
@@ -25379,8 +25307,7 @@ describe('Expressions - Yield', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 16,
                       end: 33,
                       loc: {
@@ -28234,8 +28161,7 @@ describe('Expressions - Yield', () => {
                                 type: 'SpreadElement',
                                 argument: {
                                   type: 'CallExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   callee: {
                                     type: 'FunctionExpression',
                                     params: [
@@ -30872,8 +30798,7 @@ describe('Expressions - Yield', () => {
                   type: 'ExpressionStatement',
                   expression: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'call',
@@ -31059,8 +30984,7 @@ describe('Expressions - Yield', () => {
                   type: 'ExpressionStatement',
                   expression: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'call',

@@ -30,18 +30,24 @@ export function parseAssignmentExpression(
   line: number,
   column: number
 ): any {
-  const token = parser.token;
-
-  if ((token & Token.IsAssignOp) === Token.IsAssignOp) {
+  if ((parser.token & 0b00000100000000000000000000000000) > 0) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-    const operator = KeywordDescTable[token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator;
-
-    return parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, operator, start, line, column);
+    return parseAssignmentOrPattern(
+      parser,
+      context,
+      isPattern,
+      inGroup,
+      left,
+      KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+      start,
+      line,
+      column
+    );
   }
 
-  if ((token & 0b00001000000100000000000000000000) > 0) {
-    left = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, left);
+  if ((parser.token & 0b00001000000100000000000000000000) > 0) {
+    left = parseBinaryExpression(parser, context, inGroup, 4, parser.token, start, line, column, left);
   }
 
   return parser.token === Token.QuestionMark
@@ -54,7 +60,7 @@ export function parseExpression(parser: ParserState, context: Context, inGroup: 
 
   let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, 1, 1, inGroup, start, line, column);
 
-  expr = parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, inGroup, start, line, column);
 
   return parseAssignmentExpression(parser, context, 0, inGroup, expr, start, line, column);
 }
@@ -204,8 +210,6 @@ export function parseMemberExpression(
   parser: ParserState,
   context: Context,
   expr: any,
-  isOptional: 0 | 1,
-  isShortCircuited: 0 | 1,
   inGroup: 0 | 1,
   start: number,
   line: number,
@@ -235,8 +239,6 @@ export function parseMemberExpression(
               object: expr,
               computed: false,
               property,
-              optional: isOptional === 1,
-              shortCircuited: isShortCircuited === 1,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -245,12 +247,8 @@ export function parseMemberExpression(
               type: 'MemberExpression',
               object: expr,
               computed: false,
-              property,
-              optional: isOptional === 1,
-              shortCircuited: isShortCircuited === 1
+              property
             },
-        0,
-        isOptional,
         inGroup,
         start,
         line,
@@ -276,8 +274,6 @@ export function parseMemberExpression(
               object: expr,
               computed: true,
               property,
-              optional: isOptional === 1,
-              shortCircuited: isShortCircuited === 1,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -286,12 +282,8 @@ export function parseMemberExpression(
               type: 'MemberExpression',
               object: expr,
               computed: true,
-              property,
-              optional: isOptional === 1,
-              shortCircuited: isShortCircuited === 1
+              property
             },
-        0,
-        isShortCircuited,
         inGroup,
         start,
         line,
@@ -313,8 +305,6 @@ export function parseMemberExpression(
               type: 'CallExpression',
               callee: expr,
               arguments: args,
-              optional: isOptional === 1,
-              shortCircuited: isShortCircuited === 1,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -322,12 +312,8 @@ export function parseMemberExpression(
           : {
               type: 'CallExpression',
               callee: expr,
-              arguments: args,
-              optional: isOptional === 1,
-              shortCircuited: isShortCircuited === 1
+              arguments: args
             },
-        0,
-        isOptional,
         inGroup,
         start,
         line,
@@ -336,7 +322,6 @@ export function parseMemberExpression(
     }
     case Token.TemplateTail:
     case Token.TemplateCont: {
-      if (isShortCircuited === 1) report(parser, Errors.OptionalChainingNoTemplate);
       parser.assignable = 0;
       const quasi =
         parser.token === Token.TemplateCont
@@ -360,8 +345,6 @@ export function parseMemberExpression(
               tag: expr,
               quasi
             },
-        isOptional,
-        isShortCircuited,
         inGroup,
         start,
         line,
@@ -370,47 +353,165 @@ export function parseMemberExpression(
     }
     /* Optional Property */
     case Token.QuestionMarkPeriod: {
-      // '[x?.?.y = 1]'
-      if (isOptional === 1) report(parser, Errors.Unexpected);
-      parser.assignable = 0;
       nextToken(parser, context, /* allowRegExp */ 0); // skips: '?.'
 
-      isOptional = 1;
+      parser.assignable = 0;
 
+      return parseMemberExpression(
+        parser,
+        context,
+        context & Context.OptionsLoc
+          ? {
+              type: 'ChainingExpression',
+              base: expr,
+              chain: parseMemberOrCallChain(parser, context, [], start, line, column),
+              start,
+              end: parser.endIndex,
+              loc: setLoc(parser, line, column)
+            }
+          : {
+              type: 'ChainingExpression',
+              base: expr,
+              chain: parseMemberOrCallChain(parser, context, [], start, line, column)
+            },
+        inGroup,
+        start,
+        line,
+        column
+      );
+    }
+
+    default:
+      return expr;
+  }
+}
+
+export function parseMemberOrCallChain(
+  parser: ParserState,
+  context: Context,
+  chain: any,
+  start: number,
+  line: number,
+  column: number
+): (ESTree.MemberChain | ESTree.CallChain)[] {
+
+  switch (parser.token) {
+    /* Property */
+    case Token.Period:
+      nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
+
+      parser.assignable = 1;
+
+      if ((parser.token & 0b00000000001001110000000000000000) === 0) report(parser, Errors.InvalidDotProperty);
+
+      chain.push(
+        context & Context.OptionsLoc
+          ? {
+              type: 'MemberChain',
+              computed: false,
+              property: parseIdentifier(parser, context),
+              optional: false,
+              start,
+              end: parser.endIndex,
+              loc: setLoc(parser, line, column)
+            }
+          : {
+              type: 'MemberChain',
+              computed: false,
+              property: parseIdentifier(parser, context),
+              optional: false
+            }
+      );
+      return parseMemberOrCallChain(parser, context, chain, start, line, column);
+
+    /* Property */
+    case Token.LeftBracket: {
+      nextToken(parser, context, /* allowRegExp */ 1);
+
+      const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+
+      consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
+
+      parser.assignable = 1;
+
+      chain.push(
+        context & Context.OptionsLoc
+          ? {
+              type: 'MemberChain',
+              computed: true,
+              property,
+              optional: false,
+              start,
+              end: parser.endIndex,
+              loc: setLoc(parser, line, column)
+            }
+          : {
+              type: 'MemberChain',
+              computed: true,
+              property,
+              optional: false
+            }
+      );
+
+      return parseMemberOrCallChain(parser, context, chain, start, line, column);
+    }
+    /* Call */
+    case Token.LeftParen:
+      const args = parseArguments(parser, context, 0);
+
+      parser.assignable = 0;
+
+      chain.push(
+        context & Context.OptionsLoc
+          ? {
+              type: 'CallChain',
+              arguments: args,
+              optional: true,
+              start,
+              end: parser.endIndex,
+              loc: setLoc(parser, line, column)
+            }
+          : {
+              type: 'CallChain',
+              arguments: args,
+              optional: true
+            }
+      );
+      return parseMemberOrCallChain(parser, context, chain, start, line, column);
+
+    case Token.TemplateTail:
+    case Token.TemplateCont:
+      report(parser, Errors.OptionalChainingNoTemplate);
+    /* Optional Property */
+    case Token.QuestionMarkPeriod:
+      nextToken(parser, context, 0);
+    // falls through
+    default:
       if ((parser.token & 0b00000000001001110000000000000000) > 0) {
         const property = parseIdentifier(parser, context);
 
-        expr =
+        chain.push(
           context & Context.OptionsLoc
             ? {
-                type: 'MemberExpression',
-                object: expr,
+                type: 'MemberChain',
                 computed: false,
                 property,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1,
+                optional: true,
                 start,
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
               }
             : {
-                type: 'MemberExpression',
-                object: expr,
+                type: 'MemberChain',
                 computed: false,
                 property,
-                optional: isOptional === 1,
-                shortCircuited: isShortCircuited === 1
-              };
-
-        isOptional = 0;
-        isShortCircuited = 1;
+                optional: true
+              }
+        );
+        return parseMemberOrCallChain(parser, context, chain, start, line, column);
       }
 
-      return parseMemberExpression(parser, context, expr, isOptional, isShortCircuited, inGroup, start, line, column);
-    }
-
-    default:
-      return expr;
+      return chain;
   }
 }
 
@@ -1062,8 +1163,6 @@ export function parseAsyncArrowOrCallExpression(
           type: 'CallExpression',
           callee,
           arguments: [],
-          optional: false,
-          shortCircuited: false,
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
@@ -1071,9 +1170,7 @@ export function parseAsyncArrowOrCallExpression(
       : {
           type: 'CallExpression',
           callee,
-          arguments: [],
-          optional: false,
-          shortCircuited: false
+          arguments: []
         };
   }
 
@@ -1103,7 +1200,7 @@ export function parseAsyncArrowOrCallExpression(
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       } else {
         mutualFlag |= Flags.NotDestructible;
-        expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       }
     } else if (token & Token.IsPatternStart) {
@@ -1117,7 +1214,7 @@ export function parseAsyncArrowOrCallExpression(
       if ((parser.token as Token) !== Token.RightParen && parser.token !== Token.Comma) {
         if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
 
-        expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
 
         mutualFlag |= Flags.NotDestructible;
 
@@ -1170,8 +1267,6 @@ export function parseAsyncArrowOrCallExpression(
             type: 'CallExpression',
             callee,
             arguments: params,
-            optional: false,
-            shortCircuited: false,
             start,
             end: parser.endIndex,
             loc: setLoc(parser, line, column)
@@ -1179,9 +1274,7 @@ export function parseAsyncArrowOrCallExpression(
         : {
             type: 'CallExpression',
             callee,
-            arguments: params,
-            optional: false,
-            shortCircuited: false
+            arguments: params
           };
     }
 
@@ -1213,8 +1306,6 @@ export function parseAsyncArrowOrCallExpression(
         type: 'CallExpression',
         callee,
         arguments: params,
-        optional: false,
-        shortCircuited: false,
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
@@ -1222,9 +1313,7 @@ export function parseAsyncArrowOrCallExpression(
     : {
         type: 'CallExpression',
         callee,
-        arguments: params,
-        optional: false,
-        shortCircuited: false
+        arguments: params
       };
 }
 
@@ -1254,7 +1343,7 @@ export function parseImportCallOrMetaExpression(
 
   parser.assignable = 0;
 
-  return parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  return parseMemberExpression(parser, context, expr, 0, start, line, column);
 }
 export function parseNewExpression(
   parser: ParserState,
@@ -1367,8 +1456,6 @@ export function parseNewMemberExpression(
               object: expr,
               computed: false,
               property,
-              optional: false,
-              shortCircuited: false,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -1377,9 +1464,7 @@ export function parseNewMemberExpression(
               type: 'MemberExpression',
               object: expr,
               computed: false,
-              property,
-              optional: false,
-              shortCircuited: false
+              property
             },
         start,
         line,
@@ -1403,8 +1488,6 @@ export function parseNewMemberExpression(
               object: expr,
               computed: true,
               property,
-              optional: false,
-              shortCircuited: false,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -1413,9 +1496,7 @@ export function parseNewMemberExpression(
               type: 'MemberExpression',
               object: expr,
               computed: true,
-              property,
-              optional: false,
-              shortCircuited: false
+              property
             },
         start,
         line,
@@ -1770,7 +1851,7 @@ export function parseParenthesizedExpression(
       } else {
         mutualFlag |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
 
-        expr = parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, inGroup, start, line, column);
 
         if ((parser.token as Token) !== Token.RightParen && (parser.token as Token) !== Token.Comma) {
           expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
@@ -1789,7 +1870,7 @@ export function parseParenthesizedExpression(
       if (parser.token !== Token.Comma && (parser.token as Token) !== Token.RightParen) {
         if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
 
-        expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
 
         mutualFlag |= Flags.NotDestructible;
 
@@ -2008,7 +2089,7 @@ export function parseLeftHandSideExpression(
     column
   );
 
-  return parseMemberExpression(parser, context, expr, 0, 0, inGroup, start, line, column);
+  return parseMemberExpression(parser, context, expr, inGroup, start, line, column);
 }
 
 export function parseIdentifier(parser: ParserState, context: Context): ESTree.Identifier {
@@ -2442,7 +2523,7 @@ export function parseArrayExpressionOrPattern(
               ? Flags.NotDestructible
               : 0;
 
-          left = parseMemberExpression(parser, context, left, 0, 0, 0, start, line, column);
+          left = parseMemberExpression(parser, context, left, 0, start, line, column);
 
           if ((parser.token & 0b00000100000000000000000000000000) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
@@ -2488,7 +2569,7 @@ export function parseArrayExpressionOrPattern(
         if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBracket) {
           if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
 
-          left = parseMemberExpression(parser, context, left, 0, 0, 0, start, line, column);
+          left = parseMemberExpression(parser, context, left, 0, start, line, column);
 
           mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3648,7 +3729,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (
@@ -3721,7 +3802,7 @@ export function parseObjectLiteralOrPattern(
             } else if (parser.flags & Flags.MustDestruct) {
               report(parser, Errors.InvalidDestructuringTarget);
             } else {
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3755,7 +3836,7 @@ export function parseObjectLiteralOrPattern(
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
             } else {
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3866,7 +3947,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token, tokenValue: valueAfterColon } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (
@@ -3928,7 +4009,7 @@ export function parseObjectLiteralOrPattern(
             } else if (parser.flags & Flags.MustDestruct) {
               report(parser, Errors.InvalidDestructuringTarget);
             } else {
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3965,7 +4046,7 @@ export function parseObjectLiteralOrPattern(
                 mutualFlag |= Flags.NotDestructible;
               }
             } else {
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3998,7 +4079,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
             if ((parser.token & 0b00000100000000000000000000000000) > 0) {
               mutualFlag |=
@@ -4068,7 +4149,7 @@ export function parseObjectLiteralOrPattern(
             } else {
               if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? mutualFlag | Flags.NotDestructible : 0;
 
@@ -4104,7 +4185,7 @@ export function parseObjectLiteralOrPattern(
             if (parser.token === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
             } else {
-              value = parseMemberExpression(parser, context, value, 0, 0, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
               mutualFlag = parser.assignable === 1 ? 0 : Flags.NotDestructible;
 
@@ -4264,7 +4345,7 @@ export function parseSpreadOrRestElement(
 
     const isClosingTokenOrComma = parser.token === closingToken || parser.token === Token.Comma;
 
-    argument = parseMemberExpression(parser, context, argument, 0, 0, 0, start, line, column);
+    argument = parseMemberExpression(parser, context, argument, 0, start, line, column);
 
     if (parser.token !== Token.Comma && parser.token !== closingToken) {
       if ((parser.assignable as 0 | 1) === 0 && parser.token === Token.Assign)
@@ -4296,7 +4377,7 @@ export function parseSpreadOrRestElement(
 
       if (token !== Token.Assign && token !== closingToken && token !== Token.Comma) {
         if (parser.flags & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
-        argument = parseMemberExpression(parser, context, argument, 0, 0, 0, start, line, column);
+        argument = parseMemberExpression(parser, context, argument, 0, start, line, column);
         mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
 
         if ((parser.token & Token.IsAssignOp) === Token.IsAssignOp) {
@@ -4597,7 +4678,7 @@ export function parseNonDirectiveExpression(
    *   ('++' | '--')? LeftHandSideExpression
    *
    */
-  expr = parseMemberExpression(parser, context, expr, 0, 0, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
   /** AssignmentExpression :
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression

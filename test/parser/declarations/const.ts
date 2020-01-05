@@ -378,8 +378,6 @@ describe('Declarations - Const', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
                   start: 24,
                   end: 35,
                   loc: {
@@ -1452,8 +1450,6 @@ describe('Declarations - Const', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
                   start: 12,
                   end: 15,
                   loc: {
@@ -9982,8 +9978,6 @@ describe('Declarations - Const', () => {
                       type: 'Property',
                       key: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
                         callee: {
                           type: 'Identifier',
                           name: 'String',
@@ -11003,8 +10997,6 @@ describe('Declarations - Const', () => {
                             },
                             value: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
                               callee: {
                                 type: 'Identifier',
                                 name: 'Function',
@@ -11462,8 +11454,6 @@ describe('Declarations - Const', () => {
                       type: 'Property',
                       key: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
                         callee: {
                           type: 'ArrowFunctionExpression',
                           body: {
@@ -12749,8 +12739,6 @@ describe('Declarations - Const', () => {
                       type: 'Property',
                       key: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
                         callee: {
                           type: 'ArrowFunctionExpression',
                           body: {
@@ -13900,8 +13888,6 @@ describe('Declarations - Const', () => {
                             },
                             value: {
                               type: 'CallExpression',
-                              optional: false,
-                              shortCircuited: false,
                               callee: {
                                 type: 'Identifier',
                                 name: 'Function',

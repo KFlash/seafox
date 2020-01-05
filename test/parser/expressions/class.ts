@@ -3,7 +3,6 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Class', () => {
-
   for (const arg of [
     'class C {} class C {}',
     'class A { static f(a, a){} }',
@@ -2786,8 +2785,7 @@ describe('Expressions - Class', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 16,
               end: 26,
               loc: {
@@ -5560,9 +5558,7 @@ describe('Expressions - Class', () => {
                   type: 'Identifier',
                   name: 'x'
                 }
-              ],
-              optional: false,
-              shortCircuited: false
+              ]
             },
             body: {
               type: 'ClassBody',
@@ -7730,8 +7726,7 @@ describe('Expressions - Class', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 1,
               end: 14,
               loc: {
@@ -8225,8 +8220,7 @@ describe('Expressions - Class', () => {
                                 },
                                 value: {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Super',
                                     start: 45,
@@ -8616,8 +8610,7 @@ describe('Expressions - Class', () => {
             },
             superClass: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'feh',
@@ -9007,8 +9000,7 @@ describe('Expressions - Class', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'ClassExpression',
                 id: {
@@ -9110,12 +9102,10 @@ describe('Expressions - Class', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ClassExpression',
                   id: {
@@ -11285,8 +11275,7 @@ describe('Expressions - Class', () => {
                                 },
                                 value: {
                                   type: 'CallExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   callee: {
                                     type: 'Super',
                                     start: 45,
@@ -11541,8 +11530,7 @@ describe('Expressions - Class', () => {
                                 },
                                 value: {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Super',
                                     start: 44,
@@ -11813,8 +11801,7 @@ describe('Expressions - Class', () => {
                                 },
                                 value: {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Super',
                                     start: 46,
@@ -12085,8 +12072,7 @@ describe('Expressions - Class', () => {
                                 },
                                 value: {
                                   type: 'MemberExpression',
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   object: {
                                     type: 'Super',
                                     start: 46,

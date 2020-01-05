@@ -2134,8 +2134,7 @@ describe('Next - Nullish Coalesce', () => {
               },
               right: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'poison',
@@ -2242,8 +2241,7 @@ describe('Next - Nullish Coalesce', () => {
                   type: 'LogicalExpression',
                   left: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'Symbol',

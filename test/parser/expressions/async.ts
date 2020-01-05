@@ -174,8 +174,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 22,
               loc: {
@@ -388,8 +387,7 @@ describe('Expressions - Async', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 22,
                     end: 40,
                     loc: {
@@ -1101,8 +1099,7 @@ describe('Expressions - Async', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 31,
               loc: {
@@ -1361,8 +1358,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 7,
                   end: 22,
                   loc: {
@@ -1550,8 +1546,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 9,
                   end: 24,
                   loc: {
@@ -1566,8 +1561,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 25,
               loc: {
@@ -1669,8 +1663,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 16,
               loc: {
@@ -1789,8 +1782,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 18,
               loc: {
@@ -1863,8 +1855,7 @@ describe('Expressions - Async', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 7,
                   loc: {
@@ -2157,8 +2148,7 @@ describe('Expressions - Async', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 15,
                     end: 23,
                     loc: {
@@ -2461,8 +2451,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 7,
                   end: 22,
                   loc: {
@@ -2477,8 +2466,7 @@ describe('Expressions - Async', () => {
                   }
                 },
                 arguments: [],
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 24,
                 loc: {
@@ -3402,8 +3390,7 @@ describe('Expressions - Async', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 11,
                   loc: {
@@ -3418,8 +3405,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 12,
               loc: {
@@ -3508,8 +3494,7 @@ describe('Expressions - Async', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 11,
                   loc: {
@@ -3540,8 +3525,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 15,
               loc: {
@@ -3679,8 +3663,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 16,
                   loc: {
@@ -3695,8 +3678,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -3834,8 +3816,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 16,
                   loc: {
@@ -3882,8 +3863,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 23,
               loc: {
@@ -3988,8 +3968,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 12,
                   loc: {
@@ -4004,8 +3983,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 13,
               loc: {
@@ -4092,8 +4070,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 10,
               loc: {
@@ -4198,8 +4175,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 13,
                   loc: {
@@ -4214,8 +4190,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -4320,8 +4295,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -4427,8 +4401,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 21,
               loc: {
@@ -4940,8 +4913,7 @@ describe('Expressions - Async', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 12,
                     end: 19,
                     loc: {
@@ -5287,8 +5259,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -5407,8 +5378,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 22,
               loc: {
@@ -5559,8 +5529,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -5711,8 +5680,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 25,
               loc: {
@@ -5803,8 +5771,7 @@ describe('Expressions - Async', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 4,
                     end: 11,
                     loc: {
@@ -5835,8 +5802,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 15,
                   loc: {
@@ -5851,8 +5817,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 16,
               loc: {
@@ -5943,8 +5908,7 @@ describe('Expressions - Async', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 4,
                     end: 11,
                     loc: {
@@ -5975,8 +5939,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 4,
                   end: 16,
                   loc: {
@@ -5991,8 +5954,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 17,
               loc: {
@@ -6229,8 +6191,7 @@ describe('Expressions - Async', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -6302,8 +6263,7 @@ describe('Expressions - Async', () => {
                   }
                 },
                 arguments: [],
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 7,
                 loc: {
@@ -6438,8 +6398,7 @@ describe('Expressions - Async', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 7,
                 loc: {
@@ -6558,8 +6517,7 @@ describe('Expressions - Async', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 5,
                   end: 12,
                   loc: {
@@ -6662,8 +6620,7 @@ describe('Expressions - Async', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 9,
                 loc: {
@@ -7199,8 +7156,7 @@ describe('Expressions - Async', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 7,
                   end: 22,
                   loc: {
@@ -7267,8 +7223,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'async',
@@ -7407,8 +7362,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'async',
@@ -7527,8 +7481,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'async',
@@ -7615,8 +7568,6 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
 
               callee: {
                 type: 'Identifier',
@@ -7719,8 +7670,6 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
 
               callee: {
                 type: 'Identifier',
@@ -7857,8 +7806,6 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
 
               callee: {
                 type: 'Identifier',
@@ -7998,8 +7945,6 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
 
               callee: {
                 type: 'Identifier',
@@ -8173,8 +8118,7 @@ describe('Expressions - Async', () => {
               type: 'ArrowFunctionExpression',
               body: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'async',
@@ -8707,8 +8651,7 @@ describe('Expressions - Async', () => {
               operator: '=',
               right: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'async',
@@ -9398,8 +9341,7 @@ describe('Expressions - Async', () => {
               expressions: [
                 {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'Identifier',
                     name: 'async',
@@ -9590,8 +9532,7 @@ describe('Expressions - Async', () => {
                   type: 'ExpressionStatement',
                   expression: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'async',
@@ -9893,12 +9834,10 @@ describe('Expressions - Async', () => {
               },
               consequent: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'async',
@@ -10604,8 +10543,7 @@ describe('Expressions - Async', () => {
                 },
                 {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'Identifier',
                     name: 'async',
@@ -10689,8 +10627,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -10710,8 +10647,7 @@ describe('Expressions - Async', () => {
               arguments: [
                 {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'Identifier',
                     name: 'async',
@@ -10811,8 +10747,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -10832,8 +10767,7 @@ describe('Expressions - Async', () => {
               arguments: [
                 {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'Identifier',
                     name: 'async',
@@ -10998,8 +10932,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'foo',
@@ -11019,8 +10952,7 @@ describe('Expressions - Async', () => {
               arguments: [
                 {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'async',
@@ -11562,8 +11494,7 @@ describe('Expressions - Async', () => {
                   },
                   right: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'async',
@@ -11860,8 +11791,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'f',
@@ -12012,8 +11942,7 @@ describe('Expressions - Async', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'async',
@@ -12133,8 +12062,7 @@ describe('Expressions - Async', () => {
               type: 'BinaryExpression',
               left: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'async',

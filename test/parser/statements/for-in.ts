@@ -377,8 +377,7 @@ describe('Statements - For in', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 9,
               loc: {
@@ -803,8 +802,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'let',
@@ -921,8 +919,7 @@ describe('Statements - For in', () => {
             },
             init: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'let',
@@ -1618,8 +1615,7 @@ describe('Statements - For in', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    shortCircuited: false,
-                    optional: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'b',
@@ -1767,8 +1763,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              shortCircuited: false,
-              optional: false,
+
               object: {
                 type: 'BinaryExpression',
                 left: {
@@ -1937,8 +1932,7 @@ describe('Statements - For in', () => {
                   }
                 },
                 arguments: [],
-                optional: false,
-                shortCircuited: false,
+
                 start: 5,
                 end: 10,
                 loc: {
@@ -1969,8 +1963,7 @@ describe('Statements - For in', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -2139,8 +2132,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              shortCircuited: false,
-              optional: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -2276,8 +2268,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              shortCircuited: false,
-              optional: false,
+
               object: {
                 type: 'ArrowFunctionExpression',
                 body: {
@@ -2445,8 +2436,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              shortCircuited: false,
-              optional: false,
+
               object: {
                 type: 'Literal',
                 value: 456,
@@ -2663,8 +2653,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              shortCircuited: false,
-              optional: false,
+
               object: {
                 type: 'ObjectExpression',
                 properties: [],
@@ -3087,8 +3076,7 @@ describe('Statements - For in', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    shortCircuited: false,
-                    optional: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -3840,8 +3828,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [],
@@ -3959,8 +3946,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ObjectExpression',
                 properties: [],
@@ -4511,8 +4497,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'let',
@@ -4829,8 +4814,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: /foo/g,
@@ -4967,8 +4951,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: 456,
@@ -5101,8 +5084,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: /foo/,
@@ -5239,8 +5221,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: /foo/,
@@ -5377,8 +5358,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: 'foo',
@@ -5513,8 +5493,7 @@ describe('Statements - For in', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [],
@@ -5850,8 +5829,7 @@ describe('Statements - For in', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [],
@@ -6002,8 +5980,7 @@ describe('Statements - For in', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ObjectExpression',
                   properties: [],
@@ -6136,8 +6113,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -6274,8 +6250,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -6443,8 +6418,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -6681,8 +6655,7 @@ describe('Statements - For in', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -10211,8 +10184,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: 'foo',
@@ -10329,8 +10301,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ObjectExpression',
                 properties: [],
@@ -10447,8 +10418,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [],
@@ -11351,12 +11321,10 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'a',
@@ -11671,8 +11639,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: true,
@@ -11789,8 +11756,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -12006,8 +11972,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: /foo/g,
@@ -12144,8 +12109,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [],
@@ -12582,8 +12546,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'let',
@@ -14616,8 +14579,7 @@ describe('Statements - For in', () => {
               elements: [
                 {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'a',
@@ -14764,15 +14726,13 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -14970,8 +14930,7 @@ describe('Statements - For in', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'b',
@@ -15135,8 +15094,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ObjectExpression',
                 properties: [
@@ -15160,8 +15118,7 @@ describe('Statements - For in', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'b',
@@ -17072,8 +17029,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [
@@ -18314,8 +18270,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: 'foo',
@@ -18432,8 +18387,7 @@ describe('Statements - For in', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'a',

@@ -2384,8 +2384,7 @@ describe('Expressions - Async function', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 1,
               end: 35,
               loc: {
@@ -2947,8 +2946,7 @@ describe('Expressions - Async function', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 32,
               loc: {
@@ -4518,8 +4516,7 @@ describe('Expressions - Async function', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 25,
                     end: 40,
                     loc: {
@@ -5646,8 +5643,7 @@ describe('Expressions - Async function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -8087,8 +8083,7 @@ describe('Expressions - Async function', () => {
                   },
                   right: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'FunctionExpression',
                       params: [],

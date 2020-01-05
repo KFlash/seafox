@@ -319,8 +319,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 44,
               loc: {
@@ -1654,8 +1653,7 @@ describe('Statements - For of', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 7,
                   end: 15,
                   loc: {
@@ -1837,8 +1835,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 12,
               loc: {
@@ -1972,8 +1969,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 11,
               loc: {
@@ -2107,8 +2103,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 12,
               loc: {
@@ -2242,8 +2237,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 13,
               loc: {
@@ -2685,8 +2679,7 @@ describe('Statements - For of', () => {
                                       }
                                     }
                                   },
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 31,
                                   end: 41,
                                   loc: {
@@ -2718,8 +2711,7 @@ describe('Statements - For of', () => {
                                     }
                                   }
                                 ],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 31,
                                 end: 46,
                                 loc: {
@@ -2856,8 +2848,7 @@ describe('Statements - For of', () => {
                                       }
                                     }
                                   },
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 60,
                                   end: 70,
                                   loc: {
@@ -2889,8 +2880,7 @@ describe('Statements - For of', () => {
                                     }
                                   }
                                 ],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 60,
                                 end: 75,
                                 loc: {
@@ -3379,8 +3369,7 @@ describe('Statements - For of', () => {
                               }
                             },
                             arguments: [],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 18,
                             end: 23,
                             loc: {
@@ -3617,8 +3606,7 @@ describe('Statements - For of', () => {
                                 }
                               }
                             },
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 15,
                             end: 18,
                             loc: {
@@ -3651,8 +3639,7 @@ describe('Statements - For of', () => {
                               }
                             },
                             arguments: [],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 22,
                             end: 27,
                             loc: {
@@ -4126,8 +4113,7 @@ describe('Statements - For of', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 5,
                 end: 13,
                 loc: {
@@ -4264,8 +4250,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 23,
               loc: {
@@ -4467,8 +4452,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 31,
               loc: {
@@ -6480,8 +6464,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -7295,8 +7278,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 8,
               loc: {
@@ -7462,8 +7444,7 @@ describe('Statements - For of', () => {
                               }
                             },
                             arguments: [],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 20,
                             end: 25,
                             loc: {
@@ -7735,8 +7716,7 @@ describe('Statements - For of', () => {
                                 }
                               }
                             ],
-                            optional: false,
-                            shortCircuited: false,
+
                             start: 18,
                             end: 30,
                             loc: {
@@ -7944,8 +7924,7 @@ describe('Statements - For of', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 5,
                 end: 13,
                 loc: {
@@ -8082,8 +8061,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 23,
               loc: {
@@ -8300,8 +8278,7 @@ describe('Statements - For of', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 36,
               loc: {
@@ -9980,8 +9957,7 @@ describe('Statements - For of', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 9,
                     end: 12,
                     loc: {
@@ -10761,8 +10737,7 @@ describe('Statements - For of', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: '',
@@ -11320,8 +11295,7 @@ describe('Statements - For of', () => {
                   type: 'RestElement',
                   argument: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'x',
@@ -12208,8 +12182,7 @@ describe('Statements - For of', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: /foo/g,
@@ -12347,8 +12320,7 @@ describe('Statements - For of', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Literal',
                 value: 456,
@@ -13042,8 +13014,7 @@ describe('Statements - For of', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'BinaryExpression',
                 left: {
@@ -13193,8 +13164,7 @@ describe('Statements - For of', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'FunctionExpression',
                 params: [],
@@ -13822,8 +13792,7 @@ describe('Statements - For of', () => {
               elements: [
                 {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'a',
@@ -13971,15 +13940,13 @@ describe('Statements - For of', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ArrayExpression',
                 elements: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -14178,8 +14145,7 @@ describe('Statements - For of', () => {
                   },
                   value: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'b',
@@ -14344,8 +14310,7 @@ describe('Statements - For of', () => {
             },
             left: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'ObjectExpression',
                 properties: [
@@ -14369,8 +14334,7 @@ describe('Statements - For of', () => {
                     },
                     value: {
                       type: 'MemberExpression',
-                      optional: false,
-                      shortCircuited: false,
+
                       object: {
                         type: 'Identifier',
                         name: 'b',

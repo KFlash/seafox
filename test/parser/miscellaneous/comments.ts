@@ -431,8 +431,6 @@ describe('Miscellaneous - Comments', () => {
                   line: 1
                 }
               },
-              optional: false,
-              shortCircuited: false,
               start: 0,
               type: 'CallExpression'
             },

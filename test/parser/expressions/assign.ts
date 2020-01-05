@@ -1149,8 +1149,7 @@ describe('Expressions - Assign', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 1,
                     end: 6,
                     loc: {
@@ -1355,8 +1354,7 @@ describe('Expressions - Assign', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 6,
                       end: 20,
                       loc: {
@@ -1973,8 +1971,7 @@ describe('Expressions - Assign', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 41,
                           end: 46,
                           loc: {
@@ -2087,8 +2084,7 @@ describe('Expressions - Assign', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 60,
                           end: 64,
                           loc: {
@@ -2201,8 +2197,7 @@ describe('Expressions - Assign', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 78,
                           end: 82,
                           loc: {
@@ -2366,8 +2361,7 @@ describe('Expressions - Assign', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 1,
                       end: 8,
                       loc: {
@@ -2548,8 +2542,7 @@ describe('Expressions - Assign', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 2,
                     end: 7,
                     loc: {
@@ -2871,8 +2864,7 @@ describe('Expressions - Assign', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 6,
                       end: 20,
                       loc: {
@@ -2988,8 +2980,7 @@ describe('Expressions - Assign', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'BinaryExpression',
                   left: {
@@ -3139,8 +3130,7 @@ describe('Expressions - Assign', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'ArrayExpression',
                   elements: [
@@ -3648,8 +3638,7 @@ describe('Expressions - Assign', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'x',

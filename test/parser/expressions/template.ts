@@ -3309,8 +3309,7 @@ describe('Expressions - Template', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 5,
                 loc: {
@@ -4030,8 +4029,7 @@ describe('Expressions - Template', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 10,
                     end: 13,
                     loc: {
@@ -4807,8 +4805,7 @@ describe('Expressions - Template', () => {
                           }
                         },
                         arguments: [],
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 15,
                         end: 27,
                         loc: {
@@ -10200,8 +10197,7 @@ describe('Expressions - Template', () => {
                   operator: '=',
                   right: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: Infinity,

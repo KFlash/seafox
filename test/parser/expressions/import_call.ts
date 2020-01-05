@@ -316,8 +316,7 @@ describe('Expressions - Import call', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 19,
               loc: {
@@ -776,8 +775,7 @@ describe('Expressions - Import call', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 14,
                   end: 22,
                   loc: {
@@ -1753,8 +1751,7 @@ describe('Expressions - Import call', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 14,
                 loc: {
@@ -1769,8 +1766,7 @@ describe('Expressions - Import call', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 16,
               loc: {
@@ -1873,8 +1869,7 @@ describe('Expressions - Import call', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 21,
                 loc: {
@@ -1906,8 +1901,7 @@ describe('Expressions - Import call', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 29,
               loc: {

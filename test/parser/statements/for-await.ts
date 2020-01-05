@@ -481,8 +481,7 @@ describe('Statements - For Await', () => {
                                     }
                                   }
                                 },
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 46,
                                 end: 61,
                                 loc: {
@@ -2599,8 +2598,7 @@ describe('Statements - For Await', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 42,
                           end: 57,
                           loc: {
@@ -4389,8 +4387,7 @@ describe('Statements - For Await', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 33,
                     end: 39,
                     loc: {
@@ -4575,8 +4572,7 @@ describe('Statements - For Await', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 33,
                     end: 39,
                     loc: {
@@ -4745,8 +4741,7 @@ describe('Statements - For Await', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 29,
                     end: 31,
                     loc: {
@@ -5052,8 +5047,7 @@ describe('Statements - For Await', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 33,
                     end: 40,
                     loc: {
@@ -6339,8 +6333,7 @@ describe('Statements - For Await', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 38,
                           end: 46,
                           loc: {

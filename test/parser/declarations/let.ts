@@ -4915,8 +4915,6 @@ describe('Declarations - Let', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
               callee: {
                 type: 'Identifier',
                 name: 'let',
@@ -9695,8 +9693,6 @@ describe('Declarations - Let', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
                 object: {
                   type: 'Identifier',
                   name: 'let',
@@ -20766,8 +20762,6 @@ describe('Declarations - Let', () => {
                         },
                         right: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
                           callee: {
                             type: 'Identifier',
                             name: 'a',
@@ -20866,8 +20860,6 @@ describe('Declarations - Let', () => {
                         },
                         right: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
                           callee: {
                             type: 'Identifier',
                             name: 'b',
@@ -20966,8 +20958,6 @@ describe('Declarations - Let', () => {
                         },
                         right: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
                           callee: {
                             type: 'Identifier',
                             name: 'c',
@@ -21066,8 +21056,6 @@ describe('Declarations - Let', () => {
                         },
                         right: {
                           type: 'CallExpression',
-                          optional: false,
-                          shortCircuited: false,
                           callee: {
                             type: 'Identifier',
                             name: 'd',
@@ -23823,8 +23811,6 @@ describe('Declarations - Let', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
               object: {
                 type: 'Identifier',
                 name: 'let',
@@ -23910,8 +23896,6 @@ describe('Declarations - Let', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
               callee: {
                 type: 'Identifier',
                 name: 'let',

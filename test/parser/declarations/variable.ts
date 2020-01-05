@@ -1211,8 +1211,6 @@ describe('Declarations - Variable', () => {
                                 }
                               },
                               arguments: [],
-                              optional: false,
-                              shortCircuited: false,
                               start: 66,
                               end: 70,
                               loc: {
@@ -6769,8 +6767,6 @@ var zoo;`,
                       },
                       right: {
                         type: 'CallExpression',
-                        optional: false,
-                        shortCircuited: false,
                         callee: {
                           type: 'Identifier',
                           name: 'eval',
@@ -8743,8 +8739,6 @@ var zoo;`,
                   },
                   right: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
                     object: {
                       type: 'Identifier',
                       name: 'String',
@@ -10802,8 +10796,6 @@ var zoo;`,
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
               callee: {
                 type: 'Identifier',
                 name: 'eval',
@@ -11476,8 +11468,6 @@ var zoo;`,
                 type: 'ExpressionStatement',
                 expression: {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
                   callee: {
                     type: 'Identifier',
                     name: '__f_6',
@@ -15887,8 +15877,6 @@ var zoo;`,
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
               callee: {
                 type: 'Identifier',
                 name: 'eval',
@@ -18093,8 +18081,6 @@ var zoo;`,
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
               object: {
                 type: 'Identifier',
                 name: 'foo',

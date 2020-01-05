@@ -92,8 +92,7 @@ describe('Expressions - Member', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 7,
                       end: 18,
                       loc: {
@@ -156,8 +155,7 @@ describe('Expressions - Member', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 7,
                     end: 26,
                     loc: {
@@ -290,8 +288,7 @@ describe('Expressions - Member', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 5,
                   loc: {
@@ -340,8 +337,7 @@ describe('Expressions - Member', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 12,
                   end: 17,
                   loc: {
@@ -475,8 +471,7 @@ describe('Expressions - Member', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 9,
                 loc: {
@@ -643,8 +638,7 @@ describe('Expressions - Member', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 2,
                   end: 11,
                   loc: {
@@ -659,8 +653,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 12,
               loc: {
@@ -793,8 +786,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -935,8 +927,7 @@ describe('Expressions - Member', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 23,
                       end: 32,
                       loc: {
@@ -1074,8 +1065,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -1216,8 +1206,7 @@ describe('Expressions - Member', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 24,
                       end: 33,
                       loc: {
@@ -1355,8 +1344,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -1516,8 +1504,7 @@ describe('Expressions - Member', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 25,
                           end: 34,
                           loc: {
@@ -1562,8 +1549,7 @@ describe('Expressions - Member', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 23,
                     end: 40,
                     loc: {
@@ -1671,8 +1657,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -1865,8 +1850,7 @@ describe('Expressions - Member', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 25,
                         end: 37,
                         loc: {
@@ -1910,8 +1894,7 @@ describe('Expressions - Member', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 23,
                     end: 43,
                     loc: {
@@ -2019,8 +2002,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -2213,8 +2195,7 @@ describe('Expressions - Member', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 25,
                         end: 37,
                         loc: {
@@ -2258,8 +2239,7 @@ describe('Expressions - Member', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 23,
                     end: 43,
                     loc: {
@@ -2367,8 +2347,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -2528,8 +2507,7 @@ describe('Expressions - Member', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 25,
                         end: 34,
                         loc: {
@@ -2573,8 +2551,7 @@ describe('Expressions - Member', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 23,
                     end: 40,
                     loc: {
@@ -2682,8 +2659,7 @@ describe('Expressions - Member', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 5,
               end: 14,
               loc: {
@@ -2752,12 +2728,10 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 1,
@@ -2857,8 +2831,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'foo',
@@ -2944,12 +2917,10 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'foo',
@@ -3065,12 +3036,10 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'foo',
@@ -3090,8 +3059,7 @@ describe('Expressions - Member', () => {
                 computed: true,
                 property: {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'Identifier',
                     name: 'test',
@@ -3138,8 +3106,7 @@ describe('Expressions - Member', () => {
               computed: true,
               property: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'bar',
@@ -3222,8 +3189,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'x',
@@ -3347,8 +3313,7 @@ describe('Expressions - Member', () => {
                 expressions: [
                   {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Literal',
                       value: 2,
@@ -3529,8 +3494,7 @@ describe('Expressions - Member', () => {
               type: 'LogicalExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -3581,8 +3545,7 @@ describe('Expressions - Member', () => {
                 type: 'AssignmentExpression',
                 left: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'c',
@@ -3893,12 +3856,10 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'foo',
@@ -4014,12 +3975,10 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Literal',
                   value: 0.5,
@@ -4119,8 +4078,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'abc',
@@ -4206,8 +4164,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'a',
@@ -4293,12 +4250,10 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'a',
@@ -4400,8 +4355,7 @@ describe('Expressions - Member', () => {
               type: 'BinaryExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'x',
@@ -4517,8 +4471,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'a',
@@ -4637,16 +4590,13 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'a',
@@ -4792,8 +4742,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'Identifier',
                 name: 'a',
@@ -4879,8 +4828,7 @@ describe('Expressions - Member', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'a',
@@ -4973,8 +4921,7 @@ describe('Expressions - Member', () => {
             },
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 5,
               loc: {
@@ -4989,8 +4936,7 @@ describe('Expressions - Member', () => {
               },
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 3,
                 loc: {

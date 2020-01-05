@@ -541,8 +541,7 @@ describe('Expressions - Member', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -645,8 +644,7 @@ describe('Expressions - Member', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',

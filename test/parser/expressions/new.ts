@@ -61,17 +61,13 @@ describe('Expressions - New', () => {
                     property: {
                       type: 'Identifier',
                       name: 'bar'
-                    },
-                    optional: false,
-                    shortCircuited: false
+                    }
                   },
                   computed: false,
                   property: {
                     type: 'Identifier',
                     name: 'baz'
-                  },
-                  optional: false,
-                  shortCircuited: false
+                  }
                 },
                 arguments: []
               },
@@ -138,8 +134,7 @@ describe('Expressions - New', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 12,
                       end: 19,
                       loc: {
@@ -170,8 +165,7 @@ describe('Expressions - New', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 12,
                     end: 23,
                     loc: {
@@ -332,8 +326,7 @@ describe('Expressions - New', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 12,
                           end: 19,
                           loc: {
@@ -364,8 +357,7 @@ describe('Expressions - New', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 12,
                         end: 23,
                         loc: {
@@ -410,8 +402,7 @@ describe('Expressions - New', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 8,
                     end: 30,
                     loc: {
@@ -426,8 +417,7 @@ describe('Expressions - New', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 8,
                   end: 32,
                   loc: {
@@ -533,8 +523,7 @@ describe('Expressions - New', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 105,
                           end: 112,
                           loc: {
@@ -565,8 +554,7 @@ describe('Expressions - New', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 105,
                         end: 116,
                         loc: {
@@ -611,8 +599,7 @@ describe('Expressions - New', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 101,
                     end: 123,
                     loc: {
@@ -627,8 +614,7 @@ describe('Expressions - New', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 101,
                   end: 125,
                   loc: {
@@ -734,8 +720,7 @@ describe('Expressions - New', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 200,
                           end: 207,
                           loc: {
@@ -766,8 +751,7 @@ describe('Expressions - New', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 200,
                         end: 211,
                         loc: {
@@ -812,8 +796,7 @@ describe('Expressions - New', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 196,
                     end: 220,
                     loc: {
@@ -828,8 +811,7 @@ describe('Expressions - New', () => {
                     }
                   },
                   arguments: [],
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 196,
                   end: 224,
                   loc: {
@@ -2156,8 +2138,7 @@ describe('Expressions - New', () => {
                                     }
                                   },
                                   arguments: [],
-                                  optional: false,
-                                  shortCircuited: false,
+
                                   start: 32,
                                   end: 44,
                                   loc: {
@@ -3935,8 +3916,7 @@ describe('Expressions - New', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 10,
               loc: {
@@ -4043,8 +4023,7 @@ describe('Expressions - New', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 12,
               loc: {
@@ -4155,8 +4134,7 @@ describe('Expressions - New', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 6,
                     end: 13,
                     loc: {
@@ -4185,8 +4163,7 @@ describe('Expressions - New', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -4481,8 +4458,7 @@ describe('Expressions - New', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 4,
                 end: 14,
                 loc: {
@@ -4635,8 +4611,7 @@ describe('Expressions - New', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 7,
                 end: 15,
                 loc: {
@@ -5031,8 +5006,7 @@ describe('Expressions - New', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 14,
                     end: 33,
                     loc: {
@@ -5997,8 +5971,7 @@ describe('Expressions - New', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 31,
               loc: {
@@ -6422,8 +6395,7 @@ describe('Expressions - New', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 26,
               loc: {
@@ -6679,20 +6651,16 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'NewExpression',
                       callee: {
@@ -6870,8 +6838,7 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'b',
@@ -7090,8 +7057,7 @@ describe('Expressions - New', () => {
               },
               right: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'await',
@@ -7242,8 +7208,7 @@ describe('Expressions - New', () => {
               },
               right: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'await',
@@ -7446,8 +7411,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'NewExpression',
                 callee: {
@@ -7533,8 +7497,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'NewExpression',
                 callee: {
@@ -7876,8 +7839,7 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'Foo',
@@ -7979,16 +7941,13 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -8148,8 +8107,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'NewExpression',
                 callee: {
@@ -8271,8 +8229,7 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'Foo',
@@ -8374,8 +8331,7 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'Foo',
@@ -8612,8 +8568,7 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'Foo',
@@ -8762,8 +8717,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'NewExpression',
                 callee: {
@@ -8865,8 +8819,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'NewExpression',
                 callee: {
@@ -8970,16 +8923,13 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'MemberExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     object: {
                       type: 'Identifier',
                       name: 'a',
@@ -9141,8 +9091,7 @@ describe('Expressions - New', () => {
               type: 'UpdateExpression',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'NewExpression',
                   callee: {
@@ -9348,8 +9297,7 @@ describe('Expressions - New', () => {
               operator: 'delete',
               argument: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'NewExpression',
                   callee: {
@@ -9553,8 +9501,7 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'NewExpression',
                   callee: {
@@ -9672,12 +9619,10 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Literal',
                     value: 'foo',
@@ -9809,12 +9754,10 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Literal',
                     value: 1,
@@ -9946,12 +9889,10 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Literal',
                     value: 2,
@@ -10083,12 +10024,10 @@ describe('Expressions - New', () => {
               type: 'NewExpression',
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Literal',
                     value: true,
@@ -10505,8 +10444,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'x',
@@ -10661,8 +10599,7 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'Identifier',
                 name: 'f',
@@ -11370,20 +11307,16 @@ describe('Expressions - New', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'NewExpression',
                       callee: {

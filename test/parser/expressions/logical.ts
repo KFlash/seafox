@@ -2378,8 +2378,7 @@ describe('Expressions - Logical', () => {
               type: 'LogicalExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'a',
@@ -2430,8 +2429,7 @@ describe('Expressions - Logical', () => {
                 type: 'AssignmentExpression',
                 left: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'c',

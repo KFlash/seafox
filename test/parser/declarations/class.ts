@@ -1438,8 +1438,7 @@ describe('Declarations - Class', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 13,
                     end: 28,
                     loc: {
@@ -4067,8 +4066,7 @@ describe('Declarations - Class', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 37,
                                 end: 69,
                                 loc: {
@@ -12008,8 +12006,7 @@ describe('Declarations - Class', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 36,
                                 end: 39,
                                 loc: {
@@ -12073,8 +12070,7 @@ describe('Declarations - Class', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 45,
                                 end: 48,
                                 loc: {
@@ -12138,8 +12134,7 @@ describe('Declarations - Class', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 54,
                                 end: 57,
                                 loc: {
@@ -12203,8 +12198,7 @@ describe('Declarations - Class', () => {
                                   }
                                 },
                                 arguments: [],
-                                optional: false,
-                                shortCircuited: false,
+
                                 start: 63,
                                 end: 66,
                                 loc: {
@@ -14150,8 +14144,6 @@ describe('Declarations - Class', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 11,
                     end: 16,
                     loc: {

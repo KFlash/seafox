@@ -1878,8 +1878,7 @@ describe('Expressions - Spread', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 13,
               loc: {
@@ -1997,8 +1996,7 @@ describe('Expressions - Spread', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 14,
               loc: {
@@ -2455,8 +2453,7 @@ describe('Expressions - Spread', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 10,
               loc: {

@@ -907,8 +907,7 @@ describe('Expressions - Compound assignment', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 13,
                 loc: {
@@ -923,8 +922,7 @@ describe('Expressions - Compound assignment', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 15,
               loc: {
@@ -1017,8 +1015,7 @@ describe('Expressions - Compound assignment', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 0,
                     end: 4,
                     loc: {
@@ -1049,8 +1046,7 @@ describe('Expressions - Compound assignment', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
+
                   start: 0,
                   end: 6,
                   loc: {
@@ -1114,8 +1110,7 @@ describe('Expressions - Compound assignment', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 17,
                 loc: {
@@ -1146,8 +1141,7 @@ describe('Expressions - Compound assignment', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
+
               start: 0,
               end: 19,
               loc: {
@@ -1235,8 +1229,7 @@ describe('Expressions - Compound assignment', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 0,
                 end: 7,
                 loc: {
@@ -2379,8 +2372,7 @@ describe('Expressions - Compound assignment', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
+
                 start: 4,
                 end: 11,
                 loc: {
@@ -2854,8 +2846,7 @@ describe('Expressions - Compound assignment', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'base',
@@ -2875,8 +2866,7 @@ describe('Expressions - Compound assignment', () => {
                 computed: true,
                 property: {
                   type: 'CallExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   callee: {
                     type: 'Identifier',
                     name: 'prop',
@@ -2923,8 +2913,7 @@ describe('Expressions - Compound assignment', () => {
               operator: '/=',
               right: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'Identifier',
                   name: 'expr',
@@ -3445,8 +3434,7 @@ describe('Expressions - Compound assignment', () => {
               type: 'AssignmentExpression',
               left: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'Identifier',
                   name: 'obj',
@@ -3647,16 +3635,13 @@ describe('Expressions - Compound assignment', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
+
               callee: {
                 type: 'MemberExpression',
-                optional: false,
-                shortCircuited: false,
+
                 object: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'Identifier',
                     name: 'a',
@@ -3803,20 +3788,16 @@ describe('Expressions - Compound assignment', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'MemberExpression',
-              optional: false,
-              shortCircuited: false,
+
               object: {
                 type: 'CallExpression',
-                optional: false,
-                shortCircuited: false,
+
                 callee: {
                   type: 'MemberExpression',
-                  optional: false,
-                  shortCircuited: false,
+
                   object: {
                     type: 'CallExpression',
-                    optional: false,
-                    shortCircuited: false,
+
                     callee: {
                       type: 'Identifier',
                       name: 'a',

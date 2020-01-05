@@ -1244,8 +1244,6 @@ describe('Declarations - Function', () => {
                         }
                       },
                       arguments: [],
-                      optional: false,
-                      shortCircuited: false,
                       start: 24,
                       end: 39,
                       loc: {
@@ -3527,8 +3525,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 22,
                       end: 34,
                       loc: {
@@ -3850,8 +3846,6 @@ describe('Declarations - Function', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
                         start: 22,
                         end: 25,
                         loc: {
@@ -3882,8 +3876,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 22,
                       end: 27,
                       loc: {
@@ -4069,8 +4061,6 @@ describe('Declarations - Function', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
                         start: 21,
                         end: 25,
                         loc: {
@@ -4101,8 +4091,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 21,
                       end: 27,
                       loc: {
@@ -4456,8 +4444,6 @@ describe('Declarations - Function', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
                         start: 22,
                         end: 25,
                         loc: {
@@ -4488,8 +4474,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 22,
                       end: 28,
                       loc: {
@@ -4703,8 +4687,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 21,
                       end: 32,
                       loc: {
@@ -4877,8 +4859,6 @@ describe('Declarations - Function', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
                           start: 30,
                           end: 33,
                           loc: {
@@ -4922,8 +4902,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 23,
                       end: 36,
                       loc: {
@@ -5090,8 +5068,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     },
-                    optional: false,
-                    shortCircuited: false,
                     start: 0,
                     end: 7,
                     loc: {
@@ -5122,8 +5098,6 @@ describe('Declarations - Function', () => {
                       }
                     }
                   },
-                  optional: false,
-                  shortCircuited: false,
                   start: 0,
                   end: 10,
                   loc: {
@@ -5155,8 +5129,6 @@ describe('Declarations - Function', () => {
                     }
                   }
                 ],
-                optional: false,
-                shortCircuited: false,
                 start: 0,
                 end: 13,
                 loc: {
@@ -5187,8 +5159,6 @@ describe('Declarations - Function', () => {
                   }
                 }
               },
-              optional: false,
-              shortCircuited: false,
               start: 0,
               end: 15,
               loc: {
@@ -5531,8 +5501,6 @@ describe('Declarations - Function', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
                         start: 46,
                         end: 54,
                         loc: {
@@ -5616,8 +5584,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
                       start: 46,
                       end: 67,
                       loc: {
@@ -5951,8 +5917,6 @@ describe('Declarations - Function', () => {
                               }
                             }
                           ],
-                          optional: false,
-                          shortCircuited: false,
                           start: 43,
                           end: 69,
                           loc: {
@@ -6407,8 +6371,6 @@ describe('Declarations - Function', () => {
                       }
                     }
                   ],
-                  optional: false,
-                  shortCircuited: false,
                   start: 23,
                   end: 40,
                   loc: {
@@ -7514,8 +7476,6 @@ describe('Declarations - Function', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
                     start: 64,
                     end: 67,
                     loc: {
@@ -8210,8 +8170,6 @@ describe('Declarations - Function', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
                     start: 63,
                     end: 66,
                     loc: {
@@ -9267,8 +9225,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 17,
                     end: 23,
                     loc: {
@@ -9396,8 +9352,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 35,
                     end: 41,
                     loc: {
@@ -9599,8 +9553,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 22,
                     end: 28,
                     loc: {
@@ -9666,8 +9618,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 30,
                       end: 42,
                       loc: {
@@ -9762,8 +9712,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 49,
                     end: 55,
                     loc: {
@@ -10109,8 +10057,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 33,
                     end: 39,
                     loc: {
@@ -10176,8 +10122,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 41,
                       end: 48,
                       loc: {
@@ -10272,8 +10216,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 55,
                     end: 61,
                     loc: {
@@ -11061,8 +11003,6 @@ describe('Declarations - Function', () => {
                         }
                       },
                       arguments: [],
-                      optional: false,
-                      shortCircuited: false,
                       start: 56,
                       end: 59,
                       loc: {
@@ -13644,8 +13584,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 21,
                     end: 27,
                     loc: {
@@ -15307,8 +15245,6 @@ describe('Declarations - Function', () => {
                     }
                   }
                 },
-                optional: false,
-                shortCircuited: false,
                 start: 14,
                 end: 43,
                 loc: {
@@ -15340,8 +15276,6 @@ describe('Declarations - Function', () => {
                   }
                 }
               ],
-              optional: false,
-              shortCircuited: false,
               start: 14,
               end: 56,
               loc: {
@@ -18632,8 +18566,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 31,
                     end: 37,
                     loc: {
@@ -18699,8 +18631,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 39,
                       end: 51,
                       loc: {
@@ -18795,8 +18725,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 58,
                     end: 64,
                     loc: {
@@ -18951,8 +18879,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 17,
                     end: 23,
                     loc: {
@@ -19044,8 +18970,6 @@ describe('Declarations - Function', () => {
                                     }
                                   }
                                 ],
-                                optional: false,
-                                shortCircuited: false,
                                 start: 39,
                                 end: 55,
                                 loc: {
@@ -19103,8 +19027,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 25,
                     end: 57,
                     loc: {
@@ -19169,8 +19091,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 59,
                     end: 65,
                     loc: {
@@ -22601,8 +22521,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 31,
                     end: 37,
                     loc: {
@@ -22668,8 +22586,6 @@ describe('Declarations - Function', () => {
                           }
                         }
                       },
-                      optional: false,
-                      shortCircuited: false,
                       start: 39,
                       end: 51,
                       loc: {
@@ -22764,8 +22680,6 @@ describe('Declarations - Function', () => {
                         }
                       }
                     ],
-                    optional: false,
-                    shortCircuited: false,
                     start: 58,
                     end: 64,
                     loc: {
@@ -23826,8 +23740,6 @@ describe('Declarations - Function', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
                     start: 49,
                     end: 56,
                     loc: {
@@ -24950,8 +24862,6 @@ describe('Declarations - Function', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
               start: 194,
               end: 197,
               loc: {
@@ -25158,8 +25068,6 @@ describe('Declarations - Function', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
                     start: 50,
                     end: 53,
                     loc: {
@@ -25252,8 +25160,6 @@ describe('Declarations - Function', () => {
                 }
               },
               arguments: [],
-              optional: false,
-              shortCircuited: false,
               start: 57,
               end: 60,
               loc: {
@@ -30093,8 +29999,6 @@ describe('Declarations - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
               callee: {
                 type: 'FunctionExpression',
                 params: [
@@ -30381,8 +30285,6 @@ describe('Declarations - Function', () => {
             type: 'ExpressionStatement',
             expression: {
               type: 'CallExpression',
-              optional: false,
-              shortCircuited: false,
               callee: {
                 type: 'FunctionExpression',
                 params: [

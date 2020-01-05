@@ -1299,8 +1299,7 @@ describe('Module - Import', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 37,
                     end: 60,
                     loc: {
@@ -1401,8 +1400,7 @@ describe('Module - Import', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 74,
                         end: 89,
                         loc: {
@@ -1468,8 +1466,7 @@ describe('Module - Import', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 113,
                           end: 122,
                           loc: {
@@ -1484,8 +1481,7 @@ describe('Module - Import', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 74,
                       end: 123,
                       loc: {
@@ -3712,8 +3708,7 @@ describe('Module - Import', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 32,
                     end: 55,
                     loc: {
@@ -4025,8 +4020,7 @@ describe('Module - Import', () => {
                       }
                     },
                     arguments: [],
-                    optional: false,
-                    shortCircuited: false,
+
                     start: 36,
                     end: 59,
                     loc: {
@@ -4127,8 +4121,7 @@ describe('Module - Import', () => {
                             }
                           }
                         },
-                        optional: false,
-                        shortCircuited: false,
+
                         start: 73,
                         end: 88,
                         loc: {
@@ -4194,8 +4187,7 @@ describe('Module - Import', () => {
                               }
                             }
                           },
-                          optional: false,
-                          shortCircuited: false,
+
                           start: 112,
                           end: 121,
                           loc: {
@@ -4210,8 +4202,7 @@ describe('Module - Import', () => {
                           }
                         }
                       ],
-                      optional: false,
-                      shortCircuited: false,
+
                       start: 73,
                       end: 122,
                       loc: {
