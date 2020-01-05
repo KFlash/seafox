@@ -425,8 +425,14 @@ describe('Expressions - Await', () => {
     'export const await = 1',
     'function await() {}',
     'function* await() {}',
-    'async function await() {}'
-    // 'import {await} from "foo";',
+    'async function await() {}',
+    'export const await = 1',
+    'async function await() {}',
+    'import {foo as await} from "foo";',
+    'import await, {x, y, z} from "foo"',
+    'import await, {x, y, z,} from "foo"',
+    'import await, * as foo from "foo"',
+    'import {await} from "foo";',
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {

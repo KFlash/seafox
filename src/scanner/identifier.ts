@@ -26,7 +26,7 @@ export function scanIdentifierOrKeyword(parser: ParserState, context: Context, s
 
 export function scanIdentifierSlowPath(
   parser: ParserState,
-  context: Context,
+  _context: Context,
   source: string,
   value: string,
   maybeKeyword: 0 | 1,
@@ -75,16 +75,16 @@ export function scanIdentifierSlowPath(
 
     if (escaped === 0) return token;
 
-    if (context & Context.AllowEscapedKeyword) {
-      if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
-        return Token.EscapedFutureReserved;
-      }
-      if (token === void 0) return Token.Identifier;
+   // if (context & Context.AllowEscapedKeyword) {
+     // if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
+       // return Token.EscapedFutureReserved;
+      //}
+      //if (token === void 0) return Token.Identifier;
 
       return token;
-    }
+    //}
 
-    return Token.EscapedIdentifier;
+    //return Token.EscapedIdentifier;
   }
 
   return Token.Identifier;

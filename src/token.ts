@@ -159,8 +159,8 @@ export const enum Token {
   EnumKeyword         = 0b00000000000000100000000001110110,
 
   /* Escapes */
-  EscapedIdentifier     = 0b00000000000000000000000001110111,
-  EscapedFutureReserved = 0b00000000000000000000000001111000,
+  EscapedIdentifier     = 0b00000000001000010000000001110111,
+  EscapedFutureReserved = 0b00000000001000010000000001111000,
 
   /* Others */
 

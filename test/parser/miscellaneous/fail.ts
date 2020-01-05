@@ -15,6 +15,8 @@ describe('Miscellaneous - Failure', () => {
     'for (a of b) let [x] = y',
     '({1: ({}) += (1)});',
     '({1: ({}) = (1)});',
+    'function ** gen() { }',
+    '0b07n',
     'x/{c:/ /=>',
     '+{f(){}==',
     'with {a}',

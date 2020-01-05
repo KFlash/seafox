@@ -2979,7 +2979,7 @@ export function parseClassBody(
       )
     );
 
-    if ((parser.token as Token) === Token.Semicolon) {
+    while ((parser.token as Token) === Token.Semicolon) {
       nextToken(parser, context, /* allowRegExp */ 0);
     }
   }
