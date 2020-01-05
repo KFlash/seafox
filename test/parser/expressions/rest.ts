@@ -54,7 +54,9 @@ describe('Expressions - Rest', () => {
     'function foo(a, ...b, c) => {}',
     'var obj = class { method(a, b = 1, ...c = [2,3]) {} };',
     'function f(a, ...[b]) { "use strict"; }',
-    '(a = ...NaN, b = [...[1,2,3]], ...rest) => {};'
+    '(a = ...NaN, b = [...[1,2,3]], ...rest) => {};',
+    'function f(a, ...b = 0);',
+    'function f(a, ...b, c);'
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
@@ -64,6 +66,125 @@ describe('Expressions - Rest', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `function f(...b) {};`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'RestElement',
+                argument: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                start: 11,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 17,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 19,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 19
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
     [
       `function multiElementWithInitializer(...{a: r = 0, b: s, c: t = 1}) {}`,
       Context.OptionsLoc,

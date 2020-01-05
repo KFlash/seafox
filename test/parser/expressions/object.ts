@@ -21,6 +21,7 @@ describe('Expressions - Object', () => {
     ['({x=1} = {y=1});', Context.Empty],
     ['({x: y={z=1}}={})', Context.Empty],
     ['({x=1}),', Context.Empty],
+    ['x = { this };', Context.Empty],
     ['({z={x=1}})=>{};', Context.Empty],
     ['({x = ({y=1}) => y})', Context.Empty],
     ['(({x=1})) => x', Context.Empty],
@@ -91,6 +92,7 @@ describe('Expressions - Object', () => {
     ['a = {"a"} = b', Context.Empty],
     ['({x}) = foo', Context.Empty],
     ['({break})', Context.Empty],
+    ['({break})', Context.Strict],
     ['a = { x: [(x, y)] } = { x: [] };', Context.Empty],
     ['a = { x: [(x, y)] } = {};', Context.Empty],
     ['a = { x: [(x, y)] } = { 1: [] = [(a = b)] };', Context.Empty],
@@ -487,8 +489,447 @@ describe('Expressions - Object', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `({ 0n: 0 });`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 12,
+            expression: {
+              end: 10,
+              loc: {
+                end: {
+                  column: 10,
+                  line: 1
+                },
+                start: {
+                  column: 1,
+                  line: 1
+                }
+              },
+              properties: [
+                {
+                  computed: false,
+                  end: 8,
+                  key: {
+                    bigint: '0n',
+                    end: 5,
+                    loc: {
+                      end: {
+                        column: 5,
+                        line: 1
+                      },
+                      start: {
+                        column: 3,
+                        line: 1
+                      }
+                    },
+                    start: 3,
+                    type: 'BigIntLiteral',
+                    value: null
+                  },
+                  kind: 'init',
+                  loc: {
+                    end: {
+                      column: 8,
+                      line: 1
+                    },
+                    start: {
+                      column: 3,
+                      line: 1
+                    }
+                  },
+                  method: false,
+                  shorthand: false,
+                  start: 3,
+                  type: 'Property',
+                  value: {
+                    end: 8,
+                    loc: {
+                      end: {
+                        column: 8,
+                        line: 1
+                      },
+                      start: {
+                        column: 7,
+                        line: 1
+                      }
+                    },
+                    start: 7,
+                    type: 'Literal',
+                    value: 0
+                  }
+                }
+              ],
+              start: 1,
+              type: 'ObjectExpression'
+            },
+            loc: {
+              end: {
+                column: 12,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 12,
+        loc: {
+          end: {
+            column: 12,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `var obj = { 999999999999999999n: true };`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            declarations: [
+              {
+                end: 39,
+                id: {
+                  end: 7,
+                  loc: {
+                    end: {
+                      column: 7,
+                      line: 1
+                    },
+                    start: {
+                      column: 4,
+                      line: 1
+                    }
+                  },
+                  name: 'obj',
+                  start: 4,
+                  type: 'Identifier'
+                },
+                init: {
+                  end: 39,
+                  loc: {
+                    end: {
+                      column: 39,
+                      line: 1
+                    },
+                    start: {
+                      column: 10,
+                      line: 1
+                    }
+                  },
+                  properties: [
+                    {
+                      computed: false,
+                      end: 37,
+                      key: {
+                        bigint: '999999999999999999n',
+                        end: 31,
+                        loc: {
+                          end: {
+                            column: 31,
+                            line: 1
+                          },
+                          start: {
+                            column: 12,
+                            line: 1
+                          }
+                        },
+                        start: 12,
+                        type: 'BigIntLiteral',
+                        value: null
+                      },
+                      kind: 'init',
+                      loc: {
+                        end: {
+                          column: 37,
+                          line: 1
+                        },
+                        start: {
+                          column: 12,
+                          line: 1
+                        }
+                      },
+                      method: false,
+                      shorthand: false,
+                      start: 12,
+                      type: 'Property',
+                      value: {
+                        end: 37,
+                        loc: {
+                          end: {
+                            column: 37,
+                            line: 1
+                          },
+                          start: {
+                            column: 33,
+                            line: 1
+                          }
+                        },
+                        start: 33,
+                        type: 'Literal',
+                        value: true
+                      }
+                    }
+                  ],
+                  start: 10,
+                  type: 'ObjectExpression'
+                },
+                loc: {
+                  end: {
+                    column: 39,
+                    line: 1
+                  },
+                  start: {
+                    column: 4,
+                    line: 1
+                  }
+                },
+                start: 4,
+                type: 'VariableDeclarator'
+              }
+            ],
+            end: 40,
+            kind: 'var',
+            loc: {
+              end: {
+                column: 40,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'VariableDeclaration'
+          }
+        ],
+        end: 40,
+        loc: {
+          end: {
+            column: 40,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `var { 9007199254740991n: it } = { 9007199254740991n: 1 };`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            declarations: [
+              {
+                end: 56,
+                id: {
+                  end: 29,
+                  loc: {
+                    end: {
+                      column: 29,
+                      line: 1
+                    },
+                    start: {
+                      column: 4,
+                      line: 1
+                    }
+                  },
+                  properties: [
+                    {
+                      computed: false,
+                      end: 27,
+                      key: {
+                        bigint: '9007199254740991n',
+                        end: 23,
+                        loc: {
+                          end: {
+                            column: 23,
+                            line: 1
+                          },
+                          start: {
+                            column: 6,
+                            line: 1
+                          }
+                        },
+                        start: 6,
+                        type: 'BigIntLiteral',
+                        value: null
+                      },
+                      kind: 'init',
+                      loc: {
+                        end: {
+                          column: 27,
+                          line: 1
+                        },
+                        start: {
+                          column: 6,
+                          line: 1
+                        }
+                      },
+                      method: false,
+                      shorthand: false,
+                      start: 6,
+                      type: 'Property',
+                      value: {
+                        end: 27,
+                        loc: {
+                          end: {
+                            column: 27,
+                            line: 1
+                          },
+                          start: {
+                            column: 25,
+                            line: 1
+                          }
+                        },
+                        name: 'it',
+                        start: 25,
+                        type: 'Identifier'
+                      }
+                    }
+                  ],
+                  start: 4,
+                  type: 'ObjectPattern'
+                },
+                init: {
+                  end: 56,
+                  loc: {
+                    end: {
+                      column: 56,
+                      line: 1
+                    },
+                    start: {
+                      column: 32,
+                      line: 1
+                    }
+                  },
+                  properties: [
+                    {
+                      computed: false,
+                      end: 54,
+                      key: {
+                        bigint: '9007199254740991n',
+                        end: 51,
+                        loc: {
+                          end: {
+                            column: 51,
+                            line: 1
+                          },
+                          start: {
+                            column: 34,
+                            line: 1
+                          }
+                        },
+                        start: 34,
+                        type: 'BigIntLiteral',
+                        value: null
+                      },
+                      kind: 'init',
+                      loc: {
+                        end: {
+                          column: 54,
+                          line: 1
+                        },
+                        start: {
+                          column: 34,
+                          line: 1
+                        }
+                      },
+                      method: false,
+                      shorthand: false,
+                      start: 34,
+                      type: 'Property',
+                      value: {
+                        end: 54,
+                        loc: {
+                          end: {
+                            column: 54,
+                            line: 1
+                          },
+                          start: {
+                            column: 53,
+                            line: 1
+                          }
+                        },
+                        start: 53,
+                        type: 'Literal',
+                        value: 1
+                      }
+                    }
+                  ],
+                  start: 32,
+                  type: 'ObjectExpression'
+                },
+                loc: {
+                  end: {
+                    column: 56,
+                    line: 1
+                  },
+                  start: {
+                    column: 4,
+                    line: 1
+                  }
+                },
+                start: 4,
+                type: 'VariableDeclarator'
+              }
+            ],
+            end: 57,
+            kind: 'var',
+            loc: {
+              end: {
+                column: 57,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'VariableDeclaration'
+          }
+        ],
+        end: 57,
+        loc: {
+          end: {
+            column: 57,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
       `wrap({async foo(){}, bar(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -716,7 +1157,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({async foo(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -874,7 +1315,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({arguments})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -979,7 +1420,209 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...{eval}.x} = {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ObjectPattern',
+                properties: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'eval',
+                              start: 6,
+                              end: 10,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 6
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 10
+                                }
+                              }
+                            },
+                            value: {
+                              type: 'Identifier',
+                              name: 'eval',
+                              start: 6,
+                              end: 10,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 6
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 10
+                                }
+                              }
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: true,
+                            start: 6,
+                            end: 10,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 6
+                              },
+                              end: {
+                                line: 1,
+                                column: 10
+                              }
+                            }
+                          }
+                        ],
+                        start: 5,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+
+                      start: 5,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 5
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 2,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  }
+                ],
+                start: 1,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ObjectExpression',
+                properties: [],
+                start: 17,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              },
+              start: 1,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `({...{eval}.x} = {});`,
+      Context.OptionsLoc | Context.Strict,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1181,7 +1824,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({async get(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1339,7 +1982,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({async 'foo'(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1497,7 +2140,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({[a]:b});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1636,7 +2279,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({[a]:b, [15]:d});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1826,7 +2469,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({*foo(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1984,7 +2627,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({* foo(){},*bar(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2212,7 +2855,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({[foo](){}, get [bar](){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2440,7 +3083,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({get [foo](){}, get [bar](){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2668,7 +3311,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ async * async(){} });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2792,7 +3435,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ async * await(){} });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2916,7 +3559,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ async * break(){} });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3040,7 +3683,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ set const(x){} });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3181,7 +3824,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({continue: x}) => x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3321,7 +3964,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({static * continue(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3445,7 +4088,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({* delete(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3569,7 +4212,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async * for(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3693,7 +4336,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({get(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3851,7 +4494,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {x, ...y}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4019,7 +4662,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...[a, b]}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4169,7 +4812,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...a,}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4284,9 +4927,2130 @@ describe('Expressions - Object', () => {
         }
       }
     ],
+
+    [
+      `var x = { [5 + 5]: foo };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ObjectExpression',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'BinaryExpression',
+                        left: {
+                          type: 'Literal',
+                          value: 5,
+                          start: 11,
+                          end: 12,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 11
+                            },
+                            end: {
+                              line: 1,
+                              column: 12
+                            }
+                          }
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: 5,
+                          start: 15,
+                          end: 16,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 15
+                            },
+                            end: {
+                              line: 1,
+                              column: 16
+                            }
+                          }
+                        },
+                        operator: '+',
+                        start: 11,
+                        end: 16,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 16
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 19,
+                        end: 22,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 22
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: true,
+                      method: false,
+                      shorthand: false,
+                      start: 10,
+                      end: 22,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 22
+                        }
+                      }
+                    }
+                  ],
+                  start: 8,
+                  end: 24,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 24
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 24,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 24
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      `({[x]: 10, y: 20});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Literal',
+                    value: 10,
+                    start: 7,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: true,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Literal',
+                    value: 20,
+                    start: 14,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
+    [
+      `({get [x]() {}, set [x](v) {}});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 12,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 9,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  kind: 'get',
+                  computed: true,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 21,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 21
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [
+                      {
+                        type: 'Identifier',
+                        name: 'v',
+                        start: 24,
+                        end: 25,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 24
+                          },
+                          end: {
+                            line: 1,
+                            column: 25
+                          }
+                        }
+                      }
+                    ],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 27,
+                      end: 29,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 27
+                        },
+                        end: {
+                          line: 1,
+                          column: 29
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 23,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  },
+                  kind: 'set',
+                  computed: true,
+                  method: false,
+                  shorthand: false,
+                  start: 16,
+                  end: 29,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 29
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 32,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 32
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 32,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 32
+          }
+        }
+      }
+    ],
+    [
+      `var x = { [bar]: foo };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ObjectExpression',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'bar',
+                        start: 11,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 17,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 17
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: true,
+                      method: false,
+                      shorthand: false,
+                      start: 10,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    }
+                  ],
+                  start: 8,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `({[x]: function() {}});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 18,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 18
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 7,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: true,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `({[x]: 10});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Literal',
+                    value: 10,
+                    start: 7,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: true,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `({[x]: 10n});`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 13,
+            expression: {
+              end: 11,
+              loc: {
+                end: {
+                  column: 11,
+                  line: 1
+                },
+                start: {
+                  column: 1,
+                  line: 1
+                }
+              },
+              properties: [
+                {
+                  computed: true,
+                  end: 10,
+                  key: {
+                    end: 4,
+                    loc: {
+                      end: {
+                        column: 4,
+                        line: 1
+                      },
+                      start: {
+                        column: 3,
+                        line: 1
+                      }
+                    },
+                    name: 'x',
+                    start: 3,
+                    type: 'Identifier'
+                  },
+                  kind: 'init',
+                  loc: {
+                    end: {
+                      column: 10,
+                      line: 1
+                    },
+                    start: {
+                      column: 2,
+                      line: 1
+                    }
+                  },
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  type: 'Property',
+                  value: {
+                    bigint: '10n',
+                    end: 10,
+                    loc: {
+                      end: {
+                        column: 10,
+                        line: 1
+                      },
+                      start: {
+                        column: 7,
+                        line: 1
+                      }
+                    },
+                    start: 7,
+                    type: 'BigIntLiteral',
+                    value: null
+                  }
+                }
+              ],
+              start: 1,
+              type: 'ObjectExpression'
+            },
+            loc: {
+              end: {
+                column: 13,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 13,
+        loc: {
+          end: {
+            column: 13,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `var x = { baz(a = 10) {}, foo(a, b = 10) {}, toast(a, b = 10, c) {} };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ObjectExpression',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'baz',
+                        start: 10,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'FunctionExpression',
+                        params: [
+                          {
+                            type: 'AssignmentPattern',
+                            left: {
+                              type: 'Identifier',
+                              name: 'a',
+                              start: 14,
+                              end: 15,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 14
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 15
+                                }
+                              }
+                            },
+                            right: {
+                              type: 'Literal',
+                              value: 10,
+                              start: 18,
+                              end: 20,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 18
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 20
+                                }
+                              }
+                            },
+                            start: 14,
+                            end: 20,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 14
+                              },
+                              end: {
+                                line: 1,
+                                column: 20
+                              }
+                            }
+                          }
+                        ],
+                        body: {
+                          type: 'BlockStatement',
+                          body: [],
+                          start: 22,
+                          end: 24,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 22
+                            },
+                            end: {
+                              line: 1,
+                              column: 24
+                            }
+                          }
+                        },
+                        async: false,
+                        generator: false,
+                        id: null,
+                        start: 13,
+                        end: 24,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 13
+                          },
+                          end: {
+                            line: 1,
+                            column: 24
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: true,
+                      shorthand: false,
+                      start: 10,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 26,
+                        end: 29,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 26
+                          },
+                          end: {
+                            line: 1,
+                            column: 29
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'FunctionExpression',
+                        params: [
+                          {
+                            type: 'Identifier',
+                            name: 'a',
+                            start: 30,
+                            end: 31,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 30
+                              },
+                              end: {
+                                line: 1,
+                                column: 31
+                              }
+                            }
+                          },
+                          {
+                            type: 'AssignmentPattern',
+                            left: {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 33,
+                              end: 34,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 33
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 34
+                                }
+                              }
+                            },
+                            right: {
+                              type: 'Literal',
+                              value: 10,
+                              start: 37,
+                              end: 39,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 37
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 39
+                                }
+                              }
+                            },
+                            start: 33,
+                            end: 39,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 33
+                              },
+                              end: {
+                                line: 1,
+                                column: 39
+                              }
+                            }
+                          }
+                        ],
+                        body: {
+                          type: 'BlockStatement',
+                          body: [],
+                          start: 41,
+                          end: 43,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 41
+                            },
+                            end: {
+                              line: 1,
+                              column: 43
+                            }
+                          }
+                        },
+                        async: false,
+                        generator: false,
+                        id: null,
+                        start: 29,
+                        end: 43,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 29
+                          },
+                          end: {
+                            line: 1,
+                            column: 43
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: true,
+                      shorthand: false,
+                      start: 26,
+                      end: 43,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 26
+                        },
+                        end: {
+                          line: 1,
+                          column: 43
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'toast',
+                        start: 45,
+                        end: 50,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 45
+                          },
+                          end: {
+                            line: 1,
+                            column: 50
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'FunctionExpression',
+                        params: [
+                          {
+                            type: 'Identifier',
+                            name: 'a',
+                            start: 51,
+                            end: 52,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 51
+                              },
+                              end: {
+                                line: 1,
+                                column: 52
+                              }
+                            }
+                          },
+                          {
+                            type: 'AssignmentPattern',
+                            left: {
+                              type: 'Identifier',
+                              name: 'b',
+                              start: 54,
+                              end: 55,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 54
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 55
+                                }
+                              }
+                            },
+                            right: {
+                              type: 'Literal',
+                              value: 10,
+                              start: 58,
+                              end: 60,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 58
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 60
+                                }
+                              }
+                            },
+                            start: 54,
+                            end: 60,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 54
+                              },
+                              end: {
+                                line: 1,
+                                column: 60
+                              }
+                            }
+                          },
+                          {
+                            type: 'Identifier',
+                            name: 'c',
+                            start: 62,
+                            end: 63,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 62
+                              },
+                              end: {
+                                line: 1,
+                                column: 63
+                              }
+                            }
+                          }
+                        ],
+                        body: {
+                          type: 'BlockStatement',
+                          body: [],
+                          start: 65,
+                          end: 67,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 65
+                            },
+                            end: {
+                              line: 1,
+                              column: 67
+                            }
+                          }
+                        },
+                        async: false,
+                        generator: false,
+                        id: null,
+                        start: 50,
+                        end: 67,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 50
+                          },
+                          end: {
+                            line: 1,
+                            column: 67
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: true,
+                      shorthand: false,
+                      start: 45,
+                      end: 67,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 45
+                        },
+                        end: {
+                          line: 1,
+                          column: 67
+                        }
+                      }
+                    }
+                  ],
+                  start: 8,
+                  end: 69,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 69
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 69,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 69
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 70,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 70
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 70,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 70
+          }
+        }
+      }
+    ],
+    [
+      `var x = { *test () { yield *v } };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ObjectExpression',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'test',
+                        start: 11,
+                        end: 15,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 15
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'FunctionExpression',
+                        params: [],
+                        body: {
+                          type: 'BlockStatement',
+                          body: [
+                            {
+                              type: 'ExpressionStatement',
+                              expression: {
+                                type: 'YieldExpression',
+                                argument: {
+                                  type: 'Identifier',
+                                  name: 'v',
+                                  start: 28,
+                                  end: 29,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 28
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 29
+                                    }
+                                  }
+                                },
+                                delegate: true,
+                                start: 21,
+                                end: 29,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 21
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 29
+                                  }
+                                }
+                              },
+                              start: 21,
+                              end: 29,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 21
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 29
+                                }
+                              }
+                            }
+                          ],
+                          start: 19,
+                          end: 31,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 19
+                            },
+                            end: {
+                              line: 1,
+                              column: 31
+                            }
+                          }
+                        },
+                        async: false,
+                        generator: true,
+                        id: null,
+                        start: 16,
+                        end: 31,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 16
+                          },
+                          end: {
+                            line: 1,
+                            column: 31
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: true,
+                      shorthand: false,
+                      start: 10,
+                      end: 31,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 31
+                        }
+                      }
+                    }
+                  ],
+                  start: 8,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 33,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 33
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 34,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 34
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 34,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 34
+          }
+        }
+      }
+    ],
+    [
+      `x = { method() { } };;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'x',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'ObjectExpression',
+                properties: [
+                  {
+                    type: 'Property',
+                    key: {
+                      type: 'Identifier',
+                      name: 'method',
+                      start: 6,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    value: {
+                      type: 'FunctionExpression',
+                      params: [],
+                      body: {
+                        type: 'BlockStatement',
+                        body: [],
+                        start: 15,
+                        end: 18,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 18
+                          }
+                        }
+                      },
+                      async: false,
+                      generator: false,
+                      id: null,
+                      start: 12,
+                      end: 18,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 18
+                        }
+                      }
+                    },
+                    kind: 'init',
+                    computed: false,
+                    method: true,
+                    shorthand: false,
+                    start: 6,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  }
+                ],
+                start: 4,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              },
+              start: 0,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 21,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 21
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      `var x = { foo, get, set };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ObjectExpression',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 10,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 10,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 10,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'get',
+                        start: 15,
+                        end: 18,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 18
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'get',
+                        start: 15,
+                        end: 18,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 18
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 15,
+                      end: 18,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 18
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'set',
+                        start: 20,
+                        end: 23,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 20
+                          },
+                          end: {
+                            line: 1,
+                            column: 23
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'set',
+                        start: 20,
+                        end: 23,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 20
+                          },
+                          end: {
+                            line: 1,
+                            column: 23
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 20,
+                      end: 23,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 20
+                        },
+                        end: {
+                          line: 1,
+                          column: 23
+                        }
+                      }
+                    }
+                  ],
+                  start: 8,
+                  end: 25,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 25
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 25,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 25
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
     [
       `x = {...y, b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4454,7 +7218,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...{}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4539,7 +7303,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...a, ...b})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4655,7 +7419,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: x = true} = y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4823,7 +7587,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({[a]:b}=obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4994,7 +7758,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({[a]:b, [15]:d}=obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5216,7 +7980,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {"foo": await = x} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5416,7 +8180,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {"foo": await = x} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5616,7 +8380,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({a:b=x}=y);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5818,7 +8582,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({}=x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5937,7 +8701,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({a:b, c}=obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6159,7 +8923,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({a, b}=obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6381,7 +9145,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({a:b, c:d}=obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6603,7 +9367,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x, {foo, bar} = doo`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6824,7 +9588,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a, b} = c = d)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7044,7 +9808,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x, {foo = y, bar} = doo`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7296,7 +10060,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: {x = true} = true} = y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7547,7 +10311,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a, b} = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7767,7 +10531,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({s: "foo".foo} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7937,7 +10701,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({l: 50..foo} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8107,7 +10871,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"foo": [x].foo}=y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8294,7 +11058,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"foo": 15..foo}=y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8464,7 +11228,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x: x[Y] } = x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8634,7 +11398,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({web: false, __proto__: a, __proto__: b});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8841,7 +11605,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `([{web: false, __proto__: a, __proto__: b}]);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9065,7 +11829,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: b = c} = [2])`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9250,7 +12014,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: (b) = c} = [2])`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -9435,7 +12199,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: (b).c} = [2])`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9622,7 +12386,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: (b).c = d} = [2])`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -9840,7 +12604,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `var a = { __proto__: { abc: 123 } };`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10031,7 +12795,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `var b = { ["__proto__"]: { abc: 123 }};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10222,7 +12986,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ __proto__: null, other: null, "__proto__": null });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10429,7 +13193,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...x = y, y})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10597,7 +13361,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...a,});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10682,7 +13446,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {"foo": yield}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10819,7 +13583,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {"foo": yield /x/g}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11020,7 +13784,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {"foo": yield / x}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11189,7 +13953,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `function *f(){   s = {"foo": yield}   }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11378,7 +14142,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `f({ s: null, u: 0, w: false, y: "" });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11670,7 +14434,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `f = ({ x: y = 33 }) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11873,7 +14637,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `var f = ({ w: { x, y, z } = { x: 4, y: 5, z: 6 } }) => {};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12386,7 +15150,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a = { x: x = yield } = {};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12586,7 +15350,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a = { a: x, y } = { a: 3 };`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12858,7 +15622,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `y = { w, x } = { x: 4 };`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13130,7 +15894,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a = {} = true;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13247,7 +16011,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x: { x } } = { x: null });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13488,7 +16252,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x: [ x ] } = { x: null });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13694,7 +16458,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x = y } = {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13860,10 +16624,10 @@ describe('Expressions - Object', () => {
         }
       }
     ],
-    //`var obj = [...[ ext.b, ext["c"], { set v(val) { ext.d = val; } }.v ] = ["b", "c", "d" ]  ];`, Context.OptionsNext | Context.OptionsLoc,  {}  ],
+    //`var obj = [...[ ext.b, ext["c"], { set v(val) { ext.d = val; } }.v ] = ["b", "c", "d" ]  ];`, Context.OptionsLoc,  {}  ],
     [
       `({a:a}=1)()`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14017,7 +16781,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a, b,...rest} = {a, b,...rest} = obj)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14402,7 +17166,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `{{ { d;} }; var c = {d};}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14638,7 +17402,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({1: [b.c = x]} = 2 / (dd = ((a)) = 3))`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14952,7 +17716,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({["a"]: [b]} = 1 / (d = (a	)  => a))`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15205,7 +17969,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"a": [b]} = 1 / (d = ((a)) = a))`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15455,7 +18219,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: [b]} = 1 / (d = ((a)) = a))`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15705,7 +18469,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[(a)(x = (y))]: {}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15876,7 +18640,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[(a)()]: {}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15998,7 +18762,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[a = b]: {}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16135,7 +18899,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a = [b]} = c)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16320,7 +19084,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a = [b]} = 1)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16505,7 +19269,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `[(x.y)] = obj`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16640,7 +19404,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `(({ p = 14 }) => p)({ p : 15 });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16897,7 +19661,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `var _a = { a: '', b: 1 }, a = _a.a, _b = _a.b, b = _b === void 0 ? a : _b;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -17390,7 +20154,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ ...bar } = {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17507,7 +20271,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `f = (1 + {}), bar4 = [{ bar: "bar" }][0][_f];sss`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17855,7 +20619,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `[{ [(1 + {})]: bar4 }] = [{ bar: "bar" }];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18110,7 +20874,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ ["bar"]: bar2 } = { bar: "bar" });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18299,7 +21063,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `[{[foo]: bar4}] = [{bar: "bar"}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18522,7 +21286,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `let {[11]: bar2_1} = {11: "bar"};`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18713,7 +21477,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ a: obj["a"] } = {})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18883,7 +21647,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ a: obj.a } = {})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19053,7 +21817,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ a: obj['a'] } = {})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19223,7 +21987,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x, x1:y = 20} = {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19442,7 +22206,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a: [b = 1, c = 2][1]} = {a:[]});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -19761,7 +22525,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ tyssjh = ((cspagh = 4) => a) } = 1) => { /*jjj*/ }; (function(a) { })()`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20113,7 +22877,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[a]: a} = 1)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20250,7 +23014,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x([ a, b ]){} });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20424,7 +23188,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({y, a:{x}}) => x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20667,7 +23431,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ ...c[0]})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20785,7 +23549,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...arguments} = {})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -20902,7 +23666,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x : y = 1, ...z })`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21070,7 +23834,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[foo()] : z})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21192,7 +23956,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ responseText: text } = res)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21329,7 +24093,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `function *f(){   s = {"foo": yield /x/g}   }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21537,7 +24301,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `(x = { [a]: (x = (y)) }) / y.z`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21771,7 +24535,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {[d]: {}[d] += a}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -21973,7 +24737,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...obj} = foo)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22090,7 +24854,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `let { x4: { ...y4 } } = z;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22261,7 +25025,7 @@ describe('Expressions - Object', () => {
     ],
     [
       'var {  a, "b": b1, [`c`]: c1, [d + "e"]: d1, [`${d}e`]: d2, ...e1 } = e;',
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22748,7 +25512,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async 8(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22872,7 +25636,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({5(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -22996,7 +25760,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"foo"(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23120,7 +25884,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({get "a b c"(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23244,7 +26008,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({set 15(x){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23385,7 +26149,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a:b,...obj} = foo)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23553,7 +26317,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async *ident(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23677,7 +26441,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({set ident(ident){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23818,7 +26582,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ident: {}.length} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -23988,7 +26752,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ident: {}.length = x} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -24189,7 +26953,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ident: [foo].length} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -24376,7 +27140,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ident: [foo].length = x} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -24594,7 +27358,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...obj} = {}) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -24745,7 +27509,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...x[0] }= {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -24895,7 +27659,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({eval});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25000,7 +27764,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({eval} = x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25137,7 +27901,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...x[0] }= {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25287,7 +28051,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a, b, ...{c, e}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25577,7 +28341,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x, ...{y , z} })`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25816,7 +28580,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a:b,...obj}) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -25987,7 +28751,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x, ...y} = {x, ...y})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26238,7 +29002,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `([[ x ]] = [undefined]= {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26406,7 +29170,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `someObject = { someKey: { ...mapGetters([ "some_val_1", "some_val_2" ]) } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26642,7 +29406,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `fn = ({text = "default", ...props}) => text + props.children`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -26941,7 +29705,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x, ...y, a, ...b, c})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27210,7 +29974,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `assignmentResult = { x: x = yield } = value`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27410,7 +30174,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({"a":b});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27547,7 +30311,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({"a":b, "c":d});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27735,7 +30499,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({[a]:b, [15]:d});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -27923,7 +30687,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({typeof: x} = y);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28060,7 +30824,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({a:b, c} = x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28280,7 +31044,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[foo]: x} = y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28417,7 +31181,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x} = foo )`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28554,7 +31318,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {get} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28723,7 +31487,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {get get(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -28879,7 +31643,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {get [foo](){}, [bar](){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -29105,7 +31869,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"x": [y].slice(0)})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29294,7 +32058,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"x": {y: z}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29451,7 +32215,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"x": {y: z}} = x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -29640,7 +32404,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `[{x : [{y:{z = 1}, z1 = 2}] }, {x2 = 3}, {x3 : {y3:[{z3 = 4}]}} ] = [{x:[{y:{}}]}, {}, {x3:{y3:[{}]}}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30638,7 +33402,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({[sourceKey()]: target()[targetKey()]} = source());`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -30876,7 +33640,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `f(a, ...1 + 1, b)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -31042,7 +33806,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `[{x : [{y:{z = 1}}] }] = [{x:[{y:{}}]}];`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -31486,7 +34250,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {"foo": await = x} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -31686,7 +34450,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async * typeof(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -31810,7 +34574,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = { async *[y](){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -31966,7 +34730,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async "a b c"(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -32090,7 +34854,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async 15(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -32214,7 +34978,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({get 15(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -32338,7 +35102,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({set "a b c"(x){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -32479,7 +35243,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x: y, z})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -32635,7 +35399,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({async foo(){}, bar(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -32861,7 +35625,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({foo(){}, async bar(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33087,7 +35851,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = ({*foo(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33243,7 +36007,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a = {"a": b} = b`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33412,7 +36176,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33517,7 +36281,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x} = foo )`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33654,7 +36418,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a = {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33739,7 +36503,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a = {"a": b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -33876,7 +36640,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {get}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -34013,7 +36777,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {async}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -34150,7 +36914,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {get} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -34319,7 +37083,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a:b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -34456,7 +37220,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {async:b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -34593,7 +37357,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a, b} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -34813,7 +37577,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a:b, c:d}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -35001,7 +37765,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a, c:d} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -35221,7 +37985,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ [a]: {} [a] })`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -35359,7 +38123,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {15:b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -35496,7 +38260,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {.9:a, 0x84:b, 0b1:c, 0o27:d, 1e234:e}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -35837,7 +38601,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {1:b, 0:d}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -36025,7 +38789,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {[a]:b, [15]:d}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -36213,7 +38977,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = { *a() {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -36369,7 +39133,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {0(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -36525,7 +39289,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {.9(){}, 0x84(){}, 0b1(){}, 0o27(){}, 1e234(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -36961,7 +39725,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {async async(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -37117,7 +39881,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {async "foo"(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -37273,7 +40037,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {async [foo](){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -37429,7 +40193,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {async foo(){}, async bar(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -37655,7 +40419,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {*get(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -37811,7 +40575,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {*[foo](){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -37967,7 +40731,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {foo: typeof x}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -38121,7 +40885,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {foo: true / false}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -38290,7 +41054,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {await}  = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -38459,7 +41223,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {arguments}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -38596,7 +41360,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": y+z}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -38765,7 +41529,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": [y]}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -38919,7 +41683,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": [y]} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -39105,7 +41869,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": [y + x]}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -39291,7 +42055,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": [y].slice(0)}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -39512,7 +42276,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": {y: z}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -39701,7 +42465,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": {y: z}} = x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -39922,7 +42686,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": {a: y + x}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -40143,7 +42907,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": {a: y + x}.slice(0)}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -40431,7 +43195,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {"x": 600}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -40568,7 +43332,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x, {foo = y, bar} = doo`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -40820,7 +43584,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a, b} = y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -41040,7 +43804,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a, b} = c = d)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -41260,7 +44024,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `result = [x[yield]] = vals;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -41427,7 +44191,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({ x: x[Y] } = x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -41597,7 +44361,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `a={"b":c=d}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -41766,7 +44530,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `s = {s: this}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -41902,7 +44666,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x={...true}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42019,7 +44783,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({x:y} = {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42156,7 +44920,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({y:y2} = {y:y2-2})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42377,7 +45141,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {__proto__(){}, __proto__(){}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42603,7 +45367,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async *5(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42727,7 +45491,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({5(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42851,7 +45615,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async "a b c"(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -42975,7 +45739,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async *[x](){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43099,7 +45863,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({async *ident(){}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43223,7 +45987,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = { ... a}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43340,7 +46104,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...a, ...b})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43456,7 +46220,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({obj: x, ...a})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43592,7 +46356,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...{}})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43677,7 +46441,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({...obj,})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43762,7 +46526,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {a, ...y, b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -43981,7 +46745,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...a=b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -44130,7 +46894,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...{a, b}}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -44350,7 +47114,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...a,}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -44467,7 +47231,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...y, b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -44635,7 +47399,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...a + b}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -44784,7 +47548,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {...[a, b]}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -44934,7 +47698,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({"foo": this})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45038,7 +47802,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({790: true})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45143,7 +47907,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({790: this})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45247,7 +48011,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({set [foo](b){}, set [bar](d){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45475,7 +48239,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({set "foo"(a){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45616,7 +48380,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({foo: typeof x});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45739,7 +48503,7 @@ describe('Expressions - Object', () => {
 
     [
       `({ [a]: {} [a] })`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -45877,7 +48641,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x = {.9:a, 0x84:b, 0b1:c, 0o27:d, 1e234:e}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -46218,7 +48982,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({*foo(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -46376,7 +49140,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `wrap({*get(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -46534,7 +49298,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({* foo(){},*bar(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -46762,7 +49526,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({* foo(){}, bar(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -46990,7 +49754,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({[a]:b});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -47129,7 +49893,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({15:b});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -47268,7 +50032,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({1:b, 0:d});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -47458,7 +50222,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({* await(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -47582,7 +50346,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({foo(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -47740,7 +50504,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({"a":b, "c":d});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -47930,7 +50694,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x({0(){}});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48088,7 +50852,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({foo: true / false});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48225,7 +50989,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x= { async prototype(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48381,7 +51145,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x= { get prototype(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48537,7 +51301,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `x= { prototype(){} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48693,7 +51457,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a:b=2})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48830,7 +51594,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({a:b})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -48935,7 +51699,7 @@ describe('Expressions - Object', () => {
     ],
     [
       `({})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',

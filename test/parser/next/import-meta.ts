@@ -256,8 +256,6 @@ describe('Next - Import Meta', () => {
                                 }
                               }
                             },
-                            optional: false,
-
                             start: 20,
                             end: 46,
                             loc: {
@@ -477,8 +475,6 @@ describe('Next - Import Meta', () => {
                   }
                 }
               },
-              optional: false,
-
               start: 0,
               end: 14,
               loc: {
@@ -711,8 +707,6 @@ describe('Next - Import Meta', () => {
                 }
               },
               arguments: [],
-              optional: false,
-
               start: 0,
               end: 13,
               loc: {
@@ -1346,8 +1340,6 @@ describe('Next - Import Meta', () => {
                     }
                   }
                 },
-                optional: false,
-
                 start: 0,
                 end: 19,
                 loc: {
@@ -1379,8 +1371,6 @@ describe('Next - Import Meta', () => {
                   }
                 }
               ],
-              optional: false,
-
               start: 0,
               end: 32,
               loc: {
@@ -1507,8 +1497,6 @@ describe('Next - Import Meta', () => {
                             }
                           }
                         },
-                        optional: false,
-
                         start: 13,
                         end: 38,
                         loc: {
@@ -1539,8 +1527,6 @@ describe('Next - Import Meta', () => {
                           }
                         }
                       },
-                      optional: false,
-
                       start: 13,
                       end: 46,
                       loc: {
@@ -1571,8 +1557,6 @@ describe('Next - Import Meta', () => {
                         }
                       }
                     },
-                    optional: false,
-
                     start: 13,
                     end: 51,
                     loc: {
@@ -2028,8 +2012,6 @@ describe('Next - Import Meta', () => {
                                 }
                               }
                             },
-                            optional: false,
-
                             start: 8,
                             end: 23,
                             loc: {

@@ -320,31 +320,32 @@ export function parseMemberExpression(
         column
       );
     }
-    case Token.TemplateTail:
-    case Token.TemplateCont: {
+    case Token.TemplateTail: {
       parser.assignable = 0;
-      const quasi =
-        parser.token === Token.TemplateCont
-          ? parseTemplate(parser, context | Context.TaggedTemplate, start, line, column)
-          : parseTemplateLiteral(parser, context);
 
       return parseMemberExpression(
         parser,
         context,
-        context & Context.OptionsLoc
-          ? {
-              type: 'TaggedTemplateExpression',
-              tag: expr,
-              quasi,
-              start,
-              end: parser.endIndex,
-              loc: setLoc(parser, line, column)
-            }
-          : {
-              type: 'TaggedTemplateExpression',
-              tag: expr,
-              quasi
-            },
+        parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
+        inGroup,
+        start,
+        line,
+        column
+      );
+    }
+    case Token.TemplateCont: {
+      return parseMemberExpression(
+        parser,
+        context,
+        parseTemplateExpression(
+          parser,
+          context,
+          expr,
+          parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
+          start,
+          line,
+          column
+        ),
         inGroup,
         start,
         line,
@@ -400,7 +401,7 @@ export function parseMemberOrCallChain(
     case Token.Period:
       nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
 
-      parser.assignable = 1;
+      parser.assignable = 0;
 
       if ((parser.token & 0b00000000001001110000000000000000) === 0) report(parser, Errors.InvalidDotProperty);
 
@@ -1339,17 +1340,16 @@ export function parseImportCallOrMetaExpression(
 
   let expr: any = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
-  if (parser.token === Token.Period) {
-    return parseImportMetaExpression(parser, context, expr, start, line, column);
+  if (parser.token !== Token.Period) {
+    if (inNew === 1) report(parser, Errors.InvalidImportNew);
+
+    expr = parseImportExpression(parser, context, start, line, column);
+
+    parser.assignable = 0;
+
+    return parseMemberExpression(parser, context, expr, 0, start, line, column);
   }
-
-  if (inNew === 1) report(parser, Errors.InvalidImportNew);
-
-  expr = parseImportExpression(parser, context, start, line, column);
-
-  parser.assignable = 0;
-
-  return parseMemberExpression(parser, context, expr, 0, start, line, column);
+  return parseImportMetaExpression(parser, context, expr, start, line, column);
 }
 export function parseNewExpression(
   parser: ParserState,
@@ -1377,7 +1377,6 @@ export function parseNewExpression(
 
   const expr = parsePrimaryExpression(parser, context, BindingKind.None, 1, 1, 0, inGroup, start, line, column);
 
-  // NewExpression without arguments.
   const callee = parseNewMemberExpression(parser, context, inGroup, expr, start, line, column);
 
   const args = parser.token === Token.LeftParen ? parseArguments(parser, context, inGroup) : [];
@@ -1515,33 +1514,35 @@ export function parseNewMemberExpression(
       report(parser, Errors.OptionalChainingNoNew);
 
     /* Template */
-    case Token.TemplateCont:
-    case Token.TemplateTail: {
+    case Token.TemplateCont: {
       parser.assignable = 0;
-
-      const quasi =
-        parser.token === Token.TemplateCont
-          ? parseTemplate(parser, context | Context.TaggedTemplate, start, line, column)
-          : parseTemplateLiteral(parser, context);
 
       return parseNewMemberExpression(
         parser,
         context,
         inGroup,
-        context & Context.OptionsLoc
-          ? {
-              type: 'TaggedTemplateExpression',
-              tag: expr,
-              quasi,
-              start: start,
-              end: parser.endIndex,
-              loc: setLoc(parser, line, column)
-            }
-          : {
-              type: 'TaggedTemplateExpression',
-              tag: expr,
-              quasi
-            },
+        parseTemplateExpression(
+          parser,
+          context,
+          expr,
+          parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
+          start,
+          line,
+          column
+        ),
+        start,
+        line,
+        column
+      );
+    }
+    case Token.TemplateTail: {
+      parser.assignable = 0;
+
+      return parseNewMemberExpression(
+        parser,
+        context,
+        inGroup,
+        parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
         start,
         line,
         column
@@ -1552,6 +1553,30 @@ export function parseNewMemberExpression(
   }
 }
 
+export function parseTemplateExpression(
+  parser: ParserState,
+  context: Context,
+  tag: any,
+  quasi: any,
+  start: number,
+  line: number,
+  column: number
+): any {
+  return context & Context.OptionsLoc
+    ? {
+        type: 'TaggedTemplateExpression',
+        tag,
+        quasi,
+        start: start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'TaggedTemplateExpression',
+        tag,
+        quasi
+      };
+}
 /**
  * Parse super expression
  *
@@ -4242,6 +4267,136 @@ export function parseObjectLiteralOrPattern(
           mutualFlag |= Flags.NotDestructible;
         } else {
           report(parser, Errors.InvalidObjLitKeyStar);
+        }
+      } else if ((parser.token as Token) === Token.BigIntLiteral) {
+        key = parseBigIntLiteral(parser, context);
+
+        if (parser.token === Token.Colon) {
+          nextToken(parser, context, /* allowRegExp */ 1);
+
+          const { start, line, column } = parser;
+
+          if ((parser.token & 0b00000000001001110000000000000000) > 0) {
+            value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
+
+            const { token, tokenValue: valueAfterColon } = parser;
+
+            value = parseMemberExpression(parser, context, value, 0, start, line, column);
+
+            if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
+              if (
+                (token as Token) === Token.Assign ||
+                (token as Token) === Token.RightBrace ||
+                (token as Token) === Token.Comma
+              ) {
+                if (parser.assignable === 0) {
+                  mutualFlag |= Flags.NotDestructible;
+                } else if (scope) {
+                  addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
+                }
+              } else {
+                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+              }
+            } else if ((parser.token as Token) === Token.Assign) {
+              mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
+              value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
+            } else {
+              mutualFlag |= Flags.NotDestructible;
+              value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
+            }
+          } else if ((parser.token & 0b00000010000000000000000000000000) > 0) {
+            value =
+              (parser.token as Token) === Token.LeftBrace
+                ? parseObjectLiteralOrPattern(
+                    parser,
+                    context,
+                    scope,
+                    0,
+                    isPattern,
+                    0,
+                    type,
+                    origin,
+                    start,
+                    line,
+                    column
+                  )
+                : parseArrayExpressionOrPattern(
+                    parser,
+                    context,
+                    scope,
+                    0,
+                    isPattern,
+                    inGroup,
+                    type,
+                    origin,
+                    start,
+                    line,
+                    column
+                  );
+
+            mutualFlag = parser.flags;
+
+            parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
+
+            if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
+              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+            } else if (parser.flags & Flags.MustDestruct) {
+              report(parser, Errors.InvalidDestructuringTarget);
+            } else {
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+
+              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
+
+              if ((parser.token & 0b00000100000000000000000000000000) > 0) {
+                value = parseAssignmentOrPattern(
+                  parser,
+                  context,
+                  isPattern,
+                  0,
+                  value as any,
+                  KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+                  start,
+                  line,
+                  column
+                );
+              } else {
+                if ((parser.token & 0b00001000000100000000000000000000) > 0) {
+                  value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value as any);
+                }
+
+                if ((parser.token as Token) === Token.QuestionMark) {
+                  value = parseConditionalExpression(parser, context, value, start, line, column);
+                }
+                mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+              }
+            }
+          } else {
+            value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
+
+            mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+
+            if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
+              if (parser.assignable === 0) {
+                mutualFlag |= Flags.NotDestructible;
+              }
+            } else {
+              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+
+              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
+
+              if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBrace) {
+                if ((parser.token as Token) !== Token.Assign) mutualFlag |= Flags.NotDestructible;
+
+                value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
+              }
+            }
+          }
+        } else if ((parser.token as Token) === Token.LeftParen) {
+          state |= PropertyKind.Method;
+          value = parseMethodDefinition(parser, context, state);
+          mutualFlag |= Flags.NotDestructible;
+        } else {
+          report(parser, Errors.Unexpected);
         }
       } else {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[token & 0b00000000000000000000000011111111]);

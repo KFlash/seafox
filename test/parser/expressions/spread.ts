@@ -13,6 +13,8 @@ describe('Expressions - Spread', () => {
     '{async ...foo}',
     'return ...[1,2,3];',
     'var ...x = [1,2,3];',
+    'if (b,...a, );',
+    '(b, ...a);',
     'var [...x,] = [1,2,3];',
     'var [...x, y] = [1,2,3];',
     'var { x } = {x: ...[1,2,3]}',
@@ -69,7 +71,6 @@ describe('Expressions - Spread', () => {
     'let {...obj1,} = foo',
     'let {...obj1,...obj2} = foo',
     '({...obj1,} = foo)',
-    //'({...(obj)} = foo)',
     '({...{a,b}} = foo)',
     '({...[a,b]} = foo)',
     '({...{a,b}}) => {}',
@@ -83,6 +84,123 @@ describe('Expressions - Spread', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `foo(a, ...b);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 0,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                {
+                  type: 'SpreadElement',
+                  argument: {
+                    type: 'Identifier',
+                    name: 'b',
+                    start: 10,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 10
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  start: 7,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
     [
       `let {x, ...y} = v`,
       Context.OptionsLoc,
