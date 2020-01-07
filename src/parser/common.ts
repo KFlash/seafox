@@ -18,8 +18,7 @@ export const enum Context {
   AllowEscapedKeyword = 1 << 9,
   Strict = 1 << 10,
   Module = 1 << 11, // Current code should be parsed as a module body
-  InSwitch = 1 << 12,
-  InGlobal = 1 << 13,
+  DisallowIn = 1 << 13,
   TaggedTemplate = 1 << 16,
   InIteration = 1 << 17,
   SuperProperty = 1 << 18,
@@ -30,7 +29,8 @@ export const enum Context {
   InConstructor = 1 << 24,
   InMethod = 1 << 25,
   AllowNewTarget = 1 << 26,
-  DisallowIn = 1 << 27
+  InSwitch = 1 << 27,
+  InGlobal = 1 << 28
 }
 
 /**
@@ -283,7 +283,6 @@ export function consume(parser: ParserState, context: Context, t: Token, allowRe
 }
 
 export function validateFunctionName(parser: ParserState, context: Context, t: Token): void {
-  console.log(context & Context.Strict);
   if (context & Context.Strict) {
     if ((t & Token.FutureReserved) > 0) {
       report(parser, Errors.UnexpectedStrictReserved);

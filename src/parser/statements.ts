@@ -60,7 +60,6 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
   while (parser.token === Token.StringLiteral) {
     const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
     let expression = parseLiteral(parser, context);
-
     if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
       isStrictDirective = 1;
       context |= Context.Strict;

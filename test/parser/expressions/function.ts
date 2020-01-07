@@ -11,6 +11,7 @@ describe('Expressions - Function', () => {
     [`function f(...rest = x){}`, Context.Empty],
     [`function f(...rest, b){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
+    [`(function a(b, b) { "use strict"; })`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],

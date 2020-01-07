@@ -823,13 +823,24 @@ export function parseIdentifierOrArrow(
   parser: ParserState,
   context: Context
 ): ESTree.Identifier | ESTree.ArrowFunctionExpression {
-  const { start, line, column } = parser;
+  const { start, line, column, token, tokenValue } = parser;
 
-  let expr: ESTree.Identifier | ESTree.ArrowFunctionExpression = parseIdentifier(parser, context);
+  nextToken(parser, context, 0);
+
+  let expr: ESTree.Identifier | ESTree.ArrowFunctionExpression = parseIdentifierFromValue(
+    parser,
+    context,
+    tokenValue,
+    start,
+    line,
+    column
+  );
 
   parser.assignable = 1;
 
   if (parser.token === Token.Arrow) {
+    parser.flags |=
+      (token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000 ? Flags.HasStrictReserved : 0;
     const mutualFlag: Flags = (parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
 
     const scope = {
@@ -1305,6 +1316,9 @@ export function parseAsyncArrowOrCallExpression(
     return parseArrowFunctionAfterParen(parser, context, scope, mutualFlag, params, canAssign, 1, start, line, column);
   }
 
+  if ((context & Context.OptionsDisableWebCompat) === 0 && parser.flags & Flags.SeenProto) {
+    report(parser, Errors.DuplicateProto);
+  }
   parser.flags = (parser.flags | 0b00000000000000000000110000000000) ^ 0b00000000000000000000110000000000;
 
   if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
@@ -2068,6 +2082,10 @@ export function parseParenthesizedExpression(
     report(parser, Errors.UncompleteArrow);
   }
 
+  if ((context & Context.OptionsDisableWebCompat) === 0 && parser.flags & Flags.SeenProto) {
+    report(parser, Errors.DuplicateProto);
+  }
+
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
 
@@ -2772,7 +2790,7 @@ export function parseFunctionExpression(
 
   let id: ESTree.Identifier | null = null;
   let firstRestricted: Token | undefined;
-  console.log('d');
+
   let scope: ScopeState = {
     parent: void 0,
     type: ScopeKind.Block
@@ -2787,16 +2805,18 @@ export function parseFunctionExpression(
       type: ScopeKind.FunctionRoot,
       scopeError: void 0
     };
-
+    const { token, tokenValue, start, line, column } = parser;
     validateFunctionName(
       parser,
-      ((context & 0b0000000000000000000_1100_00000000) << 11) | generatorAndAsyncFlags,
-      parser.token
+      ((context | 0b00000000011000000000000000000000) ^ 0b00000000011000000000000000000000) | generatorAndAsyncFlags,
+      token
     );
 
-    firstRestricted = parser.token;
+    firstRestricted = token;
 
-    id = parseIdentifier(parser, context);
+    nextToken(parser, context, /* allowRegExp */ 0);
+
+    id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
   }
   context =
     ((context | 0b0000001111011000000_0000_00000000) ^ 0b0000001111011000000_0000_00000000) |
