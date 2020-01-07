@@ -1,4 +1,4 @@
-import { Context } from '../../../src/parser/bits';
+import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
@@ -18,7 +18,6 @@ describe('Statements - Continue', () => {
     ['while(z) continue foo', Context.OptionsNext],
     ['while(z) foo: continue foo', Context.OptionsNext],
     ['for (;;) while(z) continue foo', Context.OptionsNext],
-
     ['x: foo; while (true) continue x;', Context.OptionsNext],
     ['while (true) continue x;', Context.OptionsNext],
     ['while (true) while (true) { x: continue x; }', Context.OptionsNext],

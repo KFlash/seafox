@@ -11,7 +11,6 @@ export { scanRegularExpression } from './regexp';
 export { scanTemplate } from './template';
 export { report, Errors } from '../errors';
 export { unicodeLookup } from './unicode';
-export { CharKinds, firstCharKinds } from './tables';
 export { fromCodePoint, toHex, readNext } from './common';
 export { scanEscapeSequence, Escape, handleStringError } from './string';
 export { Chars } from './chars';

@@ -1,6 +1,5 @@
 import { Token } from '../token';
-import { ParserState } from './common';
-import { Flags } from './bits';
+import { ParserState, Flags } from './common';
 
 /**
  * The parser options.
@@ -28,6 +27,8 @@ export interface Options {
   identifierPattern?: boolean;
   // Enable React JSX parsing
   jsx?: boolean;
+  // Enable non-standard parenthesized expression node
+  preserveParens?: boolean;
 }
 
 /**

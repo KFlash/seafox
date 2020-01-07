@@ -1,8 +1,7 @@
 import { Chars, isIdentifierPart, CharFlags, CharTypes } from './';
-import { ParserState } from '../parser/common';
+import { ParserState, Context } from '../parser/common';
 import { Token } from '../token';
 import { report, Errors } from '../errors';
-import { Context } from '../parser/bits';
 
 /**
  * Scans regular expression

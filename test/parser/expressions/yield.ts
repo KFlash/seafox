@@ -1,6 +1,6 @@
-import { Context } from '../../../src/parser/bits';
+import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Yield', () => {
   for (const [source, ctx] of [
@@ -15865,6 +15865,143 @@ describe('Expressions - Yield', () => {
           end: {
             line: 1,
             column: 44
+          }
+        }
+      }
+    ],
+    [
+      `function *g() { return yield.x; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ReturnStatement',
+                  argument: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'YieldExpression',
+                      argument: null,
+                      delegate: false,
+                      start: 23,
+                      end: 28,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 28
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 29,
+                      end: 30,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 29
+                        },
+                        end: {
+                          line: 1,
+                          column: 30
+                        }
+                      }
+                    },
+                    start: 23,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  },
+                  start: 16,
+                  end: 31,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 31
+                    }
+                  }
+                }
+              ],
+              start: 14,
+              end: 33,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 33
+                }
+              }
+            },
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'g',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 33,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 33
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 33,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 33
           }
         }
       }

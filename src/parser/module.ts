@@ -4,8 +4,18 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { parseStatementListItem } from './statements';
-import { Context, BindingKind, ClassFlags, Origin } from './bits';
-import { ParserState, expectSemicolon, validateIdentifier, isValidIdentifier, consume, setLoc } from './common';
+import {
+  ParserState,
+  Context,
+  BindingKind,
+  ClassFlags,
+  Origin,
+  expectSemicolon,
+  validateIdentifier,
+  isValidIdentifier,
+  consume,
+  setLoc
+} from './common';
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,

@@ -1,9 +1,7 @@
-import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
+import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Escaped keywords', () => {
-
   for (const arg of [
     '(\\u0069mplements = 1);',
     'var impl\\u0065ments = 1;',

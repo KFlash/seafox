@@ -1,5 +1,4 @@
-import { ParserState } from '../parser/common';
-import { Context } from '../parser/bits';
+import { ParserState, Context } from '../parser/common';
 import { report, Errors } from '../errors';
 import { unicodeLookup, Chars } from './';
 

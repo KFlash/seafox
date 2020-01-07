@@ -5,9 +5,14 @@ import { Errors, report, reportScopeError } from '../errors';
 import * as ESTree from './estree';
 import { parseStatementListItem } from './statements';
 import { ScopeState, ScopeKind, addBlockName, addVarOrBlock } from './scope';
-import { Flags, Context, BindingKind, FunctionFlag, PropertyKind, Origin } from './bits';
 import {
   ParserState,
+  Flags,
+  Context,
+  BindingKind,
+  FunctionFlag,
+  PropertyKind,
+  Origin,
   expectSemicolon,
   consume,
   consumeOpt,
@@ -544,11 +549,28 @@ export function parseArguments(
   const args: (ESTree.Expression | ESTree.SpreadElement)[] = [];
 
   while (parser.token !== Token.RightParen) {
-    args.push(
-      parser.token === Token.Ellipsis
-        ? parseSpreadElement(parser, context, inGroup)
-        : parseExpression(parser, context, inGroup)
-    );
+    if (parser.token === Token.Ellipsis) {
+      const { start, line, column } = parser;
+
+      nextToken(parser, context, /* allowRegExp */ 1);
+
+      args.push(
+        context & Context.OptionsLoc
+          ? {
+              type: 'SpreadElement',
+              argument: parseExpression(parser, context, inGroup),
+              start,
+              end: parser.endIndex,
+              loc: setLoc(parser, line, column)
+            }
+          : {
+              type: 'SpreadElement',
+              argument: parseExpression(parser, context, inGroup)
+            }
+      );
+    } else {
+      args.push(parseExpression(parser, context, inGroup));
+    }
 
     if (parser.token !== Token.Comma) break;
 
@@ -558,25 +580,6 @@ export function parseArguments(
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
   return args;
-}
-
-export function parseSpreadElement(parser: ParserState, context: Context, inGroup: 0 | 1): ESTree.SpreadElement {
-  const { start, line, column } = parser;
-
-  nextToken(parser, context, /* allowRegExp */ 1);
-
-  return context & Context.OptionsLoc
-    ? {
-        type: 'SpreadElement',
-        argument: parseExpression(parser, context, inGroup),
-        start,
-        end: parser.endIndex,
-        loc: setLoc(parser, line, column)
-      }
-    : {
-        type: 'SpreadElement',
-        argument: parseExpression(parser, context, inGroup)
-      };
 }
 
 export function parseTemplateLiteral(parser: ParserState, context: Context): ESTree.TemplateLiteral {
@@ -2068,7 +2071,20 @@ export function parseParenthesizedExpression(
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
 
-  return expr;
+  if ((context & Context.OptionsPreserveParens) === 0) return expr;
+
+  return context & Context.OptionsLoc
+    ? {
+        type: 'ParenthesizedExpression',
+        expression: expr,
+        start: sStart,
+        end: parser.endIndex,
+        loc: setLoc(parser, sLine, sColumn)
+      }
+    : ({
+        type: 'ParenthesizedExpression',
+        expression: expr
+      } as any);
 }
 
 export function parseExpressionStatement(
@@ -2756,7 +2772,7 @@ export function parseFunctionExpression(
 
   let id: ESTree.Identifier | null = null;
   let firstRestricted: Token | undefined;
-
+  console.log('d');
   let scope: ScopeState = {
     parent: void 0,
     type: ScopeKind.Block

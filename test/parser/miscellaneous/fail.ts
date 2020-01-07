@@ -1,4 +1,3 @@
-import { Context } from '../../../src/parser/bits';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
@@ -1807,6 +1806,13 @@ describe('Miscellaneous - Failure', () => {
     `async ({} + 1) => x;`,
     `({x: y}.length) => x;`,
     `({x = y}.z) => obj`,
+    'if(1) b: function a(){}',
+    'do b: function a(){} while (1)',
+    'while(1) b: function a(){}',
+    'for(;;) b: function a(){}',
+    'with(1) b: function a(){}',
+    'for(a of b) d: function c(){}',
+    'for(const a = 1;;) c: function b(){}',
     `({a: {x = y}}.z) => obj`,
     'for (var i = 20 of b) { }',
     'for (var {i} = 20 of b) { }',
@@ -1833,7 +1839,7 @@ describe('Miscellaneous - Failure', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseScript(`${arg}`);
+        parseScript(`${arg}`, { preserveParens: true });
       });
     });
   }

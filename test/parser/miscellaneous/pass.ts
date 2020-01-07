@@ -1,5 +1,5 @@
 import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
+import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Pass', () => {
   for (const arg of [

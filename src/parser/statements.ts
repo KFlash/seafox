@@ -3,7 +3,6 @@ import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, ScopeKind } from './scope';
-import { Flags, Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -37,6 +36,12 @@ import {
 import {
   ParserState,
   expectSemicolon,
+  Flags,
+  Context,
+  BindingKind,
+  FunctionFlag,
+  ClassFlags,
+  Origin,
   consume,
   consumeOpt,
   setLoc,
@@ -55,6 +60,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
   while (parser.token === Token.StringLiteral) {
     const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
     let expression = parseLiteral(parser, context);
+
     if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
       isStrictDirective = 1;
       context |= Context.Strict;
@@ -218,8 +224,10 @@ export function parseLabelledStatement(
   nestedLabels = parseStatementWithLabelSet(parser.token, value, labels, nestedLabels);
 
   const body =
+    allowFuncDecl === 0 ||
     // Disallow if web compability is off
-    (context & 0b00000000000000000000010000010000) > 0 || parser.token !== Token.FunctionKeyword
+    (context & 0b00000000000000000000010000010000) > 0 ||
+    parser.token !== Token.FunctionKeyword
       ? parseStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl)
       : parseFunctionDeclaration(parser, context, scope, FunctionFlag.IsDeclaration, origin);
 

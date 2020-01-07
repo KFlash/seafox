@@ -1,4 +1,4 @@
-import { Context } from '../../../src/parser/bits';
+import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
 
@@ -59,6 +59,8 @@ describe('Expressions - Async arrow', () => {
     ['async(...a)`template-head${c}`=>{}', Context.Empty],
     ['async(...a)?c:d=>{}=>{};', Context.Empty],
     ['async (...a)?c:d=>{}=>{}', Context.Empty],
+    ['async () => {}\n/x', Context.Empty],
+    ['async () => {}\n/ x / g', Context.Empty],
     ['async ([a = yield b]) => x', Context.Empty],
     ['async ([a = yield]) => x', Context.Strict],
     ['async ({a = yield b}) => x', Context.Empty],

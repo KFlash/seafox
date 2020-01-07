@@ -1,4 +1,4 @@
-import { Context } from '../../../src/parser/bits';
+import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
 
@@ -22,7 +22,6 @@ describe('Expressions - Function', () => {
     ['0, function(...x = []) {}', Context.Empty],
     ['0, function(...x = []) {};', Context.Empty],
     [`let x; { var x; }`, Context.OptionsLoc],
-
     [`function{}`, Context.OptionsLoc],
     [`function(){`, Context.OptionsLoc],
     [`var a = function()`, Context.OptionsLoc],

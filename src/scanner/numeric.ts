@@ -1,8 +1,7 @@
-import { ParserState } from '../parser/common';
+import { ParserState, Context, Flags } from '../parser/common';
 import { toHex, Chars, CharTypes, CharFlags } from './';
 import { Token } from '../token';
 import { report, Errors } from '../errors';
-import { Context, Flags } from '../parser/bits';
 
 export function scanNumber(parser: ParserState, source: string, char: number, skipSMI: 0 | 1): Token {
   let digit = 9;
@@ -15,11 +14,7 @@ export function scanNumber(parser: ParserState, source: string, char: number, sk
       --digit;
     }
 
-    if (
-      digit >= 0 &&
-      char !== Chars.Period &&
-      (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) === 0
-    ) {
+    if (digit >= 0 && char !== Chars.Period && (CharTypes[char] & 0b00000000000000000000000000000011) === 0) {
       // Most numbers are pure decimal integers without fractional component
       // or exponential notation - handle that with optimized code
       parser.tokenValue = value;
@@ -46,7 +41,7 @@ export function scanNumber(parser: ParserState, source: string, char: number, sk
 
   if (char === Chars.Underscore) return skipNumericSeparator(parser, source, char);
 
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
 
@@ -150,7 +145,7 @@ export function scanNumberAfterDecimalPoint(parser: ParserState, source: string,
 
   if (char === Chars.Underscore) return skipNumericSeparator(parser, source, char);
 
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
 
@@ -177,7 +172,7 @@ export function scanImplicitOctalDigits(parser: ParserState, context: Context, s
 
   if (char === Chars.LowerN) report(parser, Errors.InvalidBigIntLiteral);
 
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
 
@@ -199,7 +194,7 @@ export function scanOctalDigits(parser: ParserState, source: string): Token {
 
   if (start === parser.index) report(parser, Errors.MissingDigits);
 
-  if (digit >= 0 && (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) === 0) {
+  if (digit >= 0 && (CharTypes[char] & 0b00000000000000000000000000000011) === 0) {
     parser.tokenValue = value;
     return Token.NumericLiteral;
   }
@@ -223,7 +218,7 @@ export function scanOctalDigits(parser: ParserState, source: string): Token {
 
   if (char === Chars.LowerN) return scanBigInt(parser, source);
 
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
 
@@ -238,7 +233,7 @@ export function scanHexDigits(parser: ParserState, source: string): Token {
   const start = parser.index;
   let digit = 7;
 
-  while ((CharTypes[char] & CharFlags.Hex) === CharFlags.Hex && digit >= 0) {
+  while ((CharTypes[char] & 0b00000000000000000000000000100000) > 0 && digit >= 0) {
     value = (value << 4) | toHex(char);
     char = source.charCodeAt(++parser.index);
     --digit;
@@ -246,13 +241,13 @@ export function scanHexDigits(parser: ParserState, source: string): Token {
 
   if (start === parser.index) report(parser, Errors.MissingDigits);
 
-  if (digit >= 0 && (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) === 0) {
+  if (digit >= 0 && (CharTypes[char] & 0b00000000000000000000000000000011) === 0) {
     parser.tokenValue = value;
     return Token.NumericLiteral;
   }
 
   let allowSeparator: 0 | 1 = 1;
-  while (CharTypes[char] & (CharFlags.Underscore | CharFlags.Hex)) {
+  while ((CharTypes[char] & 0b00000000000000000000000001100000) > 0) {
     if (char === Chars.Underscore) {
       if (!allowSeparator) {
         report(parser, Errors.ContinuousNumericSeparator);
@@ -270,7 +265,7 @@ export function scanHexDigits(parser: ParserState, source: string): Token {
 
   if (char === Chars.LowerN) return scanBigInt(parser, source);
 
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
 
@@ -293,7 +288,7 @@ export function scanBinaryDigits(parser: ParserState, source: string): Token {
 
   if (start === parser.index) report(parser, Errors.MissingDigits);
 
-  if (digit >= 0 && (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) === 0) {
+  if (digit >= 0 && (CharTypes[char] & 0b00000000000000000000000000000011) === 0) {
     parser.tokenValue = value;
     return Token.NumericLiteral;
   }
@@ -316,7 +311,7 @@ export function scanBinaryDigits(parser: ParserState, source: string): Token {
 
   if (char === Chars.LowerN) return scanBigInt(parser, source);
 
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
 
@@ -327,7 +322,7 @@ export function scanBinaryDigits(parser: ParserState, source: string): Token {
 
 export function scanBigInt(parser: ParserState, source: string): Token {
   const char = source.charCodeAt(++parser.index);
-  if (CharTypes[char] & (CharFlags.IdentifierStart | CharFlags.Decimal)) {
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
     report(parser, Errors.IDStartAfterNumber);
   }
   return Token.BigIntLiteral;

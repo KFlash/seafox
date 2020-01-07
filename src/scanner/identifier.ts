@@ -1,11 +1,10 @@
-import { ParserState } from '../parser/common';
+import { ParserState, Context } from '../parser/common';
 import { Token, descKeywordTable } from '../token';
-import { Context } from '../parser/bits';
 import { report, Errors } from '../errors';
-import { Chars, isIdentifierPart, CharFlags, CharTypes, fromCodePoint, toHex, unicodeLookup } from './';
+import { Chars, isIdentifierPart, CharTypes, fromCodePoint, toHex, unicodeLookup } from './';
 
 export function scanIdentifier(parser: ParserState, context: Context, source: string, char: number): Token {
-  while (CharTypes[char] & CharFlags.IdentifierPart) {
+  while ((CharTypes[char] & 0b00000000000000000000000000000101) > 0) {
     char = source.charCodeAt(++parser.index);
   }
   const value = source.slice(parser.start, parser.index);
@@ -15,7 +14,7 @@ export function scanIdentifier(parser: ParserState, context: Context, source: st
 }
 
 export function scanIdentifierOrKeyword(parser: ParserState, context: Context, source: string, char: number): Token {
-  while (CharTypes[char] & CharFlags.IdentifierPart) {
+  while ((CharTypes[char] & 0b00000000000000000000000000000101) > 0) {
     char = source.charCodeAt(++parser.index);
   }
   const value = source.slice(parser.start, parser.index);
@@ -75,13 +74,13 @@ export function scanIdentifierSlowPath(
 
     if (escaped === 0) return token;
 
-   // if (context & Context.AllowEscapedKeyword) {
-     // if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
-       // return Token.EscapedFutureReserved;
-      //}
-      //if (token === void 0) return Token.Identifier;
+    // if (context & Context.AllowEscapedKeyword) {
+    // if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
+    // return Token.EscapedFutureReserved;
+    //}
+    //if (token === void 0) return Token.Identifier;
 
-      return token;
+    return token;
     //}
 
     //return Token.EscapedIdentifier;

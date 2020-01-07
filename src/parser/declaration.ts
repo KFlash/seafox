@@ -3,8 +3,19 @@ import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
 import { ScopeState, ScopeKind, addVarName, addBlockName, declareUnboundVariable } from './scope';
-import { Context, BindingKind, FunctionFlag, ClassFlags, Origin } from './bits';
-import { ParserState, expectSemicolon, setLoc, validateFunctionName, isStrictReservedWord, consumeOpt } from './common';
+import {
+  ParserState,
+  Context,
+  BindingKind,
+  FunctionFlag,
+  ClassFlags,
+  Origin,
+  expectSemicolon,
+  setLoc,
+  validateFunctionName,
+  isStrictReservedWord,
+  consumeOpt
+} from './common';
 import {
   parseFunctionLiteral,
   parseClassTail,

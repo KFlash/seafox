@@ -1,4 +1,4 @@
-import { Context } from './parser/bits';
+import { Context } from './parser/common';
 import { Options, create } from './parser/core';
 import { Program } from './parser/estree';
 import { nextToken } from './scanner/scan';
@@ -19,6 +19,7 @@ export function parseScript(source: string, options?: Options): Program {
     if (options.disableWebCompat) context |= Context.OptionsDisableWebCompat;
     if (options.directives) context |= Context.OptionsDirectives | Context.OptionsRaw;
     if (options.raw) context |= Context.OptionsRaw;
+    if (options.preserveParens) context |= Context.OptionsPreserveParens;
     if (options.globalReturn) context |= Context.OptionsGlobalReturn;
     if (options.impliedStrict) context |= Context.Strict;
   }
@@ -71,6 +72,7 @@ export function parseModule(source: string, options?: Options): Program {
     if (options.disableWebCompat) context |= Context.OptionsDisableWebCompat;
     if (options.directives) context |= Context.OptionsDirectives | Context.OptionsRaw;
     if (options.globalReturn) context |= Context.OptionsGlobalReturn;
+    if (options.preserveParens) context |= Context.OptionsPreserveParens;
     if (options.raw) context |= Context.OptionsRaw;
   }
 

@@ -2,14 +2,14 @@ import { unicodeLookup } from './unicode';
 import { Chars } from './chars';
 
 export const enum CharFlags {
-  None = 0,
-  Decimal = 1 << 0,
-  IdentifierStart = 1 << 1,
-  IdentifierPart = (1 << 2) | Decimal,
-  WhiteSpace = 1 << 3,
-  LineTerminator = 1 << 4,
-  Hex = 1 << 5,
-  Underscore = 1 << 6
+  None = 0b00000000000000000000000000000000,
+  Decimal = 0b00000000000000000000000000000001,
+  IdentifierStart = 0b00000000000000000000000000000010,
+  IdentifierPart = 0b00000000000000000000000000000101,
+  WhiteSpace = 0b00000000000000000000000000001000,
+  LineTerminator = 0b00000000000000000000000000010000,
+  Hex = 0b00000000000000000000000000100000,
+  Underscore = 0b00000000000000000000000001000000
 }
 
 /**

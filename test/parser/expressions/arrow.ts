@@ -1,4 +1,4 @@
-import { Context } from '../../../src/parser/bits';
+import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
@@ -486,12 +486,12 @@ describe('Expressions - Arrow', () => {
   for (const [source, ctx, expected] of [
     /*[
   `() => {}\n() => {}`,
-  Context.OptionsNext | Context.OptionsLoc,
+  Context.OptionsLoc,
   {}],*/
 
     [
       `eval => 42;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -579,7 +579,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a) => 00;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -666,8 +666,594 @@ describe('Expressions - Arrow', () => {
       }
     ],
     [
+      `()=>{}
+      [x]`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 4,
+                  end: 6,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 6
+                    }
+                  }
+                },
+                params: [],
+                async: false,
+                expression: false,
+                start: 0,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'x',
+                start: 14,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 7
+                  },
+                  end: {
+                    line: 2,
+                    column: 8
+                  }
+                }
+              },
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 2,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 2,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      `() => {};
+      ([x,]);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 6,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              params: [],
+              async: false,
+              expression: false,
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 18,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 8
+                    },
+                    end: {
+                      line: 2,
+                      column: 9
+                    }
+                  }
+                }
+              ],
+              start: 17,
+              end: 21,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 7
+                },
+                end: {
+                  line: 2,
+                  column: 11
+                }
+              }
+            },
+            start: 16,
+            end: 23,
+            loc: {
+              start: {
+                line: 2,
+                column: 6
+              },
+              end: {
+                line: 2,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `()=>{}
+      {x}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 4,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              params: [],
+              async: false,
+              expression: false,
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            start: 0,
+            end: 6,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 6
+              }
+            }
+          },
+          {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 7
+                    },
+                    end: {
+                      line: 2,
+                      column: 8
+                    }
+                  }
+                },
+                start: 14,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 7
+                  },
+                  end: {
+                    line: 2,
+                    column: 8
+                  }
+                }
+              }
+            ],
+            start: 13,
+            end: 16,
+            loc: {
+              start: {
+                line: 2,
+                column: 6
+              },
+              end: {
+                line: 2,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      `()=>{}
+      (foo)`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 4,
+                  end: 6,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 6
+                    }
+                  }
+                },
+                params: [],
+                async: false,
+                expression: false,
+                start: 0,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 14,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 7
+                    },
+                    end: {
+                      line: 2,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 2,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 2,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `async => {}
+      ++foo`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 9,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'async',
+                  start: 0,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: false,
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 20,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 8
+                  },
+                  end: {
+                    line: 2,
+                    column: 11
+                  }
+                }
+              },
+              operator: '++',
+              prefix: true,
+              start: 18,
+              end: 23,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 6
+                },
+                end: {
+                  line: 2,
+                  column: 11
+                }
+              }
+            },
+            start: 18,
+            end: 23,
+            loc: {
+              start: {
+                line: 2,
+                column: 6
+              },
+              end: {
+                line: 2,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
       `x => y => 42;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -790,7 +1376,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `e => ({ property: 42 });`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -930,7 +1516,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `foo(() => {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1035,7 +1621,7 @@ describe('Expressions - Arrow', () => {
     [
       `const a = () => {}
       [a]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         body: [
           {
@@ -1176,7 +1762,7 @@ describe('Expressions - Arrow', () => {
       `const a = () => { alert("hi") }
 
   (a && a()) || alert("howdy");`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         body: [
           {
@@ -1496,7 +2082,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({})=>0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1584,7 +2170,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `foo = (eval) => eval`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1704,7 +2290,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `af = eval => eval`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1824,7 +2410,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `af = (...x) => { return x.length; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2024,7 +2610,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(() => 1)(), 1`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2145,7 +2731,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a => a + 1)(1), 2`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2332,7 +2918,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a => { return a + 3; })(1), 4`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2551,7 +3137,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `() => f1({x: 1})`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2708,7 +3294,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `() => f10({x: 6}, 2)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2881,7 +3467,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `foo(({x}, [y], z) => x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3104,7 +3690,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `foo(foo => x => (x = 20) => (x = 20) => x)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3393,7 +3979,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `((a, b) => { return a + b; })(1, 5), 6`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3644,7 +4230,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x = 9, y) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3779,7 +4365,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x, y = 9, z) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3930,7 +4516,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x, y = 9, z = 8) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4112,7 +4698,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a = b, c) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4247,7 +4833,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([]) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4335,7 +4921,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a, b) => 0, (c, d) => 1`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4523,7 +5109,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a, b, (c, d) => 0)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4676,7 +5262,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a, b => {}, a => a + 1)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4880,7 +5466,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `let Y = F => (x=>F(y=>(x(x))(y)))(x=>F(y=>(x(x))(y)))`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5380,7 +5966,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([y]) => ([y]) => x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5537,7 +6123,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(() => { try { Function("0 || () => 2")(); } catch(e) { return true; } })();`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5820,7 +6406,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(() => 5)() === 5 ? a : b;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5987,7 +6573,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x, ...[y = b = c = d]) => 1`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6218,7 +6804,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a,b,...c) => 0 + 1`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6385,7 +6971,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([x = 0]) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6521,7 +7107,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(yield) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6609,7 +7195,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(interface) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6697,7 +7283,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(eval, bar) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6801,7 +7387,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(bar, arguments) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6905,7 +7491,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([a, b], ...c) => 42`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7057,7 +7643,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `foo((a=1) => 42)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7210,7 +7796,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([a,[b],...c])=>0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7379,7 +7965,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x, y) => (u, v) => x*u + y*v`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7630,7 +8216,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a = b, c) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7765,7 +8351,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `e => "test";`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7853,7 +8439,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x) => ((y, z) => (x, y, z));`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8041,7 +8627,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a, b=(c)=>{}) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8211,7 +8797,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `1 ? 0 : a => {}, 17, 42;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8395,7 +8981,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({x = 10, y: { z = 10 }}) => [x, z]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8733,7 +9319,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({y}) => x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8873,7 +9459,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({a} = {}) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9044,7 +9630,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a, b, (c, d) => 0)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9197,7 +9783,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(() => 5)() === 5;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9317,7 +9903,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x, y = 9, {b}, z = 8, ...a) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9598,7 +10184,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `bar ? ( (...a) => {} ) : baz;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9748,7 +10334,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `bar ? ( (x, y) => (u, v) => x*u + y*v ) : baz;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10046,7 +10632,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `bar ? ( (a, b) => 0, (c, d) => 1 ) : baz;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10281,7 +10867,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `bar ? ( foo ? bar : baz => {} ) : baz;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10463,7 +11049,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({a,b=b,a:c,[a]:[d]})=>0;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10804,7 +11390,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(() => {}) || true;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10907,7 +11493,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(() => {}) ? a : b;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11025,7 +11611,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([,,])=>0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11113,7 +11699,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `function foo() { }; foo(() => "abc"); foo(() => "abc", 123);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11382,7 +11968,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({})[x => x]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11503,7 +12089,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `() => x => (a, b, c) => 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11676,7 +12262,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a = 1) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11795,7 +12381,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `async (eval) => "use strict";`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11883,7 +12469,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([x, y] = z) => x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12035,7 +12621,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([x, ...y]) => x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12171,7 +12757,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `([[x, y] = z]) => x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12340,7 +12926,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `() => { let {} = y }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12477,7 +13063,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `a = (b) => c;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12597,7 +13183,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({ident: {x: y}}) => x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12789,7 +13375,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({ident: {x}}) => x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12981,7 +13567,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({a} = b,) => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13152,7 +13738,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `for ( f => ( "key" in {}) ; 0;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13304,7 +13890,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x, y) => z => z * (x + y)`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13507,7 +14093,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `a, b => 0;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13628,7 +14214,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `var x = ({x = 30}, [y], z) => x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13883,7 +14469,7 @@ describe('Expressions - Arrow', () => {
 
     [
       `let => { function x() {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14194,7 +14780,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x) => { function x() {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14333,7 +14919,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x) => { var x; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14472,7 +15058,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `x => { function x() {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14611,7 +15197,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `g => { try {}  catch (g) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14779,7 +15365,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `g => { try {} catch ([g]) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14964,7 +15550,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `() => { let foo; }; foo => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15152,7 +15738,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `async a => let [a]`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15273,7 +15859,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `a => { let {b} = a }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15479,7 +16065,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `a => { for (let a of b) c }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15681,7 +16267,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `() => { let foo; }; foo => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15869,7 +16455,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `g => { try {} catch ([g]) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16052,174 +16638,174 @@ describe('Expressions - Arrow', () => {
         }
       }
     ],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
-    // [ `()=>x;`, Context.OptionsNext | Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
+    // [ `()=>x;`, Context.OptionsLoc, {}],
 
     [
       `()=>x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16290,7 +16876,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(x)=>{x}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16411,7 +16997,7 @@ describe('Expressions - Arrow', () => {
 
     [
       `yield => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16499,7 +17085,7 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `foo => {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
