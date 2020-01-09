@@ -551,22 +551,23 @@ export function parseForStatementWithVariableDeclarations(
           nextToken(parser, context, /* allowRegExp */ 1);
           init = parseExpression(parser, context | 0b00000000000000000010000000000000, 0);
 
-          if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
+          if ((parser.token & 0b00000000010000000000000000000000) === 0b00000000010000000000000000000000) {
             if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
             if (
-              ((parser.token as Token) === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
-              context & (Context.Strict | Context.OptionsDisableWebCompat)
+              ((parser.token as Token) === Token.InKeyword &&
+                (kind & 0b00000000000000000000000000000010) !== 0b00000000000000000000000000000010) ||
+              (context & 0b00000000000000000000010000010000) > 0
             ) {
               report(parser, Errors.ForInOfLoopInitializer, 'in');
             }
           }
         } else if (
-          (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
-          (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
+          (type & 0b00000000000000000000010000100000) !== 0 &&
+          (parser.token & 0b00000000010000000000000000000000) !== 0b00000000010000000000000000000000
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
         }
-      } else if ((token & Token.IsPatternStart) === Token.IsPatternStart) {
+      } else if ((token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000) {
         id =
           parser.token === Token.LeftBracket
             ? parseArrayExpressionOrPattern(
@@ -596,26 +597,28 @@ export function parseForStatementWithVariableDeclarations(
                 column
               );
 
-        if (parser.flags & (Flags.NotDestructible | Flags.AssignableDestruct))
+        if ((parser.flags & 0b00000000000000000000000000001100) > 0) {
           report(parser, Errors.InvalidBindingDestruct);
+        }
 
         if (parser.token === Token.Assign) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
           init = parseExpression(parser, context | 0b00000000000000000010000000000000, 0);
 
-          if ((parser.token & Token.IsInOrOf) === Token.IsInOrOf) {
+          if ((parser.token & 0b00000000010000000000000000000000) === 0b00000000010000000000000000000000) {
             if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
             if (
-              ((parser.token as Token) === Token.InKeyword && (kind & BindingKind.Variable) !== BindingKind.Variable) ||
-              context & (Context.Strict | Context.OptionsDisableWebCompat)
+              ((parser.token as Token) === Token.InKeyword &&
+                (kind & 0b00000000000000000000000000000010) !== 0b00000000000000000000000000000010) ||
+              (context & 0b00000000000000000000010000010000) > 0
             ) {
               report(parser, Errors.ForInOfLoopInitializer, 'in');
             }
           }
         } else if (
-          (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
-          (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
+          (type & 0b00000000000000000000010000100000) !== 0 &&
+          (parser.token & 0b00000000010000000000000000000000) !== 0b00000000010000000000000000000000
         ) {
           report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
         }
@@ -639,13 +642,18 @@ export function parseForStatementWithVariableDeclarations(
       );
 
       bindingCount++;
+
       parser.assignable = 1;
+
       if ((parser.token as Token) !== Token.Comma) break;
 
       consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1);
     }
 
-    if (bindingCount > 1 && parser.token & Token.IsInOrOf) {
+    if (
+      bindingCount > 1 &&
+      (parser.token & 0b00000000010000000000000000000000) === 0b00000000010000000000000000000000
+    ) {
       report(parser, Errors.ForInOfLoopMultiBindings);
     }
 
@@ -1126,7 +1134,9 @@ export function parseIfStatement(
 ): ESTree.IfStatement {
   // IfStatement ::
   //   'if' '(' Expression ')' Statement ('else' Statement)?
+
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
   const test = parseExpressions(
@@ -1173,7 +1183,7 @@ export function parseConsequentOrAlternative(
   labels: any
 ): any {
   // Disallow if web compability is off
-  return context & (Context.Strict | Context.OptionsDisableWebCompat) || parser.token !== Token.FunctionKeyword
+  return (context & 0b00000000000000000000010000010000) > 0 || parser.token !== Token.FunctionKeyword
     ? parseStatement(parser, context, scope, Origin.None, labels, null, 0)
     : parseFunctionDeclaration(
         parser,
@@ -1615,9 +1625,12 @@ export function parseExpressionOrLabelledStatement(
 
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 
-  if (parser.token === Token.Comma) {
-    expr = parseSequenceExpression(parser, context, expr, start, line, column);
-  }
-
-  return parseExpressionStatement(parser, context, expr, start, line, column);
+  return parseExpressionStatement(
+    parser,
+    context,
+    parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr,
+    start,
+    line,
+    column
+  );
 }
