@@ -496,7 +496,7 @@ export function parseForStatementWithVariableDeclarations(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   if (token === Token.LetKeyword) {
-    if ((parser.token & (Token.IsIdentifier | Token.Keyword | Token.FutureReserved | Token.IsPatternStart)) !== 0) {
+    if ((parser.token & 0b00000010001001110000000000000000) !== 0) {
       if (parser.token === Token.InKeyword) {
         if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
         init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
@@ -520,19 +520,23 @@ export function parseForStatementWithVariableDeclarations(
     kind = token === Token.VarKeyword ? BindingKind.Variable : BindingKind.Const;
   }
 
-  if (kind & (BindingKind.Variable | BindingKind.Let | BindingKind.Const)) {
+  if ((kind & 0b00000000000000000000000000110010) > 0) {
     const declarations: any[] = [];
 
     let bindingCount = 0;
     let type: BindingKind;
     while (parser.token !== Token.Comma) {
       const { tokenValue, start, line, column, token } = parser;
-      type = kind | ((parser.token & Token.IsPatternStart) === Token.IsPatternStart ? BindingKind.Pattern : 0);
+      type =
+        kind |
+        ((parser.token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000
+          ? BindingKind.Pattern
+          : 0);
 
       let id;
       let init: any = null;
 
-      if ((token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier)) !== 0) {
+      if ((token & 0b00000000001001110000000000000000) !== 0) {
         id = parseAndClassifyIdentifier(
           parser,
           context,
