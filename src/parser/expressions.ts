@@ -1767,8 +1767,7 @@ export function parseArrowFunction(
   } else {
     body = parseFunctionBody(
       parser,
-      (context | 0b0001000000000000001_0000_00000000 | Context.InGlobal) ^
-        (0b0001000000000000001_0000_00000000 | Context.InGlobal),
+      (context | 0b00010000111000000000000000000000) ^ 0b00010000111000000000000000000000,
       scope,
       void 0,
       1,
@@ -3337,8 +3336,8 @@ export function parseMethodDefinition(
     (kind & PropertyKind.Constructor) === 0 ? 0b0000001111010000000_0000_00000000 : 0b0000000111000000000_0000_00000000;
 
   context =
-    ((context | 0b0001000000000000001_0000_00000000 | Context.InGlobal | modifierFlags) ^
-      (0b0001000000000000001_0000_00000000 | Context.InGlobal | modifierFlags)) |
+    ((context | 0b00010000111000000000000000000000 | modifierFlags) ^
+      (0b00010000111000000000000000000000 | modifierFlags)) |
     ((kind & 0b0000000000000000000_0000_01011000) << 18) |
     0b0000110000001000000_0000_00000000 |
     (kind & PropertyKind.Async ? Context.InAwaitContext : 0) |
@@ -3388,8 +3387,8 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     (kind & PropertyKind.Constructor) === 0 ? 0b0000001111010000000_0000_00000000 : 0b0000000111000000000_0000_00000000;
 
   context =
-    ((context | 0b0001000000000000001_0000_00000000 | Context.InGlobal | modifierFlags) ^
-      (0b0001000000000000001_0000_00000000 | Context.InGlobal | modifierFlags)) |
+    ((context | 0b00010000111000000000000000000000 | modifierFlags) ^
+      (0b00010000111000000000000000000000 | modifierFlags)) |
     ((kind & 0b0000000000000000000_0000_01011000) << 18) |
     0b0000110000001000000_0000_00000000 |
     (kind & PropertyKind.Async ? Context.InAwaitContext : 0) |
