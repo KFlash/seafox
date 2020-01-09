@@ -70,9 +70,9 @@ export function parseFunctionDeclarationRest(
   column: number
 ): ESTree.FunctionDeclaration {
   nextToken(parser, context, /* allowRegExp */ 1);
-  // Annex B.3.4 doesn't allow generators functions
+
   const isGenerator =
-    flags & FunctionFlag.AllowGenerator ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0) : 0;
+    flags & FunctionFlag.AllowGenerator && consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0);
   const isAsync = flags & FunctionFlag.IsAsync ? 1 : 0;
 
   let id: ESTree.Identifier | null = null;
@@ -90,15 +90,16 @@ export function parseFunctionDeclarationRest(
     const { token, tokenValue, start, line, column } = parser;
 
     validateFunctionName(parser, context | ((context & 0b0000000000000000000_1100_00000000) << 11), token);
+
     // In ES6, a function behaves as a lexical binding, except in
     // a script scope, or the initial scope of eval or another function.
-    if (origin & Origin.TopLevel && (context & Context.Module) !== Context.Module) {
+    if ((origin & 0b00000000000000000000000000000100) > 0 && (context & 0b00000000000000000000100000000000) === 0) {
       addVarName(parser, context, scope, tokenValue, BindingKind.Variable);
     } else {
       addBlockName(parser, context, scope, tokenValue, BindingKind.FunctionLexical, origin);
     }
 
-    if (flags & FunctionFlag.Export) declareUnboundVariable(parser, tokenValue);
+    if ((flags & 0b00000000000000000000000000010000) > 0) declareUnboundVariable(parser, tokenValue);
 
     parent = {
       parent,
@@ -115,8 +116,7 @@ export function parseFunctionDeclarationRest(
 
   return parseFunctionLiteral(
     parser,
-    ((context | 0b0000001111011000000_0000_00000000) ^ 0b0000001111011000000_0000_00000000) |
-      Context.AllowNewTarget |
+    ((context | 0b00000100111011000000000000000000) ^ 0b00000000111011000000000000000000) |
       ((isAsync * 2 + isGenerator) << 21),
     parent,
     id,
@@ -184,7 +184,7 @@ export function parseClassDeclaration(
     //         ...
     //         [+Default] class ClassTail[?Yield]
     //
-    if ((flags & ClassFlags.Hoisted) === 0) report(parser, Errors.DeclNoName, 'Class');
+    if ((flags & 0b00000000000000000000000000000001) === 0) report(parser, Errors.DeclNoName, 'Class');
   }
 
   return parseClassTail(
