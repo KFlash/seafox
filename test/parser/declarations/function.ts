@@ -79,6 +79,26 @@ describe('Declarations - Function', () => {
     ['async function af() { var a = (x = await 0) => { }; }', Context.Empty],
     ['async function a() { async function b(k = [await 3]) {} }', Context.Empty],
     ['async function af() { var a = (x = await 0) => { }; }', Context.Empty],
+    ['function foo() {}; function bar(){} let baz, {f: [bar]} = {f:[10]};', Context.Empty],
+    ['for (let let = 0; let < 10; let++) {}', Context.Empty],
+    ['"use strict"; for (let let = 0; let < 10; let++) {}"', Context.Empty],
+    ['function f() { var x; let x; }', Context.Empty],
+    ['function f() { var x; let [x] = 20; }', Context.Empty],
+    ['function f() { var [x] = 20; let [x] = 20; }', Context.Empty],
+    ['function f() { var [x] = 20; let x; }', Context.Empty],
+    ['function f() { let x; var x; }', Context.Empty],
+    ['function f() { let x; var {x} = 20; }', Context.Empty],
+    ['function f() { let x;  function x(){} }', Context.Empty],
+    ['function f() { function x(){}; let x; }', Context.Empty],
+    ['function f() { const x = 20; var x; }', Context.Empty],
+    ['function f() { const x = 20; var {x} = 20; }', Context.Empty],
+    ['function f() { const x = 20; var [x] = 20; }', Context.Empty],
+    ['function f() { const x = 20;  function x(){} }', Context.Empty],
+    ['function f() { function x(){}; const x = 20; }', Context.Empty],
+    ['function f() { class x{}; var x; }', Context.Empty],
+    ['function f() { class x{}; var {x} = 20; }', Context.Empty],
+    ['function f() { class x{}; var [x] = 20; }', Context.Empty],
+    ['function f() { function x(){}; class x{}; }', Context.Empty],
     ['async function a() { async function b(k = [await 3]) {} }', Context.Empty]
   ]) {
     it(source as string, () => {
@@ -94,6 +114,8 @@ describe('Declarations - Function', () => {
 
   // Async Generator
   for (const [source, ctx] of [
+    ['function *f(x = (switch) = f) {}', Context.Empty],
+    ['function *f(x = (do) = f) {}', Context.Empty],
     ['async function * gen() { yield --> comment  } ', Context.Empty],
     ['async function * gen() { ({a: yield 24} = {a: 42}); } ', Context.Empty],
     ['async function * gen() { class C extends yield { } } ', Context.Empty],

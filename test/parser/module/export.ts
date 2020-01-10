@@ -275,6 +275,10 @@ describe('Module - Export', () => {
     it(source as string, () => {
       t.throws(() => {
         parseModule(source as string, {
+          directives: true,
+          globalReturn: false,
+          preserveParens: true,
+          raw: true,
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
         });
       });

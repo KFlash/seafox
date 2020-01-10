@@ -116,10 +116,3 @@ export function parseModule(source: string, options?: Options): Program {
         body
       };
 }
-
-/**
- * Parse a module or a script, optionally with various options.
- */
-export function parse(source: string, options?: Options): Program {
-  return options && options.module ? parseModule(source, options) : parseScript(source, options);
-}

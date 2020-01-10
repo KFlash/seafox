@@ -59,6 +59,9 @@ describe('Expressions - Async arrow', () => {
     ['async(...a)`template-head${c}`=>{}', Context.Empty],
     ['async(...a)?c:d=>{}=>{};', Context.Empty],
     ['async (...a)?c:d=>{}=>{}', Context.Empty],
+    ['([ async ()=>x ]) => {}', Context.Empty],
+    ['([ class{} ]) => {}', Context.Empty],
+    ['async (x = delete ((this) = f)) => {}', Context.Empty],
     ['async () => {}\n/x', Context.Empty],
     ['async () => {}\n/ x / g', Context.Empty],
     ['async ([a = yield b]) => x', Context.Empty],
@@ -68,6 +71,7 @@ describe('Expressions - Async arrow', () => {
     ['async ({a: b = yield c}) => x', Context.Empty],
     ['async ({a = yield}) => x', Context.Strict],
     ['async (...a)[1]=>{};', Context.Empty],
+    ['async (x = (await) = f) => {}', Context.Empty],
     ['async (a,...b)`template-head${c}`=>{}', Context.Empty],
     ['async (a,...b)`${c}template-tail`=>{};', Context.Empty],
     ['async (a,...b)`${c}template-tail`=>{}', Context.Empty],
@@ -77,6 +81,9 @@ describe('Expressions - Async arrow', () => {
     ['async x => (break) = 1', Context.Empty],
     ['async x => (case) = 1', Context.Empty],
     ['async x => (catch) = 1', Context.Empty],
+    ['async (x = delete ((if) = f)) => {}', Context.Empty],
+    ['async (x = delete ((export) = f)) => {}', Context.Empty],
+    ['async (x = (with) = f) => {}', Context.Empty],
     ['async x => (in) = 1', Context.Empty],
     ['async (32) => {}', Context.Empty],
     ['async (a, 32) => {}', Context.Empty],
@@ -854,6 +861,174 @@ describe('Expressions - Async arrow', () => {
           end: {
             line: 1,
             column: 22
+          }
+        }
+      }
+    ],
+    [
+      `async (x = delete ((protected) = f)) => {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 40,
+                end: 42,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 40
+                  },
+                  end: {
+                    line: 1,
+                    column: 42
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'AssignmentPattern',
+                  left: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'UnaryExpression',
+                    operator: 'delete',
+                    argument: {
+                      type: 'AssignmentExpression',
+                      left: {
+                        type: 'Identifier',
+                        name: 'protected',
+                        start: 20,
+                        end: 29,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 20
+                          },
+                          end: {
+                            line: 1,
+                            column: 29
+                          }
+                        }
+                      },
+                      operator: '=',
+                      right: {
+                        type: 'Identifier',
+                        name: 'f',
+                        start: 33,
+                        end: 34,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 33
+                          },
+                          end: {
+                            line: 1,
+                            column: 34
+                          }
+                        }
+                      },
+                      start: 19,
+                      end: 34,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 34
+                        }
+                      }
+                    },
+                    prefix: true,
+                    start: 11,
+                    end: 35,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 35
+                      }
+                    }
+                  },
+                  start: 7,
+                  end: 35,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 35
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: false,
+              start: 0,
+              end: 42,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 42
+                }
+              }
+            },
+            start: 0,
+            end: 42,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 42
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 42,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 42
           }
         }
       }
@@ -6717,6 +6892,157 @@ describe('Expressions - Async arrow', () => {
           end: {
             line: 1,
             column: 16
+          }
+        }
+      }
+    ],
+    [
+      `async (x = (let) = f) => {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 25,
+                end: 27,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 25
+                  },
+                  end: {
+                    line: 1,
+                    column: 27
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'AssignmentPattern',
+                  left: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'let',
+                      start: 12,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'f',
+                      start: 19,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    },
+                    start: 11,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  start: 7,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: false,
+              start: 0,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 0,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 27,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 27
           }
         }
       }

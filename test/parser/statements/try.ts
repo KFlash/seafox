@@ -143,6 +143,8 @@ describe('Statements - Try', () => {
     ['try {} catch (x) { { let x } ', Context.OptionsDisableWebCompat],
     ['try {} catch (x) { let x }', Context.OptionsDisableWebCompat],
     ['let e; try {} catch (e) { let e; }', Context.OptionsDisableWebCompat],
+    ['try { let a; function a() {} } catch (e) {}', Context.Empty],
+    ['try { var a; function a() {} } catch (e) {}', Context.Empty],
     ['try {} catch (x) { { let x }', Context.Empty],
     ['try {} catch (a=a) {}', Context.Empty],
     ['try {} catch (a=)a) {}', Context.Empty],
@@ -160,6 +162,106 @@ describe('Statements - Try', () => {
           impliedStrict: ((ctx as any) & Context.Strict) !== 0,
           module: ((ctx as any) & Context.Module) !== 0
         });
+      });
+    });
+  }
+
+  let lexical_e = [
+    'let e',
+    'let f, g, e',
+    'let [f] = [], [] = [], e = e, h',
+    'let {e} = 0',
+    'let {f, e} = 0',
+    'let {f, g} = 0, {e} = 0',
+    'let {f = 0, e = 1} = 0',
+    'let [e] = 0',
+    'let [f, e] = 0',
+    'let {f:e} = 0',
+    'let [[[], e]] = 0',
+    'const e = 0',
+    'const f = 0, g = 0, e = 0',
+    'const {e} = 0',
+    'const [e] = 0',
+    'const {f:e} = 0',
+    'const [[[], e]] = 0',
+    'function e(){}',
+    'function* e(){}'
+  ];
+
+  let not_lexical_e = ['var e', 'var f, e', 'var {e} = 0', 'let {} = 0', 'let {e:f} = 0', '{ function e(){} }'];
+
+  for (let declaration of not_lexical_e) {
+    it(declaration as string, () => {
+      t.doesNotThrow(() => {
+        parseScript(`
+        try {
+          throw 0;
+        } catch(e) {
+          ${declaration}
+        }
+        `);
+      });
+    });
+  }
+
+  for (let declaration of lexical_e) {
+    it(declaration as string, () => {
+      t.throws(() => {
+        parseScript(`try {
+          throw 0;
+        } catch(e) {
+          ${declaration}
+        }`);
+      });
+    });
+    it(declaration as string, () => {
+      t.throws(() => {
+        parseScript(
+          `try {
+          throw 0;
+        } catch(e) {
+          ${declaration}
+        }`,
+          {
+            disableWebCompat: true
+          }
+        );
+      });
+    });
+
+    it(declaration as string, () => {
+      t.throws(() => {
+        parseScript(`
+        try {
+          throw 0;
+        } catch({e}) {
+          ${declaration}
+        }
+        `);
+      });
+    });
+
+    it(declaration as string, () => {
+      t.doesNotThrow(() => {
+        parseScript(`
+        try {
+          throw 0;
+        } catch(e) {
+          (()=>{${declaration}})();
+        }
+        `);
+      });
+    });
+
+    it(declaration as string, () => {
+      t.doesNotThrow(() => {
+        parseScript(`
+        try {
+          throw 0;
+        } catch(e) {
+          (function(){${declaration}})();
+        }
+        `);
       });
     });
   }

@@ -24,6 +24,8 @@ describe('Expressions - Array', () => {
     `([x + y]) => x;`,
     `[x + y] = x;`,
     '[{} = 2/=2]',
+    '[ function(){} ] = x',
+    '[ x + y ] = x',
     '[a,b^=[x,y]] = z',
     '[(x, y)] = x;',
     '[a,b+=[x,y]] = z',

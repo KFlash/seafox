@@ -191,6 +191,7 @@ describe('Expressions - Group', () => {
     '(x => y) = {}',
     '({x = y})',
     '({x = y}.z)',
+    '({...(a,b)} = foo)',
     '({x = y}.z = obj)',
     '({x = y}.z) => obj',
     '({x = y}).z',
@@ -361,6 +362,9 @@ describe('Expressions - Group', () => {
     '`a` = b;',
     '(`a`) => b;',
     'for (`a` of b);',
+    '(default = "sentinal 453543")',
+    '(debugger = "sentinal 453543")',
+    '({...{}} = {})',
     'for (new.target in b);'
   ]) {
     it(`${arg}`, () => {
@@ -3022,6 +3026,123 @@ describe('Expressions - Group', () => {
           end: {
             line: 1,
             column: 8
+          }
+        }
+      }
+    ],
+    [
+      `({...(obj)} = foo)`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ObjectPattern',
+                properties: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'Identifier',
+                      name: 'obj',
+                      start: 6,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    start: 2,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  }
+                ],
+                start: 1,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 14,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              start: 1,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
           }
         }
       }

@@ -120,8 +120,6 @@ export function addVarName(
   name: string,
   kind: BindingKind
 ): void {
-  if (curScope === void 0) return;
-
   let scope: any = curScope;
   let value: any;
 
