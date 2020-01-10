@@ -1767,7 +1767,7 @@ export function parseArrowFunction(
   } else {
     body = parseFunctionBody(
       parser,
-      (context | 0b00010000111000000000000000000000) ^ 0b00010000111000000000000000000000,
+      (context | 0b00010000100000000000000000000000) ^ 0b00010000100000000000000000000000,
       scope,
       void 0,
       1,

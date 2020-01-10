@@ -2,16 +2,7 @@ import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
-function convertDecimalToBinary(digit: any, groups: boolean): string {
-  let res = '';
-  for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
-  // Makes a groups of 8 bits
-  if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, '_');
-  return res;
-}
-
 describe('Statements - Switch', () => {
-  console.log(convertDecimalToBinary(8192, false));
   for (const [source, ctx] of [
     [`switch (x) {case a: function f(){}; break; case b: let f; break; }`, Context.OptionsDisableWebCompat],
     [`switch (x) { case a: let foo; break; case b: let foo; break; }`, Context.OptionsDisableWebCompat],
@@ -24,10 +15,8 @@ describe('Statements - Switch', () => {
     ['switch (x) { case a: const foo = x; break; case b: var foo = x; break; }', Context.OptionsDisableWebCompat],
     ['switch (x) { case a: var foo = x; break; case b: const foo = x; break; }', Context.OptionsDisableWebCompat],
     ['switch (x) { case 0: var foo = 1 } let foo = 1;', Context.OptionsDisableWebCompat],
-
     ['switch (0) { case 1: class f {} default: let f }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: class f {} default: let f }', Context.Empty],
-
     ['switch (x) {case a: const f = x; break; case b: function f(){}; break; }', Context.OptionsDisableWebCompat],
     ['switch (x) {case a: async function f(){}; break; case b: let f; break; }', Context.OptionsDisableWebCompat],
     ['switch (0) { case 1: async function* f() {} default: async function f() {} }', Context.OptionsDisableWebCompat],

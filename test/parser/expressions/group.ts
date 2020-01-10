@@ -3,15 +3,6 @@ import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Group', () => {
-  function convertDecimalToBinary(digit: any, groups: boolean): string {
-    let res = '';
-    for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
-    // Makes a groups of 8 bits
-    if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, '_');
-    return res;
-  }
-
-  console.log(convertDecimalToBinary(402784256, false));
   for (const arg of [
     '(a,b+=2',
     '(a,b)+=2',

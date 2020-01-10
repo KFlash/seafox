@@ -739,10 +739,12 @@ export interface UnaryExpression extends _Node {
   argument: LeftHandSideExpression | Literal | UnaryExpression;
 }
 
+export type VariableDeclarationKind = 'let' | 'const' | 'var';
+
 export interface VariableDeclaration extends _Node {
   type: 'VariableDeclaration';
   declarations: VariableDeclarator[];
-  kind: 'let' | 'const' | 'var';
+  kind: VariableDeclarationKind;
   declare?: boolean;
 }
 

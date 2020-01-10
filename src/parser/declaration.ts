@@ -265,7 +265,11 @@ export function parseVariableDeclarationListAndDeclarator(
     const { start, line, column } = parser;
 
     // This little 'trick' speeds up the validation below
-    type = kind | ((parser.token & Token.IsPatternStart) === Token.IsPatternStart ? BindingKind.Pattern : 0);
+    type =
+      kind |
+      ((parser.token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000
+        ? BindingKind.Pattern
+        : 0);
 
     id = parseBindingPattern(parser, context, scope, kind, origin);
 
@@ -276,8 +280,8 @@ export function parseVariableDeclarationListAndDeclarator(
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context, 0);
     } else if (
-      (type & (BindingKind.Const | BindingKind.Pattern)) !== 0 &&
-      (parser.token & 0b0000000000000000001_0000_00110000) !== 0b0000000000000000001_0000_00110000
+      (type & 0b00000000000000000000010000100000) !== 0 &&
+      (parser.token & 0b00000000010000000000000000000000) !== 0b00000000010000000000000000000000
     ) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
