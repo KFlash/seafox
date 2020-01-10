@@ -139,14 +139,6 @@ export function addVarName(
     }
 
     if (
-      (value & 0b00000000000000000000000000000001) > 0 &&
-      (kind & 0b00000000000000000000000000000001) > 0 &&
-      scope === curScope
-    ) {
-      scope.scopeError = recordScopeError(parser, Errors.DuplicateBinding, name);
-    }
-
-    if (
       (value & 0b00000000000000000000001100000000) > 0 &&
       ((context & 0b00000000000000000000010000010000) > 0 || (value & 0b00000000000000000000001000000000) === 0)
     ) {

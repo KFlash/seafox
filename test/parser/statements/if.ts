@@ -42,8 +42,124 @@ describe('Statements - If', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `if (x) let: y;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'IfStatement',
+            test: {
+              type: 'Identifier',
+              name: 'x',
+              start: 4,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            consequent: {
+              type: 'LabeledStatement',
+              label: {
+                type: 'Identifier',
+                name: 'let',
+                start: 7,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              body: {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'Identifier',
+                  name: 'y',
+                  start: 12,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                start: 12,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              start: 7,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            alternate: null,
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
       `if (x) var foo = 1; var foo = 1;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -227,7 +343,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (yield === void 0) { async = false; }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -410,7 +526,7 @@ describe('Statements - If', () => {
     ],
     [
       `function f() { if (1) { return () => { while (true) hi(); } } }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -661,7 +777,7 @@ describe('Statements - If', () => {
     ],
     [
       `if(1)/  foo/`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -750,7 +866,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (foo) a; if (bar) b; else c;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -928,7 +1044,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (a > 2) {b = c }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1094,7 +1210,7 @@ describe('Statements - If', () => {
     ],
     [
       `if(foo) a = b;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1211,7 +1327,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (a) function a(){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1315,7 +1431,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (foo) bar; else doo;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1430,7 +1546,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (a) b()`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1532,7 +1648,7 @@ describe('Statements - If', () => {
     ],
     [
       `if(a)b;else c;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1647,7 +1763,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (1) { eval(42) }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1783,7 +1899,7 @@ describe('Statements - If', () => {
     ],
     [
       `if (true) if (false) {} else ; else {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
