@@ -8,6 +8,7 @@ describe('Module - Export', () => {
     ['export {y as z, y as x, y};', Context.Empty],
     ['export {y as x};', Context.Empty],
     ['export default var x = 7;', Context.Empty],
+    ['export var new = 10;', Context.Empty],
     ['export default let x = 7;', Context.Empty],
     ['export default const x = 7;', Context.Empty],
     ['"use strict"; export default const x = 7;', Context.Empty],
@@ -539,6 +540,8 @@ describe('Module - Export', () => {
       import dflt3, * as ns2 from 'h';`,
     'var a; export { a as b };',
     'export default 1',
+    'export var {x} = a, {y} = obj;',
+    'export var {x} = a, y = obj;',
     'export default () => {}'
   ]) {
     it(`${arg}`, () => {

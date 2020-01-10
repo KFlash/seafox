@@ -303,8 +303,126 @@ describe('Statements - For in', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `for (var interface in y);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 24,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 24
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'Identifier',
+                    name: 'interface',
+                    start: 9,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'y',
+              start: 22,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
       `for (a[b] in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -437,7 +555,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let[x] in y);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -572,7 +690,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let[x] of y);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -708,7 +826,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let;;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -778,7 +896,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let.x in y);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -895,7 +1013,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let();;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -982,7 +1100,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let a in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1100,7 +1218,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let a in c);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1218,7 +1336,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var a in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1336,7 +1454,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let a in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1454,7 +1572,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let in x) y`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1554,7 +1672,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({a: b.c} in d) e`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1739,7 +1857,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ((a in b).x in {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -1889,7 +2007,7 @@ describe('Statements - For in', () => {
 
     [
       `for (let().foo in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2023,7 +2141,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2108,7 +2226,7 @@ describe('Statements - For in', () => {
 
     [
       `for (function(){ }[foo] in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2244,7 +2362,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (((x)=>{}).x in y);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2396,7 +2514,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (456[x] in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2529,7 +2647,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (yield in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2613,7 +2731,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({}.b in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2746,7 +2864,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({ eval = 0 } in [{}]) ;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2930,7 +3048,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([x] in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3031,7 +3149,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({x: a.b} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3200,7 +3318,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let = 1; let < 1; let++) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3382,7 +3500,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let in {}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3467,7 +3585,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var let = 1; let < 1; let++) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3666,7 +3784,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [let] in {}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3803,7 +3921,7 @@ describe('Statements - For in', () => {
 
     [
       `for ([].x in y) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -3921,7 +4039,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({}.x in y) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4039,7 +4157,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let j in x) { let foo; [[foo]=[42]] = [] }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4354,7 +4472,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(const a in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4472,7 +4590,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ((let.x) of []) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4591,7 +4709,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let a = (b && c in d); ;);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4774,7 +4892,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (/foo/g[x] in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -4911,7 +5029,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (456..x in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5044,7 +5162,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (/foo/[x] in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5181,7 +5299,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (/foo/.x in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5318,7 +5436,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ("foo"[x] in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5451,7 +5569,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([][y] <<= p;;) x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5602,7 +5720,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(function(){if(x in 3);};;)x`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5787,7 +5905,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([][y] <<= p;;) x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -5938,7 +6056,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({}.u |= c;;) x;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6089,7 +6207,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (function(){ }[foo] in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6226,7 +6344,7 @@ describe('Statements - For in', () => {
 
     [
       `for (function(){ }[x in y] in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6394,7 +6512,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (function(){ if (a in b); }.prop in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6610,7 +6728,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({x: a.b} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6831,7 +6949,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [,] in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -6949,7 +7067,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [foo] in arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7084,7 +7202,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [foo=a] in arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7250,7 +7368,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [foo=a, bar] in arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7432,7 +7550,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [foo, bar=b] in arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7614,7 +7732,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [...foo] in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7764,7 +7882,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var {} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -7882,7 +8000,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var {x,} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8052,7 +8170,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var {x} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8222,7 +8340,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (a in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8306,7 +8424,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (a in b); for (a in b); for (a in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8514,7 +8632,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([a,b] in x) a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8647,7 +8765,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([a,b] of x) a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8781,7 +8899,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({a,b} in x) a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -8984,7 +9102,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({a = b} in x) a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9167,7 +9285,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (const {j} in x) { function foo() {return j} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9421,7 +9539,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (const j in x) { let [foo] = [j] }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9640,7 +9758,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([arguments] in [[]]) ;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9758,7 +9876,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let x in null, { key: 0 }) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -9962,7 +10080,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(let [a=b in c] in null);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10160,7 +10278,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ("foo".bar in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10277,7 +10395,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({}.bar in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10394,7 +10512,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([].bar in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10511,7 +10629,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var {x : y} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10681,7 +10799,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(var x=1 in [1,2,3]) 0`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -10879,7 +10997,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [foo, bar=b] of arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11062,7 +11180,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (function* y() { new.target in /(?:()|[]|(?!))/iuy };; (null))  {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -11281,7 +11399,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (a()[b] in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11431,7 +11549,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (yield in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11515,7 +11633,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (async in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11599,7 +11717,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (true.x in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11732,7 +11850,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (function(){ a in b; }.prop in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -11932,7 +12050,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (/foo/g.x in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12069,7 +12187,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([].b in c) d;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12202,7 +12320,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var {x = y} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12403,7 +12521,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [] in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12521,7 +12639,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let.x in {}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12640,7 +12758,7 @@ describe('Statements - For in', () => {
 
     [
       `for (var [foo,,] in arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12776,7 +12894,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var [foo, bar=b] in arr);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -12958,7 +13076,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var {x, y} in obj);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13179,7 +13297,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({a,b} of x) a;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13383,7 +13501,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (const [...x] in y){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13534,7 +13652,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (const {...x} in y){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13685,7 +13803,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (a in b=c);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13801,7 +13919,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var a = 0 in stored = a, {});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -13999,7 +14117,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var a = (++effects, -1) in x);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14199,7 +14317,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var a in stored = a, {a: 0, b: 1, c: 2});`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14536,7 +14654,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([a.b] in c) d`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14686,7 +14804,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([a.b].foo in c) d`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -14869,7 +14987,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({a: b.c} in d) e`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15054,7 +15172,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({a: b.c}.foo in d) e`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15272,7 +15390,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(let {a} in []) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15443,7 +15561,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for({a: a} in []){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15580,7 +15698,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for({"a": a} in []){}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15717,7 +15835,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for({a=0} in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -15884,7 +16002,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ({j} in x) { var [foo] = [j] }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16121,7 +16239,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([arguments] in [[]]) ;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16239,7 +16357,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(let [a=b in c] in null);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -16437,7 +16555,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for([{a=0}] in b);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16621,7 +16739,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(var a in b, c);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -16772,7 +16890,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([...{ x = yield }] in [[{}]]) ;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17005,7 +17123,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ( [let][1] in obj ) ;`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17139,7 +17257,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ((x) in { attr: null }) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17276,7 +17394,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ([...x] in {ab: a}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17445,7 +17563,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (x in {a: b}) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17582,7 +17700,7 @@ describe('Statements - For in', () => {
     ],
     [
       `function foo(){ "use strict"; for(x in {}, {}) {} }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         start: 0,
@@ -17782,7 +17900,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for(const x in [1,2,3]) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -17950,7 +18068,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (var a = b, c, d, b = a ; x in b ; ) { break }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18245,7 +18363,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for ("foo".x in y) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18363,7 +18481,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (a[b in c] in d);`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18512,7 +18630,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (let j in x) { foo = j }`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -18695,7 +18813,7 @@ describe('Statements - For in', () => {
     ],
     [
       `for (x in y) {}`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',

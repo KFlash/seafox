@@ -10,6 +10,7 @@ describe('Expressions - New', () => {
     'while (0) { new.target }',
     'do { new.target } while (0)',
     'new new .target',
+    '++new x()',
     // 'function f(x=() => new."target") {}',
     'new.target',
     'function f(){ new.foo }',
@@ -36,6 +37,2916 @@ describe('Expressions - New', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      '(new x);',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'x',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              arguments: [],
+              start: 1,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      'new async()',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'async',
+                start: 4,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 11,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      'new a + b',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                arguments: [],
+                start: 0,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              operator: '+',
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      'new [foo]',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'ArrayExpression',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'foo',
+                    start: 5,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  }
+                ],
+                start: 4,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      'new (x)',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'x',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 7,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 7
+          }
+        }
+      }
+    ],
+    [
+      'new "crap"',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Literal',
+                value: 'crap',
+                start: 4,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 10,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 10
+          }
+        }
+      }
+    ],
+    [
+      'function x(){""[new.target]}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Literal',
+                      value: '',
+                      start: 13,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    computed: true,
+                    property: {
+                      type: 'MetaProperty',
+                      meta: {
+                        type: 'Identifier',
+                        name: 'new',
+                        start: 16,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 16
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      },
+                      property: {
+                        type: 'Identifier',
+                        name: 'target',
+                        start: 20,
+                        end: 26,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 20
+                          },
+                          end: {
+                            line: 1,
+                            column: 26
+                          }
+                        }
+                      },
+                      start: 16,
+                      end: 26,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 16
+                        },
+                        end: {
+                          line: 1,
+                          column: 26
+                        }
+                      }
+                    },
+                    start: 13,
+                    end: 27,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 27
+                      }
+                    }
+                  },
+                  start: 13,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 27
+                    }
+                  }
+                }
+              ],
+              start: 12,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      'class x {async * new(){}}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'new',
+                    start: 17,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 17
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 22,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 22
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    async: true,
+                    generator: true,
+                    id: null,
+                    start: 20,
+                    end: 24,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 24
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 24,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 24
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
+      'class x {get new(){}}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'get',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'new',
+                    start: 13,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 18,
+                      end: 20,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 18
+                        },
+                        end: {
+                          line: 1,
+                          column: 20
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 16,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 16
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      'class x {new(){}}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'new',
+                    start: 9,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 14,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 12,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      'new x in y',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                arguments: [],
+                start: 0,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'y',
+                start: 9,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              operator: 'in',
+              start: 0,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 10,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 10
+          }
+        }
+      }
+    ],
+    [
+      '(class B extends new x {})',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ClassExpression',
+              id: {
+                type: 'Identifier',
+                name: 'B',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              superClass: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 21,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                },
+                arguments: [],
+                start: 17,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              },
+              body: {
+                type: 'ClassBody',
+                body: [],
+                start: 23,
+                end: 25,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 23
+                  },
+                  end: {
+                    line: 1,
+                    column: 25
+                  }
+                }
+              },
+              start: 1,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
+    [
+      '[new x().y] = z',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'NewExpression',
+                      callee: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 5,
+                        end: 6,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 5
+                          },
+                          end: {
+                            line: 1,
+                            column: 6
+                          }
+                        }
+                      },
+                      arguments: [],
+                      start: 1,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 9,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 9
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'z',
+                start: 14,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              start: 0,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      '[ new x ]',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'NewExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 6,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  },
+                  arguments: [],
+                  start: 2,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      'class x {static get new(){}}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'get',
+                  static: true,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'new',
+                    start: 20,
+                    end: 23,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 23
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 25,
+                      end: 27,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 25
+                        },
+                        end: {
+                          line: 1,
+                          column: 27
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 23,
+                    end: 27,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 27
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 27
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 0,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      '(new x() ** 2)',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 5,
+                  end: 6,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 6
+                    }
+                  }
+                },
+                arguments: [],
+                start: 1,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: 2,
+                start: 12,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              operator: '**',
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      'new x() ** 2;',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                arguments: [],
+                start: 0,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: 2,
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '**',
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      'new x() ** 2;',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                arguments: [],
+                start: 0,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: 2,
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '**',
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      'new (x => {})',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 10,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                params: [
+                  {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 5,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  }
+                ],
+                async: false,
+                expression: false,
+                start: 5,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      'function f(){ foo = new.target }',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 14,
+                      end: 17,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 17
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'MetaProperty',
+                      meta: {
+                        type: 'Identifier',
+                        name: 'new',
+                        start: 20,
+                        end: 24,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 20
+                          },
+                          end: {
+                            line: 1,
+                            column: 24
+                          }
+                        }
+                      },
+                      property: {
+                        type: 'Identifier',
+                        name: 'target',
+                        start: 24,
+                        end: 30,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 24
+                          },
+                          end: {
+                            line: 1,
+                            column: 30
+                          }
+                        }
+                      },
+                      start: 20,
+                      end: 30,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 20
+                        },
+                        end: {
+                          line: 1,
+                          column: 30
+                        }
+                      }
+                    },
+                    start: 14,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  },
+                  start: 14,
+                  end: 30,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 30
+                    }
+                  }
+                }
+              ],
+              start: 12,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 32,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 32
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 32,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 32
+          }
+        }
+      }
+    ],
+    [
+      'new (oh,yes)',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'SequenceExpression',
+                expressions: [
+                  {
+                    type: 'Identifier',
+                    name: 'oh',
+                    start: 5,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  },
+                  {
+                    type: 'Identifier',
+                    name: 'yes',
+                    start: 8,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  }
+                ],
+                start: 5,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      'new this',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'ThisExpression',
+                start: 4,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      `new x
+        /y`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'NewExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                arguments: [],
+                start: 0,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'y',
+                start: 15,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 9
+                  },
+                  end: {
+                    line: 2,
+                    column: 10
+                  }
+                }
+              },
+              operator: '/',
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 2,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 2,
+                column: 10
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 10
+          }
+        }
+      }
+    ],
+    [
+      'new true',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Literal',
+                value: true,
+                start: 4,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      'new 1.2',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Literal',
+                value: 1.2,
+                start: 4,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 7,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 7
+          }
+        }
+      }
+    ],
+    [
+      'new async function(){}',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'FunctionExpression',
+                params: [],
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 20,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 20
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                },
+                async: true,
+                generator: false,
+                id: null,
+                start: 4,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      'new Foo`a${b}c${c}e`',
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'TaggedTemplateExpression',
+                tag: {
+                  type: 'Identifier',
+                  name: 'Foo',
+                  start: 4,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                quasi: {
+                  type: 'TemplateLiteral',
+                  expressions: [
+                    {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 11,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 11
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 16,
+                      end: 17,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 16
+                        },
+                        end: {
+                          line: 1,
+                          column: 17
+                        }
+                      }
+                    }
+                  ],
+                  quasis: [
+                    {
+                      type: 'TemplateElement',
+                      value: {
+                        cooked: 'a',
+                        raw: 'a'
+                      },
+                      tail: false,
+                      start: 7,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    },
+                    {
+                      type: 'TemplateElement',
+                      value: {
+                        cooked: 'c',
+                        raw: 'c'
+                      },
+                      tail: false,
+                      start: 12,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    {
+                      type: 'TemplateElement',
+                      value: {
+                        cooked: 'e',
+                        raw: 'e'
+                      },
+                      tail: true,
+                      start: 17,
+                      end: 17,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 17
+                        },
+                        end: {
+                          line: 1,
+                          column: 17
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 4,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
     [
       `new new foo.bar.baz()(arg);`,
       Context.OptionsNext,

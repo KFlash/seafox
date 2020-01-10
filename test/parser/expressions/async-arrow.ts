@@ -55,6 +55,12 @@ describe('Expressions - Async arrow', () => {
     ['(async (a = b => { let b; }))', Context.OptionsDisableWebCompat],
     ['(async yield => { let yield; })', Context.OptionsDisableWebCompat],
     ['async ()c++=>{};', Context.Empty],
+    ['new async x => x', Context.Empty],
+    [
+      `new async ()
+    => x`,
+      Context.Empty
+    ],
     ['async a?c:d=>{}=>{};', Context.Empty],
     ['async(...a)`template-head${c}`=>{}', Context.Empty],
     ['async(...a)?c:d=>{}=>{};', Context.Empty],

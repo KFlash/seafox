@@ -879,6 +879,458 @@ describe('Declarations - Variable', () => {
       }
     ],
     [
+      `var x; { let x; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 6,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 6
+              }
+            }
+          },
+          {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'VariableDeclaration',
+                kind: 'let',
+                declarations: [
+                  {
+                    type: 'VariableDeclarator',
+                    init: null,
+                    id: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 13,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 13,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  }
+                ],
+                start: 9,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            start: 7,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 7
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `{ let x } var x;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'VariableDeclaration',
+                kind: 'let',
+                declarations: [
+                  {
+                    type: 'VariableDeclarator',
+                    init: null,
+                    id: {
+                      type: 'Identifier',
+                      name: 'x',
+                      start: 6,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    },
+                    start: 6,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  }
+                ],
+                start: 2,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                start: 14,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            start: 10,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 10
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `var package = x;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'package',
+                  start: 4,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                start: 4,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `var protected = x;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 16,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'protected',
+                  start: 4,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                start: 4,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
       `var [a,] = [];`,
       Context.OptionsLoc,
       {
@@ -18299,6 +18751,177 @@ var zoo;`,
       }
     ],
     [
+      `var x, {y} = obj;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 13,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    }
+                  ],
+                  start: 7,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                start: 7,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
       `var {x} = a, obj;`,
       Context.OptionsLoc,
       {
@@ -24076,6 +24699,177 @@ var zoo;`,
           end: {
             line: 1,
             column: 25
+          }
+        }
+      }
+    ],
+    [
+      `var x, {foo} = y;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'var',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: null,
+                id: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'y',
+                  start: 15,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 8,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 8,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 8,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    }
+                  ],
+                  start: 7,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                start: 7,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
           }
         }
       }

@@ -16290,6 +16290,1450 @@ describe('Statements - For', () => {
       }
     ],
     [
+      `for (var x of obj) { const x = 1 }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForOfStatement',
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'VariableDeclaration',
+                  kind: 'const',
+                  declarations: [
+                    {
+                      type: 'VariableDeclarator',
+                      init: {
+                        type: 'Literal',
+                        value: 1,
+                        start: 31,
+                        end: 32,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 31
+                          },
+                          end: {
+                            line: 1,
+                            column: 32
+                          }
+                        }
+                      },
+                      id: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 27,
+                        end: 28,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 27
+                          },
+                          end: {
+                            line: 1,
+                            column: 28
+                          }
+                        }
+                      },
+                      start: 27,
+                      end: 32,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 27
+                        },
+                        end: {
+                          line: 1,
+                          column: 32
+                        }
+                      }
+                    }
+                  ],
+                  start: 21,
+                  end: 32,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 21
+                    },
+                    end: {
+                      line: 1,
+                      column: 32
+                    }
+                  }
+                }
+              ],
+              start: 19,
+              end: 34,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 34
+                }
+              }
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 9,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'obj',
+              start: 14,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            await: false,
+            start: 0,
+            end: 34,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 34
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 34,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 34
+          }
+        }
+      }
+    ],
+    [
+      `for (const {x} = a, {y} = obj;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 32,
+              end: 33,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 32
+                },
+                end: {
+                  line: 1,
+                  column: 33
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 17,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 17
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 12,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 12,
+                          end: 13,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 12
+                            },
+                            end: {
+                              line: 1,
+                              column: 13
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      }
+                    ],
+                    start: 11,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'obj',
+                    start: 26,
+                    end: 29,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 26
+                      },
+                      end: {
+                        line: 1,
+                        column: 29
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 21,
+                          end: 22,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 21
+                            },
+                            end: {
+                              line: 1,
+                              column: 22
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 21,
+                          end: 22,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 21
+                            },
+                            end: {
+                              line: 1,
+                              column: 22
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 21,
+                        end: 22,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 21
+                          },
+                          end: {
+                            line: 1,
+                            column: 22
+                          }
+                        }
+                      }
+                    ],
+                    start: 20,
+                    end: 23,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 23
+                      }
+                    }
+                  },
+                  start: 20,
+                  end: 29,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 20
+                    },
+                    end: {
+                      line: 1,
+                      column: 29
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 33,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 33
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 33,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 33
+          }
+        }
+      }
+    ],
+    [
+      `for (const x = a, {y} = obj;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 30,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 30
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'obj',
+                    start: 24,
+                    end: 27,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 24
+                      },
+                      end: {
+                        line: 1,
+                        column: 27
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 19,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 19
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'y',
+                          start: 19,
+                          end: 20,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 19
+                            },
+                            end: {
+                              line: 1,
+                              column: 20
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 19,
+                        end: 20,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 19
+                          },
+                          end: {
+                            line: 1,
+                            column: 20
+                          }
+                        }
+                      }
+                    ],
+                    start: 18,
+                    end: 21,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 21
+                      }
+                    }
+                  },
+                  start: 18,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 27
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 31,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 31
+          }
+        }
+      }
+    ],
+    [
+      `for (const foo = bar, zoo = boo;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 34,
+              end: 35,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 34
+                },
+                end: {
+                  line: 1,
+                  column: 35
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'const',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'bar',
+                    start: 17,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 17
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'foo',
+                    start: 11,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  start: 11,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'boo',
+                    start: 28,
+                    end: 31,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 28
+                      },
+                      end: {
+                        line: 1,
+                        column: 31
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'zoo',
+                    start: 22,
+                    end: 25,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 22
+                      },
+                      end: {
+                        line: 1,
+                        column: 25
+                      }
+                    }
+                  },
+                  start: 22,
+                  end: 31,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 31
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 35,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 35
+          }
+        }
+      }
+    ],
+    [
+      `for (let foo = arr, [bar] = arr2;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 35,
+              end: 36,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 35
+                },
+                end: {
+                  line: 1,
+                  column: 36
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'let',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr',
+                    start: 15,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'foo',
+                    start: 9,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'arr2',
+                    start: 28,
+                    end: 32,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 28
+                      },
+                      end: {
+                        line: 1,
+                        column: 32
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ArrayPattern',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'bar',
+                        start: 21,
+                        end: 24,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 21
+                          },
+                          end: {
+                            line: 1,
+                            column: 24
+                          }
+                        }
+                      }
+                    ],
+                    start: 20,
+                    end: 25,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 25
+                      }
+                    }
+                  },
+                  start: 20,
+                  end: 32,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 20
+                    },
+                    end: {
+                      line: 1,
+                      column: 32
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 36,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 36
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 36,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 36
+          }
+        }
+      }
+    ],
+    [
+      `for (let {x} = a, y = obj;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 28,
+              end: 29,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 28
+                },
+                end: {
+                  line: 1,
+                  column: 29
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'let',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 10,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      }
+                    ],
+                    start: 9,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'obj',
+                    start: 22,
+                    end: 25,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 22
+                      },
+                      end: {
+                        line: 1,
+                        column: 25
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 18,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  start: 18,
+                  end: 25,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 25
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `for (let {x} = a, obj;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 24,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 24
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'let',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'x',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 10,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      }
+                    ],
+                    start: 9,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'Identifier',
+                    name: 'obj',
+                    start: 18,
+                    end: 21,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 21
+                      }
+                    }
+                  },
+                  start: 18,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
+    [
       `for (const a = x;;) { let a; }`,
       Context.OptionsLoc,
       {

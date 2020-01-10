@@ -45,6 +45,7 @@ describe('Declarations - Class', () => {
     ['class A { async static staticAsyncMethod() {} }', Context.Empty],
     ['class A { static async prototype() {} }', Context.Empty],
     ['class 0123() {}', Context.Empty],
+    ['class x { constructor() { new super }}', Context.Empty],
     ['class static get prototype() {}', Context.Empty],
     ['class static async : 0', Context.Empty],
     ['class x { static get prototype() {} }', Context.Empty],

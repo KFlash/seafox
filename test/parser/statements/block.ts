@@ -13,6 +13,12 @@ describe('Statements - Block', () => {
     [`{ function f(){} async function f(){} }`, Context.OptionsDisableWebCompat],
     [`{ async function f() {} const f = 0 }`, Context.OptionsDisableWebCompat],
     [`{ class f {} function* f() {} }`, Context.Empty],
+    [`{ (x = [yield y]) }`, Context.Empty],
+    [`{ (x = {[yield y]: 1}) }`, Context.Empty],
+    [`{ (x = y = yield z); }`, Context.Empty],
+    [`{ var f = 123; if (true) function f(){} }`, Context.OptionsDisableWebCompat],
+    [`{ async function f() {} var f; }`, Context.Empty],
+    [`{ async function f() {} var f; }`, Context.OptionsDisableWebCompat],
     [`{ class f {} let f }`, Context.Empty],
     [`{ const f = 0; async function f() {} }`, Context.Empty],
     [`{ const f = 0; function f() {} }`, Context.Empty],
@@ -120,6 +126,278 @@ describe('Statements - Block', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `{ (x = [yield]) }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'yield',
+                        start: 8,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      }
+                    ],
+                    start: 7,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  start: 3,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                start: 2,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `{ (x = [yield]) => z }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'ArrowFunctionExpression',
+                  body: {
+                    type: 'Identifier',
+                    name: 'z',
+                    start: 19,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  params: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 3,
+                        end: 4,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 3
+                          },
+                          end: {
+                            line: 1,
+                            column: 4
+                          }
+                        }
+                      },
+                      right: {
+                        type: 'ArrayExpression',
+                        elements: [
+                          {
+                            type: 'Identifier',
+                            name: 'yield',
+                            start: 8,
+                            end: 13,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 8
+                              },
+                              end: {
+                                line: 1,
+                                column: 13
+                              }
+                            }
+                          }
+                        ],
+                        start: 7,
+                        end: 14,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 14
+                          }
+                        }
+                      },
+                      start: 3,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    }
+                  ],
+                  async: false,
+                  expression: true,
+                  start: 2,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 2,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
     [
       `{ function f(){} async function f(){} }`,
       Context.OptionsLoc,
