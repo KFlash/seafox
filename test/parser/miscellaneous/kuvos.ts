@@ -1,7 +1,9 @@
 import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
 
-describe('Miscellaneous - Failure', () => {
+// Tests from @kuvos / Tenko
+
+describe('Miscellaneous - Lexical', () => {
   for (const arg of [
     '{ async function f() {} var f; }',
     'let x; { var x; }',
