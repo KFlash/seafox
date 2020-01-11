@@ -152,7 +152,6 @@ export function parseBinaryExpression(
 ): any {
   let t: Token;
   let right: ESTree.Expression;
-  let operator: ESTree.LogicalOperator;
 
   const prec =
     context & Context.DisallowIn ? 0b00000000000000000000111100000000 : 0b00000000000000000000111100000000 << 4;
@@ -162,13 +161,11 @@ export function parseBinaryExpression(
 
     if ((t & prec) + (((t === Token.Exponentiate) as any) << 8) <= minPrec) return left;
 
-    if (((l | t) & 0b01000000100000000000000000000000) > 0b01000000000000000000000000000000) {
+    if (((l | t) & 0b01000000100000000000000000000000) > Token.IsCoalescing) {
       report(parser, Errors.InvalidCoalescing);
     }
 
     nextToken(parser, context, /* allowRegExp */ 1);
-
-    operator = KeywordDescTable[t & 0b00000000000000000000000011111111] as ESTree.LogicalOperator;
 
     right = parseBinaryExpression(
       parser,
@@ -190,7 +187,7 @@ export function parseBinaryExpression(
             type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
             right,
-            operator,
+            operator: KeywordDescTable[t & 0b00000000000000000000000011111111],
             start: curStart,
             end: parser.endIndex,
             loc: setLoc(parser, curLine, curColumn)
@@ -199,7 +196,7 @@ export function parseBinaryExpression(
             type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
             right,
-            operator
+            operator: KeywordDescTable[t & 0b00000000000000000000000011111111]
           };
   }
 }

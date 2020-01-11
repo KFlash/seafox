@@ -123,7 +123,7 @@ export function addVarName(
   let scope: any = curScope;
   let value: any;
 
-  while (scope && (scope.type & 0b00000000000000000000000010000000) === 0) {
+  do {
     value = scope['#' + name];
 
     if ((value & 0b00000000000000000000000011110100) > 0) {
@@ -146,7 +146,7 @@ export function addVarName(
     scope['#' + name] = kind;
 
     scope = scope.parent;
-  }
+  } while (scope && (scope.type & 0b00000000000000000000000010000000) === 0);
 }
 
 /**
