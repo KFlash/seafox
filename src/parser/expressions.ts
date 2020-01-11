@@ -207,8 +207,6 @@ export function parseBinaryExpression(
             operator
           };
   }
-
-  return left;
 }
 
 export function parseMemberExpression(
