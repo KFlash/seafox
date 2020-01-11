@@ -1951,7 +1951,7 @@ export function parseParenthesizedExpression(
         Token.RightParen,
         0,
         0,
-        0,
+        1,
         kind,
         origin,
         start,
