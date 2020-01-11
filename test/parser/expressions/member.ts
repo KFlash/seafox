@@ -11,8 +11,12 @@ describe('Expressions - Member', () => {
     'for (let[x in y] in y);',
     'for (let[x in y] in y);',
     'foo.bar.',
+    'a.[b].c().d.toString()',
+    'abc.£',
+    'abc???.£',
     'foo.|1.',
     'foo.123.',
+    'abc.123',
     'foo["bar"',
     'foo`bar',
     'foo[].bar'

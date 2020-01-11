@@ -3,6 +3,14 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Conditional', () => {
+  for (const arg of ['a ? await x : c', 'a ? b : await c', 'a ? b : yield c']) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
     [
       `foo?.3:0`,

@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Call', () => {
   for (const arg of [
@@ -39,7 +39,491 @@ describe('Expressions - Call', () => {
     });
   }
 
+  for (const arg of [
+    'async(a)(b)async',
+    '(a)(( async () => {}) => {})',
+    'async(async() () => {})(async() () => {})(y)(n)(c)', // crazy #1
+    'async(async() () => {})(async() () => {})(y)(n)(c)', // crazy #2
+    'async(async() () => {})(async() () => {})(async() () => {})(async() () => {})(async() () => {})' // crazy #3
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    `a()(a)`,
+    `async()()`,
+    `async(a)()`,
+    `async()(b)`,
+    `async(a)(b)`,
+    '...([1, 2, 3])',
+    "...'123', ...'456'",
+    '...new Set([1, 2, 3]), 4',
+    '1, ...[2, 3], 4',
+    '...Array(...[1,2,3,4])',
+    '...NaN',
+    "0, 1, ...[2, 3, 4], 5, 6, 7, ...'89'",
+    "0, 1, ...[2, 3, 4], 5, 6, 7, ...'89', 10",
+    "...[0, 1, 2], 3, 4, 5, 6, ...'7', 8, 9",
+    "...[0, 1, 2], 3, 4, 5, 6, ...'7', 8, 9, ...[10]"
+  ]) {
+    it(`function fn() { 'use strict';} fn(${arg});`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`function fn() { 'use strict';} fn(${arg});`);
+      });
+    });
+    it(`function fn() { } fn(${arg});`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`function fn() { } fn(${arg});`);
+      });
+    });
+  }
+
+  for (const arg of ['(...[1, 2, 3])', '......[1,2,3]']) {
+    it(`function fn() { 'use strict';} fn(${arg});`, () => {
+      t.throws(() => {
+        parseScript(`function fn() { 'use strict';} fn(${arg});`);
+      });
+    });
+
+    it(`function fn() { } fn(${arg});`, () => {
+      t.throws(() => {
+        parseScript(`function fn() { } fn(${arg});`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'foo(...[],);',
+    '(function(obj) {}(1, 2, 3, ...[]));',
+    'foo(x=1,y=x,x+y)',
+    'foo(x,x=1);',
+    'a.b( o.bar );',
+    'a.b( o["bar"] );',
+    'a.b( foo() );',
+    'a.b.c( foo() );',
+    'a.b( o.bar );',
+    'a.b( o["bar"] );',
+    'a().b',
+    'a.b( foo() );',
+    'a.b.c( foo() );',
+    'a.b( foo() );',
+    'a.b( c() ).d;',
+    'eval(...{}, "x = 0;");',
+    'foo()(1, 2, 3, ...{})',
+    'foo(...[],)',
+    '(function(obj) {}({a: 1, b: 2, ...{c: 3, d: 4}}));',
+    'a.b( c() ).d.e;',
+    'f();',
+    'a.b( o.bar );',
+    'a.b( o["bar"] );',
+    'a.b( foo() );',
+    'a.b.c( foo() );',
+    'a.b( foo() );',
+    'a.b( c() ).d;',
+    'eval(...{}, "x = 0;");',
+    'foo()(1, 2, 3, ...{})',
+    'foo(...[],)',
+    'foo(...[],);',
+    '(function(obj) {}(1, 2, 3, ...[]));',
+    'foo(x=1,y=x,x+y)',
+    'foo(x,x=1);',
+    'a.b( o.bar );',
+    'a.b( o["bar"] );',
+    'a.b( foo() );',
+    'a.b.c( foo() );',
+    'a.b( foo() );',
+    'a.b( c() ).d;',
+    'eval(...{}, "x = 0;");',
+    'foo()(1, 2, 3, ...{})',
+    'foo(...[],)',
+    '(function(obj) {}({a: 1, b: 2, ...{c: 3, d: 4}}));',
+    'a.b( c() ).d.e;',
+    'f();',
+    'g(a);',
+    'h(a, b);',
+    'i(a, b, ...c);',
+    'j(...a);',
+    'a.k();',
+    '(a + b).l();',
+    'a.m().n();',
+    'new A();',
+    'new A(a);',
+    'new a.B();',
+    'new a.b.C();',
+    'new (a().B)();',
+    'new new A()();',
+    'new (A, B)();',
+    'a.b( c() ).d.e((a)).f.g',
+    'a.b( c() ).d.e((a = 123)).f.g',
+    '(function(obj) {}({a: 1, b: 2, ...null}));',
+    '(function(obj) {}({a: 1, b: 2, ...null}));',
+    '(function(obj) {}({a: 1, b: 2, ...null}));',
+    '(function(obj) {}({...{b: 2}, a: 3}));',
+    "(function(obj) {}({...{a: 2, b: 3, c: 4, e: undefined, f: null, g: false}, a: 1, b: 7, d: 5, h: -0, i: Symbol('foo'), j: {a: 2, b: 3, c: 4, e: undefined, f: null, g: false}}));",
+    '(function(obj) {}({...undefined}));',
+    '(function(obj) {}(...target = [2, 3, 4]));',
+    `a(String, 2).v(123).length;`,
+    `a(b,c).abc(1).def`,
+    `a(b,c).abc(1)`,
+    `a(b,c).abc`,
+    `a(b,c)`,
+    `foo(bar, baz)`,
+    'async (...a, ...b);',
+    'async (...a, b);',
+    `(    foo  )()`,
+    `f(...a)`,
+    `f(...a, ...b)`,
+    `f(...a, ...b)`,
+    'f();',
+    'foo(...[1.1, 2.2, 3.3, 4.4, 5.5])',
+    'foo(...[1])',
+    'foo(...[1, 2, 3])',
+    'foo(...new Set([1]))',
+    'foo(...new Set([1, 2, 3, 4, 5, 6]))',
+    'foo(..."")',
+    'foo(...[])',
+    'foo(...new Set)',
+    'foo(...(function*() { })())',
+    'foo(...[1, 2, 3], 4)',
+    'foo(...new Set([1, 2, 3, 4]))',
+    `foo(...(function*() {
+      yield 1;
+      yield 2;
+      yield 3;
+      yield 4;
+    })())`,
+    'foo(0, ...[1], 2, 3, ...[4, 5], 6, 7, 8, ...[9])',
+    'foo(0, ...[1], 2, 3, ...[4, 5], 6, 7, 8)',
+    'foo.bar(...[1, 2, 3, 4, 5, 6])',
+    'foo.bar(...new Set([1, 2]))',
+    'foo.bar(..."")',
+    'foo(...(function*(){ yield 1; yield 2; yield 3; })())',
+    'foo(0, ...[1], 2, 3, ...[4, 5], 6, 7, 8, ...[9])',
+    'O.nested, O.nested["returnThis"](..."test")',
+    'foo.bar("tes", ..."t!!")',
+    'foo.bar(0, ...[1], 2, 3, ...[4, 5], 6, 7, 8, ...[9])',
+    'fn(...b(), d())',
+    'fn(a(), ...b())',
+    'fn(async(), ...b())',
+    'fn(a(), ...b(), ...c(), d(), e())',
+    'foo(1, ...[2], 3)',
+    'foo(...[1])',
+    'foo(0)',
+    'foo(NaN)',
+    'foo("")',
+    'foo(false)',
+    'foo({})',
+    'foo([])',
+    'foo(1, ...[2], 3)',
+    'foo(...a);',
+    '(async(...a, ...b))',
+    '(async(a, ...b))',
+    '(async(a, ...b = y))',
+    '(async(...b = y, d))',
+    '(async(...b = y, ...d))',
+    `foo();
+     foo("foo");
+     foo("foo", "bar");
+     foo(bar());
+     foo(bar("test"));`
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`, {
+          disableWebCompat: true
+        });
+      });
+    });
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`${arg}`);
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
+    [
+      `foo(x => ok).bar`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'CallExpression',
+                callee: {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 0,
+                  end: 3,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 3
+                    }
+                  }
+                },
+                arguments: [
+                  {
+                    type: 'ArrowFunctionExpression',
+                    body: {
+                      type: 'Identifier',
+                      name: 'ok',
+                      start: 9,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 9
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    params: [
+                      {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 4,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 4
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      }
+                    ],
+                    async: false,
+                    expression: true,
+                    start: 4,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  }
+                ],
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'bar',
+                start: 13,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              },
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `(async => {})[foo]`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'BlockStatement',
+                  body: [],
+                  start: 10,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                params: [
+                  {
+                    type: 'Identifier',
+                    name: 'async',
+                    start: 1,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  }
+                ],
+                async: false,
+                expression: false,
+                start: 1,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 14,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              start: 0,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
     [
       `foo(...new Set([1, 2, 3, 4]))`,
       Context.OptionsNext | Context.OptionsLoc,

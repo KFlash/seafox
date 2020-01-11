@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Compound assignment', () => {
   for (const arg of [
@@ -33,6 +33,51 @@ describe('Expressions - Compound assignment', () => {
     });
   }
 
+  for (const arg of [
+    `[a >>>= a];`,
+    `[a >>>= a += a];`,
+    `[a >>>= (a += a)];`,
+    `[a >>>= (a += (a))];`,
+    `[a >>>= a += {a}];`,
+    `[a >>>= a += {a}];`,
+    `[a >>>= a += a];`,
+    `([a += a] );`,
+    `([...a += a] );`,
+    `[a >>>= (a)];`,
+    `([...a += a += a += (a) >>>= 2]);`,
+    '[...a %= (a)];',
+    `obj.prop >>= 20;`,
+    `a |= 2;`,
+    `obj.prop &= 20;`,
+    'obj.len ^= 10;',
+    'var z = (x += 1);',
+    'var z = (x <<= 1);',
+    'x -= 1 ',
+    'y1 = (y %= 2);',
+    'y1 === -1',
+    'x *= "1";',
+    'x /= null;',
+    'x >>>= true;',
+    'if (scope.x !== 2) {}',
+    'x /= y',
+    'base[prop] /= expr();',
+    'x	>>=	1, 0',
+    'x	*=	-1',
+    '({a: a *= -1})',
+    '([a *= -1])',
+    '([(a *= -1)])'
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`${arg}`);
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
     [
       `([(a *= -1)])`,

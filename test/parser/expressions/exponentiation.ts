@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Exponentiation', () => {
   for (const arg of [
@@ -42,14 +42,65 @@ describe('Expressions - Exponentiation', () => {
     '!1 ** 2;',
     '(!3 ** 2)',
     '(+x ** 2)',
+    '(a * +a ** a ** 3)',
+    'for (var import.meta of [1]) {}',
     '(typeof 3 ** 2)',
     '(delete 3 ** 2)',
-    'delete 3 ** 2;',
-    '!1 ** 2;'
+    'delete 3 ** 2;'
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
         parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '(delete O.p) ** 10',
+    '(~O.p) ** 10',
+    '(~x) ** 10',
+    '(!O.p) ** 10',
+    '(!x) ** 10',
+    '(+O.p) ** 10',
+    '(+x) ** 10',
+    '(-O.p) ** 10',
+    'x ** y ** z',
+    '++x ** y',
+    '(-x) ** y',
+    '-(x ** y)',
+    '(-x) ** 10',
+    '(typeof O.p) ** 10',
+    '(typeof x) ** 10',
+    '(void 0) ** 10',
+    '(void O.p) ** 10',
+    '(void x) ** 10',
+    '2 ** ++exponent, 8',
+    '2 ** -1 * 2, 1',
+    '2 ** (3 ** 2)',
+    '2 ** 3 ** 2, 512',
+    '16 / 2 ** 2, 4',
+    '++O.p ** 10',
+    '++x ** 10',
+    '--O.p ** 10',
+    '--base ** 2',
+    '2 ** !s',
+    '2 ** +n',
+    '!(3 ** 2)',
+    '-(3 ** 2)',
+    '--x ** 10',
+    'O.p++ ** 10',
+    'x++ ** 10',
+    'O.p-- ** 10',
+    'x-- ** 10'
+  ]) {
+    it(`var O = { p: 1 }, x = 10; ; if (${arg}) { foo(); }`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`var O = { p: 1 }, x = 10; ; if (${arg}) { foo(); }`);
+      });
+    });
+    it(`var O = { p: 1 }, x = 10; ; if (${arg}) { foo(); }`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`var O = { p: 1 }, x = 10; ; if (${arg}) { foo(); }`);
       });
     });
   }

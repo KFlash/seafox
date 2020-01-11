@@ -39,6 +39,8 @@ describe('Declarations - Class', () => {
     ['class {}', Context.Empty],
     ['class extends base {}', Context.Empty],
     ['class name { *', Context.Empty],
+    ['class x {new: x}', Context.Empty],
+    ['class x extends new {}', Context.Empty],
     ['class A { async constructor() {} }', Context.Empty],
     ['class A { async get foo() {} }', Context.Empty],
     ['class A { async set foo() {} }', Context.Empty],
@@ -51,6 +53,10 @@ describe('Declarations - Class', () => {
     ['class x { static get prototype() {} }', Context.Empty],
     //['class x { 0123() {} }', Context.Empty],
     ['class x { static async get x(){} }', Context.Empty],
+    ['class x {    async * async f(){}    }', Context.Empty],
+    ['class x {    * * f(){}    }', Context.Empty],
+    ['class x {    async async f(){}    }', Context.Empty],
+    ['class x {    static static f(){}    }', Context.Empty],
     ['class x { method() { with ({}) {} } }', Context.Empty],
     ['class x { *method() { with ({}) {} } }', Context.Empty],
     ['class x { static set prototype(x) {} }', Context.Empty],
@@ -61,6 +67,7 @@ describe('Declarations - Class', () => {
     ['class x { method() { [super()] = []; } }', Context.Empty],
     ['class { method() { [super.x] = []; }}', Context.Empty],
     ['class { set constructor(_) {} }', Context.Empty],
+    ['class x { foo(x=new (await y)()){} }', Context.Empty],
     ['class { set constructor(...a) {} }', Context.Empty],
     ['class { get constructor() {} }', Context.Empty],
     ['class {  * constructor() { }', Context.Empty]
@@ -121,6 +128,662 @@ describe('Declarations - Class', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `class x {async new(){}}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'new',
+                    start: 15,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 20,
+                      end: 22,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 20
+                        },
+                        end: {
+                          line: 1,
+                          column: 22
+                        }
+                      }
+                    },
+                    async: true,
+                    generator: false,
+                    id: null,
+                    start: 18,
+                    end: 22,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 22
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 22
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 23,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 23
+          }
+        }
+      }
+    ],
+    [
+      `class x {* new(){}}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'new',
+                    start: 11,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 16,
+                      end: 18,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 16
+                        },
+                        end: {
+                          line: 1,
+                          column: 18
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: true,
+                    id: null,
+                    start: 14,
+                    end: 18,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 18
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
+
+    [
+      `class x{ constructor(){  (super.a) += 1;  }}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'constructor',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'constructor',
+                    start: 9,
+                    end: 20,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 20
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [
+                        {
+                          type: 'ExpressionStatement',
+                          expression: {
+                            type: 'AssignmentExpression',
+                            left: {
+                              type: 'MemberExpression',
+                              object: {
+                                type: 'Super',
+                                start: 26,
+                                end: 31,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 26
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 31
+                                  }
+                                }
+                              },
+                              computed: false,
+                              property: {
+                                type: 'Identifier',
+                                name: 'a',
+                                start: 32,
+                                end: 33,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 32
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 33
+                                  }
+                                }
+                              },
+                              start: 26,
+                              end: 33,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 26
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 33
+                                }
+                              }
+                            },
+                            operator: '+=',
+                            right: {
+                              type: 'Literal',
+                              value: 1,
+                              start: 38,
+                              end: 39,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 38
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 39
+                                }
+                              }
+                            },
+                            start: 25,
+                            end: 39,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 25
+                              },
+                              end: {
+                                line: 1,
+                                column: 39
+                              }
+                            }
+                          },
+                          start: 25,
+                          end: 40,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 25
+                            },
+                            end: {
+                              line: 1,
+                              column: 40
+                            }
+                          }
+                        }
+                      ],
+                      start: 22,
+                      end: 43,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 22
+                        },
+                        end: {
+                          line: 1,
+                          column: 43
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 20,
+                    end: 43,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 43
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 43,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 43
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 44,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 44
+                }
+              }
+            },
+            start: 0,
+            end: 44,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 44
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 44,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 44
+          }
+        }
+      }
+    ],
+    [
+      `class A {async [foo](){}}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'A',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: true,
+                  key: {
+                    type: 'Identifier',
+                    name: 'foo',
+                    start: 16,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 16
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 22,
+                      end: 24,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 22
+                        },
+                        end: {
+                          line: 1,
+                          column: 24
+                        }
+                      }
+                    },
+                    async: true,
+                    generator: false,
+                    id: null,
+                    start: 20,
+                    end: 24,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 24
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 24,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 24
+                    }
+                  }
+                }
+              ],
+              start: 8,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 25,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 25
+          }
+        }
+      }
+    ],
     [
       `class A { finally() {} }`,
       Context.OptionsLoc,

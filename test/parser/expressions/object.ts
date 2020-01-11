@@ -3,6 +3,165 @@ import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Object', () => {
+  for (const arg of [
+    '({x={}={}}),',
+    '({y={x={}={}={}={}={}={}={}={}}={}}),',
+    '({a=1, b=2, c=3, x=({}={})}),',
+    '({x=1, y={z={1}}})',
+    '({x=1} = {y=1});',
+    '({x: y={z=1}}={})',
+    '({x=1}),',
+    '({z={x=1}})=>{};',
+    '({x = ({y=1}) => y})',
+    '(({x=1})) => x',
+    '({e=[]}==(;',
+    '({x=1}[-1]);',
+    '({x=y}[-9])',
+    '({x=y}.x.z[-9])',
+    '({x=y}`${-9}`)',
+    '(new {x=y}(-9))',
+    'new {x=1}',
+    'new {x=1}={}',
+    'typeof {x=1}',
+    'typeof ({x=1})',
+    '({x=y, [-9]:0})',
+    '((({w = x} >(-9)',
+    '++({x=1})',
+    '--{x=1}',
+    '!{x=1}={}',
+    'delete {x=1}',
+    'delete ({x=1})',
+    'delete {x=1} = {}',
+    '({x=1}.abc)',
+    'x > (0, {a = b} );',
+    'var x = 0 + {a=1} = {}',
+    'let o = {x=1};',
+    'var j = {x=1};',
+    'var j = {x={y=1}}={};',
+    'const z = {x=1};',
+    'const z = {x={y=1}}={};',
+    'const {x=1};',
+    'const {x={y=33}}={};',
+    'var {x=1};',
+    'let {x=1};',
+    'let x, y, {z=1}={}, {w=2}, {e=3};',
+    '[{x=1, y = ({z=2} = {})}];',
+    "try {throw 'a';} catch ({x={y=1}}) {}",
+    'if ({k: 1, x={y=2}={}}) {}',
+    'if (false) {} else if (true) { ({x=1}) }',
+    "switch ('c') { case 'c': ({x=1}); }",
+    'for ({x=1}; 1;) {1}',
+    'for ({x={y=2}}; 1;) {1}',
+    'for (var x = 0; x < 2; x++) { ({x=1, y=2}) }',
+    'for (let x=1;{x=1};){}',
+    'for (let x=1;{x={y=2}};){}',
+    'for (let x=1;1;{x=1}){}',
+    'for (let x=1;1;{x={y=2}}){}',
+    'while ({x=1}) {1};',
+    'while ({x={y=2}}={}) {1};',
+    'with ({x=1}) {};',
+    'with ({x={y=3}={}}) {};',
+    'with (Math) { ({x=1}) };',
+    'true ? {x=1} : 1;',
+    'false ? 1 : {x=1};',
+    '{x=1} ? 2 : 3;'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '{ ...y }',
+    '{ a: 1, ...y }',
+    '{ b: 1, ...y }',
+    '{ y, ...y}',
+    '{ ...z = y}',
+    '{ ...y, y }',
+    '{ ...y, ...y}',
+    '{ a: 1, ...y, b: 1}',
+    '{ ...y, b: 1}',
+    '{ ...1}',
+    '{ ...null}',
+    '{ ...undefined}',
+    '{ ...1 in {}}',
+    '{ ...1 in {} ? a : []}',
+    '{ ...1 ? {} : []}',
+    '{ ...[]}',
+    '{ ...async function() { }}',
+    '{ ...async () => { }}',
+    '{ ...new Foo()}',
+    '{[a]: {...a}}',
+    '{ [a]: {} [a] }',
+    '{ [a]: {} = a }',
+    '{ [a]: {} + a }',
+    '{ [a]: {} /- a }',
+    '{ [a]: {} ? a : b }',
+    '{ [a]: [] [a] }',
+    '{ [a]: [] = a }',
+    '{ [a]: [] + a }',
+    '{ [a]: [] /- a }',
+    '{ [a]: [] ? a : b }',
+    '{ a: [] + a }',
+    '{ a: [] /- a }',
+    '{ a: [] ? a : b }',
+    '{ "a": [] + a }',
+    '{ "a": [] /- a }',
+    '{ a: [([] ? a : b.c[d])] / 2 }',
+    'x = { a: { "a": { "a": [] ? a : b } } }',
+    'x = { a: {x} = y }',
+    'x = { a: {x} = y.z }',
+    'x = { a: [x] = y.z }',
+    'x = { [a]: { "a": { "a": [] ? a : b } } }',
+    'x = { [a]: {x} = y }',
+    'x = { [a]: {x} = y.z }',
+    'x = { [a]: [x] = y.z }',
+    '{ "a": [([] ? a : b.c[d])] / 2 }',
+    'x = { "a": { "a": { "a": [] ? a : b } } }',
+    'x = { "a": {x} = y }',
+    'x = { "a": {x} = y.z }',
+    'x = { "a": [x] = y.z }',
+    '(x = { a: {x} = y }) / y.z',
+    '(x = { a: x = y }) / y.z',
+    '(x = { a: (x) = y }) / y.z',
+    '(x = { a: x = (y) }) / y.z',
+    '(x = { a: (x = (y)) }) / y.z',
+    '(x = { "a": {x} = y }) / y.z',
+    '(x = { "a": x = y }) / y.z',
+    '(x = { "a": (x) = y }) / y.z',
+    '(x = { "a": x = (y) }) / y.z',
+    '(x = { "a": (x = (y)) }) / y.z',
+    '(x = { [a]: {x} = y }) / y.z',
+    '(x = { [a]: x = y }) / y.z',
+    '(x = { [a]: (x) = y }) / y.z',
+    '(x = { [a]: x = (y) }) / y.z',
+    '(x = { [a]: (x = (y)) }) / y.z',
+    'x = { "a": ([] ? a : b.c[d]) }',
+    'x = {"d": {}[d] += a}',
+    'x = {d: {}[d] += a}',
+    'x = {[d]: {}[d] += a}',
+    '{ "a": [] ? a : b.c[d] }',
+    '{ "a": [] ? a : b / 2 - 2}',
+    '{ "a": [] ? a : b }',
+    '{d: {}[d] += a}',
+    '{"string": {}[d] += a}',
+    '{["d"]: {}[d] += a}',
+    '{[d]: {}[d] += a}',
+    '{"d": {}[d] += a}',
+    '{"d": {}[x ? y : z] += a}',
+    '{d: {}[x ? y : z] += a}',
+    '{ b: c.d === e ? f : g }',
+    '{ "b": c.d === e ? f : g }',
+    '{ [b]: c.d === e ? f : g }'
+  ]) {
+    it(`'use strict'; x = ${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`x = ${arg}`);
+      });
+    });
+  }
   for (const [source, ctx] of [
     ['({y={x={}={}={}={}={}={}={}={}}={}}),', Context.Empty],
     ['({a=1, b=2, c=3, x=({}={})}),', Context.Empty],
@@ -456,6 +615,140 @@ describe('Expressions - Object', () => {
           impliedStrict: ((ctx as any) & Context.Strict) !== 0,
           module: ((ctx as any) & Context.Module) !== 0
         });
+      });
+    });
+  }
+
+  for (const arg of [
+    'async ()=>x',
+    'class{}',
+    'delete x.y',
+    'false',
+    'function(){}',
+    'new x',
+    'null',
+    'true',
+    'this',
+    'typeof x',
+    'void x',
+    'x + y',
+    '[].length',
+    '[x].length',
+    '{}.length',
+    '{x: y}.length'
+  ]) {
+    it(`({${arg}} = x);`, () => {
+      t.throws(() => {
+        parseScript(`({${arg}} = x);`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'x: 1, x() {}',
+    'x() {}, x: 1',
+    'x() {}, get x() {}',
+    'x() {}, set x(_) {}',
+    'x() {}, x() {}',
+    'x() {}, y() {}, x() {}',
+    'x() {}, "x"() {}',
+    "x() {}, 'x'() {}",
+    '1.0() {}, 1: 1',
+    'x: 1, *x() {}',
+    '*x() {}, x: 1',
+    '*x() {}, get x() {}',
+    '*x() {}, set x(_) {}',
+    '*x() {}, *x() {}',
+    '*x() {}, y() {}, *x() {}',
+    '*x() {}, *"x"() {}',
+    "*x() {}, *'x'() {}",
+    '*1.0() {}, 1: 1'
+  ]) {
+    it(`"use strict"; ({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`"use strict";  ({ ${arg} });`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'x: 1, x() {}',
+    'x() {}, x: 1',
+    'x() {}, get x() {}',
+    'x() {}, set x(_) {}',
+    'x() {}, x() {}',
+    'x() {}, y() {}, x() {}',
+    'x() {}, "x"() {}',
+    "x() {}, 'x'() {}",
+    '1.0() {}, 1: 1',
+    'x: 1, *x() {}',
+    '*x() {}, x: 1',
+    '*x() {}, get x() {}',
+    '*x() {}, set x(_) {}',
+    '*x() {}, *x() {}',
+    '*x() {}, y() {}, *x() {}',
+    '*x() {}, *"x"() {}',
+    "*x() {}, *'x'() {}",
+    '*1.0() {}, 1: 1'
+  ]) {
+    it(`"use strict"; ({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`"use strict";  ({ ${arg} });`);
+      });
+    });
+    it(`"use strict"; ({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`"use strict";  ({ ${arg} });`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'break',
+    'case',
+    'catch',
+    'class',
+    'const',
+    'continue',
+    'debugger',
+    'default',
+    'delete',
+    'do',
+    'else',
+    'export',
+    'extends',
+    'finally',
+    'for',
+    'function',
+    'if',
+    'import',
+    'in',
+    'instanceof',
+    'new',
+    'return',
+    'super',
+    'switch',
+    'this',
+    'throw',
+    'try',
+    'typeof',
+    'var',
+    'void',
+    'while',
+    'with',
+    'null',
+    'true',
+    'false',
+    'enum'
+  ]) {
+    it(`({foo: ${arg}}) => null`, () => {
+      t.throws(() => {
+        parseScript(`({foo: ${arg}}) => null`);
+      });
+    });
+    it(`({foo: ${arg}}) => null`, () => {
+      t.throws(() => {
+        parseModule(`({foo: ${arg}}) => null`);
       });
     });
   }

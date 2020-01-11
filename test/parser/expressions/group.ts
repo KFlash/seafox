@@ -4,6 +4,60 @@ import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Group', () => {
   for (const arg of [
+    'break',
+    'case',
+    'catch',
+    'class',
+    'const',
+    'continue',
+    'debugger',
+    'default',
+    'delete',
+    'do',
+    'else',
+    'export',
+    'extends',
+    'finally',
+    'for',
+    'function',
+    'if',
+    'import',
+    'in',
+    'instanceof',
+    'new',
+    'return',
+    'super',
+    'switch',
+    'this',
+    'throw',
+    'try',
+    'typeof',
+    'var',
+    'void',
+    'while',
+    'with',
+    'null',
+    'true',
+    'false' /*'enum',*/
+  ]) {
+    it(`should fail on '(${arg}) = foo'`, () => {
+      t.throws(() => {
+        parseScript(`(${arg}) = foo`);
+      });
+    });
+    it(`should fail on '(${arg}) = foo'`, () => {
+      t.throws(() => {
+        parseModule(`(${arg}) = foo`);
+      });
+    });
+    it(`foo = { get x(){  "use strict"; ( ${arg} = "sentinal 79845134");   }}`, () => {
+      t.throws(() => {
+        parseScript(`foo = { get x(){  "use strict"; ( ${arg} = "sentinal 79845134");   }}`);
+      });
+    });
+  }
+
+  for (const arg of [
     '(a,b+=2',
     '(a,b)+=2',
     '(a[b],c)+=2',
@@ -115,11 +169,16 @@ describe('Expressions - Group', () => {
     '(...[a) = a',
     '(...a) = a',
     '(a,b)=(c,d);',
+    '(a,,) = x',
+    '(a,,)',
     '({a = 0});',
     '({a} += 0);',
     '({a,,} = 0)',
     '({,a,} = 0)',
     '({a, ...b, c} = {})',
+    '( break ) = x',
+    '( catch ) = x',
+    '( continue ) = x',
     '({a = 5})',
     '({ ...{a} } = {})',
     '({b, c, d, ...{a} } = {})',
@@ -141,6 +200,10 @@ describe('Expressions - Group', () => {
     '"use strict"; (a, arguments) => {}',
     '({var} = 0)',
     '({a.b} = 0)',
+    '({key: new})',
+    '( new ) = x',
+    '({key: new} = null)',
+    '({new x} = x);',
     '({0} = 0)',
     '(a=1)=2',
     '(a=1)+=2',
@@ -360,6 +423,7 @@ describe('Expressions - Group', () => {
     '(a = b) = c;',
     '`a`++;',
     '`a` = b;',
+    '({key: new} = null)',
     '(`a`) => b;',
     'for (`a` of b);',
     '(default = "sentinal 453543")',
@@ -372,22 +436,40 @@ describe('Expressions - Group', () => {
         parseScript(`${arg}`);
       });
     });
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`, {
+          disableWebCompat: true
+        });
+      });
+    });
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseModule(`${arg}`);
+      });
+    });
   }
 
   for (const arg of [
     '([...[]] = x);',
     '({...[].x} = x);',
+    '({...a[x]} = x);',
     '({...[({...[].x} = x)].x} = x);',
     '({...a.x} = x);',
     '({...x.x, y})',
     '({...x.x = y, y})',
     '({...x = y, y})',
+    '({x: y.z} = b)',
+    '(foo /=g/m.x);',
+    '([void /=g/m.x]);',
+    '([delete /a/.x]);',
     '([x.y = a] = z)',
     '([x.y = a] = ([x.y = a] = ([x.y = a] = z)))',
     '({..."x".x} = x);',
     '({...{}.x} = x);',
     '([...[].x] = x);',
     '([...[([...[].x] = x)].x] = x);',
+    '({s: "foo".foo} = x)',
     '([...{}.x] = x);',
     '({..."x"[x]} = x);',
     '({...[][x]} = x);',
@@ -401,6 +483,11 @@ describe('Expressions - Group', () => {
     '([...{}[x]] = x);',
     '([...{}[x]] = "x");',
     '({...{b: 0}.x} = {});',
+    '({a: (b).c} = [2])',
+    '({"x": 600..xyz} = x)',
+    'x={..."foo".foo=x}',
+    '({"foo": {x}.foo}=y)',
+    '({"foo": 15..foo}=y)',
     '({...[0].x} = {});',
     '({...{b: 0}[x]} = {});',
     '({...[0][x]} = {});',
@@ -415,8 +502,71 @@ describe('Expressions - Group', () => {
         parseScript(`${arg}`, { impliedStrict: true });
       });
     });
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`${arg}`, { impliedStrict: true });
+      });
+    });
   }
 
+  for (const arg of [
+    'let',
+    'implements',
+    'package',
+    'protected',
+    'interface',
+    'private',
+    'public',
+    'yield',
+    // special non-keywords
+    'static',
+    'eval',
+    'arguments'
+  ]) {
+    it(`should fail on '(${arg} = foo )'`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; (${arg} = foo)`);
+      });
+      t.throws(() => {
+        parseModule(`(${arg} = foo)`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'async ()=>x',
+    'await foo',
+    'class{}',
+    'delete x.x',
+    'false',
+    'function(){}',
+    'new x',
+    'null',
+    'super',
+    'true',
+    'this',
+    'typeof x',
+    'void x',
+    'yield x',
+    'x + y',
+    '[].length',
+    '[x].length',
+    '{}.length',
+    '{x}.length',
+    '{x: y}.length'
+  ]) {
+    it(`should fail on '(${arg})=> y'`, () => {
+      t.throws(() => {
+        parseScript(`(${arg})=> y`);
+      });
+      t.throws(() => {
+        parseScript(`async (${arg})=> y`);
+      });
+      t.throws(() => {
+        parseModule(`async (${arg})=> y`);
+      });
+    });
+  }
   for (const arg of [
     '(a,b+=2',
     '(a,b)+=2',
@@ -434,13 +584,24 @@ describe('Expressions - Group', () => {
     '(a, b) = c',
     '(,,)',
     '(,) = x',
+    '(,)',
+    '( x + y ) = x',
     '(,,) = x',
     '(a,) = x',
     '(a,b,) = x',
     '(a = b,) = x',
+    '( new x ) = x',
+    '( this ) = x',
+    '( this ) => {}',
+    '( true ) => {}',
+    '(...a,)',
     '(...a,) = x',
     '([x],) = x',
     '({a},) = x',
+    '( yield x )',
+    '([x] = y,)',
+    '([x] = y,)',
+    '({a} = b,)',
     '(...a = x,) = x',
     '({a} = b,) = x',
     '(a, 1, "c", d, e, f) => x;',
@@ -630,6 +791,91 @@ describe('Expressions - Group', () => {
       }
     ],
     [
+      `( await ) = x`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'await',
+                start: 2,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'x',
+                start: 12,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              start: 0,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
       `[(a), b] = [];`,
       Context.OptionsLoc,
       {
@@ -743,6 +989,176 @@ describe('Expressions - Group', () => {
           end: {
             line: 1,
             column: 14
+          }
+        }
+      }
+    ],
+    [
+      `( [].length )`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 2,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'length',
+                start: 5,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              start: 2,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `( {}.length )`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ObjectExpression',
+                properties: [],
+                start: 2,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'length',
+                start: 5,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              start: 2,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
           }
         }
       }
@@ -2516,6 +2932,219 @@ describe('Expressions - Group', () => {
           end: {
             line: 1,
             column: 17
+          }
+        }
+      }
+    ],
+    [
+      `(a.b().c().d) += 1;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'CallExpression',
+                      callee: {
+                        type: 'MemberExpression',
+                        object: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 1,
+                          end: 2,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 1
+                            },
+                            end: {
+                              line: 1,
+                              column: 2
+                            }
+                          }
+                        },
+                        computed: false,
+                        property: {
+                          type: 'Identifier',
+                          name: 'b',
+                          start: 3,
+                          end: 4,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 3
+                            },
+                            end: {
+                              line: 1,
+                              column: 4
+                            }
+                          }
+                        },
+                        start: 1,
+                        end: 4,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 1
+                          },
+                          end: {
+                            line: 1,
+                            column: 4
+                          }
+                        }
+                      },
+                      arguments: [],
+                      start: 1,
+                      end: 6,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 6
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 7,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  arguments: [],
+                  start: 1,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'd',
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                start: 1,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '+=',
+              right: {
+                type: 'Literal',
+                value: 1,
+                start: 17,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              start: 0,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
           }
         }
       }

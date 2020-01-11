@@ -234,11 +234,13 @@ describe('Statements - For in', () => {
     [`for ({}.x);`, Context.Empty],
     ['for(const let in 0);', Context.Empty],
     ['for(let let of 0);', Context.Empty],
+    ['for (new.target in x) ;', Context.Empty],
     ['for((0) of 0);', Context.Empty],
     ['for((0) in 0);', Context.Empty],
     ['for(([0]) in 0);', Context.Empty],
     ['for(({a: 0}) in 0);', Context.Empty],
     ['for(0 in 0);', Context.Empty],
+    ['for (new x in x) ;', Context.Empty],
     ['for ({p: x = 0} = 0 in {});', Context.Empty],
     ['for ({p: x = 0} = 0 in {});', Context.Empty],
     ['for ({p: x = 0} = 0 in {});', Context.Empty]
@@ -302,6 +304,138 @@ describe('Statements - For in', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `for ({}[b] in c) d;`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'Identifier',
+                name: 'd',
+                start: 17,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              start: 17,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ObjectExpression',
+                properties: [],
+                start: 5,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'b',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              start: 7,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 14,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
     [
       `for (var interface in y);`,
       Context.OptionsLoc,

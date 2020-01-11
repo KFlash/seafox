@@ -39,6 +39,14 @@ describe('Expressions - Arrow', () => {
     ['async a => let {a}', Context.OptionsDisableWebCompat],
     ['([a,b,c]) => { const c = x; }', Context.Empty],
     ['let => { let let }', Context.Empty],
+    ['new (x, y) => ok', Context.Empty],
+    ['new async => {}', Context.Empty],
+    ['new async => ok', Context.Empty],
+    ['new x => {}', Context.Empty],
+    ['new x => ok', Context.Empty],
+    ['([x],) => x', Context.Empty],
+    ['({a},) => x', Context.Empty],
+    ['({new x}) => x;', Context.Empty],
     ['const let => { let }', Context.Empty],
     ['var logger = a,b => console.log(a);', Context.Empty],
     [
@@ -46,6 +54,7 @@ describe('Expressions - Arrow', () => {
     =>{}`,
       Context.Empty
     ],
+    ['({key: new}) => null', Context.Empty],
     ['var a = (b) =>', Context.Empty],
     ['(a, a) => {}', Context.Empty],
     ['(a, b, a) => {}', Context.Empty],
@@ -6815,6 +6824,142 @@ describe('Expressions - Arrow', () => {
       }
     ],
     [
+      `(x, y) => ok.x`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'Identifier',
+                  name: 'ok',
+                  start: 10,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 13,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                start: 10,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 1,
+                  end: 2,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 2
+                    }
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'y',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                }
+              ],
+              async: false,
+              expression: true,
+              start: 0,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
       `(a,b,...c) => 0 + 1`,
       Context.OptionsLoc,
       {
@@ -11091,6 +11236,94 @@ describe('Expressions - Arrow', () => {
           end: {
             line: 1,
             column: 46
+          }
+        }
+      }
+    ],
+    [
+      `( arguments ) => {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 17,
+                end: 19,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 17
+                  },
+                  end: {
+                    line: 1,
+                    column: 19
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'arguments',
+                  start: 2,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              async: false,
+              expression: false,
+              start: 0,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
           }
         }
       }
