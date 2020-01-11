@@ -44,6 +44,7 @@ describe('Expressions - Arrow', () => {
     ['new async => ok', Context.Empty],
     ['new x => {}', Context.Empty],
     ['new x => ok', Context.Empty],
+    ['( await foo ) => {}', Context.Empty],
     ['({new x}) => x;', Context.Empty],
     ['const let => { let }', Context.Empty],
     ['var logger = a,b => console.log(a);', Context.Empty],

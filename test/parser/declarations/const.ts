@@ -28,7 +28,6 @@ describe('Declarations - Const', () => {
     [`const while = 1;`, Context.Strict],
     [`const while = 1;`, Context.Strict],
     [`const while = 1;`, Context.Strict],
-
     [`const export = 1;`, Context.Empty],
     [`const if = 1;`, Context.Empty],
     [`const debugger = 1;`, Context.OptionsDisableWebCompat],
@@ -197,6 +196,393 @@ describe('Declarations - Const', () => {
   }
 
   for (const [source, ctx, expected] of [
+    [
+      `const obj = {  foo = 123, bar: x = 123, } = { foo: 24, bar: 45 };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'foo',
+                          start: 15,
+                          end: 18,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 15
+                            },
+                            end: {
+                              line: 1,
+                              column: 18
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'foo',
+                            start: 15,
+                            end: 18,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 15
+                              },
+                              end: {
+                                line: 1,
+                                column: 18
+                              }
+                            }
+                          },
+                          right: {
+                            type: 'Literal',
+                            value: 123,
+                            start: 21,
+                            end: 24,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 21
+                              },
+                              end: {
+                                line: 1,
+                                column: 24
+                              }
+                            }
+                          },
+                          start: 15,
+                          end: 24,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 15
+                            },
+                            end: {
+                              line: 1,
+                              column: 24
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 15,
+                        end: 24,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 24
+                          }
+                        }
+                      },
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'bar',
+                          start: 26,
+                          end: 29,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 26
+                            },
+                            end: {
+                              line: 1,
+                              column: 29
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'AssignmentPattern',
+                          left: {
+                            type: 'Identifier',
+                            name: 'x',
+                            start: 31,
+                            end: 32,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 31
+                              },
+                              end: {
+                                line: 1,
+                                column: 32
+                              }
+                            }
+                          },
+                          right: {
+                            type: 'Literal',
+                            value: 123,
+                            start: 35,
+                            end: 38,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 35
+                              },
+                              end: {
+                                line: 1,
+                                column: 38
+                              }
+                            }
+                          },
+                          start: 31,
+                          end: 38,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 31
+                            },
+                            end: {
+                              line: 1,
+                              column: 38
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 26,
+                        end: 38,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 26
+                          },
+                          end: {
+                            line: 1,
+                            column: 38
+                          }
+                        }
+                      }
+                    ],
+                    start: 12,
+                    end: 41,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 12
+                      },
+                      end: {
+                        line: 1,
+                        column: 41
+                      }
+                    }
+                  },
+                  operator: '=',
+                  right: {
+                    type: 'ObjectExpression',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'foo',
+                          start: 46,
+                          end: 49,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 46
+                            },
+                            end: {
+                              line: 1,
+                              column: 49
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Literal',
+                          value: 24,
+                          start: 51,
+                          end: 53,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 51
+                            },
+                            end: {
+                              line: 1,
+                              column: 53
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 46,
+                        end: 53,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 46
+                          },
+                          end: {
+                            line: 1,
+                            column: 53
+                          }
+                        }
+                      },
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'bar',
+                          start: 55,
+                          end: 58,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 55
+                            },
+                            end: {
+                              line: 1,
+                              column: 58
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Literal',
+                          value: 45,
+                          start: 60,
+                          end: 62,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 60
+                            },
+                            end: {
+                              line: 1,
+                              column: 62
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 55,
+                        end: 62,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 55
+                          },
+                          end: {
+                            line: 1,
+                            column: 62
+                          }
+                        }
+                      }
+                    ],
+                    start: 44,
+                    end: 64,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 44
+                      },
+                      end: {
+                        line: 1,
+                        column: 64
+                      }
+                    }
+                  },
+                  start: 12,
+                  end: 64,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 64
+                    }
+                  }
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'obj',
+                  start: 6,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                start: 6,
+                end: 64,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 64
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 65,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 65
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 65,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 65
+          }
+        }
+      }
+    ],
     [
       `const {public} = x;`,
       Context.OptionsLoc,
