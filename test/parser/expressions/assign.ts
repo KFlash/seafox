@@ -43,6 +43,47 @@ describe('Expressions - Assign', () => {
   for (const [source, ctx, expected] of [
     [
       `({a:(b) = c})`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'a'
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'b'
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'c'
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `({a:(b) = c})`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

@@ -380,6 +380,51 @@ describe('Statements - For of', () => {
     ],
     [
       `for ([ a = b = c ] of d) ;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForOfStatement',
+            body: {
+              type: 'EmptyStatement'
+            },
+            left: {
+              type: 'ArrayPattern',
+              elements: [
+                {
+                  type: 'AssignmentPattern',
+                  left: {
+                    type: 'Identifier',
+                    name: 'a'
+                  },
+                  right: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'b'
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'c'
+                    }
+                  }
+                }
+              ]
+            },
+            right: {
+              type: 'Identifier',
+              name: 'd'
+            },
+            await: false
+          }
+        ]
+      }
+    ],
+    [
+      `for ([ a = b = c ] of d) ;`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

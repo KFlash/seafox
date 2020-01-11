@@ -4794,6 +4794,45 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `(a = b, c) => {}`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: []
+              },
+              params: [
+                {
+                  type: 'AssignmentPattern',
+                  left: {
+                    type: 'Identifier',
+                    name: 'a'
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'b'
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'c'
+                }
+              ],
+              async: false,
+              expression: false
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `(a = b, c) => {}`,
       Context.OptionsLoc,
       {
         type: 'Program',
@@ -12741,6 +12780,42 @@ describe('Expressions - Arrow', () => {
     ],
     [
       `({})[x => x]`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ObjectExpression',
+                properties: []
+              },
+              computed: true,
+              property: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                params: [
+                  {
+                    type: 'Identifier',
+                    name: 'x'
+                  }
+                ],
+                async: false,
+                expression: true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `({})[x => x]`,
       Context.OptionsLoc,
       {
         type: 'Program',
@@ -15966,6 +16041,54 @@ describe('Expressions - Arrow', () => {
             column: 24
           }
         }
+      }
+    ],
+    [
+      `g => { try {}  catch (g) {} }`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [
+                  {
+                    type: 'TryStatement',
+                    block: {
+                      type: 'BlockStatement',
+                      body: []
+                    },
+                    handler: {
+                      type: 'CatchClause',
+                      param: {
+                        type: 'Identifier',
+                        name: 'g'
+                      },
+                      body: {
+                        type: 'BlockStatement',
+                        body: []
+                      }
+                    },
+                    finalizer: null
+                  }
+                ]
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'g'
+                }
+              ],
+              async: false,
+              expression: false
+            }
+          }
+        ]
       }
     ],
     [

@@ -436,6 +436,44 @@ describe('Expressions - Compound assignment', () => {
     ],
     [
       `[a >>>= (a += (a))];`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'a'
+                  },
+                  operator: '>>>=',
+                  right: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a'
+                    },
+                    operator: '+=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'a'
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `[a >>>= (a += (a))];`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

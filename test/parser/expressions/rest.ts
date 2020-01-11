@@ -187,6 +187,98 @@ describe('Expressions - Rest', () => {
     ],
     [
       `function multiElementWithInitializer(...{a: r = 0, b: s, c: t = 1}) {}`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'RestElement',
+                argument: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'a'
+                      },
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'r'
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: 0
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'b'
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 's'
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'c'
+                      },
+                      value: {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 't'
+                        },
+                        right: {
+                          type: 'Literal',
+                          value: 1
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false
+                    }
+                  ]
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: []
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'multiElementWithInitializer'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `function multiElementWithInitializer(...{a: r = 0, b: s, c: t = 1}) {}`,
       Context.OptionsLoc,
       {
         type: 'Program',

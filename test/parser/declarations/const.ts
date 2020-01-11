@@ -585,6 +585,49 @@ describe('Declarations - Const', () => {
     ],
     [
       `const {public} = x;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'const',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'public'
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'public'
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      `const {public} = x;`,
       Context.OptionsLoc,
       {
         type: 'Program',

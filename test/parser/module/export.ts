@@ -147,6 +147,17 @@ describe('Module - Export', () => {
     ['export class f{}; async function f(){};', Context.Empty],
     ['export async function f(){}; const f = foo;', Context.Empty],
     ['export var foo; export let foo;', Context.Empty],
+    ['export var [...foo, bar] = obj;', Context.Empty],
+    ['export var [...foo,,] = obj;', Context.Empty],
+    ['export var [...] = obj;', Context.Empty],
+    ['export var [.x] = obj;', Context.Empty],
+    ['export var [foo = x];', Context.Empty],
+    ['export var foo, [bar];', Context.Empty],
+    ['export var [foo];', Context.Empty],
+    ['export const [foo = x];', Context.Empty],
+    ['export const [foo], bar;', Context.Empty],
+    ['export var [..x] = obj;', Context.Empty],
+    ['export var [... ...foo] = obj;', Context.Empty],
     ['var a,b; export {b, a}; export {a};', Context.Empty],
     ['export default function(a){ let a; }', Context.Empty],
     ['export default function(a){ const a = 0; }', Context.Empty],
@@ -918,6 +929,35 @@ describe('Module - Export', () => {
             column: 39
           }
         }
+      }
+    ],
+    [
+      `export default class {} foo`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExportDefaultDeclaration',
+            declaration: {
+              type: 'ClassDeclaration',
+              id: null,
+              superClass: null,
+              body: {
+                type: 'ClassBody',
+                body: []
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Identifier',
+              name: 'foo'
+            }
+          }
+        ]
       }
     ],
     [

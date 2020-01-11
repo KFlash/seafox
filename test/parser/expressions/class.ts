@@ -1541,6 +1541,62 @@ describe('Expressions - Class', () => {
     ],
     [
       `class x{[x](a=await){}}`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x'
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: true,
+                  key: {
+                    type: 'Identifier',
+                    name: 'x'
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [
+                      {
+                        type: 'AssignmentPattern',
+                        left: {
+                          type: 'Identifier',
+                          name: 'a'
+                        },
+                        right: {
+                          type: 'Identifier',
+                          name: 'await'
+                        }
+                      }
+                    ],
+                    body: {
+                      type: 'BlockStatement',
+                      body: []
+                    },
+                    async: false,
+                    generator: false,
+                    id: null
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `class x{[x](a=await){}}`,
       Context.OptionsLoc,
       {
         type: 'Program',
@@ -9893,6 +9949,53 @@ describe('Expressions - Class', () => {
             column: 25
           }
         }
+      }
+    ],
+    [
+      `(class A {static get "foo"(){}})`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ClassExpression',
+              id: {
+                type: 'Identifier',
+                name: 'A'
+              },
+              superClass: null,
+              body: {
+                type: 'ClassBody',
+                body: [
+                  {
+                    type: 'MethodDefinition',
+                    kind: 'get',
+                    static: true,
+                    computed: false,
+                    key: {
+                      type: 'Literal',
+                      value: 'foo'
+                    },
+                    value: {
+                      type: 'FunctionExpression',
+                      params: [],
+                      body: {
+                        type: 'BlockStatement',
+                        body: []
+                      },
+                      async: false,
+                      generator: false,
+                      id: null
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
       }
     ],
     [

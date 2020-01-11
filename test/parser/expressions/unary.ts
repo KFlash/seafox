@@ -923,6 +923,45 @@ describe('Expressions - Unary', () => {
     ],
     [
       `delete (a, b).c`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'UnaryExpression',
+              operator: 'delete',
+              argument: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'SequenceExpression',
+                  expressions: [
+                    {
+                      type: 'Identifier',
+                      name: 'a'
+                    },
+                    {
+                      type: 'Identifier',
+                      name: 'b'
+                    }
+                  ]
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'c'
+                }
+              },
+              prefix: true
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `delete (a, b).c`,
       Context.OptionsLoc,
       {
         type: 'Program',

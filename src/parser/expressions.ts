@@ -922,8 +922,6 @@ export function parsePrimaryExpression(
         report(parser, Errors.StrictEvalArguments);
       }
 
-      if (!isValidIdentifier(context, token)) report(parser, Errors.Unexpected);
-
       return parseAsyncArrowIdentifier(
         parser,
         context,

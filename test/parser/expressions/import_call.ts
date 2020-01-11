@@ -42,6 +42,50 @@ describe('Expressions - Import call', () => {
   for (const [source, ctx, expected] of [
     [
       `let f = () => { import("foo"); };`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'VariableDeclaration',
+            kind: 'let',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                init: {
+                  type: 'ArrowFunctionExpression',
+                  body: {
+                    type: 'BlockStatement',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: {
+                          type: 'ImportExpression',
+                          source: {
+                            type: 'Literal',
+                            value: 'foo'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  params: [],
+                  async: false,
+                  expression: false
+                },
+                id: {
+                  type: 'Identifier',
+                  name: 'f'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      `let f = () => { import("foo"); };`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

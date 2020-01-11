@@ -61,6 +61,11 @@ describe('Expressions - Async arrow', () => {
     => x`,
       Context.Empty
     ],
+    ['async x => for = 1', Context.Empty],
+    ['async x => if = 1', Context.Empty],
+    ['async x => await = 1', Context.Empty],
+    ['async x => break = 1', Context.Empty],
+    ['async x => (while) = 1', Context.Empty],
     ['async a?c:d=>{}=>{};', Context.Empty],
     ['async(...a)`template-head${c}`=>{}', Context.Empty],
     ['async(...a)?c:d=>{}=>{};', Context.Empty],
@@ -409,6 +414,50 @@ describe('Expressions - Async arrow', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `async g => (x = [await y])`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'AssignmentExpression',
+                left: {
+                  type: 'Identifier',
+                  name: 'x'
+                },
+                operator: '=',
+                right: {
+                  type: 'ArrayExpression',
+                  elements: [
+                    {
+                      type: 'AwaitExpression',
+                      argument: {
+                        type: 'Identifier',
+                        name: 'y'
+                      }
+                    }
+                  ]
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'g'
+                }
+              ],
+              async: true,
+              expression: true
+            }
+          }
+        ]
+      }
+    ],
     [
       `async (a = yield) => x`,
       Context.OptionsLoc,

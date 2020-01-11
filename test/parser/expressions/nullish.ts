@@ -28,6 +28,39 @@ describe('Next - Nullish Coalesce', () => {
   for (const [source, ctx, expected] of [
     [
       `a ?? b ?? c`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'LogicalExpression',
+                left: {
+                  type: 'Identifier',
+                  name: 'a'
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'b'
+                },
+                operator: '??'
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c'
+              },
+              operator: '??'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `a ?? b ?? c`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

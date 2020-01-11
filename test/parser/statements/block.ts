@@ -539,6 +539,30 @@ describe('Statements - Block', () => {
     ],
     [
       `{}[];;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'BlockStatement',
+            body: []
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrayExpression',
+              elements: []
+            }
+          },
+          {
+            type: 'EmptyStatement'
+          }
+        ]
+      }
+    ],
+    [
+      `{}[];;`,
       Context.OptionsLoc,
       {
         type: 'Program',

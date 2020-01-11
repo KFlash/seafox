@@ -14,6 +14,34 @@ describe('Expressions - Conditional', () => {
   for (const [source, ctx, expected] of [
     [
       `foo?.3:0`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'Identifier',
+                name: 'foo'
+              },
+              consequent: {
+                type: 'Literal',
+                value: 0.3
+              },
+              alternate: {
+                type: 'Literal',
+                value: 0
+              }
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `foo?.3:0`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

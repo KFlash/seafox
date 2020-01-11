@@ -628,6 +628,50 @@ describe('Next - Optional chaining', () => {
     ],
     [
       `(obj?.foo).bar++`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'ChainingExpression',
+                  base: {
+                    type: 'Identifier',
+                    name: 'obj'
+                  },
+                  chain: [
+                    {
+                      type: 'MemberChain',
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'foo'
+                      },
+                      optional: true
+                    }
+                  ]
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'bar'
+                }
+              },
+              operator: '++',
+              prefix: false
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `(obj?.foo).bar++`,
       Context.OptionsLoc,
       {
         type: 'Program',
@@ -943,6 +987,78 @@ describe('Next - Optional chaining', () => {
             column: 18
           }
         }
+      }
+    ],
+    [
+      `class Foo extends Base { method() { super.method?.(); } }`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'Foo'
+            },
+            superClass: {
+              type: 'Identifier',
+              name: 'Base'
+            },
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: false,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'method'
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [
+                        {
+                          type: 'ExpressionStatement',
+                          expression: {
+                            type: 'ChainingExpression',
+                            base: {
+                              type: 'MemberExpression',
+                              object: {
+                                type: 'Super'
+                              },
+                              computed: false,
+                              property: {
+                                type: 'Identifier',
+                                name: 'method'
+                              }
+                            },
+                            chain: [
+                              {
+                                type: 'CallChain',
+                                arguments: [],
+                                optional: true
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    async: false,
+                    generator: false,
+                    id: null
+                  }
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     [

@@ -446,6 +446,23 @@ describe('Statements - Throw', () => {
     ],
     [
       `throw foo;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ThrowStatement',
+            argument: {
+              type: 'Identifier',
+              name: 'foo'
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `throw foo;`,
       Context.OptionsNext | Context.OptionsLoc,
       {
         type: 'Program',

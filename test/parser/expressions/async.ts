@@ -125,6 +125,50 @@ describe('Expressions - Async', () => {
   for (const [source, ctx, expected] of [
     [
       `async x => delete ("x"[(await x)])`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'UnaryExpression',
+                operator: 'delete',
+                argument: {
+                  type: 'MemberExpression',
+                  object: {
+                    type: 'Literal',
+                    value: 'x'
+                  },
+                  computed: true,
+                  property: {
+                    type: 'AwaitExpression',
+                    argument: {
+                      type: 'Identifier',
+                      name: 'x'
+                    }
+                  }
+                },
+                prefix: true
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              ],
+              async: true,
+              expression: true
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `async x => delete ("x"[(await x)])`,
       Context.OptionsLoc,
       {
         type: 'Program',
@@ -516,6 +560,59 @@ describe('Expressions - Async', () => {
             column: 26
           }
         }
+      }
+    ],
+    [
+      `function* g() {(async((a = (yield (b)))));}`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'Identifier',
+                      name: 'async'
+                    },
+                    arguments: [
+                      {
+                        type: 'AssignmentExpression',
+                        left: {
+                          type: 'Identifier',
+                          name: 'a'
+                        },
+                        operator: '=',
+                        right: {
+                          type: 'YieldExpression',
+                          argument: {
+                            type: 'Identifier',
+                            name: 'b'
+                          },
+                          delegate: false
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'g'
+            }
+          }
+        ]
       }
     ],
     [

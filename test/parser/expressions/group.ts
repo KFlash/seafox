@@ -262,9 +262,9 @@ describe('Expressions - Group', () => {
     '([{x = y}])',
     '([{x = y}].z)',
     '([{x = y}].z = obj)',
-    '([{x = y}.z])',
     '([{x = y}.z] = obj)',
     '([{x = y}].z) => obj',
+    '[{x = y}] => z',
     '([{x = y}]).z',
     '[{x = y}]',
     '([{x = y}.z])',
@@ -342,7 +342,6 @@ describe('Expressions - Group', () => {
     'x = {x: 15.foo()} = x',
     '((x={15: (await foo)}) => x',
     '(x, ...);',
-    '({ident: [foo, bar] += x})',
     '({ident: [foo, bar] += x})',
     '({...{x} }) => {}',
     '({...(x) }) => {}',
@@ -946,125 +945,127 @@ describe('Expressions - Group', () => {
       `( true )`,
       Context.OptionsLoc,
       {
-        "type": "Program",
-        "sourceType": "script",
-        "body": [
-            {
-                "type": "ExpressionStatement",
-                "expression": {
-                    "type": "Literal",
-                    "value": true,
-                    "start": 2,
-                    "end": 6,
-                    "loc": {
-                        "start": {
-                            "line": 1,
-                            "column": 2
-                        },
-                        "end": {
-                            "line": 1,
-                            "column": 6
-                        }
-                    }
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Literal',
+              value: true,
+              start: 2,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
                 },
-                "start": 0,
-                "end": 8,
-                "loc": {
-                    "start": {
-                        "line": 1,
-                        "column": 0
-                    },
-                    "end": {
-                        "line": 1,
-                        "column": 8
-                    }
+                end: {
+                  line: 1,
+                  column: 6
                 }
-            }
-        ],
-        "start": 0,
-        "end": 8,
-        "loc": {
-            "start": {
-                "line": 1,
-                "column": 0
+              }
             },
-            "end": {
-                "line": 1,
-                "column": 8
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
             }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
         }
-    }],
+      }
+    ],
     [
       `( function(){} )`,
       Context.OptionsLoc,
       {
-        "type": "Program",
-        "sourceType": "script",
-        "body": [
-            {
-                "type": "ExpressionStatement",
-                "expression": {
-                    "type": "FunctionExpression",
-                    "params": [],
-                    "body": {
-                        "type": "BlockStatement",
-                        "body": [],
-                        "start": 12,
-                        "end": 14,
-                        "loc": {
-                            "start": {
-                                "line": 1,
-                                "column": 12
-                            },
-                            "end": {
-                                "line": 1,
-                                "column": 14
-                            }
-                        }
-                    },
-                    "async": false,
-                    "generator": false,
-                    "id": null,
-                    "start": 2,
-                    "end": 14,
-                    "loc": {
-                        "start": {
-                            "line": 1,
-                            "column": 2
-                        },
-                        "end": {
-                            "line": 1,
-                            "column": 14
-                        }
-                    }
-                },
-                "start": 0,
-                "end": 16,
-                "loc": {
-                    "start": {
-                        "line": 1,
-                        "column": 0
-                    },
-                    "end": {
-                        "line": 1,
-                        "column": 16
-                    }
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'FunctionExpression',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 12,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
                 }
-            }
-        ],
-        "start": 0,
-        "end": 16,
-        "loc": {
-            "start": {
-                "line": 1,
-                "column": 0
+              },
+              async: false,
+              generator: false,
+              id: null,
+              start: 2,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
             },
-            "end": {
-                "line": 1,
-                "column": 16
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
             }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
         }
-    }],
+      }
+    ],
     [
       `(async ({a = 1, b, ...c}) => 1)`,
       Context.OptionsLoc,

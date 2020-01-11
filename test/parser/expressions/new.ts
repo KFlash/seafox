@@ -135,6 +135,30 @@ describe('Expressions - New', () => {
   for (const [source, ctx, expected] of [
     [
       'new (import(x));',
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'NewExpression',
+              callee: {
+                type: 'ImportExpression',
+                source: {
+                  type: 'Identifier',
+                  name: 'x'
+                }
+              },
+              arguments: []
+            }
+          }
+        ]
+      }
+    ],
+    [
+      'new (import(x));',
       Context.OptionsLoc,
       {
         type: 'Program',

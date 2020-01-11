@@ -31,7 +31,6 @@ describe('Statements - For in', () => {
     ['for (const [foo] = arr, bar = arr2);', Context.Empty],
     ['for (const {x} = a, obj;;);', Context.Empty],
     ['for (const foo, [bar] = arr2;;);', Context.Empty],
-    ['for (var {x} = a, obj;;);', Context.Empty],
     ['for (const x, {y} = obj;;);', Context.Empty],
     ['for (const {x}, {y} in z);', Context.Empty],
     ['for (const {x:y=z}, {a:b=c} in obj);', Context.Empty],

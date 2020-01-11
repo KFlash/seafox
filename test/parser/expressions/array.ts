@@ -1140,6 +1140,63 @@ describe('Expressions - Array', () => {
     ],
     [
       `[...{a: 0}.x] = [];`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'RestElement',
+                    argument: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [
+                          {
+                            type: 'Property',
+                            key: {
+                              type: 'Identifier',
+                              name: 'a'
+                            },
+                            value: {
+                              type: 'Literal',
+                              value: 0
+                            },
+                            kind: 'init',
+                            computed: false,
+                            method: false,
+                            shorthand: false
+                          }
+                        ]
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'x'
+                      }
+                    }
+                  }
+                ]
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: []
+              }
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `[...{a: 0}.x] = [];`,
       Context.OptionsLoc,
       {
         type: 'Program',
@@ -11559,6 +11616,36 @@ describe('Expressions - Array', () => {
             column: 12
           }
         }
+      }
+    ],
+    [
+      `[(a)] = b;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'Identifier',
+                    name: 'a'
+                  }
+                ]
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'b'
+              }
+            }
+          }
+        ]
       }
     ],
     [
@@ -25844,6 +25931,147 @@ describe('Expressions - Array', () => {
             column: 11
           }
         }
+      }
+    ],
+    [
+      `[a[x.y]] = z`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'a'
+                    },
+                    computed: true,
+                    property: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Identifier',
+                        name: 'x'
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'y'
+                      }
+                    }
+                  }
+                ]
+              },
+              operator: '=',
+              right: {
+                type: 'Identifier',
+                name: 'z'
+              }
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `f = ([...[ x ] = []]);`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'f'
+              },
+              operator: '=',
+              right: {
+                type: 'ArrayExpression',
+                elements: [
+                  {
+                    type: 'SpreadElement',
+                    argument: {
+                      type: 'AssignmentExpression',
+                      left: {
+                        type: 'ArrayExpression',
+                        elements: [
+                          {
+                            type: 'Identifier',
+                            name: 'x'
+                          }
+                        ]
+                      },
+                      operator: '=',
+                      right: {
+                        type: 'ArrayExpression',
+                        elements: []
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    [
+      `([[x, y] = z]) => x;`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Identifier',
+                name: 'x'
+              },
+              params: [
+                {
+                  type: 'ArrayPattern',
+                  elements: [
+                    {
+                      type: 'AssignmentPattern',
+                      left: {
+                        type: 'ArrayPattern',
+                        elements: [
+                          {
+                            type: 'Identifier',
+                            name: 'x'
+                          },
+                          {
+                            type: 'Identifier',
+                            name: 'y'
+                          }
+                        ]
+                      },
+                      right: {
+                        type: 'Identifier',
+                        name: 'z'
+                      }
+                    }
+                  ]
+                }
+              ],
+              async: false,
+              expression: true
+            }
+          }
+        ]
       }
     ],
     [
