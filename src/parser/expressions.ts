@@ -162,7 +162,8 @@ export function parseBinaryExpression(
     if ((t & prec) + (((t === Token.Exponentiate) as any) << 8) <= minPrec) return left;
 
     // Mixing ?? with || or && is currently specified as an early error.
-    // Since ?? is the lowest-precedence binary operator, it suffices to check whether these ever coexist in the operator stack.
+    // Since ?? is the lowest-precedence binary operator, it suffices to merge the 'Coalescing' and 'IsLogic' tokens and check
+    // whether these have a higher value than the 'Coalescing' token.
     if (((l | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
       report(parser, Errors.InvalidCoalescing);
     }
