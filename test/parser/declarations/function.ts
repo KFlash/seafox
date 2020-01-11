@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Declarations - Function', () => {
   // Async function
@@ -39,6 +39,115 @@ describe('Declarations - Function', () => {
     ['function foo({x:super}) {}', Context.Empty],
     ['function foo({x:super()}) {}', Context.Empty],
     ['function foo([super()]) {}', Context.Empty],
+    ['async function f() { delete await; }', Context.Empty],
+    ['async function foo (foo = super()) { let bar; }', Context.Empty],
+    ['async function foo (foo = super()) { let bar; }', Context.Empty],
+    ['async function foo (foo = super()) { let bar; }', Context.Empty],
+    ['abc: async function a() {}', Context.Empty],
+    ['async function wrap() {\nasync function await() { }\n}', Context.Empty],
+    ['async function foo(await) { }', Context.Empty],
+    ['(async function await() { })', Context.Empty],
+    ['(async function foo(await) { })', Context.Empty],
+    ['(async function foo() { return {await} })', Context.Empty],
+    ['async function* a() { for (let m in ((await))) x;  (r = a) => {} }', Context.Strict],
+    ['async function* g() { await; }; f = ([...[,]] = g()) => {};', Context.Empty],
+    ['async ({a = b})', Context.Empty],
+    ['async await => 1"', Context.Empty],
+    ['async function f() { for await (let.x of a); }', Context.Empty],
+    ['async function fn() { for await (const [x] = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (const {x} = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (let [x] = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (let {x} = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (var [x] = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (var {x} = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (const x = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (let x = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for await (var x = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for (const {x} = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for (let {x} = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for (let x = 1 of []) {} }', Context.Empty],
+    ['async function fn() { for (var x = 1 of []) {} }', Context.Empty],
+    ['async (a = await) => {}', Context.Empty],
+    ['async (...await) => 1', Context.Empty],
+    ['async ([await]) => 1', Context.Empty],
+    ['async function f() { let\nyield 0 }', Context.Empty],
+    ['async function f() { "use strict"; let\nawait 0 }', Context.Empty],
+    ['async ([...await]) => 1', Context.Empty],
+    ['async (b = {await}) => 1', Context.Empty],
+    ['async (b = {a: await}) => 1', Context.Empty],
+    ['async (b = [await]) => 1', Context.Empty],
+    ['async function* f(a = await) {}', Context.Empty],
+    ['function f(a = async function*(a = await) {}) {}', Context.Empty],
+    ['function f() { a = async function*(a = await) {}; }', Context.Empty],
+    ['async function a(k = await 3) {}', Context.Empty],
+    ['async (a = await) => {}', Context.Empty],
+    ['async function foo (foo) { super.prop };', Context.Empty],
+    ['async function foo (foo) { super.prop };', Context.Empty],
+    ['"use strict"; async function eval () {  }', Context.Empty],
+    ['async function f() { let\narguments.length }', Context.Empty],
+    ['async function f() { let\narguments.await }', Context.Empty],
+    ['async function f() { let\narguments.package }', Context.Empty],
+    ['async function f() { let\narguments.yield }', Context.Empty],
+    ['async function foo (foo = super()) { let bar; }', Context.Empty],
+    ['async function a(){ (foo = +await bar) => {} }', Context.Empty],
+    ['async function a(){ ([await]) => 1 }', Context.Empty],
+    ['async function a(){ (x = delete ((await) = f)) => {} }', Context.Empty],
+    ['async function a(){ (await) => x }', Context.Empty],
+    ['async function a(){ (e=await)=>l }', Context.Empty],
+    ['async function af() { var a = (x, y, z = await 0) => { }; }', Context.Empty],
+    ['async function af() { var a = (x, y = await 0, z = 0) => { }; }', Context.Empty],
+    ['async function af() { var a = (x = await 0) => { }; }', Context.Empty],
+    ['async function af() { var a = (x, await, y) => { }; }', Context.Empty],
+    ['async function af() { var a = (x, y, await) => { }; }', Context.Empty],
+    ['async function af() { var a = (await) => { }; }', Context.Empty],
+    ['async function af() { var a = await => { }; }', Context.Empty],
+    ['async function a(){ async ([a=await]) => 1 }', Context.Empty],
+    ['({async foo() { var await }})', Context.Empty],
+    ['({async foo(await) { }})', Context.Empty],
+    ['({async foo() { return {await} }})', Context.Empty],
+    ['async function f(a = await) {}', Context.Empty],
+    ['({async foo: 1})', Context.Empty],
+    ['class A {async\nfoo() { }}', Context.Empty],
+    ['class A {static async\nfoo() { }}', Context.Empty],
+    ['async function* g(){ ({[await]: a}) => 0; }', Context.Empty],
+    ['class A {async constructor() { }}', Context.Empty],
+    ['class A {async foo() { return {await} }}', Context.Empty],
+    ['async function foo() { await }', Context.Empty],
+    ['(async function foo() { await })', Context.Empty],
+    ['({async foo() { await }})', Context.Empty],
+    ['async function foo(a = await b) {}', Context.Empty],
+    ['(async function foo(a = await b) {})', Context.Empty],
+    ['async (a = await b) => {}', Context.Empty],
+    ['async function wrapper() {\nasync (a = await b) => {}\n}', Context.Empty],
+    ['({async foo(a = await b) {}})', Context.Empty],
+    ['async function wrap() {\n(a = await b) => a\n}', Context.Empty],
+    ['async function wrap() {\n({a = await b} = obj) => a\n}', Context.Empty],
+    ['function* wrap() {\nasync(a = yield b) => a\n}', Context.Empty],
+    ['async function f(){ (x = new x(await x)) => {}   }', Context.Empty],
+    ['async function arguments() { "use strict"; }', Context.Empty],
+    ['async function fn(eval) { "use strict"; }', Context.Empty],
+    ['async function method() { var await = 1; }', Context.Empty],
+    ['async function method(await;) { }', Context.Empty],
+    ['async function method() { var x = await; }', Context.Empty],
+    ['async function af(a, b = await a) { }', Context.Empty],
+    ['async function af(a, b = await a) { "use strict"; }', Context.Empty],
+    ['async function af(x) { function f(a = await x) { } f(); } af();', Context.Empty],
+    ['async function af(arguments) { "use strict"; }', Context.Empty],
+    ['async function af(eval) { "use strict"; }', Context.Empty],
+    ['async function a() { async function b(k = await 3) {} }', Context.Empty],
+    ['async function a() { async function b(k = [await 3]) {} }', Context.Empty],
+    ['async function k() { function a() { await 4; } }', Context.Empty],
+    ['async (b = [...await]) => 1', Context.Empty],
+    ['async (b = class await {}) => 1', Context.Strict | Context.Module],
+    ['async (await, b = async()) => 2', Context.Empty],
+    ['async (await, b = async () => {}) => 1', Context.Empty],
+    ['async function* a() { await;  (r = a) => {} }', Context.Empty],
+    ['async function* a() { (await) => {} }', Context.Empty],
+    ['{ async function f() {} async function f() {} }', Context.OptionsDisableWebCompat],
+    ['switch (0) { case 1: async function f() {} default: function f() {} }', Context.OptionsDisableWebCompat],
+    ['{ function* f() {} async function f() {} }', Context.OptionsDisableWebCompat | Context.Strict],
+    ['async function* f() { a = async function*(a = await) {}; }', Context.Empty],
+    ['function f(a = async function(a = await) {}) {}', Context.Empty],
     ['function f(a, b, a, c = 10) { }', Context.OptionsDisableWebCompat],
     ['async function a() { async function b(k = await 3) {} }', Context.Empty],
     ['async function a() { async function b(k = [await 3]) {} }', Context.Empty],
@@ -228,6 +337,22 @@ describe('Declarations - Function', () => {
     ['function *f(){ class x extends yield { }  }', Context.Empty],
     ['function f(){ class x extends foo(yield y) { }  }', Context.Empty],
     ['function f(){ class x { foo(yield){} }  }', Context.Empty],
+    ['f(x=package=10) => { "use strict"; }', Context.Empty],
+    ['f(x = eval = 10) => { "use strict"; }', Context.Empty],
+    ['o = {foo(x=package=y){ "use strict"; }}', Context.Empty],
+    ['class c {foo(x=package=y){ "use strict"; }}', Context.Empty],
+    ['o = {foo(x = package = y){ "use strict"; }}', Context.Empty],
+    ['o = {foo(x = let = y){ "use strict"; }}', Context.Empty],
+    ['o = {foo(x = implements = y){ "use strict"; }}', Context.Empty],
+    ['o = {foo(x= eval = y){ "use strict"; }}', Context.Empty],
+    ['function f(async function() {}) { }', Context.Empty],
+    ['function foo(package) { "use strict"; }', Context.Empty],
+    ['function test({...x = 1}) {}', Context.Empty],
+    ['function test({...[]}) {}', Context.Empty],
+    ['function test({...x = 1}) {}', Context.Empty],
+    ['function test({...{}}) {}', Context.Empty],
+    ['function test({...x = 1}) {}', Context.Empty],
+    ['function foo() { "use strict"; 00004; }', Context.Strict],
     ['function f(){ class x { foo(x=yield){} }  }', Context.Empty],
     ['function f(){ class x { foo(x=yield y){} }  }', Context.Empty],
     ['function f(){ class x { foo(x=new (yield)()){} }  }', Context.Empty],
@@ -324,7 +449,6 @@ describe('Declarations - Function', () => {
     ['function foo(a, a = b) {}', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
     ['function f([foo], [foo]){}', Context.OptionsDisableWebCompat],
     [`const x = a; function x(){};`, Context.OptionsDisableWebCompat],
-
     [`async function x() { var a = await => { }; }`, Context.Empty],
     [`async function x() { var a = (await) => { }; }`, Context.Empty],
     [`async function x() { var a = (x, y, await) => { }; }`, Context.Empty],
@@ -419,7 +543,1549 @@ describe('Declarations - Function', () => {
     });
   }
 
+  for (const arg of [
+    'yield 2;',
+    'yield * 2;',
+    'yield * \n 2;',
+    'yield * \r 2;',
+    'yield * \t 2;',
+    'yield * \n\f\r 2;',
+    'yield * \f\n\r 2;',
+    'yield yield 1;',
+    'yield * yield * 1;',
+    'yield 3 + (yield 4);',
+    'yield 3 + (yield 4) + 4;',
+    'yield * 3 + (yield * 4);',
+    '(yield * 3) + (yield * 4);',
+    'yield 3; yield 4;',
+    'yield * 3; yield * 4;',
+    '(function (yield) { })',
+    '(function yield() { })',
+    '(function (await) { })',
+    '(function await() { })',
+    'yield { yield: 12 }',
+    'yield /* comment */ { yield: 12 }',
+    'x = class extends (await 10) {}',
+    'x = class extends f(await 10) {}',
+    'x = class extends (null, await 10) { }',
+    'x = class extends (a ? null : await 10) { }',
+    'yield * \n { yield: 12 }',
+    'yield /* comment */ * \n { yield: 12 }',
+    'yield 1; return',
+    'yield 1; return;',
+    'yield * 1; return',
+    'yield * 1; return;',
+    'yield 1; return 7',
+    'yield * 1; return 7',
+    "yield 1; return 7; yield 'foo';",
+    "yield * 1; return 3; yield * 'foo';",
+    '({ yield: 1 })',
+    '({ get yield() { } })',
+    '({ await: 1 })',
+    '({ get await() { } })',
+    '({ [yield]: x } = { })',
+    '({ [await 1]: x } = { })',
+    'yield',
+    'yield\n',
+    'yield /* comment */',
+    'yield // comment\n',
+    'yield // comment\n\r\f',
+    '(yield)',
+    '[yield]',
+    '{yield}',
+    'yield, yield',
+    'yield; yield',
+    'yield; yield; yield; yield;',
+    '(yield) ? yield : yield',
+    '(yield) \n ? yield : yield',
+    'yield\nfor (;;) {}',
+    'await 10',
+    'await 10; return',
+    'await 10; return 20',
+    "await 10; return 20; yield 'foo'",
+    'await (yield 10)',
+    'await (  yield     10  ) ',
+    'await (yield 10); return',
+    'await (yield 10); return 80',
+    "await (yield 10); return 50; yield 'foo'",
+    'yield await 10',
+    'yield await 10; return',
+    'yield await 10; return;',
+    'yield await 10; return 10',
+    "yield await 10; return 10; yield 'foo'",
+    'await /* comment */ 10',
+    'await // comment\n 10',
+    'yield await /* comment\n */ 10',
+    'yield await // comment\n 10',
+    'await (yield /* comment */)',
+    'await (yield // comment\n)',
+    'for await (x of xs);',
+    'for await (let x of xs);',
+    'await a; yield b;',
+    'class A { async f() { for await (x of xs); } }'
+  ]) {
+    it(`async function * gen() { ${arg} }`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`async function * gen() { ${arg} }`);
+      });
+    });
+    it(`({ async * gen () { ${arg} } })`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`({ async * gen () { ${arg} } })`);
+      });
+    });
+    it(`(async function * () {${arg} }) `, () => {
+      t.doesNotThrow(() => {
+        parseScript(`(async function * () {${arg} }) `);
+      });
+    });
+    it(`({ async * gen () {${arg} } }) `, () => {
+      t.doesNotThrow(() => {
+        parseScript(`({ async * gen () {${arg} } }) `);
+      });
+    });
+    it(`({ async * gen () {${arg} } }) `, () => {
+      t.doesNotThrow(() => {
+        parseScript(`({ async * gen () {${arg} } }) `);
+      });
+    });
+  }
+
+  for (const arg of [
+    'var yield;',
+    'var await;',
+    'var foo, yield;',
+    'var foo, await;',
+    'try { } catch (yield) { }',
+    'try { } catch (await) { }',
+    'function yield() { }',
+    '(async function * yield() { })',
+    '(async function * await() { })',
+    'async function * foo(yield) { }',
+    '(async function * foo(yield) { })',
+    'async function * foo(await) { }',
+    '(async function * foo(await) { })',
+    '(async function * foo(await) { })',
+    'yield = 1;',
+    'await = 1;',
+    'var foo = yield = 1;',
+    'var foo = await = 1;',
+    '++yield;',
+    'yield++;',
+    'await++;',
+    'yield *',
+    '(yield *)',
+    'yield 3 + yield 4;',
+    'yield: 34',
+    'yield ? 1 : 2',
+    'yield / yield',
+    '+ yield',
+    '+ yield 3',
+    'var [yield] = [42];',
+    'var [await] = [42];',
+    'var {foo: yield} = {a: 42};',
+    'yield\n{yield: 42}',
+    'yield /* comment */\n {yield: 42}',
+    'yield //comment\n {yield: 42}',
+    'var {foo: await} = {a: 42};',
+    '[yield] = [42];',
+    '[await] = [42];',
+    '({a: yield} = {a: 42});',
+    '({a: await} = {a: 42});',
+    'var [yield 24] = [42];',
+    'var [await 24] = [42];',
+    'var {foo: yield 24} = {a: 42};',
+    'var {foo: await 24} = {a: 42};',
+    '[yield 24] = [42];',
+    '[await 24] = [42];',
+    '({a: yield 24} = {a: 42});',
+    '({a: await 24} = {a: 42});',
+    '({ await })',
+    'yield --> comment ',
+    '(yield --> comment)',
+    'yield /* comment */ --> comment ',
+    'class C extends yield { }',
+    '[yield 24] = [42];',
+    '[await 24] = [42];',
+    '({a: yield 24} = {a: 42});',
+    '({a: await 24} = {a: 42});',
+    "for (yield 'x' in {});",
+    "for (await 'x' in {});",
+    "for (yield 'x' of {});",
+    "for (await 'x' of {});",
+    "for (yield 'x' in {} in {});",
+    "for (await 'x' in {} in {});",
+    "for (yield 'x' in {} of {});",
+    "for (await 'x' in {} of {});",
+    'class C extends yield { }',
+    'class C extends await { }'
+  ]) {
+    it(`async function * gen() { ${arg} } `, () => {
+      t.throws(() => {
+        parseScript(`async function * gen() { ${arg} } `);
+      });
+    });
+    it(`async function * gen() { ${arg} } `, () => {
+      t.throws(() => {
+        parseModule(`async function * gen() { ${arg} } `);
+      });
+    });
+    it(`(async function * () {${arg} }) `, () => {
+      t.throws(() => {
+        parseScript(`(async function * () {${arg} }) `);
+      });
+    });
+    it(`({ async * gen () {${arg} } }) `, () => {
+      t.throws(() => {
+        parseScript(`({ async * gen () {${arg} } }) `);
+      });
+    });
+  }
+
+  for (const arg of [
+    'function f() { ++(yield); }',
+    'function f(arg) {function h() { g(arg) }; return h}',
+    'function f(arg, ...arguments) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg, arguments=[]) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg) {g(arg); arg = 42; g(arg)}',
+    'function f(arg=1) {g(arg); arg = 42; g(arg)}',
+    "function f(arg) {g(arg); g(function() {eval('arg = 42')}); g(arg)}",
+    "function f(arg) {g(arg); g(() => eval('arg = 42')); g(arg)}",
+    'function f(arg) {g(arg); arguments[0] = 42; g(arg)}',
+    'function *f(){  class x extends foo(yield y) { }  }',
+    'function *f(){  class x extends foo(yield) { }  }',
+    'function f(a, a) {}',
+    'function f([foo], b){}',
+    'function f([foo] = x, b){}',
+    'function f([foo], b = y){}',
+    'function f([foo] = x, b = y){}',
+    'function f(x, [foo]){}',
+    'function f([foo=a,bar=b] = x){}',
+    'function f([...bar] = obj){}',
+    'function f([foo, ...bar] = obj){}',
+    'function f({foo} = x, b){}',
+    'function f({foo} = x, b = y){}',
+    'function f(x, {foo} = y){}',
+    'function f(x = y, {foo} = z){}',
+    'function f({foo=a} = x){}',
+    'function f({foo=a,bar} = x){}',
+    'function f({foo,bar=b} = x){}',
+    'function f({foo=a,bar=b} = x){}',
+    'function f({foo:a} = x){}',
+    'function f({foo:a,bar} = x){}',
+    'function f({foo,bar:b} = x){}',
+    'function f({foo:a,bar:b} = x){}',
+    'function f({a}, {b}, {c = ""}) { return [a, b, c] }',
+    'function g({a}, {b} = {b: 2}) { return [a, b] }',
+    'function h({a}, {b} = {b: 2}, c) { return [a, b, c] }',
+    'function i({a}, {b}, c, ...rest) { return [a, b, c, rest] }',
+    'function f({a}, {b}, {c = ""}) { return [a, b, c] }',
+    'function f({a}, {b}, {c = ""}) { return [a, b, c] }',
+    'function f({a}, {b}, {c = ""}) { return [a, b, c] }',
+    'function f({foo:a,bar:b} = x){}',
+    'function f({foo:a=b} = x){}',
+    'function f({foo:a=b, bar:c=d} = x){}',
+    'function f({foo}){}',
+    'function f({foo=a}){}',
+    'function f({foo:a}){}',
+    'function f({foo:a=b}){}',
+    'function f({foo}, bar){}',
+    'function f(foo, {bar}){}',
+    'function f([]){}',
+    'function f([] = x){}',
+    'function f([,]){}',
+    'function f([,] = x){}',
+    'function f([,,]){}',
+    'function f([,,] = x){}',
+    'function f([foo]){}',
+    'function f([foo] = x){}',
+    'function f([foo,]){}',
+    'function f([foo,] = x){}',
+    'function f([foo,,]){}',
+    'function f([foo,,] = x){}',
+    'function f([,foo]){}',
+    'function f([,foo] = x){}',
+    'function f([,,foo]){}',
+    'function f([,,foo] = x){}',
+    'function f([foo,bar]){}',
+    'function f([foo,bar] = x){}',
+    'function f([foo,,bar]){}',
+    'function f() {   class x { foo(x=new (await)()){} }   }',
+    "function f(arg) {g(arg); g(function() {eval('arg = 42')}); g(arg)}",
+    'function f(arg) {g(arg); g(() => arg = 42); g(arg)}',
+    "function f(arg) {g(arg); g(() => eval('arg = 42')); g(arg)}",
+    "function f(...arg) {g(arg); eval('arg = 42'); g(arg)}",
+    'function f(arg) {}',
+    'function f(arg) {g(arg)}',
+    'function f(arg) {function h() { g(arg) }; h()}',
+    'function f(arg) {function h() { g(arg) }; return h}',
+    'function f(arg=1) {}',
+    'function f(arg=1) {g(arg)}',
+    'function f(arg, arguments) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg, ...arguments) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg, arguments=[]) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(...arg) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg) {g(arg); g(function() {arguments[0] = 42}); g(arg)}',
+    'function f(arg) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg) {g(arg); h(arguments); g(arg)}',
+    "function f(arg) {g(arg); eval('arguments[0] = 42'); g(arg)}",
+    'function f(arg) {g(arg); g(() => arguments[0] = 42); g(arg)}',
+    'function f([]){}',
+    'function f([] = x){}',
+    'function f([,]){}',
+    'function f([,] = x){}',
+    'function f([,,]){}',
+    'function f([,,] = x){}',
+    'function f([foo]){}',
+    'function f([foo] = x){}',
+    'function f([foo,]){}',
+    'function f([foo,] = x){}',
+    'function f([foo,,]){}',
+    'function f([foo,,] = x){}',
+    'function fn1([a, b = 42]) {}',
+    'function fn2([a = 42, b,]) {}',
+    'function fn3([a,, b = a, c = 42]) {}',
+    'function fn1([{}]) {}',
+    'function fn2([{} = 42]) {}',
+    'function fn3([a, {b: c}]) {}',
+    'function fn4([a, {b: []}]) {}',
+    'function fn2([a, b,]) {}',
+    'function fn2([,,]) {}',
+    'function fn([]) {}',
+    'function fn2([,,,,,,,...args]) {}',
+    'function fn1([...args]) {}',
+    'function fn3([x, {y}, ...z]) {}',
+    'function fn4([,x, {y}, , ...z]) {}',
+    'function fn5({x: [...y]}) {}',
+    'function fnc({x: {}}) {}',
+    'function fnd({x: {y}}) {}',
+    'function fne({x: {} = 42}) {}',
+    'function fnf({x: {y} = 42}) {}',
+    'function fna({x: y}) {}',
+    'function fn2({a: {p: q, }, }) {}',
+    'function fn1({x,}) {}',
+    'function fna({x}) {}',
+    'function fnb({x, y}) {}',
+    'function fnc({x = 42}) {}',
+    'function fnd({x, y = 42}) {} ',
+    'function fn1({a: {p: q}, b: {r}, c: {s = 0}, d: {}}) {}',
+    'function fn2(x, {a: r, b: s, c: t}, y) {}',
+    'function fn3({x: {y: {z: {} = 42}}}) {}',
+    'function fn4([], [[]], [[[[[[[[[x]]]]]]]]]) {}',
+    'function fn4([[x, y, ...z]]) {}',
+    'function fn3({a: [,,,] = 42}) {}',
+    'function fn2([{a: [{}]}]) {}',
+    'function fn1([{}]) {}',
+    'function f([,foo]){}',
+    'function f([,foo] = x){}',
+    'function f([,,foo]){}',
+    'function f([,,foo] = x){}',
+    'function f([foo,bar]){}',
+    'function f([foo,bar] = x){}',
+    'function f([foo,,bar]){}',
+    'function f([foo,,bar] = x){}',
+    'function f([foo], b){}',
+    'function f([foo] = x, b){}',
+    'function f([foo], b = y){}',
+    'function f([foo] = x, b = y){}',
+    'function f(x, [foo]){}',
+    'function f(x, [foo] = y){}',
+    'function f(x = y, [foo] = z){}',
+    'function f(x = y, [foo]){}',
+    'function f([foo=a]){}',
+    'function f([foo=a] = c){}',
+    'function f([foo=a,bar]){}',
+    'function f([foo=a,bar] = x){}',
+    'function f([foo,bar=b]){}',
+    'function f([foo,bar=b] = x){}',
+    'function f([foo=a,bar=b]){}',
+    `function bar() {foo = 42}; ext(bar); ext(foo)`,
+    `function bar() { }`,
+    `function a(b, c) { }`,
+    `function makeArrayLength(x) { if(x < 1 || x > 4294967295 || x != x || isNaN(x) || !isFinite(x)) return 1; else return Math.floor(x); };`,
+    `function foo () {"use strict";}`,
+    `function __decl(){return 1;}`,
+    `function __func__2(){b};`,
+    `function x(...{ a }){}`,
+    `function santa() { function package() {} function evdal() { "use strict"; }}`,
+    `function foo(bar, eval) { function bar() { "use strict"; } }`,
+    '(function(){})',
+    'function test() { "use strict" + 42; }',
+    'function test(t, t) { }',
+    'function hello() { z(); }',
+    'function f() {} function* f() {}',
+    'function* f() {} function f() {}',
+    'function __func(){};',
+    '"use strict"; (function(){}).hasOwnProperty("icefapper");',
+    'function __func(){ delete arguments; return arguments; }',
+    'function hello() { say_hi_to_ariya(); }',
+    'function arguments() { }',
+    'function hello(a, b) { sayHi(); }',
+    'function f() { var o = { get await() { } } }',
+    'function f() { var o = { *await() { } } }',
+    'function f() { var await = 10; var o = { await }; }',
+    'function f() { class C { await() { } } }',
+    'function f() { class C { *await() { } } }',
+    'function f() { var fe = function await() { } }',
+    'function f() { function await() { } }',
+    'function f() { const await = 10; }',
+    'function f(a = async function (x) { await x; }) { a(); } f();',
+    'function f() {var async = 1; return async;}',
+    'function f() {let async = 1; return async;}',
+    'function f() {const async = 1; return async;}',
+    'function f() {function async() {} return async();}',
+    'function f() {var async = async => async; return async();}',
+    'function f() {function foo() { var await = 1; return await; }}',
+    'function f() {function foo(await) { return await; }}',
+    'function f() {function* foo() { var await = 1; return await; }}',
+    'function f() {function* foo(await) { return await; }}',
+    'function f() {var f = () => { var await = 1; return await; }}',
+    "'use strict'; var O = { method() { var asyncFn = async function*() {}} }",
+    "'use strict'; var f = () => {async function* f() {}}",
+    "'use strict'; var f = () => {var O = { async *method() {} };}",
+    'var hi = function arguments() { };',
+    'function f(a, a) { function f(a, a) {} }',
+    'function f(arg, ...arguments) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg, arguments=[]) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(...arg) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg) {g(arg); g(function() {arguments[0] = 42}); g(arg)}',
+    'function f(arg, x=1) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg=1) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg) {g(arg); arg = 42; g(arg)}',
+    'function f(arg=1) {g(arg); arg = 42; g(arg)}',
+    'function f(arg) {g(arg); g(() => arg = 42); g(arg)}',
+    'function f(arg) {g(arg); h(arguments); g(arg)}',
+    'function f(arg) {g(arg); g(() => arguments[0] = 42); g(arg)}',
+    'function f() { ++(yield); }',
+    'function f(a, a) {}',
+    'function foo () {"use strict";}',
+    'function f() {} function f() {}',
+    'var f; function f() {}',
+    'function f() {} var f;',
+    'function* f() {} function* f() {}',
+    'var f; function* f() {}',
+    'function* f() {} var f;',
+    'function hello(a) { z(); }',
+    'function eval() { function inner() { "use strict" } }',
+    'function hello(a, b) { z(); }',
+    'function test() { "use strict"\n + 0; }',
+    'function a() {} function a() {}',
+    'function a() { function a() {} function a() {} }',
+    'function arguments() { }',
+    'function arguments() { function foo() { "use strict"; } }',
+    'function arguments(eval) { function foo() { "use strict"; } }',
+    'function arguments(eval) { function foo() { "use strict"; } function eval() {} }',
+    'function arguments() { eval = arguments; function foo() { "use strict"; } }',
+    'function arguments(eval) { eval = arguments; function foo() { "use strict"; } }',
+    'function arguments(eval) { eval = arguments; function foo() { "use strict"; } "use strict"; }',
+    'function arguments(eval) { function foo() { "use strict"; } eval = arguments;  }',
+    `function a() {
+      return 'hello \
+          world';
+    }`,
+    'function f([x]) {}',
+    'function f([[,] = g()]) {}',
+    'function f([[...x] = function() {}()]) {}',
+    'function f([x = 23]) {}',
+    'function f([{ x, y, z } = { x: 44, y: 55, z: 66 }]) {}',
+    'function f([...x]) {}',
+    'function f([x = 23] = []) {}',
+    'function f([{ x, y, z } = { x: 44, y: 55, z: 66 }] = [{ x: 11, y: 22, z: 33 }]) {}',
+    'function f([...[]] = function*() {}) {}',
+    'function f({ x, } = { x: 23 }) {}',
+    'function f({ w: { x, y, z } = { x: 4, y: 5, z: 6 } } = { w: { x: undefined, z: 7 } }) {}',
+    'function f({ x, }) {}',
+    'function f({ w: { x, y, z } = { x: 4, y: 5, z: 6 } }) {}',
+    `function
+    x
+    (
+    )
+    {
+    }
+    ;`,
+    `function                                                    y                                   (                                          )                                              {};
+    y();
+    `,
+    `function
+    z
+    (
+    )
+    {
+    }
+    ;
+    `,
+    `function __func__3(){1};`,
+    `function __func__4(){1+c};`,
+    `function __func__5(){inc(d)};`,
+    `function foo (a, b, c) { }`,
+    `function __gunc(){return true};`,
+    `function f(x = x) {}`,
+    `function f([x] = []) {}`,
+    `function f([{ x }] = [null]) {}`,
+    `function f({ w: [x, y, z] = [4, 5, 6] } = { w: [7, undefined, ] }) {}`,
+    `function test(t, t) { }`,
+    `function arguments() { }`,
+    `function a() { function a() {} function a() {} }`,
+    `function j(...a) {}
+    function k() {}
+    var l = function () {};
+    var m = function (a = 1, b, c) {};
+    function* o() {
+      yield 42;
+    }
+    function* p() {
+      yield 42;
+      yield 7;
+      return "answer";
+    }
+    let q = function* () {};
+    let r = a => a;
+    let s = (a, b) => a + b;
+    let t = (a, b = 0) => a + b;
+    let u = (a, b) => {};
+    let v = () => {};
+    let w = () => ({});
+    let x = () => {
+      let a = 42;
+      return a;
+    };
+    let y = () => ({
+      a: 1,
+      b: 2
+    });`,
+    'function ref(a,) {}',
+    'function eval() { }',
+    'function interface() { }',
+    'function yield() { }',
+    'function f(arg, x=1) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg, ...x) {g(arg); arguments[0] = 42; g(arg)}',
+    'function f(arg=1) {g(arg); arguments[0] = 42; g(arg)}',
+    "function f(arg) {'use strict'; g(arg); arguments[0] = 42; g(arg)}",
+    'function f(arg) {g(arg); f.arguments[0] = 42; g(arg)}',
+    'function f(arg, args=arguments) {g(arg); args[0] = 42; g(arg)}',
+    'function f(arg) {g(arg); arg = 42; g(arg)}',
+    "function f(arg) {g(arg); eval('arg = 42'); g(arg)}",
+    'function f(arg) {g(arg); var arg = 42; g(arg)}',
+    'function f(arg, x=1) {g(arg); arg = 42; g(arg)}',
+    'function f(arg, ...x) {g(arg); arg = 42; g(arg)}',
+    'function f(arg=1) {g(arg); arg = 42; g(arg)}',
+    "function f(arg) {'use strict'; g(arg); arg = 42; g(arg)}",
+    'function f(arg, {a=(g(arg), arg=42)}) {g(arg)}',
+    'function f(arg) {g(arg); g(function() {arg = 42}); g(arg)}',
+    'function f([foo,,bar] = x){}',
+    'function f(x, [foo] = y){}',
+    'function f(x = y, [foo] = z){}',
+    'function f(x = y, [foo]){}',
+    'function f([foo=a]){}',
+    'function f([foo=a] = c){}',
+    'function f([foo=a,bar]){}',
+    'function f([foo=a,bar] = x){}',
+    'function f([foo,bar=b]){}',
+    'function f([foo,bar=b] = x){}',
+    'function f([foo=a,bar=b]){}',
+    'function f([foo=a,bar=b] = x){}',
+    '(function({x, ...y}) { })',
+    'function f() { class x { foo(x=await){} }   }',
+    'function f() { class x { foo(await){} }   }',
+    'function f() { class x extends foo(await) { }   }',
+    'function f() { class x extends await { }   }',
+    'function f() { class await { }   }',
+    'function *f(){ class x { [yield y](){} }  }',
+    'function *f(){ class x { [yield](){} }  }',
+    'function *f(){ class x { yield(){} }  }',
+    'function f() { throw `${delete(y)}`; }',
+    'async function* a() { for (let m in ((yield))) x;  (r = a) => {} }'
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`, {
+          disableWebCompat: true
+        });
+      });
+    });
+  }
+
+  for (const arg of [
+    'async function f() { for await ([x] in y) {} }',
+    'async function f() { for await ("foo".x in y) {} }',
+    'async function f() { for await ((x) in y) {} }',
+    'async function f() { for await (var x in y) {} }',
+    'async function f() { for await (let x in y) {} }',
+    'async function f() { for await (const x in y) {} }'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'async function wrap() {\n({a = await b} = obj)\n}',
+    'async function wrap() {\n(a = await b)\n}',
+    'async function foo(a = class {async bar() { await b }}) {}',
+    'async function foo(a = {async bar() { await b }}) {}',
+    'async function foo(a = async () => await b) {}',
+    'async function foo(a = async function foo() { await b }) {}',
+    'async function foo() { await + 1 }',
+    'async function f() { for await ([a] of []); }',
+    'async function f() { for await ([a = 1] of []); }',
+    "async function f() { 'use strict'; for await ({a} of []); }",
+    'async function * f() { for await ({a: a} of []); }',
+    'async function * f() { for await ({0: a} of []); }',
+    'async function * f() { for await ({0: a = 1} of []); }',
+    'async function x({x}) { var y = x; var x = 2; return y; }',
+    'async function x({x}) { { var y = x; var x = 2; } return y; }',
+    'async function x({x}, g = () => x) { { var x = 2; } return g(); }',
+    'async function x({x}) { var g = () => x; var x = 2; return g(); }',
+    'async function x({x}) { { var g = () => x; var x = 2; } return g(); }',
+    'async function x({x}, g = () => eval("x")) { var x = 2; return g(); }',
+    'async function x(y, g = () => y) { var y = 2; return g(); }',
+    'async function x({x}, y) { var z = y; var y = 2; return z; }',
+    'async function x({x}, y, [z], v) { var x, y, z; return x*y*z*v }',
+    'async function x({x}) { function x() { return 2 }; return x(); }',
+    'async function x(x = (y = 1)) { z = 1; await undefined; w = 1; };',
+    'async function x(a, b, c) { await a; }',
+    'async function a({x}) { var x = 2; return x }',
+    'async function a() { await 4; } var await = 5',
+    'async function a() { function b() { return await; } }',
+    'async function a() { var k = { async: 4 } }',
+    'async function a() { await 4; }',
+    'async function a() { var t = !await 1 }',
+    'async function a() { var t = ~await 1; }',
+    'async function a() { var t = !(await 1); }',
+    'async function a() { var t = ~(await 1);  }',
+    'async function a() { var t = typeof (await 1); }',
+    'async function a() { var t = typeof typeof await 1;  }',
+    'async function a() { var t = void void await 1;  }',
+    'async function a() { await 2 + 3; }',
+    '(async function a() {}.constructor)',
+    '"use strict"; async function a() { var t = +(await 1); }',
+    '"use strict"; async function a() { var t = void (await 1); }',
+    '"use strict"; async function a() { var t = !void void await 1; }',
+    '"use strict"; async function a() { var t = +(await 1); }',
+    '"use strict"; async function a() { var t = +(await 1); }',
+    'async function foo({x}) { { var x = 2; } return x; }',
+    'async function foo(a = x) { var x = 2; return a; }',
+    'async function foo(a = x) { function x() {}; return a; }',
+    'async function foo(a = eval("x")) { var x; return a; }',
+    'async function foo(a = function() { return x }) { var x; return a(); }',
+    'async function foo(a = () => x) { var x; return a(); }',
+    'async function foo(a = () => eval("x")) { var x; return a(); }',
+    'async function foo(x, y = () => x) { return x + y(); }',
+    'async function foo(x = {a: 1, m() { return 2 }}) { return x.a + x.m(); }',
+    'async function foo(x = () => 1) { return x() }',
+    'async function async(x, y) { return x - y; }',
+    'async function async() { return 12; }',
+    'async function foo(a, b = () => a, c = b) { function b() { return a; } var a = 2; return [b, c]; }',
+    'async function foo(a = x) { let x = 2; return a; }',
+    'async function foo(a = () => eval("x")) { var x; return a(); }',
+    'async function foo(x = (y = 1)) { z = 1; await undefined; w = 1; };',
+    'async function f() { let a = function(a = await) {}; }',
+    'async function f(a = async function() { await 1; }) {}',
+    'async function foo(y = eval("var x = 2")) { with ({}) { return x; } }',
+    'async function foo(y = eval("var x = 2"), z = x) { return z; }',
+    'async function foo(y = eval("var x = 2"), z = eval("x")) { return z; }',
+    'async function foo(z = eval("var y = 2")) { return y; }',
+    'async function foo(f = () => x) { eval("var x = 2"); return f() }',
+    'async function foo() { return await bar() + await z(); }',
+    'async function foo(a, b) { await a + await b }',
+    'async function foo(a) { return a ? await bar() : await z(); }',
+    'async function af(x) { var x = 0; with (obj) { x = await af(); } return x; }',
+    'async function * foo() { yield ()=>{}; }',
+    'async function af1(a) { await a; return await foo.call({ x : 100 }); /** comment**/ }',
+    'async function f2(d, e, f) { let x = await f1(d + 10, e + 20, f + 30); return x; }',
+    '(async function(x = 1) {})',
+    '(async function(x = 1, ...a) {})',
+    '(async function(x, y = 1, z, v = 2, ...a) {})',
+    '(async function(x, y = 1, z, v = 2) {})',
+    '(async function(x, y = 1, z) {})',
+    '(async function(x, y = 1, ...a) {})',
+    `(async () => { return !await Promise.resolve(false); })();`,
+    `async function f(x = async function(){await x}){}`,
+    `async function f(x = async () => await x){}`,
+    `async function f(){ async(await x); }`,
+    `function f() { async function yield() {} }`,
+    'async (a = async () => { await 1; }) => {}',
+    `async function yield() {}`,
+    `(async function yield() {});`,
+    `function f() { (async function yield() {}); }`,
+    `function* g() { (async function yield() {}); }`,
+    `({ async yield() {} });`,
+    `function f() { ({ async yield() {} }); }`,
+    `function* g() { ({ async yield() {} }); }`,
+    `({ async [yield]() {} });`,
+    `function f() { ({ async [yield]() {} }); }`,
+    `function* g() { ({ async [yield]() {} }); }`,
+    'async function* a() { yield; (r = a) => {} }',
+    'async function* x(a, b, ...c) { await 1; }',
+    'async function* x(a, b = 2) { await 1; }',
+    'async function* x(a) { yield 1; }',
+    'async function* x(a, b = 2) { yield 1; }',
+    'async function* x(a, b, ...c) { yield 1; }',
+    'async function x() { let x = await 1; eval("var i = 5"); let y = await 2; debugger; }',
+    'new (async function*() {})',
+    '(async function*() {}).caller',
+    '(async function*() {}).arguments',
+    'async function fib(n) { return (n == 0 || n == 1) ? n : await fib(n - 1) + await fib(n - 2); }',
+    'var hardcoreFib = async function fib2(n) { return (n == 0 || n == 1) ? n : await fib2(n - 1) + await fib2(n - 2); }',
+    '() => class extends (async function() {}) {}',
+    'async function f() {   class x { foo(x=new (await)()){} }   }',
+    'async function f() {   class x extends await y { }   }',
+    `async function yield() {}`,
+    'async function x () { a = { a: await(a) } }',
+    'async function* a(){}',
+    'async function f() {   class x { await(){} }   }',
+    'async function f() {   class x { foo(x=await){} }   }',
+    'function f() {   class x { [await](){} }   }',
+    '(async function* (){})',
+    'async function* a() { for (let m in ((yield))) x;  (r = a) => {} }',
+    'async function f() {   class x { foo(await){} }   }',
+    'function f() {   class x { await(){} }   }',
+    'async function f() {   class x extends feh(await y) { }   }',
+    'function f() {   class x { foo(x=new (await)()){} }   }',
+    'async function fn() { const x = await import([a]); }',
+    'async function fn() { const x = await import([]); }',
+    'async function fn() { const x = await import(() => {}); }',
+    'async function fn() { const x = await import(await a); }',
+    'async function fn() { const x = await getpromise(); }',
+    'async function fn() { const x = await import(a()()); }',
+    'async function fn() { const x = await import(a()[0]); }',
+    'async function fn() { const x = await import(a().x); }',
+    'async function fn() { const x = await import(b()); }',
+    'async function fn() { const x = await import((((((("./foo"))))))); }',
+    'async function fn() { const x = await import(x += a); }',
+    'async function fn() { const x = await import(x = a); }',
+    'async function fn() { const x = await import(delete void typeof +-~! 0 && b); }',
+    'async function fn() { const x = await import(false || b); }',
+    'async function fn() { const x = await import({}); }',
+    'async function fn() { const x = await import({}); }',
+
+    'async function fn() { (await x)[a] += y; }',
+    'async function fn() { x[await a] += y; }',
+    'async function fn() { (await x).a += await y; }',
+    'async function fn() { (await x)[a] += await y; }',
+    'async function fn() { x[await a] += await y; }',
+    'async function fn() { (await x) ** y; }',
+    'async function fn() { return (await x), y; }',
+    'async function fn() { return x, await y; }',
+    'async function fn() { x.a.b = await y; }',
+    'async function fn() {  x[z] = await y; }',
+    'async function fn() {x[z].b = await y; }',
+    'async function fn() { const x = await import({}); }',
+    'async function fn() { x.a[z] = await y;; }',
+    'async function fn() { (await x) && y; }',
+    'async function fn() { x && await y; }',
+    'async function fn() {  x = await y; }',
+    'async function fn() { x + await y; }',
+    'async function fn() {(await x) + y; }',
+    'async function fn() {(await x).a = y; }',
+    'async function fn() {  (await x.a).b = y; }',
+    'async function fn() { (await x)[z] = y; }',
+    'async function fn() { x[await z].b = y;}',
+    'async function fn() { (await x[z]).b = y; }',
+    'async function * fn() { return import(yield 42); }',
+    'async function f() { let\narguments }',
+    'async function f() { let\ninterface }',
+    'async function f() { let\npackage }',
+    'async function f() { for await (x[a in b] of y); }',
+    'async function a() { await a.b[c](d).e; }',
+    'await.b[c](d).e;',
+    `function *a(){yield\n*a}`,
+    'async function * fn() { import(yield * ["Mr. X", "Mr. Y", "Mr. Z"]); }',
+    'async function* f(a = async function*() { await 1; }) {}',
+    'function f() { return await; }',
+    `async function *gen() {
+      yield {
+          ...yield,
+          y: 1,
+          ...yield yield,
+        };
+    }`,
+    `async function *gen() {
+      yield [...yield];
+    }`,
+    `async function *gen() {
+      yield [...yield yield];
+    }`,
+    `"use strict"; async function * fn() {
+      for await ([ {} = yield ] of [iterable]) {
+      }
+    }`,
+    `async function f() {
+      let x = await y;
+            const a = (b) => {};
+    }`,
+    `async function f() {
+      (((x = await y)));
+            const a = (b) => {};
+    }`,
+    `async function f() {
+      let x = await y;
+            async (b) => {};
+    }`,
+    `async function f() {
+      (((x = await y)));
+            async (b) => {};
+    }`
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'async function f() { var await = { await : async function foo() {} } }',
+    'async function f() { class x { foo(x=await y){} }   }',
+    'async function f() { class x { foo(x=new (await y)()){} }   }',
+    'async function f(async, await) { var x = await async; return x; }',
+    'async function f() { class x { foo(await y){} }   }',
+    'function f() { class x { foo(x=await y){} }   }',
+    'async function foo() { async function bar(a = await baz()) {} }',
+    'async function wrap() {\n({a = await b} = obj) => a\n}',
+    'function f() { class x { foo(x=new (await y)()){} }   }',
+    'async function wrap() {\n(a = await b) => a\n}',
+    'async function f() { class x extends await { }   }',
+    'function f() { class x { await y(){} }   }',
+    'async function f() { class await { }   }',
+    'function f() { class x { [await y](){} }   }',
+    'async function * f() { for await ({0: a} = 1 of []); }',
+    'async function * f() { for await ({0: a = 1} = 1 of []); }',
+    'async function f() {   class x extends feh(await) { }   }',
+    'async function * f() { for await ({a: a} = 1 of []); }',
+    "async function f() { 'use strict'; for await ({a} = 1 of []); }",
+    'async function foo() { await }',
+    'async function a(k = await 3) {}',
+    'async function a() { async function b(k = await 3) {} }',
+    'async function a() { async function b(k = [await 3]) {} }',
+    'async function a() { async function b([k = await 3]) {} }',
+    'async function a() { async function b([k = [await 3]]) {} }',
+    'async function a() { async function b({k = await 3}) {} }',
+    'async function a() { async function b({k = [await 3]}) {} }',
+    'async function f() { for await ([a = 1] = 1 of []); }',
+    'async function f() { for await ([a] = 1 of []); }',
+    'async function fn() { var await; }',
+    'async function fn() { var await; }',
+    'async function fn() { void await; }',
+    'async function a(){ (foo = await bar) => {}     }',
+    'async function f(){ (fail = class A {[await foo](){}; "x"(){}}) => {}    }',
+    'async function fn() { await: ; }',
+    `async function foo (foo = super()) { var bar; }`,
+    'async function fn() { void await; }',
+    'async function fn() { void await; }',
+    'async function fn() { await: ; }',
+    'async function af() { var a = (x, await, y) => { }; }',
+    'async function af() { var a = (x = await 0) => { }; }',
+    'async function af() { var a = (x, y = await 0, z = 0) => { }; }',
+    'async function af() { var a = (x, y, z = await 0) => { }; }',
+    'async function foo (x = await) {  }',
+    'async function foo (await) {  }',
+    '(async function await() {})',
+    'function* a() { await 4; }',
+    'async function a(k = await 3) {}',
+    'async function a() { async function b(k = [await 3]) {} }',
+    'async function a() { async function b([k = await 3]) {} }',
+    'async function a() { async function b([k = [await 3]]) {} }',
+    'async function a() { async function b({k = await 3}) {} }',
+    'async function a() { async function b({k = [await 3]}) {} }',
+    'async function a() { var await = 4; }',
+    'async function a() { return await; }',
+    'async function af() { var a = (x, y, await) => { }; }',
+    'async function af() { var a = (x, await, y) => { }; }',
+    'async function af() { (b = (c = await => {}) => {}) => {}; }',
+    'async function foo (foo) { super() };',
+    'async function foo() { (async function await() { }) }',
+    `(async function() { 0, { await } = {};  });`,
+    //    'async function f(){ (x = new (await x)) => {}   }',
+    'async function f(){ (x = new f[await x]) => {}   }',
+    `async function f(x = () => await x){}`,
+    'async function f(){ (x = class A {[await foo](){}; "x"(){}}) => {} }',
+    'async function x({await}) { return 1 }',
+    'async function f() { return {await}; }',
+    'async function f() { return {await = 0} = {}; }',
+    'async (a = await => {}) => {}'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+
+    it(`() =>${arg}`, () => {
+      t.throws(() => {
+        parseScript(`() =>${arg}`);
+      });
+    });
+
+    it(`function foo() {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`function foo() {${arg}}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'var await = 1;',
+    'var { await } = 1;',
+    'var [ await ] = 1;',
+    'return async (await) => {};',
+    'var O = { async [await](a, a) {} }',
+    'await;',
+    'function await() {}',
+    'var f = await => 42;',
+    'var f = (await) => 42;',
+    'var f = (await, a) => 42;',
+    'var f = (...await) => 42;',
+    'var e = (await);',
+    'var e = (await, f);',
+    'var e = (await = 42)',
+    'var e = [await];',
+    'var e = {await};'
+  ]) {
+    it(`async function f() {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`async function f() {${arg}}`);
+      });
+    });
+
+    it(`var f = async() => {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`var f = async() => {${arg}}`);
+      });
+    });
+
+    it(`var O = { async method() {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`var O = { async method() {${arg}}`);
+      });
+    });
+
+    it(`'use strict'; var f = async function() {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var f = async function() {${arg}}`);
+      });
+    });
+
+    it(`'use strict'; var f = async() => {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var f = async() => {${arg}}`);
+      });
+    });
+
+    it(`'use strict'; var O = { async method() {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var O = { async method() {${arg}}`);
+      });
+    });
+
+    it(`'use strict'; var O = { async method() {${arg}}`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var O = { async method() {${arg}}`);
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
+    [
+      `async\nfunction foo() { }`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 5,
+            expression: {
+              end: 5,
+              loc: {
+                end: {
+                  column: 5,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'async',
+              start: 0,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 5,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          },
+          {
+            async: false,
+            body: {
+              body: [],
+              end: 24,
+              loc: {
+                end: {
+                  column: 18,
+                  line: 2
+                },
+                start: {
+                  column: 15,
+                  line: 2
+                }
+              },
+              start: 21,
+              type: 'BlockStatement'
+            },
+            end: 24,
+            generator: false,
+            id: {
+              end: 18,
+              loc: {
+                end: {
+                  column: 12,
+                  line: 2
+                },
+                start: {
+                  column: 9,
+                  line: 2
+                }
+              },
+              name: 'foo',
+              start: 15,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 18,
+                line: 2
+              },
+              start: {
+                column: 0,
+                line: 2
+              }
+            },
+            params: [],
+            start: 6,
+            type: 'FunctionDeclaration'
+          }
+        ],
+        end: 24,
+        loc: {
+          end: {
+            column: 18,
+            line: 2
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `async function *gen() { yield [...yield]; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'YieldExpression',
+                    argument: {
+                      type: 'ArrayExpression',
+                      elements: [
+                        {
+                          type: 'SpreadElement',
+                          argument: {
+                            type: 'YieldExpression',
+                            argument: null,
+                            delegate: false,
+                            start: 34,
+                            end: 39,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 34
+                              },
+                              end: {
+                                line: 1,
+                                column: 39
+                              }
+                            }
+                          },
+                          start: 31,
+                          end: 39,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 31
+                            },
+                            end: {
+                              line: 1,
+                              column: 39
+                            }
+                          }
+                        }
+                      ],
+                      start: 30,
+                      end: 40,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 30
+                        },
+                        end: {
+                          line: 1,
+                          column: 40
+                        }
+                      }
+                    },
+                    delegate: false,
+                    start: 24,
+                    end: 40,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 24
+                      },
+                      end: {
+                        line: 1,
+                        column: 40
+                      }
+                    }
+                  },
+                  start: 24,
+                  end: 41,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 24
+                    },
+                    end: {
+                      line: 1,
+                      column: 41
+                    }
+                  }
+                }
+              ],
+              start: 22,
+              end: 43,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 43
+                }
+              }
+            },
+            async: true,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'gen',
+              start: 16,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            start: 0,
+            end: 43,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 43
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 43,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 43
+          }
+        }
+      }
+    ],
+    [
+      `"use strict"; async function foo() { function bar() { await = 1; } bar(); }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'FunctionDeclaration',
+                  params: [],
+                  body: {
+                    type: 'BlockStatement',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: {
+                          type: 'AssignmentExpression',
+                          left: {
+                            type: 'Identifier',
+                            name: 'await',
+                            start: 54,
+                            end: 59,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 54
+                              },
+                              end: {
+                                line: 1,
+                                column: 59
+                              }
+                            }
+                          },
+                          operator: '=',
+                          right: {
+                            type: 'Literal',
+                            value: 1,
+                            start: 62,
+                            end: 63,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 62
+                              },
+                              end: {
+                                line: 1,
+                                column: 63
+                              }
+                            }
+                          },
+                          start: 54,
+                          end: 63,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 54
+                            },
+                            end: {
+                              line: 1,
+                              column: 63
+                            }
+                          }
+                        },
+                        start: 54,
+                        end: 64,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 54
+                          },
+                          end: {
+                            line: 1,
+                            column: 64
+                          }
+                        }
+                      }
+                    ],
+                    start: 52,
+                    end: 66,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 52
+                      },
+                      end: {
+                        line: 1,
+                        column: 66
+                      }
+                    }
+                  },
+                  async: false,
+                  generator: false,
+                  id: {
+                    type: 'Identifier',
+                    name: 'bar',
+                    start: 46,
+                    end: 49,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 46
+                      },
+                      end: {
+                        line: 1,
+                        column: 49
+                      }
+                    }
+                  },
+                  start: 37,
+                  end: 66,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 37
+                    },
+                    end: {
+                      line: 1,
+                      column: 66
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'Identifier',
+                      name: 'bar',
+                      start: 67,
+                      end: 70,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 67
+                        },
+                        end: {
+                          line: 1,
+                          column: 70
+                        }
+                      }
+                    },
+                    arguments: [],
+                    start: 67,
+                    end: 72,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 67
+                      },
+                      end: {
+                        line: 1,
+                        column: 72
+                      }
+                    }
+                  },
+                  start: 67,
+                  end: 73,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 67
+                    },
+                    end: {
+                      line: 1,
+                      column: 73
+                    }
+                  }
+                }
+              ],
+              start: 35,
+              end: 75,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 35
+                },
+                end: {
+                  line: 1,
+                  column: 75
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 29,
+              end: 32,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 29
+                },
+                end: {
+                  line: 1,
+                  column: 32
+                }
+              }
+            },
+            start: 14,
+            end: 75,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 75
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 75,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 75
+          }
+        }
+      }
+    ],
+    [
+      `async function await() { }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 23,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 23
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'await',
+              start: 15,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
+          }
+        }
+      }
+    ],
     [
       `{ function foo(a, a) {  } function foo(a, a) {  } }`,
       Context.OptionsLoc,
@@ -5029,6 +6695,451 @@ describe('Declarations - Function', () => {
           end: {
             line: 1,
             column: 38
+          }
+        }
+      }
+    ],
+    [
+      `async function* f([{ x, y, z } = { x: 44, y: 55, z: 66 }]) {  }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'ArrayPattern',
+                elements: [
+                  {
+                    type: 'AssignmentPattern',
+                    left: {
+                      type: 'ObjectPattern',
+                      properties: [
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'x',
+                            start: 21,
+                            end: 22,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 21
+                              },
+                              end: {
+                                line: 1,
+                                column: 22
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Identifier',
+                            name: 'x',
+                            start: 21,
+                            end: 22,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 21
+                              },
+                              end: {
+                                line: 1,
+                                column: 22
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: true,
+                          start: 21,
+                          end: 22,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 21
+                            },
+                            end: {
+                              line: 1,
+                              column: 22
+                            }
+                          }
+                        },
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'y',
+                            start: 24,
+                            end: 25,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 24
+                              },
+                              end: {
+                                line: 1,
+                                column: 25
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Identifier',
+                            name: 'y',
+                            start: 24,
+                            end: 25,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 24
+                              },
+                              end: {
+                                line: 1,
+                                column: 25
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: true,
+                          start: 24,
+                          end: 25,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 24
+                            },
+                            end: {
+                              line: 1,
+                              column: 25
+                            }
+                          }
+                        },
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'z',
+                            start: 27,
+                            end: 28,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 27
+                              },
+                              end: {
+                                line: 1,
+                                column: 28
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Identifier',
+                            name: 'z',
+                            start: 27,
+                            end: 28,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 27
+                              },
+                              end: {
+                                line: 1,
+                                column: 28
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: true,
+                          start: 27,
+                          end: 28,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 27
+                            },
+                            end: {
+                              line: 1,
+                              column: 28
+                            }
+                          }
+                        }
+                      ],
+                      start: 19,
+                      end: 30,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 30
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'ObjectExpression',
+                      properties: [
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'x',
+                            start: 35,
+                            end: 36,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 35
+                              },
+                              end: {
+                                line: 1,
+                                column: 36
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: 44,
+                            start: 38,
+                            end: 40,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 38
+                              },
+                              end: {
+                                line: 1,
+                                column: 40
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: false,
+                          start: 35,
+                          end: 40,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 35
+                            },
+                            end: {
+                              line: 1,
+                              column: 40
+                            }
+                          }
+                        },
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'y',
+                            start: 42,
+                            end: 43,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 42
+                              },
+                              end: {
+                                line: 1,
+                                column: 43
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: 55,
+                            start: 45,
+                            end: 47,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 45
+                              },
+                              end: {
+                                line: 1,
+                                column: 47
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: false,
+                          start: 42,
+                          end: 47,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 42
+                            },
+                            end: {
+                              line: 1,
+                              column: 47
+                            }
+                          }
+                        },
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'z',
+                            start: 49,
+                            end: 50,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 49
+                              },
+                              end: {
+                                line: 1,
+                                column: 50
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: 66,
+                            start: 52,
+                            end: 54,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 52
+                              },
+                              end: {
+                                line: 1,
+                                column: 54
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: false,
+                          start: 49,
+                          end: 54,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 49
+                            },
+                            end: {
+                              line: 1,
+                              column: 54
+                            }
+                          }
+                        }
+                      ],
+                      start: 33,
+                      end: 56,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 33
+                        },
+                        end: {
+                          line: 1,
+                          column: 56
+                        }
+                      }
+                    },
+                    start: 19,
+                    end: 56,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 19
+                      },
+                      end: {
+                        line: 1,
+                        column: 56
+                      }
+                    }
+                  }
+                ],
+                start: 18,
+                end: 57,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 18
+                  },
+                  end: {
+                    line: 1,
+                    column: 57
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 59,
+              end: 63,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 59
+                },
+                end: {
+                  line: 1,
+                  column: 63
+                }
+              }
+            },
+            async: true,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 16,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 63,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 63
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 63,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 63
           }
         }
       }

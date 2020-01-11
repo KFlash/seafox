@@ -1193,8 +1193,7 @@ export function parseAsyncArrowOrCallExpression(
         };
   }
 
-  parser.flags =
-    (parser.flags | 0b00000000000000000000010100000000) ^ (0b00000000000000000000010100000000 | Flags.SeenYield);
+  parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
 
   let expr: any = null;
 

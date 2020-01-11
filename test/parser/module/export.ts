@@ -17,6 +17,8 @@ describe('Module - Export', () => {
     ['function a() {} function a() {}', Context.Empty],
     ['function a() export {} function a() {}', Context.Empty],
     ['function a() {} export function a() {}', Context.Empty],
+    ['export function await() {}', Context.Empty],
+    ['export function *await() {}', Context.Empty],
     ['export default function f(){}; export default class C {};', Context.Empty],
     ['export async function a() {} export async function a() {}', Context.Empty],
     ['export class a {} export async function a() {}', Context.Empty],

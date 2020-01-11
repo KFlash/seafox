@@ -479,6 +479,7 @@ export function parseForStatementWithVariableDeclarations(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
+  isAwait: any,
   labels: any,
   curStart: number,
   curLine: number,
@@ -714,7 +715,7 @@ export function parseForStatementWithVariableDeclarations(
 
   if (parser.token === Token.InKeyword) {
     if ((parser.assignable as 0 | 1) === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
-
+    if (isAwait === 1) report(parser, Errors.Unexpected);
     nextToken(parser, context, /* allowRegExp */ 1);
 
     right = parseExpressions(parser, context, 0);
@@ -816,6 +817,7 @@ export function parseForStatement(
       parser,
       context,
       scope,
+      isAwait,
       labels,
       curStart,
       curLine,
