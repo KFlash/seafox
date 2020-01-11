@@ -3,6 +3,160 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Destructuibility', () => {
+  const destructuringForms = [
+    (a: any) => `${a} = [];`,
+    (a: any) => `var ${a} = [];`,
+    (a: any) => `let ${a} = [];`,
+    (a: any) => `const ${a} = [];`,
+    (a: any) => `(${a}) => {};`,
+    (a: any) => `async (${a}) => {};`,
+    (a: any) => `(${a} = []) => {};`,
+    (a: any) => `function f(${a}) {}`,
+    (a: any) => `function *f(${a}) {}`,
+    (a: any) => `async function f(${a}) {}`,
+    (a: any) => `(function f(${a}) {})`,
+    (a: any) => `(async function *f(${a}) {})`
+  ];
+
+  for (const arg of [
+    '[...r, ]',
+    '[a, ...r, ]',
+    '[a = 0, ...r, ]',
+    '[[], ...r, ]',
+    '[[...r,]]',
+    '[[...r,], ]',
+    '[[...r,], a]'
+  ]) {
+    for (const fn of destructuringForms) {
+      it(fn(`${arg}`), () => {
+        t.throws(() => {
+          parseScript(fn(`${arg}`));
+        });
+      });
+    }
+
+    for (const arg of ['[, ]', '[a, ]', '[[], ]']) {
+      for (const fn of destructuringForms) {
+        it(fn(`${arg}`), () => {
+          t.doesNotThrow(() => {
+            parseScript(fn(`${arg}`));
+          });
+        });
+      }
+    }
+  }
+
+  const functions = [
+    (p: any) => `function f(${p}) {}`,
+    (p: any) => `function* g(${p}) {}`,
+    (p: any) => `async function* g(${p}) {}`,
+    (p: any) => `(function* g(${p}) {})`,
+    (p: any) => `(async function* g(${p}) {})`,
+    (p: any) => `({m(${p}) {}});`,
+    (p: any) => `(class {m(${p}) {}});`,
+    (p: any) => `(${p}) => {};`,
+    (p: any) => `((${p}) => {});`,
+    (p: any) => `async (${p}) => {};`,
+    (p: any) => `(async (${p}) => {});`
+  ];
+
+  for (const arg of [
+    '[]',
+    '[a]',
+    '[a, b]',
+    '[a, ...b]',
+    '[...a]',
+    '[...[]]',
+    '{}',
+    '{p: a}',
+    '{p: a = 0}',
+    '{p: {}}',
+    '{p: a, q: b}',
+    '{a}',
+    '{a, b}',
+    '{a = 0}'
+  ]) {
+    for (const fn of functions) {
+      it(fn(`${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`${arg}`));
+        });
+      });
+      it(fn(`x = 0, ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`x = 0, ...${arg}`));
+        });
+      });
+      it(fn(`x = 0, y = 0, ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`x = 0, y = 0, ...${arg}`));
+        });
+      });
+      it(fn(`[], ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`[], ...${arg}`));
+        });
+      });
+      it(fn(`[x], ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`[x], ...${arg}`));
+        });
+      });
+      it(fn(`[x = 0], ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`[x = 0], ...${arg}`));
+        });
+      });
+      it(fn(`{}, ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`{}, ...${arg}`));
+        });
+      });
+      it(fn(`{p: x}, ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`{p: x}, ...${arg}`));
+        });
+      });
+      it(fn(`{x = 0}, ...${arg}`), () => {
+        t.doesNotThrow(() => {
+          parseScript(fn(`{x = 0}, ...${arg}`));
+        });
+      });
+    }
+
+    for (const fn of functions) {
+      it(fn(`...`), () => {
+        t.throws(() => {
+          parseScript(fn(`...`));
+        });
+      });
+
+      it(fn(`...[`), () => {
+        t.throws(() => {
+          parseScript(fn(`...[`));
+        });
+      });
+
+      it(fn(`...{`), () => {
+        t.throws(() => {
+          parseScript(fn(`...{`));
+        });
+      });
+      /*
+      it(fn(`...[p.q]`), () => {d
+        t.throws(() => {
+          parseSource(fn(`...[p.q]`), undefined, Context.OptionsWebCompat);
+        });
+      });
+      */
+
+      it(fn(`...[0]`), () => {
+        t.throws(() => {
+          parseScript(fn(`...[0]`));
+        });
+      });
+    }
+  }
   for (const arg of [
     '[x] += 0',
     '[...x, ] = 0;',
@@ -602,6 +756,349 @@ describe('Miscellaneous - Destructuibility', () => {
   }
 
   for (const arg of [
+    '{ x : y * 2 }',
+    '{ get x() {} }',
+    '{ set x() {} }',
+    '{ x: y() }',
+    '{ this }',
+    '{ x: this }',
+    '{ x: this = 1 }',
+    '{ super }',
+    '{ x: super }',
+    '{ x: super = 1 }',
+    '{ new.target }',
+    '{ x: new.target }',
+    '{ import.meta }',
+    '{ x: import.meta }',
+    '{ x: import.meta = 1 }',
+    '[x--]',
+    '[--x = 1]',
+    'a = b + c = d',
+    '[x()]',
+    '[this]',
+    '[this = 1]',
+    '[new.target]',
+    '[new.target = 1]',
+    '[import.meta]',
+    '[import.meta = 1]',
+    '[super]',
+    '[super = 1]',
+    '[function f() {}]',
+    '[function* f() {}]',
+    'a = ({name = "foo"}, 1) = {}',
+    '{ ([((iydvhw)), gpvpgk]) => { }; } var iydvhw=function(){return this};',
+    '{} = null  ',
+    'c = 10; ({c} = {c:11});',
+    '({x :  } = {})',
+    '({x :  , } = {};)',
+    '( {x :  , y} = {};)',
+    '({x : , y} = {});',
+    'function test5(){ ggnzrk=function(){ }; ({ggnzrk, namespace: {}, w: [(inmgdv)]}) => { };};',
+    'function test5(){ ggnzrk=function(){ }; ({ggnzrk, namespace: {}, w: ([inmgdv])}) => { };};',
+    '(nmlwii, [((yycokb) = (1))] = (nmlwii)) => { };',
+    '({ggnzrk, w: (ggnzrk)}) => { };',
+    '"([x, ...((yArgs))]) => {}',
+    '([x, ...(([yArgs, zArgs]))]) => {}',
+    'function test5(){ ggnzrk=function(){ }; ({ggnzrk, namespace: {}, w: [(inmgdv)]}) => { };};',
+    '[50]',
+    '[(50)]',
+    '[{eval}.x] = [];',
+    '[...{eval}.x] = [];',
+    '({a: {eval}.x} = {});',
+    '({...{eval}.x} = {});',
+    '[{arguments}.x] = [];',
+    '[...{arguments}.x] = [];',
+    '({a: {arguments}.x} = {});',
+    '({...{arguments}.x} = {});',
+    '({...[0].x} = {});',
+    '( {a, ...{b}} = {/*...*/})',
+    '( {a, ...{}} = {/*...*/})',
+    '( {a, ...[b]} = {/*...*/})',
+    '( {a, ...[]} = {/*...*/})',
+    '( [{a, ...[]}] = [{/*...*/}])',
+    '[(async function() {})]',
+    '{ x: 50 }',
+    '{ x: (50) }',
+    "['str']",
+    "{ x: 'str' }",
+    "{ x: ('str') }",
+    '{ x: (foo()) }',
+    '{ x: function() {} }',
+    '{ x: async function() {} }',
+    '{ x: function*() {} }',
+    '{ x: (function() {}) }',
+    '{ x: (async function() {}) }',
+    '{ x: (function*() {}) }',
+    "{ x: y } = 'str'",
+    "[x, y] = 'str'",
+    '[(x,y) => z]',
+    '[async(x,y) => z]',
+    '[async x => z]',
+    '{x: (y) => z}',
+    '{x: (y,w) => z}',
+    '{x: async (y) => z}',
+    '{x: async (y,w) => z}',
+    '[x, ...y, z]',
+    '[...x,]',
+    '[...++x]',
+    '[...x--]',
+    '[...!x]',
+    '[...x + y]',
+    '({ x: x4, x: (x+=1e4) })',
+    '(({ x: x4, x: (x+=1e4) }))',
+    '({ x: x4, x: (x+=1e4) } = {})',
+    '(({ x: x4, x: (x+=1e4) } = {}))',
+    '(({ x: x4, x: (x+=1e4) }) = {})',
+    '({ x: y } = {})',
+    '(({ x: y }) = {})',
+    '([a])',
+    '(([a]))',
+    '([a] = [])',
+    '(([a] = []))',
+    '[ ...([a]) ]',
+    '{ x: ([y]) }',
+    '{ x: ([y] = []) }',
+    '{ x: ({y}) }',
+    '{ x: ({y} = {}) }',
+    '[ ...[ ( [ a ] ) ] ]',
+    '(([a]) = [])',
+    '{ x: (++y) }',
+    '[ (...[a]) ]',
+    '[ ...([a] = [])',
+    '[ (...[a]) ]',
+    '[ (++y) ]',
+    '[ ...(++y) ]',
+    '[ x += x ]',
+    '[x[yield]]] = value',
+    '{ foo: x += x }',
+    '([arguments] = [])',
+    '"use strict"; [ x = yield ] = []',
+    '[ x += x ]',
+    '{ foo: x += x }',
+    'a++',
+    '++a',
+    'delete a',
+    'void a',
+    'typeof a',
+    '(a = b) = c;',
+    '~a',
+    '!a',
+    '{ x : y++ }',
+    '[a++]',
+    '(x => y)',
+    '(async x => y)',
+    '((x, z) => y)',
+    '(async (x, z) => y)',
+    'a()',
+    '--a',
+    '+a',
+    '-a',
+    '(a = b)++;',
+    'new a',
+    'a + a',
+    'a - a',
+    'a * a',
+    'a / a',
+    'a == a',
+    'a != a',
+    'a > a',
+    'a < a',
+    'a <<< a',
+    'a >>> a',
+    'a`bcd`',
+    'this',
+    'null',
+    'true',
+    'false',
+    '/abc/',
+    '`abc`',
+    'class {}',
+    'var',
+    '[var]',
+    '{x : {y : var}}',
+    '{[1+1]}',
+    '[...rest, x]',
+    '[a,b,...rest, x]',
+    '[a,,...rest, x]',
+    '[...rest,]',
+    '[a,b,...rest,]',
+    '[a,,...rest,]',
+    '[...rest,...rest1]',
+    '[a,b,...rest,...rest1]',
+    '[a,,..rest,...rest1]',
+    '[x, y, ...z = 1]',
+    '[...z = 1]',
+    '[x, y, ...[z] = [1]]',
+    '[...[z] = [1]]',
+    '{ x : 3 }',
+    "{ x : 'foo' }",
+    '{ x : /foo/ }',
+    '{ x : `foo` }',
+    '{ get a() {} }',
+    '{ set a() {} }',
+    '{x : x += a}',
+    '{m() {} = 0}',
+    '{+2 : x}',
+    '{-2 : x}',
+    '1',
+    "'abc'",
+    '{ method() {} }',
+    '{ *method() {} }',
+    '...a++',
+    '[this = 1]',
+    '[new.target]',
+    '[new.target = 1]',
+    '[import.meta]',
+    '[import.meta = 1]',
+    '{ x: 50 }',
+    '{ x: (50) }',
+    "['str']",
+    "{ x: 'str' }",
+    "{ x: ('str') }",
+    '{ x: (foo()) }',
+    '{ x: function() {} }',
+    '{ x: async function() {} }',
+    '{ x: function*() {} }',
+    '{ x: (function() {}) }',
+    '{ x: (async function() {}) }',
+    '{ x: (function*() {}) }',
+    "{ x: y } = 'str'",
+    "[x, y] = 'str'",
+    '[(x,y) => z]',
+    '[async(x,y) => z]',
+    '...++a',
+    '...typeof a',
+    '...[a++]',
+    '...(x => y)',
+    '{ ...x, }',
+    '{ ...x, y }',
+    '{ y, ...x, y }',
+    '{ ...x, ...y }',
+    '{ ...x, ...x }',
+    '{ ...x, ...x = {} }',
+    '{ ...x, ...x = ...x }',
+    '{ ...x, ...x = ...{ x } }',
+    '{ ,, ...x }',
+    '{ ...get a() {} }',
+    '{ ...set a() {} }',
+    '{ ...method() {} }',
+    '{ ...function() {} }',
+    '{ ...*method() {} }',
+    '(true ? { x = true } : { x = false })',
+    '({foo() {}} = {});',
+    '({get foo() {}} = {});',
+    '({set foo(a) {}} = {});',
+    "({get ['foo']() {}} = {});",
+    "({set ['foo'](a) {}} = {});",
+    '({e: a.b}) => 0',
+    'function a({e: a.b}) {}',
+    'function* a({e: a.b}) {}',
+    '(function ({e: a.b}) {})',
+    '(function* ({e: a.b}) {})',
+    '(function* ([a.b]) {})',
+    '({a([a.b]){}})',
+    '({*a([a.b]){}})',
+    '({set a([a.b]){}})',
+    '([a.b]) => 0',
+    '({*a({e: a.b}){}})',
+    '({set a({e: a.b}){}})',
+    '({a:for} = 0)',
+    '({a = 0});',
+    '({a} += 0);',
+    '({get a(){}})=0',
+    '({a:this}=0)',
+    '({var} = 0)',
+    '({,a,} = 0)',
+    '({a,,a} = 0)',
+    '({function} = 0)',
+    '({a:function} = 0)',
+    '({a:for} = 0)',
+    "({'a'} = 0)",
+    '({var} = 0)',
+    '({a.b} = 0)',
+    '{ x: ([y]) }',
+    '{ x: ([y] = []) }',
+    '{ x: ({y}) }',
+    '{ x: ({y} = {}) }',
+    '{ x: (++y) }',
+    '[ (...[a]) ]',
+    '[ ...([a]) ]',
+    '[ (++y) ]',
+    '[ ...(++y) ]',
+    '{a = [...b, c]} = 0',
+    '[a, ...b, {c=0}]',
+    '[async x => z]',
+    '{x: (y) => z}',
+    '{x: (y,w) => z}',
+    '{x: async (y) => z}',
+    '{x: async (y,w) => z}',
+    '[x, ...y, z]',
+    '[...x,]',
+    '[x, y, ...z = 1]',
+    '[...z = 1]',
+    '[x, y, ...[z] = [1]]',
+    '[...[z] = [1]]',
+    '[...++x]',
+    '[...x--]',
+    '[...!x]',
+    '[...x + y]',
+    '({ x: x4, x: (x+=1e4) })',
+    '(({ x: x4, x: (x+=1e4) }))',
+    '({ x: x4, x: (x+=1e4) } = {})',
+    '(({ x: x4, x: (x+=1e4) } = {}))',
+    '(({ x: x4, x: (x+=1e4) }) = {})',
+    '({ x: y } = {})',
+    '(({ x: y } = {}))',
+    '(({ x: y }) = {})',
+    '([a])',
+    '(([a]))',
+    '([a] = [])',
+    '(([a] = []))',
+    '(([a]) = [])',
+    '({0} = 0)',
+    '{...{x} }',
+    '{...[x] }',
+    '{ x : /foo/ }',
+    '...typeof a',
+    'a.g(...[]) = 1',
+    'eval(...["1"]) = 1',
+    'g(...[]) ++',
+    'a.g(...[]) ++',
+    '[g(...[])] = []',
+    '[a.g(...[])] = []',
+    '[eval(...["1"])] = []',
+    '({y: g(...[])} = 1)',
+    '({y: a.g(...[])} = 1)',
+    '({y: eval(...["1"])} = 1)',
+    `[{a = 0}.x] = [];`,
+    `[{a = 0}.x] = [];`,
+    `[...{a = 0}.x] = [];`,
+    `({a: {b = 0}.x} = {});`,
+    `({...{b = 0}.x} = {});`
+  ]) {
+    it(`(${arg}= {});`, () => {
+      t.throws(() => {
+        parseScript(`(${arg}= {});`);
+      });
+    });
+    it(`var  ${arg} = {}`, () => {
+      t.throws(() => {
+        parseScript(`var  ${arg} = {}`);
+      });
+    });
+    it(`"use strict"; let ${arg} = {}`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; let ${arg} = {}`);
+      });
+    });
+    it(`try {} catch(${arg}) {}`, () => {
+      t.throws(() => {
+        parseScript(`try {} catch(${arg}) {}`);
+      });
+    });
+  }
+
+  for (const arg of [
     '{,}',
     '({})',
     '([])',
@@ -900,6 +1397,18 @@ describe('Miscellaneous - Destructuibility', () => {
     '{ x : x, y : y }',
     '{ x : x = 1, y : y }',
     '{ x : x, y : y = 42 }',
+    '[{x:x = 1, y:y = 2}, [a = 3, b = 4, c = 5]]',
+    '[a,b,...rest]',
+    '[a,,...rest]',
+    '{ __proto__: x, __proto__: y}',
+    '{arguments: x}',
+    '{eval: x}',
+    '{ x : y, ...z }',
+    '{ x : y = 1, ...z }',
+    '{ x : x, y : y, ...z }',
+    '{ x : x = 1, y : y, ...z }',
+    '{ x : x, y : y = 42, ...z }',
+    '[{x:x, y:y, ...z}, [a,b,c]]',
     '[]',
     '{}',
     '[{x:x, y:y}, [,x,z,]]',
@@ -917,14 +1426,6 @@ describe('Miscellaneous - Destructuibility', () => {
     '{var: x = 42}',
     '{var: (x) = 42}',
     '{[x] : z}',
-    '{[foo()] : z}',
-    '{[foo()] : (z)}',
-    '{[foo()] : foo().bar}',
-    "{[foo()] : foo()['bar']}",
-    '{[foo()] : this.bar}',
-    "{[foo()] : this['bar']}",
-    "{[foo()] : 'foo'.bar}",
-    "{[foo()] : 'foo'['bar']}",
     '[...x]',
     '[x,y,...z]',
     '[x,,...z]',

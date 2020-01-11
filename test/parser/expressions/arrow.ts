@@ -44,8 +44,6 @@ describe('Expressions - Arrow', () => {
     ['new async => ok', Context.Empty],
     ['new x => {}', Context.Empty],
     ['new x => ok', Context.Empty],
-    ['([x],) => x', Context.Empty],
-    ['({a},) => x', Context.Empty],
     ['({new x}) => x;', Context.Empty],
     ['const let => { let }', Context.Empty],
     ['var logger = a,b => console.log(a);', Context.Empty],
@@ -504,6 +502,82 @@ describe('Expressions - Arrow', () => {
     });
   }
 
+  for (const arg of [
+    '(a\n=> a)(1)',
+    '(a/*\n*/=> a)(1)',
+    '((a)\n=> a)(1)',
+    '((a)/*\n*/=> a)(1)',
+    '((a, b)\n=> a + b)(1, 2)',
+    '((a, b)/*\n*/=> a + b)(1, 2)'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'eval => {}',
+    'arguments => {}',
+    '(eval) => {}',
+    '(arguments) => {}',
+    '(yield) => {}',
+    '(interface) => {}',
+    '(eval, bar) => {}',
+    '(bar, eval) => {}',
+    '(bar, arguments) => {}',
+    '(bar, yield) => {}',
+    '(bar, interface) => {}',
+    '(interface, eval) => {}',
+    '(interface, arguments) => {}',
+    '(eval, interface) => {}',
+    '(arguments, interface) => {}'
+  ]) {
+    it(`${arg};`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  // Testing yield in arrow formal list
+  for (const arg of [
+    'x=yield',
+    'x, y=yield',
+    '{x=yield}',
+    '[x=yield]',
+    'x=(yield)',
+    'x, y=(yield)',
+    '{x=(yield)}',
+    '[x=(yield)]',
+    'x=f(yield)',
+    'x, y=f(yield)',
+    '{x=f(yield)}',
+    '[x=f(yield)]',
+    '{x}=yield',
+    '[x]=yield',
+    '{x}=(yield)',
+    '[x]=(yield)',
+    '{x}=f(yield)',
+    '[x]=f(yield)'
+  ]) {
+    it(`(function *g(z = ( ${arg} ) => {}) { });`, () => {
+      t.throws(() => {
+        parseScript(`(function *g(z = ( ${arg} ) => {}) { });`);
+      });
+    });
+    it(`(function *g(async ( ${arg} ) => {}) { });`, () => {
+      t.throws(() => {
+        parseScript(`(function *g(async ( ${arg} ) => {}) { });`);
+      });
+    });
+    it(`(function *g(z = ( ${arg} ) => {}) { });`, () => {
+      t.throws(() => {
+        parseScript(`(function *g(z = ( ${arg} ) => {}) { });`);
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
     /*[
   `() => {}\n() => {}`,
