@@ -1309,10 +1309,10 @@ export function parseAsyncArrowOrCallExpression(
     if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
     return parseArrowFunctionAfterParen(parser, context, scope, mutualFlag, params, canAssign, 1, start, line, column);
   }
-
   if ((context & Context.OptionsDisableWebCompat) === 0 && parser.flags & Flags.SeenProto) {
     report(parser, Errors.DuplicateProto);
   }
+
   parser.flags = (parser.flags | 0b00000000000000000000110000000000) ^ 0b00000000000000000000110000000000;
 
   if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
@@ -2733,7 +2733,8 @@ export function parseArrayExpressionOrPattern(
   }
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+    (((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag) ^
+    0b00000000000000000000001000000000;
 
   return node;
 }
