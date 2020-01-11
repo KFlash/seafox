@@ -161,7 +161,7 @@ export function parseBinaryExpression(
 
     if ((t & prec) + (((t === Token.Exponentiate) as any) << 8) <= minPrec) return left;
 
-    if (((l | t) & 0b01000000100000000000000000000000) > Token.IsCoalescing) {
+    if (((l | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
       report(parser, Errors.InvalidCoalescing);
     }
 
