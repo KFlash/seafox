@@ -1,5 +1,11 @@
 export const enum Token {
 
+ /* Performing a bitwise and (&) with this value (255) will return only the
+  * token bit, which corresponds to the index of the token's value in the
+  * KeywordDescTable array */
+
+  Kind  = 0b00000000000000000000000011111111,
+
   /* Attribute names */
   Contextual        = 0b00000000000000010000000000000000,
   Keyword           = 0b00000000000000100000000000000000,
@@ -7,15 +13,15 @@ export const enum Token {
   IsStringOrNumber  = 0b00000000000010000000000000000000,
   IsExpressionStart = 0b00000000000100000000000000000000,
   IsIdentifier      = 0b00000000001000010000000000000000,
-  IsInOrOf          = 0b00000000010000000000000000000000, // 'in' or 'of'
+  IsInOrOf          = 0b00000000010000000000000000000000,
   IsLogical         = 0b00000000100000000000000000000000,
   IsAutoSemicolon   = 0b00000001000000000000000000000000,
-  IsPatternStart    = 0b00000010000000000000000000000000, // Start of pattern, '[' or '{'
+  IsPatternStart    = 0b00000010000000000000000000000000,
   IsAssignOp        = 0b00000100000000000000000000000000,
   IsBinaryOp        = 0b00001000000100000000000000000000,
   IsUpdateOp        = 0b00010000000100000000000000000000,
   IsEvalOrArguments = 0b00100000000100000000000000000000,
-  Coalescing      = 0b01000000000000000000000000000000,
+  Coalescing        = 0b01000000000000000000000000000000,
 
  /* Node types */
  EOF                = 0b00000001000000000000000000000000,
@@ -179,7 +185,13 @@ export const enum Token {
  Eval                = 0b00100000001100010000000010000101,
  Arguments           = 0b00100000001100010000000010000110,
 }
-
+/**
+ * Array for mapping tokens to token values. The indices of the values
+ * correspond to the token bits 0-124.
+ * For this to work properly, the values in the array must be kept in
+ * the same order as the token bits.
+ * Usage: KeywordDescTable[token & T$Kind]
+ */
 export const KeywordDescTable = [
  'end of source',
 

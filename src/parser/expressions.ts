@@ -44,7 +44,7 @@ export function parseAssignmentExpression(
       isPattern,
       inGroup,
       left,
-      KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+      KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
       start,
       line,
       column
@@ -189,7 +189,7 @@ export function parseBinaryExpression(
             type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
             right,
-            operator: KeywordDescTable[t & 0b00000000000000000000000011111111],
+            operator: KeywordDescTable[t & Token.Kind],
             start: curStart,
             end: parser.endIndex,
             loc: setLoc(parser, curLine, curColumn)
@@ -198,7 +198,7 @@ export function parseBinaryExpression(
             type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
             right,
-            operator: KeywordDescTable[t & 0b00000000000000000000000011111111]
+            operator: KeywordDescTable[t & Token.Kind]
           };
   }
 }
@@ -1028,7 +1028,7 @@ export function parseAsyncExpression(
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
       if (allowLHS === 0) {
-        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
 
       return parseFunctionExpression(parser, context, 1, curStart, curLine, curColumn);
@@ -1037,7 +1037,7 @@ export function parseAsyncExpression(
     // async Identifier => ...
     if ((parser.token & Token.IsIdentifier) === Token.IsIdentifier) {
       if (allowLHS === 0) {
-        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
 
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
@@ -1767,7 +1767,7 @@ export function parseArrowFunction(
       const { token } = parser;
 
       if ((token & Token.IsBinaryOp) > 0) {
-        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
 
       switch (token) {
@@ -1785,7 +1785,7 @@ export function parseArrowFunction(
         case Token.Period:
         case Token.QuestionMark:
         case Token.Exponentiate:
-          report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+          report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
         default: // ignore
       }
     }
@@ -1919,7 +1919,7 @@ export function parseParenthesizedExpression(
             0,
             0,
             expr,
-            KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+            KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
             start,
             line,
             column
@@ -2294,7 +2294,7 @@ export function parseUpdateExpression(
 
   if (parser.assignable === 0) report(parser, Errors.InvalidIncDecTarget);
 
-  const operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.UpdateOperator;
+  const operator = KeywordDescTable[parser.token & Token.Kind] as ESTree.UpdateOperator;
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
@@ -2332,7 +2332,7 @@ export function parseUpdateExpressionPrefix(
   if (allowLHS === 0) report(parser, Errors.Unexpected);
   if (inNew === 1) report(parser, Errors.InvalidIncDecNew);
 
-  const operator = KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.UpdateOperator;
+  const operator = KeywordDescTable[parser.token & Token.Kind] as ESTree.UpdateOperator;
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -2388,7 +2388,7 @@ export function parseUnaryExpression(
   if (allowLHS === 0) report(parser, Errors.Unexpected);
 
   if (inNew === 1) {
-    report(parser, Errors.InvalidNewUnary, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+    report(parser, Errors.InvalidNewUnary, KeywordDescTable[parser.token & Token.Kind]);
   }
 
   const operator = parser.token;
@@ -2412,7 +2412,7 @@ export function parseUnaryExpression(
   return context & Context.OptionsLoc
     ? {
         type: 'UnaryExpression',
-        operator: KeywordDescTable[operator & 0b00000000000000000000000011111111] as ESTree.UnaryOperator,
+        operator: KeywordDescTable[operator & Token.Kind] as ESTree.UnaryOperator,
         argument: arg,
         prefix: true,
         start,
@@ -2421,7 +2421,7 @@ export function parseUnaryExpression(
       }
     : {
         type: 'UnaryExpression',
-        operator: KeywordDescTable[operator & 0b00000000000000000000000011111111] as ESTree.UnaryOperator,
+        operator: KeywordDescTable[operator & Token.Kind] as ESTree.UnaryOperator,
         argument: arg,
         prefix: true
       };
@@ -2587,7 +2587,7 @@ export function parseArrayExpressionOrPattern(
               isPattern,
               0,
               left,
-              KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+              KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
               start,
               line,
               column
@@ -2635,7 +2635,7 @@ export function parseArrayExpressionOrPattern(
               isPattern,
               0,
               left,
-              KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+              KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
               start,
               line,
               column
@@ -2672,7 +2672,7 @@ export function parseArrayExpressionOrPattern(
         );
 
         if (parser.token !== Token.Comma && (parser.token as Token) !== Token.RightBracket) {
-          report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+          report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
         }
 
         mutualFlag |= parser.flags;
@@ -3211,7 +3211,7 @@ export function parseClassElementList(
         nextToken(parser, context, /* allowRegExp */ 0); // skip: '*'
         break;
       default:
-        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
     }
   }
 
@@ -3868,7 +3868,7 @@ export function parseObjectLiteralOrPattern(
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+                  KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
                   start,
                   line,
                   column
@@ -4075,7 +4075,7 @@ export function parseObjectLiteralOrPattern(
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+                  KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
                   start,
                   line,
                   column
@@ -4146,7 +4146,7 @@ export function parseObjectLiteralOrPattern(
                 isPattern,
                 0,
                 value as any,
-                KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+                KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
                 start,
                 line,
                 column
@@ -4217,7 +4217,7 @@ export function parseObjectLiteralOrPattern(
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+                  KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
                   start,
                   line,
                   column
@@ -4378,7 +4378,7 @@ export function parseObjectLiteralOrPattern(
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & 0b00000000000000000000000011111111] as ESTree.AssignmentOperator,
+                  KeywordDescTable[parser.token & Token.Kind] as ESTree.AssignmentOperator,
                   start,
                   line,
                   column
@@ -4423,7 +4423,7 @@ export function parseObjectLiteralOrPattern(
           report(parser, Errors.Unexpected);
         }
       } else {
-        report(parser, Errors.UnexpectedToken, KeywordDescTable[token & 0b00000000000000000000000011111111]);
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[token & Token.Kind]);
       }
 
       parser.flags =

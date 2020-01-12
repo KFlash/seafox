@@ -4,9 +4,16 @@ import { report, Errors } from '../errors';
 import { Chars, isIdentifierPart, CharTypes, fromCodePoint, toHex, unicodeLookup } from './';
 
 export function scanIdentifier(parser: ParserState, context: Context, source: string, char: number): Token {
-  while ((CharTypes[char] & 0b00000000000000000000000000000101) > 0) {
+  // run to the next non-idPart
+  while (
+    (CharTypes[char] & 0b00000000000000000000000000000101) > 0 ||
+    // Note: "while((unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1)" would be enough to
+    // make this work. This is just a performance tweak
+    (char > 0x7f && (unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1)
+  ) {
     char = source.charCodeAt(++parser.index);
   }
+
   const value = source.slice(parser.start, parser.index);
   if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 0, 0);
   parser.tokenValue = value;
@@ -14,7 +21,13 @@ export function scanIdentifier(parser: ParserState, context: Context, source: st
 }
 
 export function scanIdentifierOrKeyword(parser: ParserState, context: Context, source: string, char: number): Token {
-  while ((CharTypes[char] & 0b00000000000000000000000000000101) > 0) {
+  // run to the next non-idPart
+  while (
+    (CharTypes[char] & 0b00000000000000000000000000000101) > 0 ||
+    // Note: "while((unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1)" would be enough to
+    // make this work. This is just a performance tweak
+    (char > 0x7f && (unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1)
+  ) {
     char = source.charCodeAt(++parser.index);
   }
   const value = source.slice(parser.start, parser.index);
