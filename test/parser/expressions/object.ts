@@ -783,6 +783,197 @@ describe('Expressions - Object', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `({ __proto__: x, __proto__: y }) => {};`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 36,
+                end: 38,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 36
+                  },
+                  end: {
+                    line: 1,
+                    column: 38
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: '__proto__',
+                        start: 3,
+                        end: 12,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 3
+                          },
+                          end: {
+                            line: 1,
+                            column: 12
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'x',
+                        start: 14,
+                        end: 15,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 14
+                          },
+                          end: {
+                            line: 1,
+                            column: 15
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 3,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: '__proto__',
+                        start: 17,
+                        end: 26,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 17
+                          },
+                          end: {
+                            line: 1,
+                            column: 26
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'y',
+                        start: 28,
+                        end: 29,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 28
+                          },
+                          end: {
+                            line: 1,
+                            column: 29
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: false,
+                      start: 17,
+                      end: 29,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 17
+                        },
+                        end: {
+                          line: 1,
+                          column: 29
+                        }
+                      }
+                    }
+                  ],
+                  start: 1,
+                  end: 31,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 31
+                    }
+                  }
+                }
+              ],
+              async: false,
+              expression: false,
+              start: 0,
+              end: 38,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 38
+                }
+              }
+            },
+            start: 0,
+            end: 39,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 39
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 39,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 39
+          }
+        }
+      }
+    ],
+    [
       `({ 0n: 0 });`,
       Context.OptionsLoc,
       {
