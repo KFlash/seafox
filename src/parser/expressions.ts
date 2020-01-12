@@ -2733,8 +2733,9 @@ export function parseArrayExpressionOrPattern(
   }
 
   parser.flags =
-    (((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag) ^
-    0b00000000000000000000001000000000;
+    ((parser.flags | 0b00000000000000000000000000011110 | 0b00000000000000000000001000000000) ^
+      (0b00000000000000000000001000000000 | 0b00000000000000000000000000011110)) |
+    ((mutualFlag | 0b00000000000000000000001000000000) ^ 0b00000000000000000000001000000000);
 
   return node;
 }
@@ -4468,8 +4469,6 @@ export function parseObjectLiteralOrPattern(
 
   consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
 
-  if (prototypeCount > 1) mutualFlag |= Flags.SeenProto;
-
   const node =
     context & Context.OptionsLoc
       ? {
@@ -4499,7 +4498,9 @@ export function parseObjectLiteralOrPattern(
   }
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) |
+    mutualFlag |
+    (prototypeCount > 1 ? 0b00000000000000000000001000000000 : 0);
 
   return node;
 }

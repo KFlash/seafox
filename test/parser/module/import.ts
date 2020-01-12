@@ -17,6 +17,7 @@ describe('Module - Import', () => {
     ['import { y as yield } from "foo"', Context.Empty],
     ['import { y as yield } from "foo"', Context.Empty],
     ['import { y as yield } from "foo"', Context.Empty],
+    ['import {a, b} fromx "c"', Context.Empty],
     ['import {} from;', Context.Empty],
     ["import {,} from 'a';", Context.Empty],
     ["import {b,,} from 'a';", Context.Empty],
