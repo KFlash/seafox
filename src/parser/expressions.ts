@@ -220,11 +220,15 @@ export function parseMemberExpression(
   line: number,
   column: number
 ): ESTree.Expression | ESTree.MemberExpression | ESTree.UpdateExpression {
-  if ((parser.token & Token.IsUpdateOp) === Token.IsUpdateOp) {
-    return parser.newLine === 0 ? parseUpdateExpression(parser, context, expr, start, line, column) : expr;
-  }
+  if ((parser.token & Token.IsMemberOrCallExpression) !== Token.IsMemberOrCallExpression) return expr;
 
   switch (parser.token) {
+    /* Update expression */
+    case Token.Increment:
+    case Token.Decrement: {
+      return parser.newLine === 0 ? parseUpdateExpression(parser, context, expr, start, line, column) : expr;
+    }
+
     /* Property */
     case Token.Period: {
       nextToken(parser, context, /* allowRegExp */ 0);
@@ -233,9 +237,7 @@ export function parseMemberExpression(
 
       const property = parsePropertyOrPrivatePropertyName(parser, context);
 
-      return parseMemberExpression(
-        parser,
-        context,
+      expr =
         context & Context.OptionsLoc
           ? {
               type: 'MemberExpression',
@@ -251,12 +253,8 @@ export function parseMemberExpression(
               object: expr,
               computed: false,
               property
-            },
-        inGroup,
-        start,
-        line,
-        column
-      );
+            };
+      break;
     }
     /* Property */
     case Token.LeftBracket: {
@@ -268,9 +266,7 @@ export function parseMemberExpression(
 
       parser.assignable = 1;
 
-      return parseMemberExpression(
-        parser,
-        context,
+      expr =
         context & Context.OptionsLoc
           ? {
               type: 'MemberExpression',
@@ -286,12 +282,8 @@ export function parseMemberExpression(
               object: expr,
               computed: true,
               property
-            },
-        inGroup,
-        start,
-        line,
-        column
-      );
+            };
+      break;
     }
 
     /* Call */
@@ -300,9 +292,7 @@ export function parseMemberExpression(
 
       parser.assignable = 0;
 
-      return parseMemberExpression(
-        parser,
-        context,
+      expr =
         context & Context.OptionsLoc
           ? {
               type: 'CallExpression',
@@ -316,42 +306,24 @@ export function parseMemberExpression(
               type: 'CallExpression',
               callee: expr,
               arguments: args
-            },
-        inGroup,
-        start,
-        line,
-        column
-      );
+            };
+      break;
     }
     case Token.TemplateTail: {
-      return parseMemberExpression(
-        parser,
-        context,
-        parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
-        inGroup,
-        start,
-        line,
-        column
-      );
+      expr = parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column);
+      break;
     }
     case Token.TemplateCont: {
-      return parseMemberExpression(
+      expr = parseTemplateExpression(
         parser,
         context,
-        parseTemplateExpression(
-          parser,
-          context,
-          expr,
-          parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
-          start,
-          line,
-          column
-        ),
-        inGroup,
+        expr,
+        parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
         start,
         line,
         column
       );
+      break;
     }
     /* Optional Property */
     case Token.QuestionMarkPeriod: {
@@ -359,9 +331,7 @@ export function parseMemberExpression(
 
       parser.assignable = 0;
 
-      return parseMemberExpression(
-        parser,
-        context,
+      expr =
         context & Context.OptionsLoc
           ? {
               type: 'ChainingExpression',
@@ -375,17 +345,10 @@ export function parseMemberExpression(
               type: 'ChainingExpression',
               base: expr,
               chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column)
-            },
-        inGroup,
-        start,
-        line,
-        column
-      );
+            };
     }
-
-    default:
-      return expr;
   }
+  return parseMemberExpression(parser, context, expr, inGroup, start, line, column);
 }
 
 export function parseMemberOrCallChain(
@@ -947,10 +910,10 @@ export function parsePrimaryExpression(
     return expr;
   }
 
-  if ((token & Token.IsUpdateOp) === Token.IsUpdateOp) {
-    return parseUpdateExpressionPrefix(parser, context, inNew, allowLHS, start, line, column);
-  }
   switch (token) {
+    case Token.Decrement:
+    case Token.Increment:
+      return parseUpdateExpressionPrefix(parser, context, inNew, allowLHS, start, line, column);
     case Token.DeleteKeyword:
     case Token.Negate:
     case Token.Complement:
