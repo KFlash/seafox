@@ -756,7 +756,8 @@ describe('Expressions - Object', () => {
     'x = {__proto__: 1, "__proto__": 2}',
     'x = {\'__proto__\': 1, "__proto__": 2}',
     "x = {'__proto__': 1, __proto__: 2}",
-    'x = {__proto__: 1, "__proto__": 2}'
+    'x = {__proto__: 1, "__proto__": 2}',
+    '([{ __proto__: x, __proto__: y }] = [{}]);'
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
