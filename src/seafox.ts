@@ -88,8 +88,8 @@ export function parseModule(source: string, options?: Options): Program {
   };
 
   const body = parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope);
-
-  for (const key in parser.exportedBindings) {
+  const exportedBindings = parser.exportedBindings;
+  for (const key in exportedBindings) {
     if (key[0] === '#' && !(scope as any)[key]) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
   }
   return context & Context.OptionsLoc

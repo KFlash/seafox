@@ -185,18 +185,21 @@ export function setLoc(parser: ParserState, line: number, column: number): any {
  */
 export function reinterpretToPattern(state: ParserState, node: any): void {
   switch (node.type) {
-    case 'ArrayExpression':
+    case 'ArrayExpression': {
       node.type = 'ArrayPattern';
       const elements = node.elements;
-      for (let i = 0, n = elements.length; i < n; ++i) {
-        const element = elements[i];
-        if (element) reinterpretToPattern(state, element);
+      let i = elements.length;
+      while (i--) {
+        if (elements[i]) reinterpretToPattern(state, elements[i]);
       }
+
       return;
+    }
     case 'ObjectExpression':
       node.type = 'ObjectPattern';
       const properties = node.properties;
-      for (let i = 0, n = properties.length; i < n; ++i) {
+      let i = properties.length;
+      while (i--) {
         reinterpretToPattern(state, properties[i]);
       }
       return;

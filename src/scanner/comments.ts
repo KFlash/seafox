@@ -19,16 +19,16 @@ export function skipSingleLineComment(parser: ParserState, source: string, i: nu
   // separately by the lexical grammar and becomes part of the
   // stream of input elements for the syntactic grammar
   let char = source.charCodeAt(i);
-  while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0) {
+  do {
     char = source.charCodeAt(++i);
-  }
+  } while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0);
   return i;
 }
 
 export function skipMultiLineComment(parser: ParserState, source: string, i: number): any {
   let lastIsCR: 0 | 1 = 0;
   let char = source.charCodeAt(i++);
-  while (i < parser.length) {
+  do {
     if (char < 0x2b) {
       if (char === Chars.Asterisk) {
         while (char === Chars.Asterisk) {
@@ -59,7 +59,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, i: num
       lastIsCR = 0;
     }
     char = source.charCodeAt(i++);
-  }
+  } while (i < parser.length);
 
   report(parser, Errors.UnterminatedComment);
 }
