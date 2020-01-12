@@ -17,6 +17,7 @@ describe('Lexer - numeric literals', () => {
     fail('fails on .8n', '.8n', Context.Empty);
     //fail('fails on 2017.8n', '2017.8n', Context.Empty);
     fail('fails on 0e0n', '0e0n', Context.Empty);
+    fail('fails on 08_0;', '08_0;', Context.Empty);
     fail('fails on 0o9n', '0o9n', Context.Empty);
     fail('fails on 0b2n', '0b2n', Context.Empty);
     fail('fails on 008.3n', '008.3n', Context.Empty);
@@ -111,7 +112,7 @@ describe('Lexer - numeric literals', () => {
       column: number;
     }
 
-    const tokens: Array<[Context, Token, string, number]> = [
+    const tokens: Array<[Context, Token, string, number | void]> = [
       /* Punctuators */
       [Context.OptionsRaw, Token.NumericLiteral, '5_7', 57],
       [Context.OptionsRaw, Token.NumericLiteral, '1.1_1', 1.11],
@@ -307,7 +308,11 @@ describe('Lexer - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '0O01_1', 9],
       [Context.OptionsRaw, Token.NumericLiteral, '0X0_1', 1],
       [Context.OptionsRaw, Token.NumericLiteral, '0X0_1_0', 16],
-      [Context.OptionsRaw, Token.NumericLiteral, '0Xa', 10]
+      [Context.OptionsRaw, Token.NumericLiteral, '0Xa', 10],
+
+      [Context.OptionsRaw, Token.BigIntLiteral, '1_0n', void 0],
+      [Context.OptionsRaw, Token.BigIntLiteral, '1_0123456789n', void 0],
+      [Context.OptionsRaw, Token.BigIntLiteral, '123456789_0n', void 0]
     ];
 
     for (const [ctx, token, op, value] of tokens) {

@@ -107,6 +107,8 @@ export function skipNumericSeparator(parser: ParserState, source: string, char: 
     value += source.substring(start, parser.index) + scanDecimalDigitsOrSeparator(parser, source, char, parser.index);
   }
 
+  if (char === Chars.LowerN) return scanBigInt(parser, source);
+
   parser.tokenValue = parseFloat(value);
   return Token.NumericLiteral;
 }
@@ -165,7 +167,10 @@ export function scanImplicitOctalDigits(parser: ParserState, context: Context, s
   let value = 0;
 
   while (char >= Chars.Zero && char <= Chars.Nine) {
-    if (char >= Chars.Eight) return scanNumber(parser, source, char, 1); // 08...  or 09....
+    if (char >= Chars.Eight) {
+      if (source.charCodeAt(parser.index + 1) === Chars.Underscore) report(parser, Errors.InvalidBigIntLiteral);
+      return scanNumber(parser, source, char, 1); // 08...  or 09....
+    }
     value = value * 8 + (char - Chars.Zero);
     char = source.charCodeAt(++parser.index);
   }
