@@ -198,6 +198,8 @@ describe('Expressions - Object', () => {
     ['((({w = x} >(-9)', Context.Empty],
     ['++({x=1})', Context.Empty],
     ['--{x=1}', Context.Empty],
+    ['({ set x(...a){} })', Context.Empty],
+    ['({ get x(...a){} })', Context.Empty],
     ['!{x=1}={}', Context.Empty],
     ['delete {x=1}', Context.Empty],
     ['delete ({x=1})', Context.Empty],
@@ -269,6 +271,13 @@ describe('Expressions - Object', () => {
     ['x = { "a": {} ++a }', Context.Empty],
     ['x = { 1: {} /= a }', Context.Empty],
     ['x = { 1: {} ++a }', Context.Empty],
+    ['({12n:  [a].b.(c)})', Context.Empty],
+    ['({12n:  a + b = c / (d)})', Context.Empty],
+    ['({12n:  a + b = c })', Context.Empty],
+    ['({12n = a })', Context.Empty],
+    ['({12n = 1 })', Context.Empty],
+    ['({ async set package(a){} })', Context.Empty],
+    ['({ async get package(){} })', Context.Empty],
     ['({...x)', Context.Empty],
     ['({1} ? a : b)', Context.Empty],
     ['({x: [..] = y})', Context.Empty],
@@ -782,6 +791,4314 @@ describe('Expressions - Object', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `({12n: b = c})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 7,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 11,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 11
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      `({12n: [] / b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'ArrayExpression',
+                      elements: [],
+                      start: 7,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    operator: '/',
+                    start: 7,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `({12n: [] ** b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'ArrayExpression',
+                      elements: [],
+                      start: 7,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 13,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    operator: '**',
+                    start: 7,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `({12n: [].a ** b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ArrayExpression',
+                        elements: [],
+                        start: 7,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 10,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      start: 7,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 15,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 15
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    operator: '**',
+                    start: 7,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
+      `({12n: (a)})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 8,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `({12n: (a) = b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 13,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `({12n: (a).b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 11,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 11
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      `({12n() {}})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 8,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 5,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: true,
+                  shorthand: false,
+                  start: 2,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `({12n: ((a).b)})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 9,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 9
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 8,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `({12n: (a(a).b)})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'CallExpression',
+                      callee: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 8,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 8
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      arguments: [
+                        {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        }
+                      ],
+                      start: 8,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 13,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 8,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `({12n:  a + b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    operator: '+',
+                    start: 8,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `({12n:  "a"})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Literal',
+                    value: 'a',
+                    start: 8,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `({12n:  [a] ? b : c})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'ConditionalExpression',
+                    test: {
+                      type: 'ArrayExpression',
+                      elements: [
+                        {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 9,
+                          end: 10,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 9
+                            },
+                            end: {
+                              line: 1,
+                              column: 10
+                            }
+                          }
+                        }
+                      ],
+                      start: 8,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    consequent: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 14,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    alternate: {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 18,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 18
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    start: 8,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 21
+          }
+        }
+      }
+    ],
+    [
+      `({12n:  [a] = b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'ArrayPattern',
+                      elements: [
+                        {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 9,
+                          end: 10,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 9
+                            },
+                            end: {
+                              line: 1,
+                              column: 10
+                            }
+                          }
+                        }
+                      ],
+                      start: 8,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 14,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    start: 8,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `({12n:  [a].b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ArrayExpression',
+                      elements: [
+                        {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 9,
+                          end: 10,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 9
+                            },
+                            end: {
+                              line: 1,
+                              column: 10
+                            }
+                          }
+                        }
+                      ],
+                      start: 8,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 8,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `({12n: {}[a].b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ObjectExpression',
+                        properties: [],
+                        start: 7,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      computed: true,
+                      property: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 10,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      start: 7,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 13,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 16,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 16
+          }
+        }
+      }
+    ],
+    [
+      `({12n: "a"[a].b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Literal',
+                        value: 'a',
+                        start: 7,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      computed: true,
+                      property: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 11,
+                        end: 12,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 11
+                          },
+                          end: {
+                            line: 1,
+                            column: 12
+                          }
+                        }
+                      },
+                      start: 7,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 14,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `({12n: 1[a].b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'Literal',
+                        value: 1,
+                        start: 7,
+                        end: 8,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 8
+                          }
+                        }
+                      },
+                      computed: true,
+                      property: {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 9,
+                        end: 10,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 9
+                          },
+                          end: {
+                            line: 1,
+                            column: 10
+                          }
+                        }
+                      },
+                      start: 7,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `({12n: a /= b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 7,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    operator: '/=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `({12n: a /= b, c})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 7,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    operator: '/=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'c',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Identifier',
+                    name: 'c',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: true,
+                  start: 15,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
+      `({12n: a, c})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'c',
+                    start: 10,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 10
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Identifier',
+                    name: 'c',
+                    start: 10,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 10
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: true,
+                  start: 10,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `({12n: {}})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'ObjectExpression',
+                    properties: [],
+                    start: 7,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 11,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `({12n: []})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'ArrayExpression',
+                    elements: [],
+                    start: 7,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 11,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 11
+          }
+        }
+      }
+    ],
+    [
+      `({12n: [].b})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ArrayExpression',
+                      elements: [],
+                      start: 7,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 10,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 13,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 13
+          }
+        }
+      }
+    ],
+    [
+      `({12n: [].b = c})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ArrayExpression',
+                        elements: [],
+                        start: 7,
+                        end: 9,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 7
+                          },
+                          end: {
+                            line: 1,
+                            column: 9
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'b',
+                        start: 10,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      },
+                      start: 7,
+                      end: 11,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 11
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 14,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    start: 7,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `({12n: b ** c})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 2,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'BinaryExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 7,
+                      end: 8,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 8
+                        }
+                      }
+                    },
+                    right: {
+                      type: 'Identifier',
+                      name: 'c',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    operator: '**',
+                    start: 7,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 2,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `({*12n(){}})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 3,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 8,
+                      end: 10,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 10
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: true,
+                    id: null,
+                    start: 6,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: true,
+                  shorthand: false,
+                  start: 2,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 12,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `({*[12n](){}})`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'BigIntLiteral',
+                    value: null,
+                    bigint: '12n',
+                    start: 4,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 10,
+                      end: 12,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 12
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: true,
+                    id: null,
+                    start: 8,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: true,
+                  method: true,
+                  shorthand: false,
+                  start: 2,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      `({ set package(a){} })`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'package',
+                    start: 7,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [
+                      {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 15,
+                        end: 16,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 15
+                          },
+                          end: {
+                            line: 1,
+                            column: 16
+                          }
+                        }
+                      }
+                    ],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 17,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 17
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 14,
+                    end: 19,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 19
+                      }
+                    }
+                  },
+                  kind: 'set',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 3,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 22,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 22
+          }
+        }
+      }
+    ],
+    [
+      `({ set eval(a){} })`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'eval',
+                    start: 7,
+                    end: 11,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 11
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [
+                      {
+                        type: 'Identifier',
+                        name: 'a',
+                        start: 12,
+                        end: 13,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 12
+                          },
+                          end: {
+                            line: 1,
+                            column: 13
+                          }
+                        }
+                      }
+                    ],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [],
+                      start: 14,
+                      end: 16,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 16
+                        }
+                      }
+                    },
+                    async: false,
+                    generator: false,
+                    id: null,
+                    start: 11,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  kind: 'set',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 3,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 19,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 19
+          }
+        }
+      }
+    ],
     [
       `({ __proto__: x, __proto__: y }) => {};`,
       Context.OptionsLoc,

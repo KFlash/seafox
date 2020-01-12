@@ -30,6 +30,7 @@ describe('Statements - For', () => {
     ['for (const x in {}) { var x; }', Context.OptionsDisableWebCompat],
     [`for ({x=y} ;;) b;`, Context.Strict],
     ['for({a=0};;);', Context.Empty],
+    ['for ([] = x);', Context.Empty],
     ['for (let=10;;);', Context.Strict],
     ['for (const a;;);', Context.Empty],
     ['for (const a,b,c;;);', Context.Empty],
@@ -345,6 +346,109 @@ describe('Statements - For', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `for ([], x;;);`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 13,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 13
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            init: {
+              type: 'SequenceExpression',
+              expressions: [
+                {
+                  type: 'ArrayExpression',
+                  elements: [],
+                  start: 5,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            test: null,
+            update: null,
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
     [
       `for(x, y;;);`,
       Context.OptionsLoc,

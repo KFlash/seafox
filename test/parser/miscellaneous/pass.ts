@@ -18,7 +18,6 @@ describe('Miscellaneous - Pass', () => {
     '11_33.333_444',
     '0b10n',
     '09.1_2',
-    '09_12',
     'try { } catch (let) { }',
     'let++;',
     'var yield;',

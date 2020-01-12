@@ -546,10 +546,10 @@ export function parseForStatementWithVariableDeclarations(
           tokenValue,
           kind,
           origin,
+          1,
           start,
           line,
-          column,
-          1
+          column
         );
 
         if (parser.token === Token.Assign) {

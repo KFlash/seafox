@@ -877,7 +877,6 @@ export function parsePrimaryExpression(
     if (parser.token === Token.Arrow) {
       if (allowLHS === 0) report(parser, Errors.Unexpected);
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
-      if (inNew) report(parser, Errors.InvalidAsyncArrow);
 
       if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
         report(parser, Errors.StrictEvalArguments);
@@ -1004,7 +1003,6 @@ export function parseAsyncExpression(
       }
 
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
-      if (parser.token === Token.AwaitKeyword) report(parser, Errors.AwaitInParameter);
 
       if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
@@ -1052,11 +1050,7 @@ export function parseAsyncExpression(
 
   if (parser.token === Token.Arrow) {
     if (inNew === 1) report(parser, Errors.InvalidAsyncArrow);
-    if ((parser.token as Token) === Token.AwaitKeyword) report(parser, Errors.AwaitInParameter);
 
-    if (context & (Context.Strict | Context.InYieldContext) && (parser.token as Token) === Token.YieldKeyword) {
-      report(parser, Errors.YieldInParameter);
-    }
     return parseAsyncArrowIdentifier(
       parser,
       context,
@@ -3342,9 +3336,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     ((context | 0b00010000111000000000000000000000 | modifierFlags) ^
       (0b00010000111000000000000000000000 | modifierFlags)) |
     ((kind & 0b0000000000000000000_0000_01011000) << 18) |
-    0b0000110000001000000_0000_00000000 |
-    (kind & PropertyKind.Async ? Context.InAwaitContext : 0) |
-    (kind & PropertyKind.Generator ? Context.InYieldContext : 0);
+    0b0000110000001000000_0000_00000000;
 
   if (parser.token !== Token.RightParen) {
     if (kind & PropertyKind.Getter) report(parser, Errors.AccessorWrongArgs, 'Getter', 'no', 's');
@@ -3371,10 +3363,10 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
           tokenValue,
           BindingKind.ArgumentList,
           Origin.None,
+          0,
           start,
           line,
-          column,
-          0
+          column
         );
       } else {
         if (parser.token === Token.LeftBracket) {
@@ -3407,21 +3399,6 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
           );
         } else if (parser.token === Token.Ellipsis) {
           if (kind & PropertyKind.Setter) report(parser, Errors.BadSetterRestParameter);
-
-          left = parseSpreadOrRestElement(
-            parser,
-            context,
-            scope,
-            Token.RightParen,
-            1,
-            0,
-            0,
-            BindingKind.ArgumentList,
-            Origin.None,
-            start,
-            line,
-            column
-          );
         } else {
           report(parser, Errors.Unexpected);
         }
@@ -3534,10 +3511,10 @@ export function parseFormalParams(
         tokenValue,
         kind | BindingKind.ArgumentList,
         Origin.None,
+        0,
         start,
         line,
-        column,
-        0
+        column
       );
     } else {
       isSimpleParameterList = 1;
@@ -3975,7 +3952,7 @@ export function parseObjectLiteralOrPattern(
               ) {
                 if (parser.assignable === 0) {
                   mutualFlag |= Flags.NotDestructible;
-                } else if (scope) {
+                } else {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
               } else {
@@ -4024,8 +4001,6 @@ export function parseObjectLiteralOrPattern(
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
-            } else if (parser.flags & Flags.MustDestruct) {
-              report(parser, Errors.InvalidDestructuringTarget);
             } else {
               value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
@@ -4278,7 +4253,7 @@ export function parseObjectLiteralOrPattern(
               ) {
                 if (parser.assignable === 0) {
                   mutualFlag |= Flags.NotDestructible;
-                } else if (scope) {
+                } else {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
               } else {
@@ -4652,10 +4627,10 @@ export function parseAndClassifyIdentifier(
   name: string,
   kind: BindingKind,
   origin: Origin,
+  allowRegExp: 0 | 1,
   start: number,
   line: number,
-  column: number,
-  allowRegExp: 0 | 1 = 0
+  column: number
 ): ESTree.Identifier {
   if (context & Context.Strict) {
     if ((t & Token.FutureReserved) === Token.FutureReserved) {
@@ -4678,9 +4653,6 @@ export function parseAndClassifyIdentifier(
   }
   if (t === Token.LetKeyword) {
     if (kind & (BindingKind.Let | BindingKind.Const)) report(parser, Errors.InvalidLetConstBinding);
-  }
-  if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {
-    report(parser, Errors.AwaitOutsideAsync);
   }
 
   nextToken(parser, context, allowRegExp);
@@ -4711,7 +4683,7 @@ export function parseBindingPattern(
   const { tokenValue, start, line, column, token } = parser;
 
   if ((token & 0b00000000001001110000000000000000) > 0) {
-    return parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, kind, origin, start, line, column, 1);
+    return parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, kind, origin, 1, start, line, column);
   }
 
   if ((parser.token & Token.IsPatternStart) !== Token.IsPatternStart) report(parser, Errors.Unexpected);

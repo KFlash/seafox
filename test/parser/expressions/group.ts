@@ -656,6 +656,728 @@ describe('Expressions - Group', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `([].b ? c : d)`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'ArrayExpression',
+                  elements: [],
+                  start: 1,
+                  end: 3,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 3
+                    }
+                  }
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 1,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              consequent: {
+                type: 'Identifier',
+                name: 'c',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              alternate: {
+                type: 'Identifier',
+                name: 'd',
+                start: 12,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      `([].b ? c : d)`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'ArrayExpression',
+                  elements: [],
+                  start: 1,
+                  end: 3,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 3
+                    }
+                  }
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 4,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                start: 1,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              consequent: {
+                type: 'Identifier',
+                name: 'c',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              alternate: {
+                type: 'Identifier',
+                name: 'd',
+                start: 12,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              start: 1,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 14,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      `(((a) ? (b) = c : d ? e : f))`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'Identifier',
+                name: 'a',
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              consequent: {
+                type: 'AssignmentExpression',
+                left: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                operator: '=',
+                right: {
+                  type: 'Identifier',
+                  name: 'c',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                start: 8,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              alternate: {
+                type: 'ConditionalExpression',
+                test: {
+                  type: 'Identifier',
+                  name: 'd',
+                  start: 18,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                consequent: {
+                  type: 'Identifier',
+                  name: 'e',
+                  start: 22,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                alternate: {
+                  type: 'Identifier',
+                  name: 'f',
+                  start: 26,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 26
+                    },
+                    end: {
+                      line: 1,
+                      column: 27
+                    }
+                  }
+                },
+                start: 18,
+                end: 27,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 18
+                  },
+                  end: {
+                    line: 1,
+                    column: 27
+                  }
+                }
+              },
+              start: 2,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
+      `(((a) ? b : c))`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'Identifier',
+                name: 'a',
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              consequent: {
+                type: 'Identifier',
+                name: 'b',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              alternate: {
+                type: 'Identifier',
+                name: 'c',
+                start: 12,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              start: 2,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `(((a) ? (b) = c : d ? e : f))`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ConditionalExpression',
+              test: {
+                type: 'Identifier',
+                name: 'a',
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              consequent: {
+                type: 'AssignmentExpression',
+                left: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                operator: '=',
+                right: {
+                  type: 'Identifier',
+                  name: 'c',
+                  start: 14,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                start: 8,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              alternate: {
+                type: 'ConditionalExpression',
+                test: {
+                  type: 'Identifier',
+                  name: 'd',
+                  start: 18,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                consequent: {
+                  type: 'Identifier',
+                  name: 'e',
+                  start: 22,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                alternate: {
+                  type: 'Identifier',
+                  name: 'f',
+                  start: 26,
+                  end: 27,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 26
+                    },
+                    end: {
+                      line: 1,
+                      column: 27
+                    }
+                  }
+                },
+                start: 18,
+                end: 27,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 18
+                  },
+                  end: {
+                    line: 1,
+                    column: 27
+                  }
+                }
+              },
+              start: 2,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            start: 0,
+            end: 29,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 29
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 29,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 29
+          }
+        }
+      }
+    ],
+    [
       `({ a: (b) } = c);`,
       Context.OptionsLoc,
       {

@@ -33,6 +33,123 @@ describe('Statements - Labeled', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `a: "b", c`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'LabeledStatement',
+            label: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            body: {
+              type: 'ExpressionStatement',
+              expression: {
+                type: 'SequenceExpression',
+                expressions: [
+                  {
+                    type: 'Literal',
+                    value: 'b',
+                    start: 3,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  },
+                  {
+                    type: 'Identifier',
+                    name: 'c',
+                    start: 8,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  }
+                ],
+                start: 3,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              start: 3,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 3
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 9,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
       `yield: x`,
       Context.OptionsNext | Context.OptionsLoc,
       {

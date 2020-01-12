@@ -108,6 +108,8 @@ describe('Statements - Try', () => {
     ['function f() { try {} catch (e) { function e(){} } }', Context.OptionsDisableWebCompat],
     ['try {} catch (e) { for (var e of y) {} }', Context.OptionsDisableWebCompat],
     ['try {} catch (e) { let e = x; }', Context.Empty],
+    ['try {} catch (x', Context.Empty],
+    ['try {};', Context.Empty],
     ['try {} catch (e) { const e = x; }', Context.Empty],
     ['try {} catch (e) { var e = x; }', Context.OptionsDisableWebCompat],
     ['try {} catch (e) { var e = x; }', Context.OptionsDisableWebCompat],

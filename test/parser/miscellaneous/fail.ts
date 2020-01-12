@@ -19,6 +19,10 @@ describe('Miscellaneous - Failure', () => {
     'for(let a of b) d: function c(){}',
     'for(var a in b) d: function c(){}',
     "package => {'use strict'}",
+    'debugger /foo/',
+    'for (;a);',
+    `for (var x
+      /foo/;;);`,
     '({ __proto__: 1, __proto__: 2 })',
     '({ __proto__: null, "__proto__": null })',
     '({ __proto__: null, "__proto__": null })',
@@ -123,7 +127,6 @@ describe('Miscellaneous - Failure', () => {
     '/\\S/mm',
     '/\\S/12gg',
     '/\\S/123',
-    '11_33.333_444n',
     '1_0_0_0_',
     '0x1_',
     '1e+_1',
