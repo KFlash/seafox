@@ -190,7 +190,7 @@ export const enum Token {
  * correspond to the token bits 0-124.
  * For this to work properly, the values in the array must be kept in
  * the same order as the token bits.
- * Usage: KeywordDescTable[token & T$Kind]
+ * Usage: KeywordDescTable[token & Token.Kind]
  */
 export const KeywordDescTable = [
  'end of source',
