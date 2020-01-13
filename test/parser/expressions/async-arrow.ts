@@ -55,6 +55,7 @@ describe('Expressions - Async arrow', () => {
     ['(async (a = b => { let b; }))', Context.OptionsDisableWebCompat],
     ['(async yield => { let yield; })', Context.OptionsDisableWebCompat],
     ['async ()c++=>{};', Context.Empty],
+    ['async x => (new) = 1', Context.Empty],
     ['new async x => x', Context.Empty],
     [
       `new async ()
@@ -676,6 +677,126 @@ describe('Expressions - Async arrow', () => {
           end: {
             line: 1,
             column: 21
+          }
+        }
+      }
+    ],
+    [
+      `async x => (arguments) = 1`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'AssignmentExpression',
+                left: {
+                  type: 'Identifier',
+                  name: 'arguments',
+                  start: 12,
+                  end: 21,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 21
+                    }
+                  }
+                },
+                operator: '=',
+                right: {
+                  type: 'Literal',
+                  value: 1,
+                  start: 25,
+                  end: 26,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 25
+                    },
+                    end: {
+                      line: 1,
+                      column: 26
+                    }
+                  }
+                },
+                start: 11,
+                end: 26,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 26
+                  }
+                }
+              },
+              params: [
+                {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 6,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                }
+              ],
+              async: true,
+              expression: true,
+              start: 0,
+              end: 26,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 26
+                }
+              }
+            },
+            start: 0,
+            end: 26,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 26
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 26,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 26
           }
         }
       }

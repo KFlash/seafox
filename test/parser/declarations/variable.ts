@@ -229,6 +229,7 @@ describe('Declarations - Variable', () => {
     ['var [...bar = foo] = obj;', Context.Empty],
     ['var [.x] = obj;', Context.Empty],
     ['var [..x] = obj;', Context.Empty],
+    ['var {x:y=z}, {a:b=c} = obj;', Context.Empty],
     ['var {,} = obj;', Context.Empty],
     ['var {,,} = obj;', Context.Empty],
     ['var {,x} = obj;', Context.Empty],

@@ -3348,7 +3348,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     while ((parser.token as Token) !== Token.RightParen) {
       const { start, line, column, token, tokenValue } = parser;
 
-      if ((parser.token & 0b00000000001001110000000000000000) > 0) {
+      if ((token & 0b00000000001001110000000000000000) > 0) {
         if ((context & Context.Strict) !== Context.Strict) {
           parser.flags |=
             ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.HasStrictReserved : 0) |

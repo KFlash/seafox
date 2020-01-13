@@ -21,6 +21,7 @@ describe('Miscellaneous - Pass', () => {
     'try { } catch (let) { }',
     'let++;',
     'var yield;',
+    '/abc/',
     'var foo, yield;',
     'try { } catch (yield) { }',
     'function yield() { }',
@@ -3037,6 +3038,11 @@ after = err;
     '(function* a(b,) {});',
     '(function   (b,) {});',
     '(function*  (b,) {});',
+    'a = {...b.c} = d;',
+    'for ({x:a.b}=x ;;) ;',
+    'for ([{x:a.b}]=x ;;) ;',
+    'delete (((a)=b).x)',
+    'for ([x.y];;);',
     ' function  a(b,c,d,) {}',
     ' function* a(b,c,d,) {}',
     '(function  a(b,c,d,) {});',
@@ -3771,7 +3777,7 @@ if (foo) {
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseScript(`${arg}`);
+        parseScript(`${arg}`, { raw: true });
       });
     });
   }

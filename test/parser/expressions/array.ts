@@ -271,6 +271,10 @@ describe('Expressions - Array', () => {
     '[([{ x = y }] = b.call(c)) = ()]',
     '[(a = b.call(c)) = ()]',
     '[(a = b.call(c)) = (a = b / 2)]',
+    '[ async ()=>x ] = x',
+    '[ class{} ] = x',
+    '[ delete x.y ] = x',
+    '[ false ] = x',
     '[(a = async.call(c)) = (a = b / 2)]'
   ]) {
     it(`${arg}`, () => {

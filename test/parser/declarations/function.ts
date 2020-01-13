@@ -383,6 +383,15 @@ describe('Declarations - Function', () => {
     ['function f(x) { const x = y }', Context.Empty],
     ['function f([x=x()=x]){},({x:{1:y()=x},x:{7:3}})>x', Context.Empty],
     ['function f([x=x()=x]){}', Context.Empty],
+    ['function *f(x = delete ((null) = f)) {}', Context.Empty],
+    ['function *f(x = delete ((true) = f)) {}', Context.Empty],
+    ['function *f(x = delete ((false) = f)) {}', Context.Empty],
+    [
+      `function *f(){
+      (false) = 1;
+    }`,
+      Context.Empty
+    ],
     ['({x:{1:y()=x},x:{7:3}})>x', Context.Empty],
     ['function f(a, a) {}', Context.Strict],
     ['function f(a, b, a) {}', Context.Strict],
@@ -1755,6 +1764,375 @@ describe('Declarations - Function', () => {
           end: {
             line: 1,
             column: 43
+          }
+        }
+      }
+    ],
+    [
+      `function *f(x = delete ((arguments) = f)) {}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [
+              {
+                type: 'AssignmentPattern',
+                left: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 12,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 12
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                right: {
+                  type: 'UnaryExpression',
+                  operator: 'delete',
+                  argument: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'arguments',
+                      start: 25,
+                      end: 34,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 25
+                        },
+                        end: {
+                          line: 1,
+                          column: 34
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Identifier',
+                      name: 'f',
+                      start: 38,
+                      end: 39,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 38
+                        },
+                        end: {
+                          line: 1,
+                          column: 39
+                        }
+                      }
+                    },
+                    start: 24,
+                    end: 39,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 24
+                      },
+                      end: {
+                        line: 1,
+                        column: 39
+                      }
+                    }
+                  },
+                  prefix: true,
+                  start: 16,
+                  end: 40,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 40
+                    }
+                  }
+                },
+                start: 12,
+                end: 40,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 40
+                  }
+                }
+              }
+            ],
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 42,
+              end: 44,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 42
+                },
+                end: {
+                  line: 1,
+                  column: 44
+                }
+              }
+            },
+            async: false,
+            generator: true,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 44,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 44
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 44,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 44
+          }
+        }
+      }
+    ],
+    [
+      `function f(){ "use strict"
+      /* suffix = */ [foo]; eval = 1; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Literal',
+                      value: 'use strict',
+                      start: 14,
+                      end: 26,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 26
+                        }
+                      }
+                    },
+                    computed: true,
+                    property: {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 50,
+                      end: 53,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 22
+                        },
+                        end: {
+                          line: 2,
+                          column: 25
+                        }
+                      }
+                    },
+                    start: 14,
+                    end: 54,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 2,
+                        column: 26
+                      }
+                    }
+                  },
+                  start: 14,
+                  end: 55,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 2,
+                      column: 27
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'eval',
+                      start: 56,
+                      end: 60,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 28
+                        },
+                        end: {
+                          line: 2,
+                          column: 32
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Literal',
+                      value: 1,
+                      start: 63,
+                      end: 64,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 35
+                        },
+                        end: {
+                          line: 2,
+                          column: 36
+                        }
+                      }
+                    },
+                    start: 56,
+                    end: 64,
+                    loc: {
+                      start: {
+                        line: 2,
+                        column: 28
+                      },
+                      end: {
+                        line: 2,
+                        column: 36
+                      }
+                    }
+                  },
+                  start: 56,
+                  end: 65,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 28
+                    },
+                    end: {
+                      line: 2,
+                      column: 37
+                    }
+                  }
+                }
+              ],
+              start: 12,
+              end: 67,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 2,
+                  column: 39
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 67,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 2,
+                column: 39
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 67,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 39
           }
         }
       }

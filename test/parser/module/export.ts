@@ -34,6 +34,11 @@ describe('Module - Export', () => {
     ['export function*() {}', Context.Empty],
     ['export class extends C {}', Context.Empty],
     ['export {x};', Context.Empty],
+    [
+      `"foo"
+    export {x};`,
+      Context.Empty
+    ],
     ['export * as foo from', Context.Empty],
     [
       `export default class C {};
@@ -286,6 +291,12 @@ describe('Module - Export', () => {
     ['var foo; export {*foo(){}}', Context.Empty],
     ['export foo', Context.Empty],
     ['export {', Context.Empty],
+
+    ['export let {x:y=z};', Context.Empty],
+    ['export let x, {y};', Context.Empty],
+    ['export let {x:y};', Context.Empty],
+    ['export {', Context.Empty],
+
     ['export async;', Context.Empty],
     ['export async () => y', Context.Empty],
     ['var a; export { a,', Context.Empty]
