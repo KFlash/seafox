@@ -3042,6 +3042,7 @@ after = err;
     'for ({x:a.b}=x ;;) ;',
     'for ([{x:a.b}]=x ;;) ;',
     'delete (((a)=b).x)',
+    '/a/ *b* "c" -d- 0e0 +f+ $g$ ;h; {i} [j] `k` (l) <m> "n" .o. _p_  ^q^ r ?s?  t  :u: _v_ |w| xyz',
     'for ([x.y];;);',
     ' function  a(b,c,d,) {}',
     ' function* a(b,c,d,) {}',

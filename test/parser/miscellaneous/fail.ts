@@ -1848,7 +1848,6 @@ describe('Miscellaneous - Failure', () => {
     'for (let i = 20 in b) { }',
     `for (const x;;);`,
     `for (let of x) y`,
-    '/a/ *b* "c" -d- 0e0 +f+ $g$ ;h; {i} [j] `k` (l) <m> "n" .o. _p_  ^q^ r ?s?  t  :u: _v_ |w| xyz',
     `"use strict"; for (let.x in y);`,
     `"use strict"; for (let() of y);`,
     `for (let() of y);`,

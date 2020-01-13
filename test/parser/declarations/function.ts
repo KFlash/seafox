@@ -1975,8 +1975,8 @@ describe('Declarations - Function', () => {
                     property: {
                       type: 'Identifier',
                       name: 'foo',
-                      start: 50,
-                      end: 53,
+                      start: 49,
+                      end: 52,
                       loc: {
                         start: {
                           line: 2,
@@ -1989,7 +1989,7 @@ describe('Declarations - Function', () => {
                       }
                     },
                     start: 14,
-                    end: 54,
+                    end: 53,
                     loc: {
                       start: {
                         line: 1,
@@ -2002,7 +2002,7 @@ describe('Declarations - Function', () => {
                     }
                   },
                   start: 14,
-                  end: 55,
+                  end: 54,
                   loc: {
                     start: {
                       line: 1,
@@ -2021,8 +2021,8 @@ describe('Declarations - Function', () => {
                     left: {
                       type: 'Identifier',
                       name: 'eval',
-                      start: 56,
-                      end: 60,
+                      start: 55,
+                      end: 59,
                       loc: {
                         start: {
                           line: 2,
@@ -2038,8 +2038,8 @@ describe('Declarations - Function', () => {
                     right: {
                       type: 'Literal',
                       value: 1,
-                      start: 63,
-                      end: 64,
+                      start: 62,
+                      end: 63,
                       loc: {
                         start: {
                           line: 2,
@@ -2051,8 +2051,8 @@ describe('Declarations - Function', () => {
                         }
                       }
                     },
-                    start: 56,
-                    end: 64,
+                    start: 55,
+                    end: 63,
                     loc: {
                       start: {
                         line: 2,
@@ -2064,8 +2064,8 @@ describe('Declarations - Function', () => {
                       }
                     }
                   },
-                  start: 56,
-                  end: 65,
+                  start: 55,
+                  end: 64,
                   loc: {
                     start: {
                       line: 2,
@@ -2079,7 +2079,7 @@ describe('Declarations - Function', () => {
                 }
               ],
               start: 12,
-              end: 67,
+              end: 66,
               loc: {
                 start: {
                   line: 1,
@@ -2110,7 +2110,7 @@ describe('Declarations - Function', () => {
               }
             },
             start: 0,
-            end: 67,
+            end: 66,
             loc: {
               start: {
                 line: 1,
@@ -2124,7 +2124,7 @@ describe('Declarations - Function', () => {
           }
         ],
         start: 0,
-        end: 67,
+        end: 66,
         loc: {
           start: {
             line: 1,
