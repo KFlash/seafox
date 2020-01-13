@@ -450,7 +450,6 @@ describe('Expressions - Await', () => {
     `async function f({ await }) {}`,
     `async function f({ await = 1 }) {}`,
     `async function f({ } = await) {}`,
-
     `(async function(await) {})`,
     `(async function(...await) {})`,
     `(async function(await = 1) {})`,
@@ -459,7 +458,6 @@ describe('Expressions - Await', () => {
     `(async function({ await }) {})`,
     `(async function({ await = 1 }) {})`,
     `(async function({ } = await) {})`,
-
     `var asyncArrow = async(await) => 1;`,
     `var asyncArrow = async(await) => {};`,
     `var asyncArrow = async(...await) => 1;`,
@@ -532,6 +530,75 @@ describe('Expressions - Await', () => {
   }
 
   for (const arg of [
+    'var asyncFn = async function await() {};',
+    "var asyncFn = async () => var await = 'test';",
+    'var asyncFn = async function(await) {};',
+    "var asyncFn = async (await) => 'test';",
+    'async function f(await) {}',
+    'var O = { async method(a, a) {} }',
+    "var O = { async ['meth' + 'od'](a, a) {} }",
+    "var O = { async 'method'(a, a) {} }",
+    'var O = { async 0(a, a) {} }',
+    'var f = async() => await;',
+    'var O = { *async method() {} };',
+    'var O = { async method*() {} };',
+    'var asyncFn = async function(x = await 1) { return x; }',
+    'async function f(x = await 1) { return x; }',
+    'var f = async(x = await 1) => x;',
+    'var O = { async method(x = await 1) { return x; } };',
+    'function* g() { var f = async yield => 1; }',
+    'function* g() { var f = async(yield) => 1; }',
+    'function* g() { var f = async(x = yield) => 1; }',
+    'function* g() { var f = async({x = yield}) => 1; }',
+    'class C { async constructor() {} }',
+    'class C {}; class C2 extends C { async constructor() {} }',
+    'class C { static async prototype() {} }',
+    'class C {}; class C2 extends C { static async prototype() {} }',
+    'var f = async() => ((async(x = await 1) => x)();',
+    '(async function foo1() { } foo2 => 1)',
+    '(async function foo3() { } () => 1)',
+    '(async function foo4() { } => 1)',
+    '(async function() { } foo5 => 1)',
+    '(async function() { } () => 1)',
+    '(async function() { } => 1)',
+    '(async.foo6 => 1)',
+    '(async.foo7 foo8 => 1)',
+    '(async.foo9 () => 1)',
+    '(async().foo10 => 1)',
+    '(async().foo11 foo12 => 1)',
+    '(async().foo13 () => 1)',
+    "(async['foo14'] => 1)",
+    "(async['foo15'] foo16 => 1)",
+    "(async['foo17'] () => 1)",
+    "(async()['foo18'] => 1)",
+    "(async()['foo19'] foo20 => 1)",
+    "(async()['foo21'] () => 1)",
+    '(async`foo22` => 1)',
+    '(async`foo23` foo24 => 1)',
+    '(async`foo25` () => 1)',
+    '(async`foo26`.bar27 => 1)',
+    '(async`foo28`.bar29 foo30 => 1)',
+    '(async`foo31`.bar32 () => 1)',
+    'async({ foo33 = 1 })',
+    'async(...a = b) => b',
+    'async(...a,) => b',
+    'async(...a, b) => b',
+    'async(a = await => 1) => a',
+    'async(a = (await) => 1) => a',
+    'async(a = (...await) => 1) => a'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+    it(`'use strict'; ${arg}`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; ${arg}`);
+      });
+    });
+  }
+  for (const arg of [
     'await',
     'var f = await => 42;',
     'var { await } = 1;',
@@ -556,8 +623,33 @@ describe('Expressions - Await', () => {
       t.throws(() => {
         parseScript(`async function f() { ${arg} }`);
       });
+    });
+    it(`async function f() { ${arg} }`, () => {
       t.throws(() => {
         parseModule(`async function f() { ${arg} }`);
+      });
+    });
+    it(`'use strict'; var O = { async method() {${arg} } }`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var O = { async method() { ${arg} } }`);
+      });
+    });
+
+    it(`'use strict'; var f = async() => { ${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var f = async() => { ${arg} }`);
+      });
+    });
+
+    it(`'use strict'; var f = async() => { ${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; var f = async() => { ${arg} }`, { disableWebCompat: true });
+      });
+    });
+
+    it(`var O = { async method() { ${arg} } }`, () => {
+      t.throws(() => {
+        parseScript(`var O = { async method() { ${arg} } }`);
       });
     });
   }
@@ -602,6 +694,18 @@ describe('Expressions - Await', () => {
     it(`function* f() { ${arg} }`, () => {
       t.throws(() => {
         parseScript(`function* f() { ${arg} }`);
+      });
+    });
+
+    it(`'use strict'; async function f() {${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`'use strict'; async function f() {${arg} }`);
+      });
+    });
+
+    it(`let f = async() => {${arg} }`, () => {
+      t.throws(() => {
+        parseScript(`let f = async() => {${arg} }`);
       });
     });
   }

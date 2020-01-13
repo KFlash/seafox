@@ -61,6 +61,7 @@ describe('Expressions - New', () => {
       });
     });
   }
+
   for (const arg of [
     'function *f(){ new yield x }',
     'new ()=>{}',
