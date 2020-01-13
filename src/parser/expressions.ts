@@ -144,7 +144,7 @@ export function parseBinaryExpression(
   context: Context,
   inGroup: 0 | 1,
   minPrec: number,
-  l: Token,
+  logical: Token,
   curStart: number,
   curLine: number,
   curColumn: number,
@@ -156,14 +156,14 @@ export function parseBinaryExpression(
   const prec =
     context & Context.DisallowIn ? 0b00000000000000000000111100000000 : 0b00000000000000000000111100000000 << 4;
 
-  while ((l & Token.IsBinaryOp) > 0) {
+  do {
     t = parser.token;
 
     if ((t & prec) + (((t === Token.Exponentiate) as any) << 8) <= minPrec) return left;
 
     // Since ?? is the lowest-precedence binary operator, it suffices to merge the 'Coalescing' and 'IsLogic' tokens and check
     // whether these have a higher value than the 'Coalescing' token.
-    if (((l | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
+    if (((logical | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
       report(parser, Errors.InvalidCoalescing);
     }
 
@@ -200,7 +200,7 @@ export function parseBinaryExpression(
             right,
             operator: KeywordDescTable[t & Token.Kind]
           };
-  }
+  } while ((logical & Token.IsBinaryOp) > 0);
 }
 
 export function parsePropertyOrPrivatePropertyName(parser: ParserState, context: Context): any {
