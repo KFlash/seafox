@@ -29,6 +29,8 @@
     "es2019",
     "es2020",
     "esnext",
+    "performance",
+    "acorn",
     "lexer",
     "ast",
     "lightweight"
@@ -37,7 +39,6 @@
     "dist",
     "src",
     "README.md",
-    "CHANGELOG.md",
     "LICENSE.md"
   ],
   "publishConfig": {
