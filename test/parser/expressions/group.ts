@@ -679,6 +679,8 @@ describe('Expressions - Group', () => {
     '({{x: y}.length} = x);',
     '({delete(){}} = y);',
     '({yield(){}} = y);',
+    '({foo: fail() = x} = x)',
+    '({3200: fail() = x} = x)',
     '({debugger} = x);',
     '({enum} = x);',
     '({return(){}} = y);',

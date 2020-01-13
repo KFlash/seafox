@@ -1733,8 +1733,6 @@ export function parseArrowFunction(
         case Token.TemplateTail:
         case Token.QuestionMark:
           report(parser, Errors.InvalidAccessedBlockBodyArrow);
-        case Token.LeftParen:
-          report(parser, Errors.InvalidInvokedBlockBodyArrow);
         default: // ignore
       }
     } else {
@@ -1912,7 +1910,7 @@ export function parseParenthesizedExpression(
 
       if (parser.flags & Flags.NotDestructible) report(parser, Errors.InvalidRestArg);
 
-      if (inSequence && ((parser.token as Token) === Token.RightParen || (parser.token as Token) === Token.Comma)) {
+      if (inSequence && (parser.token as Token) === Token.RightParen) {
         expressions.push(expr);
       }
       mutualFlag |= Flags.MustDestruct | Flags.SimpleParameterList;
@@ -2880,7 +2878,7 @@ export function parseFunctionBody(
         // 29/7/2015. https://goo.gl/ueA7Ln
         if (parser.flags & Flags.SimpleParameterList) report(parser, Errors.IllegalUseStrict);
 
-        if (parser.flags & Flags.Octals) report(parser, Errors.StrictOctalLiteral);
+        //        if (parser.flags & Flags.Octals) report(parser, Errors.StrictOctalLiteral);
       } else {
         isStrictDirective = 0;
       }
@@ -4075,8 +4073,7 @@ export function parseObjectLiteralOrPattern(
             value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
             if ((parser.token & Token.IsAssignOp) > 0) {
-              mutualFlag |=
-                parser.assignable === 0 ? Flags.NotDestructible : token === Token.Assign ? 0 : Flags.AssignableDestruct;
+              mutualFlag |= token === Token.Assign ? 0 : Flags.AssignableDestruct;
 
               value = parseAssignmentOrPattern(
                 parser,
@@ -4180,10 +4177,7 @@ export function parseObjectLiteralOrPattern(
             } else {
               value = parseMemberExpression(parser, context, value, 0, start, line, column);
 
-              mutualFlag = parser.assignable === 1 ? 0 : Flags.NotDestructible;
-
               if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBrace) {
-                if (parser.token !== Token.Assign) mutualFlag |= Flags.NotDestructible;
                 value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
               }
             }
@@ -4256,11 +4250,8 @@ export function parseObjectLiteralOrPattern(
                 } else {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
-              } else {
-                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
             } else if ((parser.token as Token) === Token.Assign) {
-              mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
               value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
             } else {
               mutualFlag |= Flags.NotDestructible;
@@ -4601,7 +4592,7 @@ export function parseImportExpression(
 
   if (parser.token === Token.Ellipsis) report(parser, Errors.InvalidSpreadInImport);
 
-  const source = parseExpression(parser, context, 0);
+  const source = parseExpression(parser, context | Context.DisallowIn, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
