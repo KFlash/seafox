@@ -390,7 +390,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     parser.assignable = 1;
   }
 
-  expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
   if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
@@ -512,7 +512,7 @@ export function parseForStatementWithVariableDeclarations(
 
       parser.assignable = 1;
 
-      init = parseMemberExpression(parser, context, init, 0, start, line, column);
+      init = parseMemberExpression(parser, context, init, 1, 0, start, line, column);
 
       isLet = true;
     }
@@ -839,7 +839,7 @@ export function parseForStatement(
 
     parser.assignable = (conjuncted & Flags.NotDestructible) === Flags.NotDestructible ? 0 : 1;
 
-    init = parseMemberExpression(parser, context, init, 0, parser.start, parser.line, parser.column);
+    init = parseMemberExpression(parser, context, init, 1, 0, parser.start, parser.line, parser.column);
 
     conjuncted = parser.flags;
   } else if (token === Token.Semicolon) {
@@ -1582,7 +1582,7 @@ export function parseLetIdentOrVarDeclarationStatement(
       column
     );
   } else {
-    expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+    expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
     expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
   }
@@ -1627,7 +1627,7 @@ export function parseExpressionOrLabelledStatement(
     );
   }
 
-  expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 

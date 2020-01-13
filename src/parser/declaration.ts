@@ -338,7 +338,7 @@ export function parseImportCallDeclaration(
    *
    */
 
-  expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
   /**
    * ExpressionStatement[Yield, Await]:
@@ -388,7 +388,7 @@ export function parseImportMetaDeclaration(
    *   ('++' | '--')? LeftHandSideExpression
    */
 
-  expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
   /** AssignmentExpression :
    *   1. ConditionalExpression

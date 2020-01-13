@@ -65,7 +65,7 @@ export function parseExpression(parser: ParserState, context: Context, inGroup: 
 
   let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, 1, 1, inGroup, start, line, column);
 
-  expr = parseMemberExpression(parser, context, expr, inGroup, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 1, inGroup, start, line, column);
 
   return parseAssignmentExpression(parser, context, 0, inGroup, expr, start, line, column);
 }
@@ -215,6 +215,7 @@ export function parseMemberExpression(
   parser: ParserState,
   context: Context,
   expr: any,
+  allowLHS: 0 | 1,
   inGroup: 0 | 1,
   start: number,
   line: number,
@@ -226,7 +227,7 @@ export function parseMemberExpression(
     /* Update expression */
     case Token.Increment:
     case Token.Decrement: {
-      return parser.newLine === 0 ? parseUpdateExpression(parser, context, expr, start, line, column) : expr;
+      return parser.newLine === 0 ? parseUpdateExpression(parser, context, allowLHS, expr, start, line, column) : expr;
     }
 
     /* Property */
@@ -348,7 +349,7 @@ export function parseMemberExpression(
             };
     }
   }
-  return parseMemberExpression(parser, context, expr, inGroup, start, line, column);
+  return parseMemberExpression(parser, context, expr, allowLHS, inGroup, start, line, column);
 }
 
 export function parseMemberOrCallChain(
@@ -1171,7 +1172,7 @@ export function parseAsyncArrowOrCallExpression(
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       } else {
         mutualFlag |= Flags.NotDestructible;
-        expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       }
     } else if (token & Token.IsPatternStart) {
@@ -1185,7 +1186,7 @@ export function parseAsyncArrowOrCallExpression(
       if ((parser.token as Token) !== Token.RightParen && parser.token !== Token.Comma) {
         if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
 
-        expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
         mutualFlag |= Flags.NotDestructible;
 
@@ -1314,7 +1315,7 @@ export function parseImportCallOrMetaExpression(
 
     parser.assignable = 0;
 
-    return parseMemberExpression(parser, context, expr, 0, start, line, column);
+    return parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
   }
   return parseImportMetaExpression(parser, context, expr, start, line, column);
 }
@@ -1740,6 +1741,7 @@ export function parseArrowFunction(
         case Token.Period:
         case Token.QuestionMark:
         case Token.Exponentiate:
+        case Token.Multiply:
           report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
         default: // ignore
       }
@@ -1842,7 +1844,7 @@ export function parseParenthesizedExpression(
       } else {
         mutualFlag |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
 
-        expr = parseMemberExpression(parser, context, expr, inGroup, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 1, inGroup, start, line, column);
 
         if ((parser.token as Token) !== Token.RightParen && (parser.token as Token) !== Token.Comma) {
           expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
@@ -1861,7 +1863,7 @@ export function parseParenthesizedExpression(
       if (parser.token !== Token.Comma && (parser.token as Token) !== Token.RightParen) {
         if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
 
-        expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+        expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
         mutualFlag |= Flags.NotDestructible;
 
@@ -2097,7 +2099,7 @@ export function parseLeftHandSideExpression(
     column
   );
 
-  return parseMemberExpression(parser, context, expr, inGroup, start, line, column);
+  return parseMemberExpression(parser, context, expr, allowLHS, inGroup, start, line, column);
 }
 
 export function parseIdentifier(parser: ParserState, context: Context): ESTree.Identifier {
@@ -2236,6 +2238,7 @@ export function parseLiteral(parser: ParserState, context: Context): any {
 export function parseUpdateExpression(
   parser: ParserState,
   context: Context,
+  allowLHS: 0 | 1,
   arg: any,
   start: number,
   line: number,
@@ -2248,7 +2251,7 @@ export function parseUpdateExpression(
    */
 
   if (parser.assignable === 0) report(parser, Errors.InvalidIncDecTarget);
-
+  if (allowLHS === 0) report(parser, Errors.Unexpected);
   const operator = KeywordDescTable[parser.token & Token.Kind] as ESTree.UpdateOperator;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -2531,7 +2534,7 @@ export function parseArrayExpressionOrPattern(
               ? Flags.NotDestructible
               : 0;
 
-          left = parseMemberExpression(parser, context, left, 0, start, line, column);
+          left = parseMemberExpression(parser, context, left, 1, 0, start, line, column);
 
           if ((parser.token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
@@ -2577,7 +2580,7 @@ export function parseArrayExpressionOrPattern(
         if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBracket) {
           if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
 
-          left = parseMemberExpression(parser, context, left, 0, start, line, column);
+          left = parseMemberExpression(parser, context, left, 1, 0, start, line, column);
 
           mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3722,7 +3725,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 0, 1, start, line, column);
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (
@@ -3795,7 +3798,7 @@ export function parseObjectLiteralOrPattern(
             } else if (parser.flags & Flags.MustDestruct) {
               report(parser, Errors.InvalidDestructuringTarget);
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3829,7 +3832,7 @@ export function parseObjectLiteralOrPattern(
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -3940,7 +3943,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token, tokenValue: valueAfterColon } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (
@@ -4000,7 +4003,7 @@ export function parseObjectLiteralOrPattern(
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -4037,7 +4040,7 @@ export function parseObjectLiteralOrPattern(
                 mutualFlag |= Flags.NotDestructible;
               }
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -4070,7 +4073,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
             if ((parser.token & Token.IsAssignOp) > 0) {
               mutualFlag |= token === Token.Assign ? 0 : Flags.AssignableDestruct;
@@ -4139,7 +4142,7 @@ export function parseObjectLiteralOrPattern(
             } else {
               if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? mutualFlag | Flags.NotDestructible : 0;
 
@@ -4175,7 +4178,7 @@ export function parseObjectLiteralOrPattern(
             if (parser.token === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBrace) {
                 value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
@@ -4237,7 +4240,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token, tokenValue: valueAfterColon } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, start, line, column);
+            value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (
@@ -4296,7 +4299,7 @@ export function parseObjectLiteralOrPattern(
             } else if (parser.flags & Flags.MustDestruct) {
               report(parser, Errors.InvalidDestructuringTarget);
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -4333,7 +4336,7 @@ export function parseObjectLiteralOrPattern(
                 mutualFlag |= Flags.NotDestructible;
               }
             } else {
-              value = parseMemberExpression(parser, context, value, 0, start, line, column);
+              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
@@ -4458,7 +4461,7 @@ export function parseSpreadOrRestElement(
 
     const isClosingTokenOrComma = parser.token === closingToken || parser.token === Token.Comma;
 
-    argument = parseMemberExpression(parser, context, argument, 0, start, line, column);
+    argument = parseMemberExpression(parser, context, argument, 1, 0, start, line, column);
 
     if (parser.token !== Token.Comma && parser.token !== closingToken) {
       if ((parser.assignable as 0 | 1) === 0 && parser.token === Token.Assign)
@@ -4490,7 +4493,7 @@ export function parseSpreadOrRestElement(
 
       if (token !== Token.Assign && token !== closingToken && token !== Token.Comma) {
         if (parser.flags & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
-        argument = parseMemberExpression(parser, context, argument, 0, start, line, column);
+        argument = parseMemberExpression(parser, context, argument, 1, 0, start, line, column);
         mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
 
         if ((parser.token & Token.IsAssignOp) === Token.IsAssignOp) {
@@ -4788,7 +4791,7 @@ export function parseNonDirectiveExpression(
    *   ('++' | '--')? LeftHandSideExpression
    *
    */
-  expr = parseMemberExpression(parser, context, expr, 0, start, line, column);
+  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
   /** AssignmentExpression :
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression

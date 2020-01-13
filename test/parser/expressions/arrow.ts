@@ -40,6 +40,21 @@ describe('Expressions - Arrow', () => {
     ['([a,b,c]) => { const c = x; }', Context.Empty],
     ['let => { let let }', Context.Empty],
     ['new (x, y) => ok', Context.Empty],
+    [
+      `()=>{}
+    = 5`,
+      Context.Empty
+    ],
+    [
+      `()=>{}
+    * a`,
+      Context.Empty
+    ],
+    [`()=>{}/a`, Context.Empty],
+    [`()=>{} = a`, Context.Empty],
+    [`()=>{} = x`, Context.Empty],
+    [`()=>{} + a`, Context.Empty],
+    [`import(a b)`, Context.Empty],
     ['new async => {}', Context.Empty],
     ['new async => ok', Context.Empty],
     ['new async => {}()', Context.Empty],

@@ -57,6 +57,7 @@ describe('Expressions - Async arrow', () => {
     ['async ()c++=>{};', Context.Empty],
     ['async x => (new) = 1', Context.Empty],
     ['new async x => x', Context.Empty],
+    ['async("foo".bar) => x', Context.Empty],
     [
       `new async ()
     => x`,
