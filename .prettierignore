@@ -9,4 +9,5 @@ src/chars.ts
 src/lexer/charClassifier.ts
 src/parser/bits.ts
 src/unicode.ts
+distro/
 package-lock.json

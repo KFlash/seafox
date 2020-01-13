@@ -63,11 +63,25 @@ export function parseAssignmentExpression(
 export function parseExpression(parser: ParserState, context: Context, inGroup: 0 | 1): any {
   const { start, line, column } = parser;
 
-  let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, 1, 1, inGroup, start, line, column);
-
-  expr = parseMemberExpression(parser, context, expr, 1, inGroup, start, line, column);
-
-  return parseAssignmentExpression(parser, context, 0, inGroup, expr, start, line, column);
+  return parseAssignmentExpression(
+    parser,
+    context,
+    0,
+    inGroup,
+    parseMemberExpression(
+      parser,
+      context,
+      parsePrimaryExpression(parser, context, BindingKind.None, 0, 1, 1, inGroup, start, line, column),
+      1,
+      inGroup,
+      start,
+      line,
+      column
+    ),
+    start,
+    line,
+    column
+  );
 }
 
 export function parseExpressions(parser: ParserState, context: Context, inGroup: 0 | 1): any {
@@ -84,14 +98,12 @@ export function parseSequenceExpression(
   line: number,
   column: number
 ): ESTree.SequenceExpression {
-  nextToken(parser, context, /* allowRegExp */ 1);
+  const expressions: ESTree.Expression[] = [expr];
 
-  const expressions: ESTree.Expression[] = [expr, parseExpression(parser, context, 0)];
-
-  while (parser.token === Token.Comma) {
+  do {
     nextToken(parser, context, /* allowRegExp */ 1);
     expressions.push(parseExpression(parser, context, 0));
-  }
+  } while (parser.token === Token.Comma);
 
   return context & Context.OptionsLoc
     ? {
