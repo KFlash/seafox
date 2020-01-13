@@ -1,6 +1,6 @@
 <h1 align="center">Seafox</h1>
 
-<p align="center"> A super fast 100% spec compliant, self-hosted javascript parser written in Typescript.</p>
+<p align="center"> A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript.</p>
 
 <br>
 

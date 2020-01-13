@@ -45,9 +45,9 @@ async function createBundle() {
 
       const suffix = type === 'minified' ? '.min' : '';
 
-      //'amd' | 'cjs' | 'system' | 'es' | 'esm' | 'iife' | 'umd'
+      // 'cjs' | 'esm' | 'umd'
 
-      for (const format of ['esm', 'system', 'cjs']) {
+      for (const format of ['esm']) {
         const fileName = join(project.dist.path, `seafox.${format}${suffix}.js`);
 
         console.log(`writing ${fileName}`);
@@ -59,7 +59,7 @@ async function createBundle() {
         });
       }
 
-      for (const format of ['umd', 'amd', 'iife']) {
+      for (const format of ['umd']) {
         const fileName = join(project.dist.path, `seafox.${format}${suffix}.js`);
 
         console.log(`writing ${fileName}`);

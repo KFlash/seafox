@@ -116,3 +116,5 @@ export function parseModule(source: string, options?: Options): Program {
         body
       };
 }
+
+export const version = '0.0.3';

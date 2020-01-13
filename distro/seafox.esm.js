@@ -9304,5 +9304,6 @@ function parseModule(source, options) {
             body
         };
 }
+const version = '0.0.3';
 
-export { parseModule, parseScript };
+export { parseModule, parseScript, version };

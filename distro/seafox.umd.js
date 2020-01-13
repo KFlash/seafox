@@ -9310,9 +9310,11 @@
               body
           };
   }
+  const version = '0.0.3';
 
   exports.parseModule = parseModule;
   exports.parseScript = parseScript;
+  exports.version = version;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
