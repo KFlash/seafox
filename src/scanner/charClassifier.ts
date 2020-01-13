@@ -145,19 +145,6 @@ export const CharTypes = [
   CharFlags.None /* 0x7E */,
   CharFlags.None /* 0x7F */
 ];
-export function isIdentifierStart(code: number): number {
-  /*
-   * ES2020 11.6 IdentifierStart
-   *  $ (dollar sign)
-   *  _ (underscore)
-   *  or any character with the Unicode property «ID_Start».
-   *
-   * We use a lookup table for small and thus common characters for speed.
-   */
-  return code <= 0x7f
-    ? CharTypes[code] & CharFlags.IdentifierStart
-    : (unicodeLookup[(code >>> 5) + 34816] >>> code) & 31 & 1;
-}
 
 export function isIdentifierPart(code: number): any {
   /*

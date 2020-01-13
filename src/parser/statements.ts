@@ -683,8 +683,6 @@ export function parseForStatementWithVariableDeclarations(
     // `for of` only allows LeftHandSideExpressions which do not start with `let`, and no other production matches
     if (isLet) report(parser, Errors.ForOfLet);
 
-    if ((parser.assignable as 0 | 1) === 0) report(parser, Errors.CantAssignToInOfForLoop, 'of');
-
     nextToken(parser, context, /* allowRegExp */ 1);
 
     right = parseExpression(parser, context, 0);

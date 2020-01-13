@@ -1,4 +1,4 @@
-export { CharTypes, CharFlags, isIdentifierPart, isIdentifierStart } from './charClassifier';
+export { CharTypes, CharFlags, isIdentifierPart } from './charClassifier';
 export { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments';
 export {
   scanIdentifierSlowPath,
