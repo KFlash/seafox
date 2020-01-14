@@ -54,7 +54,7 @@ import {
 } from './common';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): ESTree.Statement[] {
-  const statements: any[] = [];
+  const statements: ESTree.Statement[] = [];
   let isStrictDirective: 0 | 1 = 0;
 
   while (parser.token === Token.StringLiteral) {
@@ -117,7 +117,7 @@ export function parseStatement(
   labels: any,
   nestedLabels: any,
   allowFuncDecl: 0 | 1
-): any {
+): ESTree.Statement {
   // Statement ::
   //   Block
   //   VariableStatement
@@ -195,9 +195,9 @@ export function parseLabelledStatement(
   context: Context,
   scope: ScopeState,
   origin: Origin,
-  labels: any,
+  labels: string,
   nestedLabels: any,
-  value: any,
+  value: any[],
   token: Token,
   expr: any,
   allowFuncDecl: 0 | 1,
@@ -265,7 +265,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
   context: Context,
   scope: ScopeState,
   origin: Origin,
-  labels: any,
+  labels: string,
   allowFuncDecl: 0 | 1
 ): ESTree.ExpressionStatement | ESTree.LabeledStatement | ESTree.FunctionDeclaration {
   const { token, tokenValue, start, line, column } = parser;
@@ -479,8 +479,8 @@ export function parseForStatementWithVariableDeclarations(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  isAwait: any,
-  labels: any,
+  isAwait: false | 0 | 1,
+  labels: string,
   curStart: number,
   curLine: number,
   curColumn: number

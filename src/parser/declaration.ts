@@ -212,7 +212,7 @@ export function parseClassDeclaration(
 export function parseVariableStatementOrLexicalDeclaration(
   parser: ParserState,
   context: Context,
-  scope: any,
+  scope: ScopeState,
   kind: BindingKind,
   origin: Origin
 ): ESTree.VariableDeclaration {
@@ -255,11 +255,11 @@ export function parseVariableDeclarationListAndDeclarator(
   kind: BindingKind,
   origin: Origin
 ): ESTree.VariableDeclarator[] {
-  const list: ESTree.VariableDeclarator[] = [];
-
-  let id: any = null;
+  let id: ESTree.BindingName;
   let type: BindingKind;
   let init: ESTree.Expression | null = null;
+
+  const list: ESTree.VariableDeclarator[] = [];
 
   while (parser.token !== Token.Comma) {
     const { start, line, column } = parser;

@@ -123,10 +123,9 @@ export type Node =
   | WithStatement
   | YieldExpression;
 
-export type Accessibility = 'public' | 'protected' | 'private' | null;
-
+export type BindingPattern = ArrayPattern | ObjectPattern;
+export type BindingName = BindingPattern | Identifier;
 export type ClassElement = FunctionExpression | MethodDefinition;
-
 export type ExportDeclaration = ClassDeclaration | ClassExpression | FunctionDeclaration | VariableDeclaration;
 export type Expression =
   | ArrowFunctionExpression
@@ -165,8 +164,15 @@ export type LeftHandSideExpression =
   | PrimaryExpression
   | TaggedTemplateExpression;
 export type LiteralExpression = BigIntLiteral | Literal | TemplateLiteral;
-export type ObjectLiteralElementLike = MethodDefinition | Property | RestElement | SpreadElement;
+export type ObjectLiteralElementLike = MethodDefinition | Property | SpreadElement;
 export type Parameter = AssignmentPattern | RestElement | ArrayPattern | ObjectPattern | Identifier;
+export type DestructuringPattern =
+  | Identifier
+  | ObjectPattern
+  | ArrayPattern
+  | RestElement
+  | AssignmentPattern
+  | MemberExpression;
 export type PrimaryExpression =
   | ArrayExpression
   | ArrayPattern
@@ -185,11 +191,13 @@ export type PrimaryExpression =
   | Super
   | TemplateLiteral
   | ThisExpression;
+export type PropertyName = Expression;
 export type Statement =
   | BlockStatement
   | BreakStatement
   | ContinueStatement
   | DebuggerStatement
+  | FunctionDeclaration
   | EmptyStatement
   | ExpressionStatement
   | IfStatement
@@ -210,14 +218,6 @@ interface ClassDeclarationBase extends _Node {
   superClass?: LeftHandSideExpression | null;
 }
 
-interface FunctionDeclarationBase extends _Node {
-  id: Identifier | null;
-  generator: boolean;
-  async: boolean;
-  params: Parameter[];
-  body?: BlockStatement | null;
-}
-
 export interface ArrayExpression extends _Node {
   type: 'ArrayExpression';
   elements: (Expression | SpreadElement | null)[];
@@ -225,7 +225,7 @@ export interface ArrayExpression extends _Node {
 
 export interface ArrayPattern extends _Node {
   type: 'ArrayPattern';
-  elements: (Expression | null)[];
+  elements: (DestructuringPattern | null)[];
 }
 
 export interface ArrowFunctionExpression extends _Node {
@@ -260,7 +260,7 @@ export interface AssignmentExpression extends _Node {
 
 export interface AssignmentPattern extends _Node {
   type: 'AssignmentPattern';
-  left: ArrayPattern | ObjectPattern | Identifier;
+  left: BindingName;
   right?: Expression;
 }
 
@@ -307,7 +307,7 @@ export interface CallExpression extends _Node {
 
 export interface CatchClause extends _Node {
   type: 'CatchClause';
-  param: ArrayPattern | ObjectPattern | Identifier | null;
+  param: BindingName | null;
   body: BlockStatement;
 }
 
@@ -408,12 +408,22 @@ export interface ForStatement extends _Node {
   body: Statement;
 }
 
-export interface FunctionDeclaration extends FunctionDeclarationBase {
+export interface FunctionDeclaration extends _Node {
   type: 'FunctionDeclaration';
+  id: Identifier | null;
+  generator: boolean;
+  async: boolean;
+  params: Parameter[];
+  body?: BlockStatement | null;
 }
 
-export interface FunctionExpression extends FunctionDeclarationBase {
+export interface FunctionExpression extends _Node {
   type: 'FunctionExpression';
+  id: Identifier | null;
+  generator: boolean;
+  async: boolean;
+  params: Parameter[];
+  body?: BlockStatement | null;
 }
 
 export interface Identifier extends _Node {
@@ -600,7 +610,7 @@ export interface MetaProperty extends _Node {
 
 export interface MethodDefinition extends _Node {
   type: 'MethodDefinition';
-  key: Expression;
+  key: PropertyName;
   value: FunctionExpression;
   computed: boolean;
   static: boolean;
@@ -620,7 +630,7 @@ export interface ObjectExpression extends _Node {
 
 export interface ObjectPattern extends _Node {
   type: 'ObjectPattern';
-  properties: ObjectLiteralElementLike[];
+  properties: (Property | RestElement)[];
 }
 
 export interface ParenthesizedExpression extends _Node {
@@ -630,8 +640,8 @@ export interface ParenthesizedExpression extends _Node {
 
 export interface Property extends _Node {
   type: 'Property';
-  key: Expression;
-  value: Expression | AssignmentPattern | ArrayPattern | ObjectPattern | Identifier;
+  key: PropertyName;
+  value: Expression | AssignmentPattern | BindingName;
   computed: boolean;
   method: boolean;
   shorthand: boolean;
@@ -640,7 +650,7 @@ export interface Property extends _Node {
 
 export interface RestElement extends _Node {
   type: 'RestElement';
-  argument: ArrayPattern | ObjectPattern | Identifier | Expression | Identifier | Literal;
+  argument: DestructuringPattern;
   value?: AssignmentPattern;
 }
 
@@ -745,14 +755,12 @@ export interface VariableDeclaration extends _Node {
   type: 'VariableDeclaration';
   declarations: VariableDeclarator[];
   kind: VariableDeclarationKind;
-  declare?: boolean;
 }
 
 export interface VariableDeclarator extends _Node {
   type: 'VariableDeclarator';
-  id: ArrayPattern | ObjectPattern | Identifier;
+  id: BindingName;
   init: Expression | null;
-  definite?: boolean;
 }
 
 export interface WhileStatement extends _Node {

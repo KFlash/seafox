@@ -34,7 +34,7 @@ export function parseAssignmentExpression(
   start: number,
   line: number,
   column: number
-): any {
+): ESTree.Expression {
   if ((parser.token & Token.IsAssignOp) > 0) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
@@ -84,7 +84,7 @@ export function parseExpression(parser: ParserState, context: Context, inGroup: 
   );
 }
 
-export function parseExpressions(parser: ParserState, context: Context, inGroup: 0 | 1): any {
+export function parseExpressions(parser: ParserState, context: Context, inGroup: 0 | 1): ESTree.Expression {
   const { start, line, column } = parser;
   const expr = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
   return parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
@@ -122,7 +122,7 @@ export function parseSequenceExpression(
 export function parseConditionalExpression(
   parser: ParserState,
   context: Context,
-  test: any,
+  test: ESTree.Expression,
   start: number,
   line: number,
   column: number
@@ -215,7 +215,7 @@ export function parseBinaryExpression(
   } while ((logical & Token.IsBinaryOp) > 0);
 }
 
-export function parsePropertyOrPrivatePropertyName(parser: ParserState, context: Context): any {
+export function parsePropertyOrPrivatePropertyName(parser: ParserState, context: Context): ESTree.Identifier {
   if ((parser.token & 0b00000000001001110000000000000000) > 0) {
     return parseIdentifier(parser, context);
   }
@@ -367,7 +367,7 @@ export function parseMemberExpression(
 export function parseMemberOrCallChain(
   parser: ParserState,
   context: Context,
-  chain: any,
+  chain: any[],
   optional: 0 | 1,
   start: number,
   line: number,
@@ -754,7 +754,7 @@ export function parseAwaitExpression(
   start: number,
   line: number,
   column: number
-): any {
+): ESTree.AwaitExpression | ESTree.Identifier | ESTree.ArrowFunctionExpression {
   if (inGroup === 1) parser.flags |= Flags.SeenAwait;
 
   if (context & Context.InAwaitContext) {
@@ -1091,7 +1091,7 @@ export function parseAsyncExpression(
 export function parseAsyncArrowIdentifier(
   parser: ParserState,
   context: Context,
-  scope: any,
+  scope: ScopeState,
   isAsync: 0 | 1,
   value: string,
   token: Token,
@@ -1099,7 +1099,7 @@ export function parseAsyncArrowIdentifier(
   start: number,
   line: number,
   column: number
-): any {
+): ESTree.Identifier | ESTree.FunctionExpression | ESTree.CallExpression | ESTree.ArrowFunctionExpression {
   parser.flags =
     ((parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000) |
     ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? Flags.StrictEvalArguments : 0);
@@ -4723,7 +4723,7 @@ export function parseDirectives(
   start: number,
   line: number,
   column: number
-) {
+): ESTree.ExpressionStatement {
   return context & Context.OptionsDirectives
     ? context & Context.OptionsLoc
       ? {
@@ -4760,7 +4760,7 @@ export function parseNonDirectiveExpression(
   start: number,
   line: number,
   column: number
-): any {
+): ESTree.Expression {
   /** MemberExpression :
    *   1. PrimaryExpression
    *   2. MemberExpression [ AssignmentExpression ]
