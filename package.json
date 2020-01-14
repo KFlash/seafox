@@ -2,10 +2,10 @@
   "name": "seafox",
   "version": "0.0.4",
   "description": "A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript",
-  "main": "dist/seafox.umd.js",
-  "module": "dist/seafox.esm.js",
-  "jsnext:main": "dist/seafox.esm.js",
-  "browser": "dist/seafox.umd.js",
+  "main": "dist/seafox.umd.min.js",
+  "module": "dist/seafox.esm.min.js",
+  "jsnext:main": "dist/seafox.esm.min.js",
+  "browser": "dist/seafox.umd.min.js",
   "types": "dist/seafox.d.ts",
   "typings": "dist/seafox.d.ts",
   "author": "KFlash",
@@ -36,8 +36,8 @@
     "lightweight"
   ],
   "files": [
-    "dist",
-    "src",
+    "dist/*.min.js",
+    "dist/**/*.d.ts",
     "README.md",
     "LICENSE.md"
   ],
