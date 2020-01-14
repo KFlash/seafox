@@ -794,7 +794,7 @@ export function parseForStatement(
 
   scope = {
     parent: scope,
-    type: ScopeKind.ForStatement,
+    type: ScopeKind.Block,
     scopeError: void 0
   };
 
@@ -1336,7 +1336,7 @@ export function parseTryStatement(
     context,
     {
       parent: scope,
-      type: ScopeKind.TryStatement,
+      type: ScopeKind.Block,
       scopeError: void 0
     },
     labels,
@@ -1358,7 +1358,7 @@ export function parseTryStatement(
 
       scope = {
         parent: scope,
-        type: ScopeKind.CatchStatement,
+        type: ScopeKind.Block,
         scopeError: void 0
       };
 
@@ -1404,7 +1404,7 @@ export function parseTryStatement(
         context,
         {
           parent: scope,
-          type: ScopeKind.CatchStatement,
+          type: ScopeKind.Block,
           scopeError: void 0
         },
         labels,

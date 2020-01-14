@@ -174,7 +174,7 @@ describe('Statements - Try', () => {
     });
   }
 
-  let lexical_e = [
+  const lexical_e = [
     'let e',
     'let f, g, e',
     'let [f] = [], [] = [], e = e, h',
@@ -196,9 +196,9 @@ describe('Statements - Try', () => {
     'function* e(){}'
   ];
 
-  let not_lexical_e = ['var e', 'var f, e', 'var {e} = 0', 'let {} = 0', 'let {e:f} = 0', '{ function e(){} }'];
+  const not_lexical_e = ['var e', 'var f, e', 'var {e} = 0', 'let {} = 0', 'let {e:f} = 0', '{ function e(){} }'];
 
-  for (let declaration of not_lexical_e) {
+  for (const declaration of not_lexical_e) {
     it(declaration as string, () => {
       t.doesNotThrow(() => {
         parseScript(`
@@ -212,7 +212,7 @@ describe('Statements - Try', () => {
     });
   }
 
-  for (let declaration of lexical_e) {
+  for (const declaration of lexical_e) {
     it(declaration as string, () => {
       t.throws(() => {
         parseScript(`try {

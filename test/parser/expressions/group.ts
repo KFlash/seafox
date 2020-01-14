@@ -186,6 +186,7 @@ describe('Expressions - Group', () => {
     '({a = 5})',
     '({ ...{a} } = {})',
     '({b, c, d, ...{a} } = {})',
+    '() + 0',
     '({a,,a} = 0)',
     '({function} = 0)',
     '({a:function} = 0)',

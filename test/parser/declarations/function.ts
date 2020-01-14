@@ -334,6 +334,7 @@ describe('Declarations - Function', () => {
     ['function f([while]) {}', Context.Empty],
     ['function f([catch]) {}', Context.Empty],
     ['function f([export]) {}', Context.Empty],
+    ['function* a({e: a.b}) {}', Context.Empty],
     ['function f() { class x extends await y { }   }', Context.Empty],
     ['function f() { class x extends foo(await y) { }   }', Context.Empty],
     ['function f() { class x { foo(await y){} }   }', Context.Empty],

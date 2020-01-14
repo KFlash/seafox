@@ -19,6 +19,61 @@ describe('Module - Export', () => {
     ['function a() {} export function a() {}', Context.Empty],
     ['export function await() {}', Context.Empty],
     ['export function *await() {}', Context.Empty],
+
+    ['var a; export {a, a}', Context.Empty],
+    ['export {x}; export let {...x} = y;', Context.Empty],
+    ['export {x}; export let [x] = y;', Context.Empty],
+    ['export {x}; export let [...x] = y;', Context.Empty],
+    ['export {x}; export let [x] = y;', Context.Empty],
+    ['export let x = y, {...x} = y;', Context.Empty],
+    ['export let x = y, [x] = y;', Context.Empty],
+    ['export let x = y, [...x] = y;', Context.Empty],
+    ['export function x(){}; export let [x] = y;', Context.Empty],
+    ['export let [x, x] = y;', Context.Empty],
+    ['export var a = x, a = y;', Context.Empty],
+    ['export let [x] = y; export {x};', Context.Empty],
+    ['export let [x] = y; export function x(){};', Context.Empty],
+    ['var a, b; export {b, a, a}', Context.Empty],
+    ['var a, b; export {a, b as a}', Context.Empty],
+    [
+      `var a, b;
+    export {a};
+    export {b as a};`,
+      Context.Empty
+    ],
+    [
+      `var a, b
+    export {b as a};
+    export {a};`,
+      Context.Empty
+    ],
+    [
+      `var a,b;
+    export {a, b};
+    export {a};`,
+      Context.Empty
+    ],
+    ['export {mustExist as canBeUndeclared};', Context.Empty],
+    ['export let foo; export let foo;', Context.Empty],
+    ['export var foo; export let foo;', Context.Empty],
+    [
+      `var x;
+    export {mustExist as x};`,
+      Context.Empty
+    ],
+    ['export var [foo = x];', Context.Empty],
+    ['export var [foo], bar;', Context.Empty],
+    ['export var [foo];', Context.Empty],
+    ['export const [foo = x];', Context.Empty],
+    ['export var await = 10;', Context.Empty],
+    ['export var [foo];', Context.Empty],
+    ['export var await = 10;', Context.Empty],
+    ['export const [foo];', Context.Empty],
+    ['export default await x', Context.Empty],
+    ['export let [foo = x];', Context.Empty],
+    ['export let [foo], bar;', Context.Empty],
+    ['export let [foo];', Context.Empty],
+    ['"use strict"; with (x) y;', Context.Empty],
     ['export default function f(){}; export default class C {};', Context.Empty],
     ['export async function a() {} export async function a() {}', Context.Empty],
     ['export class a {} export async function a() {}', Context.Empty],

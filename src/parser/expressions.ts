@@ -4,7 +4,7 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report, reportScopeError } from '../errors';
 import * as ESTree from './estree';
 import { parseStatementListItem } from './statements';
-import { ScopeState, ScopeKind, addBlockName, addVarOrBlock } from './scope';
+import { ScopeState, ScopeKind, createNestedBlockScope, addBlockName, addVarOrBlock } from './scope';
 import {
   ParserState,
   Flags,
@@ -2809,14 +2809,7 @@ export function parseFunctionLiteral(
   line: number,
   column: number
 ): any {
-  scope = {
-    parent: {
-      parent: void 0,
-      type: ScopeKind.Block
-    },
-    type: ScopeKind.FunctionParams,
-    scopeError: void 0
-  };
+  scope = createNestedBlockScope(ScopeKind.Block);
 
   const params = parseFormalParams(
     parser,
@@ -3302,17 +3295,12 @@ export function parseMethodDefinition(
     (kind & PropertyKind.Async ? Context.InAwaitContext : 0) |
     (kind & PropertyKind.Generator ? Context.InYieldContext : 0);
 
+  const scope = createNestedBlockScope(ScopeKind.Block);
+
   return parseFunctionLiteral(
     parser,
     context,
-    {
-      parent: {
-        parent: void 0,
-        type: ScopeKind.Block
-      },
-      type: ScopeKind.FunctionParams,
-      scopeError: void 0
-    },
+    scope,
     null,
     void 0,
     FunctionFlag.None,
@@ -3333,14 +3321,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
 
   const params: ESTree.Parameter[] = [];
 
-  const scope = {
-    parent: {
-      parent: void 0,
-      type: ScopeKind.Block
-    },
-    type: ScopeKind.FunctionParams,
-    scopeError: void 0
-  };
+  const scope = createNestedBlockScope(ScopeKind.Block);
 
   const modifierFlags =
     (kind & PropertyKind.Constructor) === 0 ? 0b0000001111010000000_0000_00000000 : 0b0000000111000000000_0000_00000000;
@@ -3716,7 +3697,6 @@ export function parseObjectLiteralOrPattern(
 
           if (parser.token === Token.Assign) {
             mutualFlag |= Flags.MustDestruct;
-
             value = parseAssignmentOrPattern(parser, context, isPattern, inGroup, key, '=', start, line, column);
           } else {
             mutualFlag |= inGroup === 1 && token === Token.AwaitKeyword ? Flags.SeenAwait : 0;

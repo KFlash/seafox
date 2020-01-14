@@ -18,6 +18,7 @@ describe('Miscellaneous - Pass', () => {
     '#!---IGNORED---\\xE2\\x80\\xA8',
     '#!---IGNORED---\\xE2\\x80\\xA9',
     'for(`${x in y}`;;);',
+    '("\\4"); "use strict";',
     '-134.44e44',
     '11_33',
     '11_33.333_444',

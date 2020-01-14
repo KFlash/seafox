@@ -82,15 +82,17 @@ export function parseModule(source: string, options?: Options): Program {
 
   nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 1);
 
-  const scope = {
+  const scope: any = {
     parent: void 0,
     type: ScopeKind.Block
   };
 
   const body = parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope);
+
   const exportedBindings = parser.exportedBindings;
+
   for (const key in exportedBindings) {
-    if (key[0] === '#' && !(scope as any)[key]) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
+    if (scope[key] === void 0) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
   }
   return context & Context.OptionsLoc
     ? {

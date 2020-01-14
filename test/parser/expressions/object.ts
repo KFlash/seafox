@@ -254,6 +254,7 @@ describe('Expressions - Object', () => {
     ['({foo: {x:y} += x})', Context.Empty],
     ['[(a = 0)] = 1', Context.Empty],
     ['(...a)', Context.Empty],
+
     ['({x:y} += x)', Context.Empty],
     ['({implements}) => null', Context.Strict],
     ['({interface}) => null', Context.Strict],
@@ -385,6 +386,9 @@ describe('Expressions - Object', () => {
     ['({0} = 0)', Context.Empty],
     ['({a.b} = 0)', Context.Empty],
     ['({get a(){}})=0', Context.Empty],
+    ['({get "a"(){}})=0', Context.Empty],
+    ['({get 1(){}})=0', Context.Empty],
+    ['({get 1n(){}})=0', Context.Empty],
     ['({a:this}=0)', Context.Empty],
     ['({a = 0});', Context.Empty],
     ['({a} += 0);', Context.Empty],
