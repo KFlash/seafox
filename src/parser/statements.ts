@@ -1210,7 +1210,7 @@ export function parseThrowStatement(parser: ParserState, context: Context): ESTr
 
   if (parser.newLine !== 0) report(parser, Errors.NewlineAfterThrow);
 
-  const argument: ESTree.Statement = parseExpressions(parser, context, 0);
+  const argument: any = parseExpressions(parser, context, 0);
 
   expectSemicolon(parser, context);
 

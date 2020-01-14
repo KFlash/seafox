@@ -119,4 +119,4 @@ export function parseModule(source: string, options?: Options): Program {
       };
 }
 
-export const version = '0.0.3';
+export const version = '0.0.5';
