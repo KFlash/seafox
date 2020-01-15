@@ -7,7 +7,7 @@ import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
   parseClassDeclaration,
-  parseAsyncFunctionDeclaration,
+  parseHoistableDeclaration,
   parseVariableStatementOrLexicalDeclaration,
   parseImportCallDeclaration,
   parseImportMetaDeclaration
@@ -295,7 +295,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
       if (allowFuncDecl === 0) report(parser, Errors.AsyncFunctionInSingleStatementContext);
-      return parseAsyncFunctionDeclaration(parser, context, scope, 0, 1, origin, start, line, column);
+      return parseHoistableDeclaration(parser, context, scope, 0, 1, origin, start, line, column);
     }
 
     // async Identifier => ...

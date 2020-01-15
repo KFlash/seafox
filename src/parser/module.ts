@@ -19,7 +19,7 @@ import {
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,
-  parseAsyncFunctionDeclaration,
+  parseHoistableDeclaration,
   parseVariableStatementOrLexicalDeclaration,
   parseImportCallDeclaration,
   parseImportMetaDeclaration
@@ -361,7 +361,7 @@ export function parseExportDefault(
       nextToken(parser, context, /* allowRegExp */ 0);
       if (parser.newLine === 0) {
         if ((parser.token as Token) === Token.FunctionKeyword) {
-          declaration = parseAsyncFunctionDeclaration(
+          declaration = parseHoistableDeclaration(
             parser,
             context | Context.IsExported,
             scope,
@@ -637,7 +637,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       nextToken(parser, context, /* allowRegExp */ 0);
 
       if (parser.newLine === 0 && (parser.token as Token) === Token.FunctionKeyword) {
-        declaration = parseAsyncFunctionDeclaration(parser, context, scope, 1, 1, Origin.Export, start, line, column);
+        declaration = parseHoistableDeclaration(parser, context, scope, 1, 1, Origin.Export, start, line, column);
         break;
       }
     }

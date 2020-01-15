@@ -38,11 +38,6 @@ import {
 
 /**
  * Parse function declaration
- *
- * @param parser  Parser object
- * @param context Context masks
- * @param scope
- * @param flags FunctionFlag
  */
 export function parseFunctionDeclaration(
   parser: ParserState,
@@ -52,7 +47,7 @@ export function parseFunctionDeclaration(
   isAsync: 0 | 1,
   origin: Origin
 ): ESTree.FunctionDeclaration {
-  return parseAsyncFunctionDeclaration(
+  return parseHoistableDeclaration(
     parser,
     context,
     scope,
@@ -67,17 +62,8 @@ export function parseFunctionDeclaration(
 
 /**
  * Parse async function declaration
- *
- * @param parser  Parser object
- * @param context Context masks
- * @param scope ScopeState
- * @param flags FunctionFlag
- * @param origin Origin
- * @param start  Start position
- * @param line  Line position
- * @param column Column position
  */
-export function parseAsyncFunctionDeclaration(
+export function parseHoistableDeclaration(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
@@ -142,11 +128,6 @@ export function parseAsyncFunctionDeclaration(
 
 /**
  * Parse class declaration
- *
- * @param parser  Parser object
- * @param context Context masks
- * @param scope Lexical scope
- * @param flags FunctionFlag
  */
 export function parseClassDeclaration(
   parser: ParserState,
@@ -209,11 +190,6 @@ export function parseClassDeclaration(
 
 /**
  * Parse variable statement or lexical declaration
- *
- * @param parser  Parser object
- * @param context Context masks
- * @param kind BindingKind
- * @param origin Origin
  */
 export function parseVariableStatementOrLexicalDeclaration(
   parser: ParserState,
@@ -248,11 +224,6 @@ export function parseVariableStatementOrLexicalDeclaration(
 
 /**
  * Parse variable declaration list and variable declarator
- *
- * @param parser  Parser object
- * @param context Context masks
- * @param kind VarKind
- * @param origin Origin
  */
 export function parseVariableDeclarationListAndDeclarator(
   parser: ParserState,

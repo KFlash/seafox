@@ -2868,12 +2868,12 @@ export function parseFunctionBody(
 
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
 
-  const body: any[] = [];
-  const prevContext = context;
-
-  let isStrictDirective: 0 | 1 = 0;
+  const body: ESTree.Statement[] = [];
+  const savedContext = context;
 
   if (parser.token !== Token.RightBrace) {
+    let isStrictDirective: 0 | 1 = 0;
+
     while (parser.token === Token.StringLiteral) {
       const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
       let expression = parseLiteral(parser, context);
@@ -2907,33 +2907,33 @@ export function parseFunctionBody(
           report(parser, Errors.UnexpectedStrictReserved);
         }
       }
-      if (scopeError && (prevContext & Context.Strict) === 0 && (context & Context.InGlobal) === 0) {
+      if (scopeError && (savedContext & Context.Strict) === 0 && (context & Context.InGlobal) === 0) {
         reportScopeError(scopeError);
       }
 
-      if ((parser.flags & Flags.StrictEvalArguments) === Flags.StrictEvalArguments)
+      if ((parser.flags & Flags.StrictEvalArguments) === Flags.StrictEvalArguments) {
         report(parser, Errors.StrictEvalArguments);
-
-      if ((parser.flags & Flags.HasStrictReserved) === Flags.HasStrictReserved)
+      }
+      if ((parser.flags & Flags.HasStrictReserved) === Flags.HasStrictReserved) {
         report(parser, Errors.UnexpectedStrictReserved);
+      }
+    }
+
+    parser.flags = (parser.flags | 0b00000000000000000000110011100000) ^ 0b00000000000000000000110011100000;
+
+    while ((parser.token as Token) !== Token.RightBrace) {
+      body.push(
+        parseStatementListItem(
+          parser,
+          (context | Context.DisallowIn) ^ Context.DisallowIn,
+          scope,
+          Origin.TopLevel,
+          null,
+          null
+        )
+      );
     }
   }
-
-  parser.flags = (parser.flags | 0b00000000000000000000110011100000) ^ 0b00000000000000000000110011100000;
-
-  while (parser.token !== Token.RightBrace) {
-    body.push(
-      parseStatementListItem(
-        parser,
-        (context | Context.DisallowIn) ^ Context.DisallowIn,
-        scope,
-        Origin.TopLevel,
-        null,
-        null
-      )
-    );
-  }
-
   consume(parser, context, Token.RightBrace, isDecl === 1 ? 1 : 0);
 
   parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
