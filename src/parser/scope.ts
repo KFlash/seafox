@@ -29,12 +29,26 @@ export const enum ScopeKind {
   ArrowParams = 0b00000000000000000000001000000000
 }
 
-export function createNestedBlockScope(type: ScopeKind) {
+export function createNestedBlockScope(type: ScopeKind): ScopeState {
   return {
     parent: {
       parent: void 0,
       type
     },
+    type,
+    scopeError: void 0
+  };
+}
+
+export function createTopLevelScope(type: ScopeKind): ScopeState {
+  return {
+    parent: void 0,
+    type
+  };
+}
+export function createParentScope(parent: ScopeState, type: ScopeKind): ScopeState {
+  return {
+    parent,
     type,
     scopeError: void 0
   };

@@ -19,7 +19,7 @@ import {
 import {
   parseFunctionDeclaration,
   parseClassDeclaration,
-  parseFunctionDeclarationRest,
+  parseAsyncFunctionDeclaration,
   parseVariableStatementOrLexicalDeclaration,
   parseImportCallDeclaration,
   parseImportMetaDeclaration
@@ -346,13 +346,7 @@ export function parseExportDefault(
     case Token.FunctionKeyword:
       // export default function foo () {}
       // export default function () {}
-      declaration = parseFunctionDeclaration(
-        parser,
-        context,
-        scope,
-        0b00000000000000000000000000000011,
-        Origin.TopLevel
-      );
+      declaration = parseFunctionDeclaration(parser, context | Context.IsExported, scope, 0, 0, Origin.TopLevel);
       break;
 
     case Token.ClassKeyword:
@@ -367,11 +361,12 @@ export function parseExportDefault(
       nextToken(parser, context, /* allowRegExp */ 0);
       if (parser.newLine === 0) {
         if ((parser.token as Token) === Token.FunctionKeyword) {
-          declaration = parseFunctionDeclarationRest(
+          declaration = parseAsyncFunctionDeclaration(
             parser,
-            context,
+            context | Context.IsExported,
             scope,
-            0b00000000000000000000000000000111,
+            0,
+            1,
             Origin.Export,
             start,
             line,
@@ -613,13 +608,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Export);
       break;
     case Token.FunctionKeyword:
-      declaration = parseFunctionDeclaration(
-        parser,
-        context,
-        scope,
-        0b00000000000000000000000000011011,
-        Origin.TopLevel
-      );
+      declaration = parseFunctionDeclaration(parser, context, scope, 1, 0, Origin.TopLevel);
       break;
     case Token.LetKeyword:
       declaration = parseVariableStatementOrLexicalDeclaration(parser, context, scope, BindingKind.Let, Origin.Export);
@@ -648,16 +637,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       nextToken(parser, context, /* allowRegExp */ 0);
 
       if (parser.newLine === 0 && (parser.token as Token) === Token.FunctionKeyword) {
-        declaration = parseFunctionDeclarationRest(
-          parser,
-          context,
-          scope,
-          0b00000000000000000000000000001111,
-          Origin.Export,
-          start,
-          line,
-          column
-        );
+        declaration = parseAsyncFunctionDeclaration(parser, context, scope, 1, 1, Origin.Export, start, line, column);
         break;
       }
     }

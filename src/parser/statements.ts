@@ -7,7 +7,7 @@ import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
   parseClassDeclaration,
-  parseFunctionDeclarationRest,
+  parseAsyncFunctionDeclaration,
   parseVariableStatementOrLexicalDeclaration,
   parseImportCallDeclaration,
   parseImportMetaDeclaration
@@ -39,7 +39,6 @@ import {
   Flags,
   Context,
   BindingKind,
-  FunctionFlag,
   ClassFlags,
   Origin,
   consume,
@@ -91,7 +90,7 @@ export function parseStatementListItem(
 ): any {
   switch (parser.token) {
     case Token.FunctionKeyword:
-      return parseFunctionDeclaration(parser, context, scope, FunctionFlag.Declaration, origin);
+      return parseFunctionDeclaration(parser, context, scope, 0, 0, origin);
     case Token.AsyncKeyword:
       return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 1);
     case Token.ClassKeyword:
@@ -228,7 +227,7 @@ export function parseLabelledStatement(
     (context & 0b00000000000000000000010000010000) > 0 ||
     parser.token !== Token.FunctionKeyword
       ? parseStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl)
-      : parseFunctionDeclaration(parser, context, scope, FunctionFlag.IsDeclaration, origin);
+      : parseFunctionDeclaration(parser, context, scope, 0, 0, origin | Origin.Statement);
 
   return context & Context.OptionsLoc
     ? {
@@ -296,16 +295,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
       if (allowFuncDecl === 0) report(parser, Errors.AsyncFunctionInSingleStatementContext);
-      return parseFunctionDeclarationRest(
-        parser,
-        context,
-        scope,
-        FunctionFlag.IsAsync | FunctionFlag.Declaration,
-        origin,
-        start,
-        line,
-        column
-      );
+      return parseAsyncFunctionDeclaration(parser, context, scope, 0, 1, origin, start, line, column);
     }
 
     // async Identifier => ...
@@ -1197,8 +1187,9 @@ export function parseConsequentOrAlternative(
           type: ScopeKind.Block,
           scopeError: void 0
         },
-        FunctionFlag.Declaration,
-        Origin.None
+        0,
+        0,
+        Origin.Statement
       );
 }
 

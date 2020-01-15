@@ -2,12 +2,19 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as ESTree from './estree';
-import { ScopeState, ScopeKind, addVarName, addBlockName, declareUnboundVariable } from './scope';
+import {
+  ScopeState,
+  ScopeKind,
+  addVarName,
+  addBlockName,
+  declareUnboundVariable,
+  createParentScope,
+  createTopLevelScope
+} from './scope';
 import {
   ParserState,
   Context,
   BindingKind,
-  FunctionFlag,
   ClassFlags,
   Origin,
   expectSemicolon,
@@ -41,10 +48,21 @@ export function parseFunctionDeclaration(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  flags: FunctionFlag,
+  isHoisted: 0 | 1,
+  isAsync: 0 | 1,
   origin: Origin
 ): ESTree.FunctionDeclaration {
-  return parseFunctionDeclarationRest(parser, context, scope, flags, origin, parser.start, parser.line, parser.column);
+  return parseAsyncFunctionDeclaration(
+    parser,
+    context,
+    scope,
+    isHoisted,
+    isAsync,
+    origin,
+    parser.start,
+    parser.line,
+    parser.column
+  );
 }
 
 /**
@@ -59,11 +77,12 @@ export function parseFunctionDeclaration(
  * @param line  Line position
  * @param column Column position
  */
-export function parseFunctionDeclarationRest(
+export function parseAsyncFunctionDeclaration(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  flags: FunctionFlag,
+  isHoisted: 0 | 1,
+  isAsync: 0 | 1,
   origin: Origin,
   start: number,
   line: number,
@@ -72,21 +91,14 @@ export function parseFunctionDeclarationRest(
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const isGenerator =
-    flags & FunctionFlag.AllowGenerator && consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0);
-  const isAsync = flags & FunctionFlag.IsAsync ? 1 : 0;
+    (origin & Origin.Statement) === 0 ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0) : 0;
 
   let id: ESTree.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  // Create a new parent function scope
-  let parent: ScopeState = {
-    parent: void 0,
-    type: ScopeKind.Block
-  };
+  let parent: ScopeState = createTopLevelScope(ScopeKind.Block);
 
-  if (parser.token === Token.LeftParen) {
-    if (flags & FunctionFlag.RequireIdentifier) report(parser, Errors.DeclNoName, 'Function');
-  } else {
+  if ((parser.token & 0b00000000001001110000000000000000) > 0) {
     const { token, tokenValue, start, line, column } = parser;
 
     validateFunctionName(parser, context | ((context & 0b0000000000000000000_1100_00000000) << 11), token);
@@ -99,29 +111,27 @@ export function parseFunctionDeclarationRest(
       addBlockName(parser, context, scope, tokenValue, BindingKind.FunctionLexical, origin);
     }
 
-    if ((flags & 0b00000000000000000000000000010000) > 0) declareUnboundVariable(parser, tokenValue);
+    if (isHoisted === 1) declareUnboundVariable(parser, tokenValue);
 
-    parent = {
-      parent,
-      type: ScopeKind.FunctionRoot,
-      scopeError: void 0
-    };
+    parent = createParentScope(parent, ScopeKind.FunctionRoot);
 
     firstRestricted = token;
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+  } else if ((context & Context.IsExported) === 0) {
+    report(parser, Errors.DeclNoName, 'Function');
   }
 
   return parseFunctionLiteral(
     parser,
-    ((context | 0b00000100111011000000000000000000) ^ 0b00000000111011000000000000000000) |
+    ((context | 0b00011101111011100000000100000000) ^ 0b00011001111011100000000100000000) |
       ((isAsync * 2 + isGenerator) << 21),
     parent,
     id,
     firstRestricted,
-    flags,
+    /* isDecl */ 1,
     'FunctionDeclaration',
     /* isMethod */ 0,
     start,
@@ -154,11 +164,7 @@ export function parseClassDeclaration(
   context |= Context.Strict;
 
   let id: ESTree.Identifier | null = null;
-
-  if (
-    parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
-    parser.token !== Token.ExtendsKeyword
-  ) {
+  if ((parser.token & 0b00000000001001110000000000000000) > 0 && parser.token !== Token.ExtendsKeyword) {
     const { token, start, line, column, tokenValue } = parser;
 
     if (isStrictReservedWord(parser, context, token, 0)) report(parser, Errors.UnexpectedStrictReserved);
@@ -262,14 +268,12 @@ export function parseVariableDeclarationListAndDeclarator(
   const list: ESTree.VariableDeclarator[] = [];
 
   while (parser.token !== Token.Comma) {
-    const { start, line, column } = parser;
+    const { token, start, line, column } = parser;
 
     // This little 'trick' speeds up the validation below
     type =
       kind |
-      ((parser.token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000
-        ? BindingKind.Pattern
-        : 0);
+      ((token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000 ? BindingKind.Pattern : 0);
 
     id = parseBindingPattern(parser, context, scope, kind, origin);
 
@@ -354,19 +358,7 @@ export function parseImportMetaDeclaration(
   line: number,
   column: number
 ): ESTree.ExpressionStatement {
-  let expr: any =
-    context & Context.OptionsLoc
-      ? {
-          type: 'Identifier',
-          name: 'import',
-          start,
-          end: parser.endIndex,
-          loc: setLoc(parser, line, column)
-        }
-      : {
-          type: 'Identifier',
-          name: 'import'
-        };
+  let expr: any = parseIdentifierFromValue(parser, context, 'import', start, line, column);
 
   expr = parseImportMetaExpression(parser, context, expr, start, line, column);
 

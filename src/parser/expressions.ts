@@ -10,7 +10,6 @@ import {
   Flags,
   Context,
   BindingKind,
-  FunctionFlag,
   PropertyKind,
   Origin,
   expectSemicolon,
@@ -2787,7 +2786,7 @@ export function parseFunctionExpression(
     scope,
     id,
     firstRestricted,
-    FunctionFlag.None,
+    /* isDecl */ 0,
     'FunctionExpression',
     /* isMethod */ 0,
     start,
@@ -2802,7 +2801,7 @@ export function parseFunctionLiteral(
   scope: any,
   id: any,
   firstRestricted: Token | undefined,
-  flags: FunctionFlag,
+  isDecl: 0 | 1,
   type: 'FunctionDeclaration' | 'FunctionExpression',
   isMethod: 0 | 1,
   start: number,
@@ -2829,7 +2828,7 @@ export function parseFunctionLiteral(
       scopeError: void 0
     },
     firstRestricted,
-    flags,
+    isDecl,
     scope.scopeError
   );
 
@@ -2862,7 +2861,7 @@ export function parseFunctionBody(
   context: Context,
   scope: any,
   firstRestricted: Token | undefined,
-  flags: FunctionFlag,
+  isDecl: 0 | 1,
   scopeError: any
 ): any {
   const { start, line, column } = parser;
@@ -2935,7 +2934,7 @@ export function parseFunctionBody(
     );
   }
 
-  consume(parser, context, Token.RightBrace, flags & FunctionFlag.IsDeclaration ? 1 : 0);
+  consume(parser, context, Token.RightBrace, isDecl === 1 ? 1 : 0);
 
   parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
 
@@ -2970,10 +2969,7 @@ export function parseClassExpression(
 
   let id: ESTree.Identifier | null = null;
 
-  if (
-    parser.token & (Token.Keyword | Token.FutureReserved | Token.IsIdentifier) &&
-    parser.token !== Token.ExtendsKeyword
-  ) {
+  if ((parser.token & 0b00000000001001110000000000000000) > 0 && parser.token !== Token.ExtendsKeyword) {
     const { token, start, line, column, tokenValue } = parser;
 
     if (isStrictReservedWord(parser, context, token, inGroup)) report(parser, Errors.UnexpectedStrictReserved);
@@ -3303,7 +3299,7 @@ export function parseMethodDefinition(
     scope,
     null,
     void 0,
-    FunctionFlag.None,
+    /* isDecl */ 0,
     'FunctionExpression',
     /* isMethod */ 1,
     parser.start,
@@ -3436,7 +3432,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     ? {
         type: 'FunctionExpression',
         params,
-        body: parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0),
+        body: parseFunctionBody(parser, context, scope, void 0, /* isDecl */ 0, void 0),
         async: (kind & PropertyKind.Async) === 1,
         generator: (kind & PropertyKind.Generator) === 1,
         id: null,
@@ -3447,7 +3443,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     : {
         type: 'FunctionExpression',
         params,
-        body: parseFunctionBody(parser, context, scope, void 0, FunctionFlag.None, void 0),
+        body: parseFunctionBody(parser, context, scope, void 0, /* isDecl */ 0, void 0),
         async: (kind & PropertyKind.Async) === 1,
         generator: (kind & PropertyKind.Generator) === 1,
         id: null

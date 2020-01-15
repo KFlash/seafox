@@ -15,6 +15,7 @@ export const enum Context {
   OptionsDirectives = 1 << 5,
   OptionsGlobalReturn = 1 << 6,
   OptionsPreserveParens = 1 << 7,
+  IsExported = 1 << 8,
   AllowEscapedKeyword = 1 << 9,
   Strict = 1 << 10,
   Module = 1 << 11, // Current code should be parsed as a module body
@@ -75,16 +76,6 @@ export const enum PropertyKind {
   Getter = 1 << 7,
   Setter = 1 << 8,
   GetSet = Getter | Setter
-}
-
-export const enum FunctionFlag {
-  None = 0,
-  IsDeclaration = 1 << 0,
-  AllowGenerator = 1 << 1,
-  IsAsync = 1 << 2,
-  RequireIdentifier = 1 << 3,
-  Export = 1 << 4,
-  Declaration = IsDeclaration | AllowGenerator | RequireIdentifier
 }
 
 export const enum ClassFlags {

@@ -269,6 +269,326 @@ describe('Declarations - Class', () => {
       }
     ],
     [
+      `class x{ static async *gen() { yield { ...yield, y: 1, ...yield yield, };}}`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ClassDeclaration',
+            id: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            superClass: null,
+            body: {
+              type: 'ClassBody',
+              body: [
+                {
+                  type: 'MethodDefinition',
+                  kind: 'method',
+                  static: true,
+                  computed: false,
+                  key: {
+                    type: 'Identifier',
+                    name: 'gen',
+                    start: 23,
+                    end: 26,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 26
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'FunctionExpression',
+                    params: [],
+                    body: {
+                      type: 'BlockStatement',
+                      body: [
+                        {
+                          type: 'ExpressionStatement',
+                          expression: {
+                            type: 'YieldExpression',
+                            argument: {
+                              type: 'ObjectExpression',
+                              properties: [
+                                {
+                                  type: 'SpreadElement',
+                                  argument: {
+                                    type: 'YieldExpression',
+                                    argument: null,
+                                    delegate: false,
+                                    start: 42,
+                                    end: 47,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 42
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 47
+                                      }
+                                    }
+                                  },
+                                  start: 39,
+                                  end: 47,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 39
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 47
+                                    }
+                                  }
+                                },
+                                {
+                                  type: 'Property',
+                                  key: {
+                                    type: 'Identifier',
+                                    name: 'y',
+                                    start: 49,
+                                    end: 50,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 49
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 50
+                                      }
+                                    }
+                                  },
+                                  value: {
+                                    type: 'Literal',
+                                    value: 1,
+                                    start: 52,
+                                    end: 53,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 52
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 53
+                                      }
+                                    }
+                                  },
+                                  kind: 'init',
+                                  computed: false,
+                                  method: false,
+                                  shorthand: false,
+                                  start: 49,
+                                  end: 53,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 49
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 53
+                                    }
+                                  }
+                                },
+                                {
+                                  type: 'SpreadElement',
+                                  argument: {
+                                    type: 'YieldExpression',
+                                    argument: {
+                                      type: 'YieldExpression',
+                                      argument: null,
+                                      delegate: false,
+                                      start: 64,
+                                      end: 69,
+                                      loc: {
+                                        start: {
+                                          line: 1,
+                                          column: 64
+                                        },
+                                        end: {
+                                          line: 1,
+                                          column: 69
+                                        }
+                                      }
+                                    },
+                                    delegate: false,
+                                    start: 58,
+                                    end: 69,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 58
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 69
+                                      }
+                                    }
+                                  },
+                                  start: 55,
+                                  end: 69,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 55
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 69
+                                    }
+                                  }
+                                }
+                              ],
+                              start: 37,
+                              end: 72,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 37
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 72
+                                }
+                              }
+                            },
+                            delegate: false,
+                            start: 31,
+                            end: 72,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 31
+                              },
+                              end: {
+                                line: 1,
+                                column: 72
+                              }
+                            }
+                          },
+                          start: 31,
+                          end: 73,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 31
+                            },
+                            end: {
+                              line: 1,
+                              column: 73
+                            }
+                          }
+                        }
+                      ],
+                      start: 29,
+                      end: 74,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 29
+                        },
+                        end: {
+                          line: 1,
+                          column: 74
+                        }
+                      }
+                    },
+                    async: true,
+                    generator: true,
+                    id: null,
+                    start: 26,
+                    end: 74,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 26
+                      },
+                      end: {
+                        line: 1,
+                        column: 74
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 74,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 74
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 75,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 75
+                }
+              }
+            },
+            start: 0,
+            end: 75,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 75
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 75,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 75
+          }
+        }
+      }
+    ],
+    [
       `class a { get 12n(){}}`,
       Context.OptionsLoc,
       {
