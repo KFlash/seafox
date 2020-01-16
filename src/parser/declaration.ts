@@ -15,7 +15,6 @@ import {
   ParserState,
   Context,
   BindingKind,
-  ClassFlags,
   Origin,
   expectSemicolon,
   setLoc,
@@ -61,7 +60,7 @@ export function parseFunctionDeclaration(
 }
 
 /**
- * Parse async function declaration
+ * Parse hoistable declaration
  */
 export function parseHoistableDeclaration(
   parser: ParserState,
@@ -133,11 +132,12 @@ export function parseClassDeclaration(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  flags: ClassFlags
+  isHoisted: 0 | 1,
+  isExported: 0 | 1
 ): ESTree.ClassDeclaration {
   const { start, line, column } = parser;
 
-  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
+  nextToken(parser, context, /* allowRegExp */ 0);
 
   // Second set of context masks to fix 'super' edge cases
   const inheritedContext = (context | Context.InConstructor) ^ Context.InConstructor;
@@ -145,33 +145,23 @@ export function parseClassDeclaration(
   context |= Context.Strict;
 
   let id: ESTree.Identifier | null = null;
+
   if ((parser.token & 0b00000000001001110000000000000000) > 0 && parser.token !== Token.ExtendsKeyword) {
     const { token, start, line, column, tokenValue } = parser;
 
     if (isStrictReservedWord(parser, context, token, 0)) report(parser, Errors.UnexpectedStrictReserved);
 
     // A named class creates a new lexical scope with a const binding of the
-    // class name for the "inner name".
+    // class name for the 'inner name'.
     addBlockName(parser, context, scope, tokenValue, BindingKind.Class, Origin.None);
 
-    if (flags & ClassFlags.Export) declareUnboundVariable(parser, tokenValue);
+    if (isExported === 1) declareUnboundVariable(parser, tokenValue);
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-  } else {
-    // Only under the "export default" context, class declaration does not require the class name.
-    //
-    //     ExportDeclaration:
-    //         ...
-    //         export default ClassDeclaration[~Yield, +Default]
-    //         ...
-    //
-    //     ClassDeclaration[Yield, Default]:
-    //         ...
-    //         [+Default] class ClassTail[?Yield]
-    //
-    if ((flags & 0b00000000000000000000000000000001) === 0) report(parser, Errors.DeclNoName, 'Class');
+  } else if (isHoisted === 0) {
+    report(parser, Errors.DeclNoName, 'Class');
   }
 
   return parseClassTail(
@@ -200,7 +190,7 @@ export function parseVariableStatementOrLexicalDeclaration(
 ): ESTree.VariableDeclaration {
   const { start, line, column } = parser;
 
-  nextToken(parser, context | Context.AllowEscapedKeyword, /* allowRegExp */ 0);
+  nextToken(parser, context, /* allowRegExp */ 0);
 
   const declarations = parseVariableDeclarationListAndDeclarator(parser, context, scope, kind, origin);
 
@@ -238,7 +228,7 @@ export function parseVariableDeclarationListAndDeclarator(
 
   const list: ESTree.VariableDeclarator[] = [];
 
-  while (parser.token !== Token.Comma) {
+  do {
     const { token, start, line, column } = parser;
 
     // This little 'trick' speeds up the validation below
@@ -248,15 +238,16 @@ export function parseVariableDeclarationListAndDeclarator(
 
     id = parseBindingPattern(parser, context, scope, kind, origin);
 
-    // Always set the 'initializer' to 'null' for each iteration
+    // Note: Always set the 'initializer' to 'null' for each iteration
     init = null;
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
-      init = parseExpression(parser, context, 0);
+      init = parseExpression(parser, context, /* inGroup */ 0);
     } else if (
+      // ES6 'const' and binding patterns require initializers
       (type & 0b00000000000000000000010000100000) !== 0 &&
-      (parser.token & 0b00000000010000000000000000000000) !== 0b00000000010000000000000000000000
+      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
     ) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
@@ -277,11 +268,7 @@ export function parseVariableDeclarationListAndDeclarator(
             id
           }
     );
-
-    if ((parser.token as Token) !== Token.Comma) break;
-
-    nextToken(parser, context, /* allowRegExp */ 1);
-  }
+  } while (consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1));
 
   return list;
 }

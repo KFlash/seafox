@@ -107,13 +107,15 @@ export const enum Errors {
   DuplicateExportBinding,
   UndeclaredExportedBinding,
   InvalidExportImportSource,
-  InvalidKeywordAsAlias
+  InvalidKeywordAsAlias,
+  UnterminatedTemplateExpr
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.UnterminatedTemplateExpr]: 'Missing } in template expression',
   [Errors.InvalidExportImportSource]: '%0 source must be string',
   [Errors.InvalidKeywordAsAlias]: 'Only a identifier can be used to indicate alias',
   [Errors.DuplicateExportBinding]: "Cannot export a duplicate name '%0'",

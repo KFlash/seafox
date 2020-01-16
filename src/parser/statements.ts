@@ -39,7 +39,6 @@ import {
   Flags,
   Context,
   BindingKind,
-  ClassFlags,
   Origin,
   consume,
   consumeOpt,
@@ -94,7 +93,7 @@ export function parseStatementListItem(
     case Token.AsyncKeyword:
       return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 1);
     case Token.ClassKeyword:
-      return parseClassDeclaration(parser, context, scope, ClassFlags.None);
+      return parseClassDeclaration(parser, context, scope, /* isHoisted */ 0, /* isExported */ 0);
     case Token.ConstKeyword:
       return parseVariableStatementOrLexicalDeclaration(parser, context, scope, BindingKind.Const, Origin.None);
     case Token.LetKeyword:
@@ -520,9 +519,7 @@ export function parseForStatementWithVariableDeclarations(
       const { tokenValue, start, line, column, token } = parser;
       type =
         kind |
-        ((parser.token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000
-          ? BindingKind.Pattern
-          : 0);
+        ((token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000 ? BindingKind.Pattern : 0);
 
       let id;
       let init: any = null;
@@ -602,14 +599,7 @@ export function parseForStatementWithVariableDeclarations(
           init = parseExpression(parser, context | 0b00000000000000000010000000000000, 0);
 
           if ((parser.token & 0b00000000010000000000000000000000) === 0b00000000010000000000000000000000) {
-            if ((parser.token as Token) === Token.OfKeyword) report(parser, Errors.ForInOfLoopInitializer, 'of');
-            if (
-              ((parser.token as Token) === Token.InKeyword &&
-                (kind & 0b00000000000000000000000000000010) !== 0b00000000000000000000000000000010) ||
-              (context & 0b00000000000000000000010000010000) > 0
-            ) {
-              report(parser, Errors.ForInOfLoopInitializer, 'in');
-            }
+            report(parser, Errors.ForInOfLoopInitializer, (parser.token as Token) === Token.OfKeyword ? 'of' : 'in');
           }
         } else if (
           (type & 0b00000000000000000000010000100000) !== 0 &&

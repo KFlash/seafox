@@ -95,7 +95,6 @@ function scanBadTemplate(parser: ParserState, _context: Context, source: string)
 }
 
 export function scanTemplateTail(parser: ParserState, context: Context): Token {
-  if (parser.index >= parser.length) report(parser, Errors.Unexpected);
   parser.index--;
   return scanTemplate(parser, context, parser.source);
 }

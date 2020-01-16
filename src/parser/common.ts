@@ -78,13 +78,6 @@ export const enum PropertyKind {
   GetSet = Getter | Setter
 }
 
-export const enum ClassFlags {
-  None = 0,
-  Hoisted = 1 << 0,
-  Export = 1 << 1,
-  RequireIdentifier = 1 << 2
-}
-
 /**
  * Masks to track the binding kind
  */
@@ -303,7 +296,9 @@ export function isValidIdentifier(context: Context, t: Token): boolean {
   return context & (Context.Strict | Context.InYieldContext)
     ? context & Context.Module && t === Token.AwaitKeyword
       ? false
-      : context & Context.InYieldContext && t === Token.YieldKeyword
+      : context & (Context.Strict | Context.InYieldContext) && t === Token.YieldKeyword
+      ? false
+      : t === Token.LetKeyword
       ? false
       : (t & Token.IsIdentifier) > 0
     : (t & Token.IsIdentifier) > 0 || (t & Token.FutureReserved) > 0;

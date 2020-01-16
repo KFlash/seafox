@@ -420,6 +420,48 @@ export function scan(
         }
         return Token.Period;
 
+      // `=`, `==`, `===`, `=>`
+      case Token.Assign:
+        char = source.charCodeAt(++parser.index);
+        if (char === Chars.EqualSign) {
+          if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LooseEqual;
+          parser.index++;
+          return Token.StrictEqual;
+        }
+
+        if (char !== Chars.GreaterThan) return Token.Assign;
+        parser.index++;
+        return Token.Arrow;
+
+      // `*`, `**`, `*=`, `**=`
+      case Token.Multiply:
+        char = source.charCodeAt(++parser.index);
+        if (char === Chars.EqualSign) {
+          parser.index++;
+          return Token.MultiplyAssign;
+        }
+
+        if (char !== Chars.Asterisk) return Token.Multiply;
+        if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.Exponentiate;
+        parser.index++;
+
+        return Token.ExponentiateAssign;
+
+      // `+`, `++`, `+=`
+      case Token.Add:
+        char = source.charCodeAt(++parser.index);
+        if (char === Chars.Plus) {
+          parser.index++;
+          return Token.Increment;
+        }
+
+        if (char === Chars.EqualSign) {
+          parser.index++;
+          return Token.AddAssign;
+        }
+
+        return Token.Add;
+
       // `/`, `/=`, `/>`, '/*..*/'
       case Token.Divide:
         index = ++parser.index;
@@ -445,19 +487,6 @@ export function scan(
         }
         return Token.Divide;
 
-      // `=`, `==`, `===`, `=>`
-      case Token.Assign:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.EqualSign) {
-          if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LooseEqual;
-          parser.index++;
-          return Token.StrictEqual;
-        }
-
-        if (char !== Chars.GreaterThan) return Token.Assign;
-        parser.index++;
-        return Token.Arrow;
-
       // `?`, `??`, `?.`
       case Token.QuestionMark:
         char = source.charCodeAt(++parser.index);
@@ -474,6 +503,24 @@ export function scan(
         }
 
         return Token.QuestionMark;
+
+      // `-`, `--`, `-=`, `-->`
+      case Token.Subtract:
+        char = source.charCodeAt(++parser.index);
+        if (char === Chars.Hyphen) {
+          if (source.charCodeAt(parser.index + 1) === Chars.GreaterThan && (lineStart || parser.newLine)) {
+            parser.index = skipSingleHTMLComment(parser, context, source, parser.index);
+            continue;
+          }
+          parser.index++;
+          return Token.Decrement;
+        }
+
+        if (char === Chars.EqualSign) {
+          parser.index++;
+          return Token.SubtractAssign;
+        }
+        return Token.Subtract;
 
       // `<`, `<=`, `<<`, `<<=`, `</`, `<!--`
       case Token.LessThan:
@@ -504,24 +551,6 @@ export function scan(
 
         return Token.LessThan;
 
-      // `-`, `--`, `-=`, `-->`
-      case Token.Subtract:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.Hyphen) {
-          if (source.charCodeAt(parser.index + 1) === Chars.GreaterThan && (lineStart || parser.newLine)) {
-            parser.index = skipSingleHTMLComment(parser, context, source, parser.index);
-            continue;
-          }
-          parser.index++;
-          return Token.Decrement;
-        }
-
-        if (char === Chars.EqualSign) {
-          parser.index++;
-          return Token.SubtractAssign;
-        }
-        return Token.Subtract;
-
       // `!`, `!=`, `!==`
       case Token.Negate:
         if (source.charCodeAt(parser.index + 1) === Chars.EqualSign) {
@@ -542,55 +571,11 @@ export function scan(
         parser.index++;
         return Token.ModuloAssign;
 
-      // `*`, `**`, `*=`, `**=`
-      case Token.Multiply:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.EqualSign) {
-          parser.index++;
-          return Token.MultiplyAssign;
-        }
-
-        if (char !== Chars.Asterisk) return Token.Multiply;
-        if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.Exponentiate;
-        parser.index++;
-
-        return Token.ExponentiateAssign;
-
       // `^`, `^=`
       case Token.BitwiseXor:
         if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.BitwiseXor;
         parser.index++;
         return Token.BitwiseXorAssign;
-
-      // `+`, `++`, `+=`
-      case Token.Add:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.Plus) {
-          parser.index++;
-          return Token.Increment;
-        }
-
-        if (char === Chars.EqualSign) {
-          parser.index++;
-          return Token.AddAssign;
-        }
-
-        return Token.Add;
-
-      // `|`, `||`, `|=`
-      case Token.BitwiseOr:
-        char = source.charCodeAt(++parser.index);
-
-        if (char === Chars.VerticalBar) {
-          parser.index++;
-          return Token.LogicalOr;
-        }
-        if (char === Chars.EqualSign) {
-          parser.index++;
-          return Token.BitwiseOrAssign;
-        }
-
-        return Token.BitwiseOr;
 
       // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
       case Token.GreaterThan:
@@ -616,6 +601,21 @@ export function scan(
         }
 
         return Token.ShiftRight;
+
+      // `|`, `||`, `|=`
+      case Token.BitwiseOr:
+        char = source.charCodeAt(++parser.index);
+
+        if (char === Chars.VerticalBar) {
+          parser.index++;
+          return Token.LogicalOr;
+        }
+        if (char === Chars.EqualSign) {
+          parser.index++;
+          return Token.BitwiseOrAssign;
+        }
+
+        return Token.BitwiseOr;
 
       // `&`, `&&`, `&=`
       case Token.BitwiseAnd:

@@ -8,7 +8,6 @@ import {
   ParserState,
   Context,
   BindingKind,
-  ClassFlags,
   Origin,
   expectSemicolon,
   validateIdentifier,
@@ -197,6 +196,8 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
       consume(parser, context, Token.AsKeyword, /* allowRegExp */ 0);
 
+      validateIdentifier(parser, context, BindingKind.Const, parser.token);
+
       addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
 
       specifiers.push(
@@ -215,7 +216,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
       );
       break;
 
-    // '}'
+    // '{'
     case Token.LeftBrace:
       // NamedImports :
       //   '{' '}'
@@ -243,10 +244,10 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
         if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
-          if ((parser.token & Token.IsStringOrNumber) > 0 || (parser.token as Token) === Token.Comma) {
+          if (!isValidIdentifier(context, parser.token)) {
             report(parser, Errors.InvalidKeywordAsAlias);
-          } else {
-            validateIdentifier(parser, context, BindingKind.Const, parser.token);
+          } else if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+            report(parser, Errors.StrictEvalArguments);
           }
           tokenValue = parser.tokenValue;
           local = parseIdentifier(parser, context);
@@ -351,7 +352,7 @@ export function parseExportDefault(
 
     case Token.ClassKeyword:
       // export default class foo {}
-      declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Hoisted);
+      declaration = parseClassDeclaration(parser, context, scope, /* isHoisted */ 1, /* isExported */ 0);
       break;
     case Token.AsyncKeyword:
       // export default async function f () {}
@@ -605,7 +606,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
     }
 
     case Token.ClassKeyword:
-      declaration = parseClassDeclaration(parser, context, scope, ClassFlags.Export);
+      declaration = parseClassDeclaration(parser, context, scope, /* isHoisted */ 0, /* isExported */ 1);
       break;
     case Token.FunctionKeyword:
       declaration = parseFunctionDeclaration(parser, context, scope, 1, 0, Origin.TopLevel);

@@ -118,6 +118,8 @@ export function parseSequenceExpression(
       };
 }
 
+// Parse a ternary conditional (`?:`) operator
+
 export function parseConditionalExpression(
   parser: ParserState,
   context: Context,
@@ -597,38 +599,6 @@ export function parseTemplateLiteral(parser: ParserState, context: Context): EST
       };
 }
 
-/**
- * parseTemplateLiteralExpression
- * https://tc39.github.io/ecma262/#prod-Literal
- *
- * TemplateExpression :
- *   NoSubstitutionTemplate
- *   TemplateHead
- *
- * NoSubstitutionTemplate :
- *   ` TemplateCharacters(opt) `
- *
- * TemplateHead :
- *   ` TemplateCharacters(opt) ${
- *
- * TemplateSubstitutionTail :
- *   TemplateMiddle
- *   TemplateTail
- *
- * TemplateMiddle :
- *   } TemplateCharacters(opt) ${
- *
- * TemplateTail :
- *   } TemplateCharacters(opt) `
- *
- * TemplateCharacters :
- *   TemplateCharacter TemplateCharacters(opt)
- *
- * TemplateCharacter :
- *   $ [lookahead ≠ {]
- *   \ EscapeSequence
- *   SourceCharacter (but not one of ` or \ or $)
- */
 export function parseTemplate(
   parser: ParserState,
   context: Context,
@@ -638,19 +608,21 @@ export function parseTemplate(
 ): ESTree.TemplateLiteral {
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
-  const quasis = [parseTemplateElement(parser, context, /* tail */ false)];
+  const quasis = [parseTemplateElement(parser, context, /* isTail */ 0)];
 
   consume(parser, context, Token.TemplateCont, /* allowRegExp */ 1);
 
   const expressions = [parseExpressions(parser, context, 0)];
 
+  if (parser.token !== Token.RightBrace) report(parser, Errors.UnterminatedTemplateExpr);
+
   while ((parser.token = scanTemplateTail(parser, context)) === Token.TemplateCont) {
-    quasis.push(parseTemplateElement(parser, context, /* tail */ false));
+    quasis.push(parseTemplateElement(parser, context, /* isTail */ 0));
     consume(parser, context, Token.TemplateCont, /* allowRegExp */ 1);
     expressions.push(parseExpressions(parser, context, 0));
   }
 
-  quasis.push(parseTemplateElement(parser, context, /* tail */ true));
+  quasis.push(parseTemplateElement(parser, context, /* isTail */ 1));
 
   consume(parser, context, Token.TemplateTail, /* allowRegExp */ 0);
 
@@ -670,28 +642,25 @@ export function parseTemplate(
       };
 }
 
-export function parseTemplateElement(parser: ParserState, context: Context, tail: boolean): ESTree.TemplateElement {
+export function parseTemplateElement(parser: ParserState, context: Context, isTail: 0 | 1): ESTree.TemplateElement {
   const { start, line, column } = parser;
-
+  const value = {
+    cooked: parser.tokenValue,
+    raw: parser.tokenRaw
+  };
   return context & Context.OptionsLoc
     ? {
         type: 'TemplateElement',
-        value: {
-          cooked: parser.tokenValue,
-          raw: parser.tokenRaw
-        },
-        tail,
+        value,
+        tail: isTail === 1,
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
     : {
         type: 'TemplateElement',
-        value: {
-          cooked: parser.tokenValue,
-          raw: parser.tokenRaw
-        },
-        tail
+        value,
+        tail: isTail === 1
       };
 }
 
@@ -3713,7 +3682,7 @@ export function parseObjectLiteralOrPattern(
 
             const { token } = parser;
 
-            value = parseMemberExpression(parser, context, value, 0, 1, start, line, column);
+            value = parseMemberExpression(parser, context, value, 1, inGroup, start, line, column);
 
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
               if (
