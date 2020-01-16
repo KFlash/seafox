@@ -246,6 +246,7 @@ describe('Expressions - Arrow', () => {
     ['x = (a,b)-c=>{};', Context.Empty],
     ['(a,...b)+c=>{}', Context.Empty],
     ['(a,...b)+c=>{}', Context.Empty],
+    ['([a.b]) => 0', Context.Empty],
     ['(a=1 => 42)', Context.Empty],
     ['([a, b] => 42)', Context.Empty],
     ['({a, b} => 42)', Context.Empty],

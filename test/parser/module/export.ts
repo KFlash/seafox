@@ -19,7 +19,16 @@ describe('Module - Export', () => {
     ['function a() {} export function a() {}', Context.Empty],
     ['export function await() {}', Context.Empty],
     ['export function *await() {}', Context.Empty],
-
+    ['export { encrypt }', Context.Empty],
+    ['export { default }', Context.Empty],
+    ['export { default as foo }', Context.Empty],
+    ['export { if }', Context.Empty],
+    ['export new Foo();', Context.Empty],
+    ['export typeof foo;', Context.Empty],
+    ['class Test {}; export default class Test {}', Context.Empty],
+    ['export { encrypt }; export { encrypt }', Context.Empty],
+    ['export { decrypt as encrypt }; function encrypt() {}', Context.Empty],
+    ['export { encrypt }; if (true) function encrypt() {}', Context.Empty],
     ['var a; export {a, a}', Context.Empty],
     ['export {x}; export let {...x} = y;', Context.Empty],
     ['export {x}; export let [x] = y;', Context.Empty],
@@ -530,7 +539,6 @@ describe('Module - Export', () => {
     'export var document',
     'export var document = {}',
     'export var document',
-    'export class Class {}',
     'export default 42',
     'export default class A {}',
     'export default (class{});',
@@ -621,7 +629,9 @@ describe('Module - Export', () => {
     'export default 1',
     'export var {x} = a, {y} = obj;',
     'export var {x} = a, y = obj;',
-    'export default () => {}'
+    'export default () => {}',
+    'export { encrypt }\nvar encrypt',
+    'function encrypt() {} let decrypt; export { encrypt, decrypt }'
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {

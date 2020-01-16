@@ -146,6 +146,165 @@ describe('Miscellaneous - Comments', () => {
       }
     ],
     [
+      `a<!--\n\n-->b`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 1,
+            expression: {
+              end: 1,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'a',
+              start: 0,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 1,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 11,
+        loc: {
+          end: {
+            column: 4,
+            line: 3
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `a<!--\n-->`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 1,
+            expression: {
+              end: 1,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'a',
+              start: 0,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 1,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 9,
+        loc: {
+          end: {
+            column: 3,
+            line: 2
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `a/*\n*/-->', x => x`,
+      Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 1,
+            expression: {
+              end: 1,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'a',
+              start: 0,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 1,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 18,
+        loc: {
+          end: {
+            column: 14,
+            line: 2
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
       `var /* y = 1;*/
       y;`,
       Context.OptionsLoc | Context.OptionsDisableWebCompat,

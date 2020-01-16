@@ -33,6 +33,7 @@ describe('Statements - For in', () => {
     ['for (const foo, [bar] = arr2;;);', Context.Empty],
     ['for (const x, {y} = obj;;);', Context.Empty],
     ['for (const {x}, {y} in z);', Context.Empty],
+    ['for (let {__proto__: 1, "__proto__": 2} in {});', Context.Empty],
     ['for (const {x:y=z}, {a:b=c} in obj);', Context.Empty],
     ['for (const {x});', Context.Empty],
     ['for (const [...[foo, bar],,] = obj;;);', Context.Empty],
@@ -142,7 +143,17 @@ describe('Statements - For in', () => {
     ['for (function () {} in a)', Context.Empty],
     ['for ([]);', Context.Empty],
     ['for (var [a] = 0 in {});', Context.OptionsDisableWebCompat],
+    ['for (var [a] = 0 in {});', Context.Strict],
+    ['for (var [a] = 0 in {});', Context.Empty],
     ['for (var {a} = 0 in {});', Context.OptionsDisableWebCompat],
+    ['for (var {a} = 0 in {});', Context.Strict],
+    ['for (var {a} = 0 in {});', Context.Empty],
+    ['for (const {a} = 0 in {});', Context.OptionsDisableWebCompat],
+    ['for (const {a} = 0 in {});', Context.Strict],
+    ['for (const {a} = 0 in {});', Context.Empty],
+    ['for (let {a} = 0 in {});', Context.OptionsDisableWebCompat],
+    ['for (let {a} = 0 in {});', Context.Strict],
+    ['for (let {a} = 0 in {});', Context.Empty],
     ['for(var [a = 0] = 0 in {});', Context.OptionsDisableWebCompat],
     ['for (let in o) { }', Context.Strict],
     ['for(var [...a] = 0 in {});', Context.OptionsDisableWebCompat],
@@ -364,6 +375,176 @@ describe('Statements - For in', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `for (let {a} in {});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForInStatement',
+            body: {
+              type: 'EmptyStatement',
+              start: 19,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 19
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            left: {
+              type: 'VariableDeclaration',
+              kind: 'let',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: null,
+                  id: {
+                    type: 'ObjectPattern',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 10,
+                          end: 11,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 10
+                            },
+                            end: {
+                              line: 1,
+                              column: 11
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: true,
+                        start: 10,
+                        end: 11,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 11
+                          }
+                        }
+                      }
+                    ],
+                    start: 9,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            right: {
+              type: 'ObjectExpression',
+              properties: [],
+              start: 16,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 20,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 20
+          }
+        }
+      }
+    ],
     [
       `for ({}[b] in c) d;`,
       Context.OptionsLoc,

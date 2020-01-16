@@ -10,7 +10,7 @@ describe('Expressions - Template', () => {
     ['`\\7`', Context.Empty],
     ['`\\001`', Context.Empty],
     ['\\xg', Context.Empty],
-    // ['`a${await foo}d`', Context.Empty],
+    ['`a${await foo}d`', Context.Empty],
     ['`\\u11${', Context.Empty],
     ['`\\u{110000}${', Context.Empty],
     ['`\\u{11ffff}${', Context.Empty],
@@ -284,7 +284,6 @@ describe('Expressions - Template', () => {
     '`${"-->"}\\tsuffix${"<--"}`',
     '`${"-->"}\\vsuffix${"<--"}`',
     '`\\x00${"<--"}`',
-
     '`\\x78${"<--"}`',
     '`prefix\\f${"<--"}`',
     '`${"-->"}\\x34a`',
