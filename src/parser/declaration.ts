@@ -223,18 +223,12 @@ export function parseVariableDeclarationListAndDeclarator(
   origin: Origin
 ): ESTree.VariableDeclarator[] {
   let id: ESTree.BindingName;
-  let type: BindingKind;
   let init: ESTree.Expression | null = null;
 
   const list: ESTree.VariableDeclarator[] = [];
 
   do {
     const { token, start, line, column } = parser;
-
-    // This little 'trick' speeds up the validation below
-    type =
-      kind |
-      ((token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000 ? BindingKind.Pattern : 0);
 
     id = parseBindingPattern(parser, context, scope, kind, origin);
 
@@ -244,11 +238,8 @@ export function parseVariableDeclarationListAndDeclarator(
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context, /* inGroup */ 0);
-    } else if (
       // ES6 'const' and binding patterns require initializers
-      (type & 0b00000000000000000000010000100000) !== 0 &&
-      (parser.token & Token.IsInOrOf) !== Token.IsInOrOf
-    ) {
+    } else if ((kind & BindingKind.Const) !== 0 || (token & Token.IsPatternStart) === Token.IsPatternStart) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
 

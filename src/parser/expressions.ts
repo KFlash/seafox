@@ -4,7 +4,15 @@ import { Token, KeywordDescTable } from '../token';
 import { Errors, report, reportScopeError } from '../errors';
 import * as ESTree from './estree';
 import { parseStatementListItem } from './statements';
-import { ScopeState, ScopeKind, createNestedBlockScope, addBlockName, addVarOrBlock } from './scope';
+import {
+  ScopeState,
+  ScopeKind,
+  createNestedBlockScope,
+  createTopLevelScope,
+  createParentScope,
+  addBlockName,
+  addVarOrBlock
+} from './scope';
 import {
   ParserState,
   Flags,
@@ -2717,21 +2725,11 @@ export function parseFunctionExpression(
   let id: ESTree.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  let scope: ScopeState = {
-    parent: void 0,
-    type: ScopeKind.Block
-  };
+  let scope: ScopeState = createTopLevelScope(ScopeKind.Block);
 
   if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-    scope = {
-      parent: {
-        parent: void 0,
-        type: ScopeKind.Block
-      },
-      type: ScopeKind.FunctionRoot,
-      scopeError: void 0
-    };
     const { token, tokenValue, start, line, column } = parser;
+
     validateFunctionName(
       parser,
       ((context | 0b00000000011000000000000000000000) ^ 0b00000000011000000000000000000000) | generatorAndAsyncFlags,
@@ -2743,6 +2741,8 @@ export function parseFunctionExpression(
     nextToken(parser, context, /* allowRegExp */ 0);
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+
+    scope = createParentScope(scope, ScopeKind.FunctionRoot);
   }
   context =
     ((context | 0b0000001111011000000_0000_00000000) ^ 0b0000001111011000000_0000_00000000) |
