@@ -167,10 +167,7 @@ export function parseStatement(
     case Token.WithKeyword:
       return parseWithStatement(parser, context, scope, labels, nestedLabels);
     case Token.FunctionKeyword:
-      report(
-        parser,
-        (context & 0b00000000000000000000010000010000) > 0 ? Errors.StrictFunction : Errors.SloppyFunction
-      );
+      report(parser, (context & Context.Strict) > 0 ? Errors.StrictFunction : Errors.SloppyFunction);
     case Token.ClassKeyword:
       report(parser, Errors.ClassForbiddenAsStatement);
     default:
@@ -306,14 +303,13 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
       let expr: Types.AsyncExpression = parseAsyncArrowIdentifier(
         parser,
         context,
-        {
-          parent: {
+        createParentScope(
+          {
             parent: void 0,
             type: ScopeKind.Block
           },
-          type: ScopeKind.ArrowParams,
-          scopeError: void 0
-        },
+          ScopeKind.ArrowParams
+        ),
         1,
         parser.tokenValue,
         parser.token,
@@ -356,14 +352,13 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
       expr = parseAsyncArrowIdentifier(
         parser,
         context,
-        {
-          parent: {
+        createParentScope(
+          {
             parent: void 0,
             type: ScopeKind.Block
           },
-          type: ScopeKind.ArrowParams,
-          scopeError: void 0
-        },
+          ScopeKind.ArrowParams
+        ),
         1,
         'async',
         parser.token,
@@ -1524,14 +1519,13 @@ export function parseLetIdentOrVarDeclarationStatement(
     expr = parseAsyncArrowIdentifier(
       parser,
       context,
-      {
-        parent: {
+      createParentScope(
+        {
           parent: void 0,
           type: ScopeKind.Block
         },
-        type: ScopeKind.ArrowParams,
-        scopeError: void 0
-      },
+        ScopeKind.ArrowParams
+      ),
       /* isAsync */ 0,
       tokenValue,
       token,
