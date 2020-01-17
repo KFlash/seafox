@@ -67,7 +67,7 @@ export function parseAssignmentExpression(
     : left;
 }
 
-export function parseExpression(parser: ParserState, context: Context, inGroup: 0 | 1): any {
+export function parseExpression(parser: ParserState, context: Context, inGroup: 0 | 1): Types.Expression {
   const { start, line, column } = parser;
 
   return parseAssignmentExpression(
@@ -170,7 +170,7 @@ export function parseBinaryExpression(
   curLine: number,
   curColumn: number,
   left: any
-): any {
+): Types.Expression | any {
   let t: Token;
   let right: Types.Expression;
 
@@ -820,7 +820,7 @@ export function parsePrimaryExpression(
   start: number,
   line: number,
   column: number
-): any {
+): Types.PrimaryExpression | Types.Expression {
   /**
    *  PrimaryExpression :
    *   1. this
@@ -1071,7 +1071,7 @@ export function parseAsyncArrowIdentifier(
   isAsync: 0 | 1,
   value: string,
   token: Token,
-  expr: any,
+  expr: Types.Expression,
   start: number,
   line: number,
   column: number

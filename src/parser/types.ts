@@ -7,7 +7,7 @@ export interface _Node<T extends string> {
   end?: number;
 }
 
-export interface T_Node extends T_Statement, T_Expression, T_Pattern, T_ModuleDeclaration, T_ModuleSpecifier {
+export interface T_Node extends T_Statement, T_Expression, T_ModuleDeclaration, T_ModuleSpecifier {
   Program: Program;
   SwitchCase: SwitchCase;
   CatchClause: CatchClause;
@@ -16,8 +16,6 @@ export interface T_Node extends T_Statement, T_Expression, T_Pattern, T_ModuleDe
   SpreadElement: SpreadElement;
   TemplateElement: TemplateElement;
   ClassBody: ClassBody;
-  FieldDefinition: FieldDefinition;
-  PrivateName: PrivateName;
   MethodDefinition: MethodDefinition;
   VariableDeclarator: VariableDeclarator;
 }
@@ -34,8 +32,6 @@ export type Node =
   | SpreadElement
   | TemplateElement
   | ClassBody
-  | FieldDefinition
-  | PrivateName
   | MethodDefinition
   | ModuleDeclaration
   | ModuleSpecifier
@@ -67,18 +63,12 @@ export interface T_Statement extends T_Declaration {
 export type LiteralExpression = BigIntLiteral | Literal | TemplateLiteral;
 export type ObjectLiteralElementLike = MethodDefinition | Property | SpreadElement;
 export type Parameter = AssignmentPattern | RestElement | ArrayPattern | ObjectPattern | Identifier;
-export type DestructuringPattern =
-  | Identifier
-  | ObjectPattern
-  | ArrayPattern
-  | RestElement
-  | AssignmentPattern
-  | MemberExpression;
 export type PrimaryExpression =
   | ArrayExpression
   | ArrayPattern
   | ClassExpression
   | FunctionExpression
+  | ImportExpression
   | Identifier
   | Import
   | Literal
@@ -141,7 +131,6 @@ export interface T_Expression {
 }
 export type BindingPattern = ArrayPattern | ObjectPattern;
 export type BindingName = BindingPattern | Identifier;
-export type ClassElement = FunctionExpression | MethodDefinition;
 export type ExportDeclaration = ClassDeclaration | ClassExpression | FunctionDeclaration | VariableDeclaration;
 export type Expression =
   | Identifier
@@ -159,7 +148,6 @@ export type Expression =
   | AssignmentExpression
   | LogicalExpression
   | MemberExpression
-  | PrivateName
   | ConditionalExpression
   | CallExpression
   | NewExpression
@@ -173,16 +161,18 @@ export type Expression =
   | MetaProperty
   | AwaitExpression;
 
+export type ForInitialiser = Expression | VariableDeclaration;
+export type ImportClause = ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier;
+export type IterationStatement = DoWhileStatement | ForInStatement | ForOfStatement | ForStatement | WhileStatement;
 export interface _Pattern<T extends string> extends _Node<T> {}
-export interface T_Pattern {
-  Identifier: Identifier;
-  ObjectPattern: ObjectPattern;
-  ArrayPattern: ArrayPattern;
-  AssignmentPattern: AssignmentPattern;
-  RestElement: RestElement;
-}
 
-export type PatternNoRest = Identifier | ObjectPattern | ArrayPattern | AssignmentPattern;
+export type DestructuringPattern =
+  | Identifier
+  | ObjectPattern
+  | ArrayPattern
+  | RestElement
+  | AssignmentPattern
+  | MemberExpression;
 export type Pattern = Identifier | ObjectPattern | ArrayPattern | AssignmentPattern | RestElement;
 export interface _Declaration<T extends string> extends _Statement<T> {}
 export interface T_Declaration {
@@ -209,6 +199,14 @@ export type ModuleDeclaration =
 export interface _ModuleSpecifier<T extends string> extends _Node<T> {
   local: Identifier;
 }
+export type AsyncDeclaration = ExpressionStatement | LabeledStatement | FunctionDeclaration;
+export type AsyncExpression =
+  | ArrowFunctionExpression
+  | Identifier
+  | CallExpression
+  | FunctionExpression
+  | SequenceExpression;
+
 export interface T_ModuleSpecifier {
   ImportSpecifier: ImportSpecifier;
   ImportDefaultSpecifier: ImportDefaultSpecifier;
@@ -254,7 +252,7 @@ export interface ArrayExpression extends _Expression<'ArrayExpression'> {
 }
 
 export interface ArrayPattern extends _Pattern<'ArrayPattern'> {
-  elements?: (RestElement | PatternNoRest | null)[];
+  elements?: (RestElement | DestructuringPattern | null)[];
 }
 
 export type AssignmentOperator =
@@ -347,13 +345,7 @@ export interface CatchClause extends _Node<'CatchClause'> {
 }
 
 export interface ClassBody extends _Node<'ClassBody'> {
-  body: (MethodDefinition | FieldDefinition)[];
-}
-
-export interface FieldDefinition extends _Node<'FieldDefinition'> {
-  key: PrivateName | Expression;
-  value: Expression | null;
-  computed: boolean;
+  body: MethodDefinition[];
 }
 
 export interface ClassDeclaration extends _Declaration<'ClassDeclaration'> {
@@ -394,21 +386,27 @@ export interface DoWhileStatement extends _Statement<'DoWhileStatement'> {
 export interface EmptyStatement extends _Statement<'EmptyStatement'> {}
 
 export interface ExportAllDeclaration extends _ModuleDeclaration<'ExportAllDeclaration'> {
-  source: Literal;
+  source: Literal | null;
+  exported: Identifier | null;
 }
 
 export interface ExportDefaultDeclaration extends _ModuleDeclaration<'ExportDefaultDeclaration'> {
-  declaration: Declaration | Expression;
+  declaration: ExportDeclaration | Expression;
 }
 
 export interface ExportNamedDeclaration extends _ModuleDeclaration<'ExportNamedDeclaration'> {
   declaration: Declaration | null;
-  specifiers: ExportSpecifier[];
+  specifiers: (ExportNamespaceSpecifier | ExportSpecifier)[];
   source: Literal | null;
 }
 
+export interface ExportNamespaceSpecifier extends _ModuleDeclaration<'ExportNamespaceSpecifier'> {
+  specifier: Identifier;
+}
+
 export interface ExportSpecifier extends _ModuleSpecifier<'ExportSpecifier'> {
-  exported: Identifier;
+  exported: Identifier | null;
+  local: Identifier;
 }
 
 export interface ExpressionStatement extends _Statement<'ExpressionStatement'> {
@@ -417,13 +415,13 @@ export interface ExpressionStatement extends _Statement<'ExpressionStatement'> {
 }
 
 export interface ForInStatement extends _Statement<'ForInStatement'> {
-  left: VariableDeclaration | Expression | PatternNoRest;
+  left: VariableDeclaration | Expression | DestructuringPattern;
   right: Expression;
   body: Statement;
 }
 
 export interface ForOfStatement extends _Statement<'ForOfStatement'> {
-  left: VariableDeclaration | Expression | PatternNoRest;
+  left: VariableDeclaration | Expression | DestructuringPattern;
   right: Expression;
   body: Statement;
   await: boolean;
@@ -470,7 +468,7 @@ export interface IfStatement extends _Statement<'IfStatement'> {
 export interface Import extends _Node<'Import'> {}
 
 export interface ImportDeclaration extends _ModuleDeclaration<'ImportDeclaration'> {
-  specifiers: (ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier)[];
+  specifiers: ImportClause[];
   source: Literal;
 }
 
@@ -497,7 +495,7 @@ export interface Literal extends _Expression<'Literal'> {
   raw?: string;
 }
 
-export type LogicalOperator = '&&' | '||';
+export type LogicalOperator = '&&' | '||' | '??';
 
 export interface LogicalExpression extends _Expression<'LogicalExpression'> {
   operator: LogicalOperator;
@@ -562,7 +560,7 @@ export interface ObjectExpression extends _Expression<'ObjectExpression'> {
 
 export interface AssignmentProperty extends _Node<'Property'> {
   key: any;
-  value: PatternNoRest;
+  value: DestructuringPattern;
   computed: boolean;
   kind: 'init';
   method: false;

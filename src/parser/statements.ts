@@ -86,7 +86,7 @@ export function parseStatementListItem(
   origin: Origin,
   labels: any,
   nestedLabels: any
-): any {
+): Types.Statement {
   switch (parser.token) {
     case Token.FunctionKeyword:
       return parseFunctionDeclaration(parser, context, scope, 0, 0, origin);
@@ -195,7 +195,7 @@ export function parseLabelledStatement(
   origin: Origin,
   labels: string,
   nestedLabels: any,
-  value: any[],
+  value: string[],
   token: Token,
   expr: any,
   allowFuncDecl: 0 | 1,
@@ -265,7 +265,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
   origin: Origin,
   labels: string,
   allowFuncDecl: 0 | 1
-): Types.ExpressionStatement | Types.LabeledStatement | Types.FunctionDeclaration {
+): Types.AsyncDeclaration {
   const { token, tokenValue, start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -313,7 +313,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
         report(parser, Errors.Unexpected);
       }
 
-      let expr: any = parseAsyncArrowIdentifier(
+      let expr: Types.AsyncExpression = parseAsyncArrowIdentifier(
         parser,
         context,
         {
@@ -339,7 +339,14 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     }
   }
 
-  let expr: any = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+  let expr: Types.Expression | Types.AsyncExpression = parseIdentifierFromValue(
+    parser,
+    context,
+    tokenValue,
+    start,
+    line,
+    column
+  );
 
   if (parser.token === Token.LeftParen) {
     expr = parseAsyncArrowOrCallExpression(
@@ -511,7 +518,7 @@ export function parseForStatementWithVariableDeclarations(
   }
 
   if ((kind & 0b00000000000000000000000000110010) > 0) {
-    const declarations: any[] = [];
+    const declarations: Types.VariableDeclarator[] = [];
 
     let bindingCount = 0;
     let type: BindingKind;
@@ -522,7 +529,7 @@ export function parseForStatementWithVariableDeclarations(
         ((token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000 ? BindingKind.Pattern : 0);
 
       let id;
-      let init: any = null;
+      let init: Types.Expression | null = null;
 
       if ((token & 0b00000000001001110000000000000000) !== 0) {
         id = parseAndClassifyIdentifier(
@@ -782,7 +789,7 @@ export function parseForStatement(
   let update: Types.Expression | null = null;
   let init = null;
   let right;
-  let conjuncted: any = Flags.Empty;
+  let conjuncted = Flags.Empty;
 
   const origin = Origin.ForStatement;
 
@@ -800,7 +807,7 @@ export function parseForStatement(
       curStart,
       curLine,
       curColumn
-    ) as any;
+    ) as Types.ForInStatement | Types.ForOfStatement | Types.ForStatement;
   }
 
   if ((token & Token.IsPatternStart) === Token.IsPatternStart) {

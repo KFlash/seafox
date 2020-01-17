@@ -40,7 +40,7 @@ export function parseModuleItemListAndDirectives(
   context: Context,
   scope: ScopeState
 ): Types.Statement[] {
-  const statements: any[] = [];
+  const statements: Types.Statement[] = [];
 
   if (context & Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
@@ -93,7 +93,7 @@ export function parseModuleItem(parser: ParserState, context: Context, scope: Sc
   return parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null);
 }
 
-export function parseImportDeclaration(parser: ParserState, context: Context, scope: any): any {
+export function parseImportDeclaration(parser: ParserState, context: Context, scope: ScopeState): any {
   // ImportDeclaration :
   //   'import' ImportClause 'from' ModuleSpecifier ';'
   //   'import' ModuleSpecifier ';'
@@ -113,7 +113,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
   let source: Types.Literal | null = null;
 
-  let specifiers: any = [];
+  let specifiers: Types.ImportClause[] = [];
 
   // 'import' ModuleSpecifier ';'
   if (parser.token === Token.StringLiteral) {
@@ -292,9 +292,9 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
       consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
       break;
     case Token.LeftParen:
-      return parseImportCallDeclaration(parser, context, curStart, curLine, curColumn) as any;
+      return parseImportCallDeclaration(parser, context, curStart, curLine, curColumn);
     case Token.Period:
-      return parseImportMetaDeclaration(parser, context, curStart, curLine, curColumn) as any;
+      return parseImportMetaDeclaration(parser, context, curStart, curLine, curColumn);
     default:
       report(parser, Errors.Unexpected);
   }
@@ -336,7 +336,7 @@ export function parseExportDefault(
   start: number,
   line: number,
   column: number
-): any {
+): Types.ExportDefaultDeclaration {
   // export default HoistableDeclaration[Default]
   // export default ClassDeclaration[Default]
   // export default [lookahead not-in {function, class}] AssignmentExpression[In] ;
@@ -442,7 +442,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  let specifiers: any[] = [];
+  let specifiers: (Types.ExportAllDeclaration | Types.ExportNamedDeclaration | Types.ExportSpecifier)[] = [];
   let declaration: any = null;
   let source: Types.Literal | null = null;
 
