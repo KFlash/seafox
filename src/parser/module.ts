@@ -198,7 +198,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
       validateIdentifier(parser, context, BindingKind.Const, parser.token);
 
-      addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Let, Origin.None);
+      addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Const, Origin.None);
 
       specifiers.push(
         context & Context.OptionsLoc
@@ -244,6 +244,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
         if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
+
           if (!isValidIdentifier(context, parser.token)) {
             report(parser, Errors.InvalidKeywordAsAlias);
           } else if ((parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
@@ -347,7 +348,7 @@ export function parseExportDefault(
     case Token.FunctionKeyword:
       // export default function foo () {}
       // export default function () {}
-      declaration = parseFunctionDeclaration(parser, context | Context.IsExported, scope, 0, 0, Origin.TopLevel);
+      declaration = parseFunctionDeclaration(parser, context, scope, 0, 0, Origin.TopLevel | Origin.Hoisted);
       break;
 
     case Token.ClassKeyword:
@@ -355,48 +356,50 @@ export function parseExportDefault(
       declaration = parseClassDeclaration(parser, context, scope, /* isHoisted */ 1, /* isExported */ 0);
       break;
     case Token.AsyncKeyword:
-      // export default async function f () {}
-      // export default async function () {}
-      // export default async x => x
-      const { tokenValue, start, line, column } = parser;
-      nextToken(parser, context, /* allowRegExp */ 0);
-      if (parser.newLine === 0) {
-        if ((parser.token as Token) === Token.FunctionKeyword) {
-          declaration = parseHoistableDeclaration(
-            parser,
-            context | Context.IsExported,
-            scope,
-            0,
-            1,
-            Origin.Export,
-            start,
-            line,
-            column
-          );
-        } else {
-          if ((parser.token & 0b00000000001000010000000000000000) > 0) {
-            declaration = parseIdentifier(parser, context);
-            declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
+      {
+        // export default async function f () {}
+        // export default async function () {}
+        // export default async x => x
+        const { tokenValue, start, line, column } = parser;
+        nextToken(parser, context, /* allowRegExp */ 0);
+        if (parser.newLine === 0) {
+          if ((parser.token as Token) === Token.FunctionKeyword) {
+            declaration = parseHoistableDeclaration(
+              parser,
+              context,
+              scope,
+              0,
+              1,
+              Origin.Export | Origin.Hoisted,
+              start,
+              line,
+              column
+            );
           } else {
-            declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+            if ((parser.token & 0b00000000001000010000000000000000) > 0) {
+              declaration = parseIdentifier(parser, context);
+              declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
+            } else {
+              declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
-            if ((parser.token as Token) === Token.LeftParen) {
-              declaration = parseAsyncArrowOrCallExpression(
-                parser,
-                (context | Context.DisallowIn) ^ Context.DisallowIn,
-                declaration,
-                1,
-                parser.newLine,
-                BindingKind.ArgumentList,
-                Origin.None,
-                start,
-                line,
-                column
-              );
+              if ((parser.token as Token) === Token.LeftParen) {
+                declaration = parseAsyncArrowOrCallExpression(
+                  parser,
+                  (context | Context.DisallowIn) ^ Context.DisallowIn,
+                  declaration,
+                  1,
+                  parser.newLine,
+                  BindingKind.ArgumentList,
+                  Origin.None,
+                  start,
+                  line,
+                  column
+                );
+              }
+
+              declaration = parseMemberExpression(parser, context, declaration, 1, 0, start, line, column);
+              declaration = parseAssignmentExpression(parser, context, 0, 0, declaration, start, line, column);
             }
-
-            declaration = parseMemberExpression(parser, context, declaration, 1, 0, start, line, column);
-            declaration = parseAssignmentExpression(parser, context, 0, 0, declaration, start, line, column);
           }
         }
       }

@@ -127,6 +127,59 @@ describe('Statements - Block', () => {
 
   for (const [source, ctx, expected] of [
     [
+      `{ async *[await = 5]()
+        {}
+      }`,
+      Context.Empty,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'BlockStatement',
+            body: [
+              {
+                type: 'ExpressionStatement',
+                expression: {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'async'
+                  },
+                  right: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'ArrayExpression',
+                      elements: [
+                        {
+                          type: 'AssignmentExpression',
+                          left: {
+                            type: 'Identifier',
+                            name: 'await'
+                          },
+                          operator: '=',
+                          right: {
+                            type: 'Literal',
+                            value: 5
+                          }
+                        }
+                      ]
+                    },
+                    arguments: []
+                  },
+                  operator: '*'
+                }
+              },
+              {
+                type: 'BlockStatement',
+                body: []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
       `{ (x = [yield]) }`,
       Context.OptionsLoc,
       {

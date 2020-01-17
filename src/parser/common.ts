@@ -15,7 +15,6 @@ export const enum Context {
   OptionsDirectives = 1 << 5,
   OptionsGlobalReturn = 1 << 6,
   OptionsPreserveParens = 1 << 7,
-  IsExported = 1 << 8,
   AllowEscapedKeyword = 1 << 9,
   Strict = 1 << 10,
   Module = 1 << 11, // Current code should be parsed as a module body
@@ -61,7 +60,8 @@ export const enum Origin {
   Declaration = 1 << 3,
   Arrow = 1 << 4,
   ForStatement = 1 << 5,
-  Export = 1 << 6
+  Export = 1 << 6,
+  Hoisted = 1 << 7
 }
 
 export const enum PropertyKind {

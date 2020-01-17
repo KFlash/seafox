@@ -165,7 +165,7 @@ export function parseBinaryExpression(
   context: Context,
   inGroup: 0 | 1,
   minPrec: number,
-  logical: Token,
+  token: Token,
   curStart: number,
   curLine: number,
   curColumn: number,
@@ -184,7 +184,7 @@ export function parseBinaryExpression(
 
     // Since ?? is the lowest-precedence binary operator, it suffices to merge the 'Coalescing' and 'IsLogic' tokens and check
     // whether these have a higher value than the 'Coalescing' token.
-    if (((logical | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
+    if (((token | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
       report(parser, Errors.InvalidCoalescing);
     }
 
@@ -221,7 +221,7 @@ export function parseBinaryExpression(
             right,
             operator: KeywordDescTable[t & Token.Kind]
           };
-  } while ((logical & Token.IsBinaryOp) > 0);
+  } while ((t & Token.IsBinaryOp) > 0);
 }
 
 export function parsePropertyOrPrivatePropertyName(parser: ParserState, context: Context): ESTree.Identifier {
@@ -4408,8 +4408,6 @@ export function parseSpreadOrRestElement(
   const { start, line, column, token, tokenValue } = parser;
 
   if ((token & 0b00000000001001110000000000000000) > 0) {
-    parser.assignable = 1;
-
     argument = parsePrimaryExpression(parser, context, kind, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
 
     const isClosingTokenOrComma = parser.token === closingToken || parser.token === Token.Comma;

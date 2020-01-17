@@ -365,6 +365,464 @@ describe('Statements - For', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `for (var i = 0; i < 40000; i++) { src = { ...i, x: -9007199254740991 }; clone = { ...src }; }`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ForStatement',
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'src',
+                      start: 34,
+                      end: 37,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 34
+                        },
+                        end: {
+                          line: 1,
+                          column: 37
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'ObjectExpression',
+                      properties: [
+                        {
+                          type: 'SpreadElement',
+                          argument: {
+                            type: 'Identifier',
+                            name: 'i',
+                            start: 45,
+                            end: 46,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 45
+                              },
+                              end: {
+                                line: 1,
+                                column: 46
+                              }
+                            }
+                          },
+                          start: 42,
+                          end: 46,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 42
+                            },
+                            end: {
+                              line: 1,
+                              column: 46
+                            }
+                          }
+                        },
+                        {
+                          type: 'Property',
+                          key: {
+                            type: 'Identifier',
+                            name: 'x',
+                            start: 48,
+                            end: 49,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 48
+                              },
+                              end: {
+                                line: 1,
+                                column: 49
+                              }
+                            }
+                          },
+                          value: {
+                            type: 'UnaryExpression',
+                            operator: '-',
+                            argument: {
+                              type: 'Literal',
+                              value: 9007199254740991,
+                              start: 52,
+                              end: 68,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 52
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 68
+                                }
+                              }
+                            },
+                            prefix: true,
+                            start: 51,
+                            end: 68,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 51
+                              },
+                              end: {
+                                line: 1,
+                                column: 68
+                              }
+                            }
+                          },
+                          kind: 'init',
+                          computed: false,
+                          method: false,
+                          shorthand: false,
+                          start: 48,
+                          end: 68,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 48
+                            },
+                            end: {
+                              line: 1,
+                              column: 68
+                            }
+                          }
+                        }
+                      ],
+                      start: 40,
+                      end: 70,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 40
+                        },
+                        end: {
+                          line: 1,
+                          column: 70
+                        }
+                      }
+                    },
+                    start: 34,
+                    end: 70,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 34
+                      },
+                      end: {
+                        line: 1,
+                        column: 70
+                      }
+                    }
+                  },
+                  start: 34,
+                  end: 71,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 34
+                    },
+                    end: {
+                      line: 1,
+                      column: 71
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'clone',
+                      start: 72,
+                      end: 77,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 72
+                        },
+                        end: {
+                          line: 1,
+                          column: 77
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'ObjectExpression',
+                      properties: [
+                        {
+                          type: 'SpreadElement',
+                          argument: {
+                            type: 'Identifier',
+                            name: 'src',
+                            start: 85,
+                            end: 88,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 85
+                              },
+                              end: {
+                                line: 1,
+                                column: 88
+                              }
+                            }
+                          },
+                          start: 82,
+                          end: 88,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 82
+                            },
+                            end: {
+                              line: 1,
+                              column: 88
+                            }
+                          }
+                        }
+                      ],
+                      start: 80,
+                      end: 90,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 80
+                        },
+                        end: {
+                          line: 1,
+                          column: 90
+                        }
+                      }
+                    },
+                    start: 72,
+                    end: 90,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 72
+                      },
+                      end: {
+                        line: 1,
+                        column: 90
+                      }
+                    }
+                  },
+                  start: 72,
+                  end: 91,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 72
+                    },
+                    end: {
+                      line: 1,
+                      column: 91
+                    }
+                  }
+                }
+              ],
+              start: 32,
+              end: 93,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 32
+                },
+                end: {
+                  line: 1,
+                  column: 93
+                }
+              }
+            },
+            init: {
+              type: 'VariableDeclaration',
+              kind: 'var',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  init: {
+                    type: 'Literal',
+                    value: 0,
+                    start: 13,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  id: {
+                    type: 'Identifier',
+                    name: 'i',
+                    start: 9,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 5,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            test: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'i',
+                start: 16,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: 40000,
+                start: 20,
+                end: 25,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 20
+                  },
+                  end: {
+                    line: 1,
+                    column: 25
+                  }
+                }
+              },
+              operator: '<',
+              start: 16,
+              end: 25,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 25
+                }
+              }
+            },
+            update: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'i',
+                start: 27,
+                end: 28,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 27
+                  },
+                  end: {
+                    line: 1,
+                    column: 28
+                  }
+                }
+              },
+              operator: '++',
+              prefix: false,
+              start: 27,
+              end: 30,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 27
+                },
+                end: {
+                  line: 1,
+                  column: 30
+                }
+              }
+            },
+            start: 0,
+            end: 93,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 93
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 93,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 93
+          }
+        }
+      }
+    ],
+    [
       `for ([{__proto__: 1, __proto__: 2}];;);`,
       Context.OptionsLoc | Context.OptionsDisableWebCompat,
       {

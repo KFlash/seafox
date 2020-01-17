@@ -1,6 +1,6 @@
 {
   "name": "seafox",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript",
   "main": "dist/seafox.umd.min.js",
   "module": "dist/seafox.esm.min.js",
@@ -10,13 +10,13 @@
   "typings": "dist/seafox.d.ts",
   "author": "KFlash",
   "license": "ISC",
-  "homepage": "https://github.com/seafox/seafox",
+  "homepage": "https://github.com/kflash/seafox",
   "repository": {
     "type": "git",
-    "url": "https://github.com/seafox/seafox"
+    "url": "https://github.com/kflash/seafox"
   },
   "bugs": {
-    "url": "https://github.com/seafox/seafox/issues"
+    "url": "https://github.com/kflash/seafox/issues"
   },
   "keywords": [
     "parsing",

@@ -105,7 +105,7 @@ export function parseHoistableDeclaration(
     nextToken(parser, context, /* allowRegExp */ 0);
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-  } else if ((context & Context.IsExported) === 0) {
+  } else if ((origin & Origin.Hoisted) === 0) {
     report(parser, Errors.DeclNoName, 'Function');
   }
 
@@ -239,7 +239,7 @@ export function parseVariableDeclarationListAndDeclarator(
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context, /* inGroup */ 0);
       // ES6 'const' and binding patterns require initializers
-    } else if ((kind & BindingKind.Const) !== 0 || (token & Token.IsPatternStart) === Token.IsPatternStart) {
+    } else if ((kind & BindingKind.Const) > 0 || (token & Token.IsPatternStart) === Token.IsPatternStart) {
       report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
     }
 
