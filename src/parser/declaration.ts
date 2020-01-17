@@ -1,7 +1,7 @@
 import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
-import * as ESTree from './estree';
+import * as Types from './types';
 import {
   ScopeState,
   ScopeKind,
@@ -45,7 +45,7 @@ export function parseFunctionDeclaration(
   isHoisted: 0 | 1,
   isAsync: 0 | 1,
   origin: Origin
-): ESTree.FunctionDeclaration {
+): Types.FunctionDeclaration {
   return parseHoistableDeclaration(
     parser,
     context,
@@ -72,13 +72,13 @@ export function parseHoistableDeclaration(
   start: number,
   line: number,
   column: number
-): ESTree.FunctionDeclaration {
+): Types.FunctionDeclaration {
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const isGenerator =
     (origin & Origin.Statement) === 0 ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0) : 0;
 
-  let id: ESTree.Identifier | null = null;
+  let id: Types.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
   let parent: ScopeState = createTopLevelScope(ScopeKind.Block);
@@ -134,7 +134,7 @@ export function parseClassDeclaration(
   scope: ScopeState,
   isHoisted: 0 | 1,
   isExported: 0 | 1
-): ESTree.ClassDeclaration {
+): Types.ClassDeclaration {
   const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -144,7 +144,7 @@ export function parseClassDeclaration(
 
   context |= Context.Strict;
 
-  let id: ESTree.Identifier | null = null;
+  let id: Types.Identifier | null = null;
 
   if ((parser.token & 0b00000000001001110000000000000000) > 0 && parser.token !== Token.ExtendsKeyword) {
     const { token, start, line, column, tokenValue } = parser;
@@ -175,7 +175,7 @@ export function parseClassDeclaration(
     start,
     line,
     column
-  ) as ESTree.ClassDeclaration;
+  ) as Types.ClassDeclaration;
 }
 
 /**
@@ -187,7 +187,7 @@ export function parseVariableStatementOrLexicalDeclaration(
   scope: ScopeState,
   kind: BindingKind,
   origin: Origin
-): ESTree.VariableDeclaration {
+): Types.VariableDeclaration {
   const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -221,11 +221,11 @@ export function parseVariableDeclarationListAndDeclarator(
   scope: ScopeState,
   kind: BindingKind,
   origin: Origin
-): ESTree.VariableDeclarator[] {
-  let id: ESTree.BindingName;
-  let init: ESTree.Expression | null = null;
+): Types.VariableDeclarator[] {
+  let id: Types.BindingName;
+  let init: Types.Expression | null = null;
 
-  const list: ESTree.VariableDeclarator[] = [];
+  const list: Types.VariableDeclarator[] = [];
 
   do {
     const { token, start, line, column } = parser;
@@ -270,7 +270,7 @@ export function parseImportCallDeclaration(
   start: number,
   line: number,
   column: number
-): ESTree.ExpressionStatement {
+): Types.ExpressionStatement {
   let expr: any = parseImportExpression(parser, context, start, line, column);
   /** MemberExpression :
    *   1. PrimaryExpression
@@ -306,7 +306,7 @@ export function parseImportMetaDeclaration(
   start: number,
   line: number,
   column: number
-): ESTree.ExpressionStatement {
+): Types.ExpressionStatement {
   let expr: any = parseIdentifierFromValue(parser, context, 'import', start, line, column);
 
   expr = parseImportMetaExpression(parser, context, expr, start, line, column);

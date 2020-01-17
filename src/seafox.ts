@@ -1,6 +1,6 @@
 import { Context } from './parser/common';
 import { Options, create } from './parser/core';
-import { Program } from './parser/estree';
+import { Program } from './parser/types';
 import { nextToken } from './scanner/scan';
 import { skipHashBang } from './scanner/comments';
 import { parseModuleItemListAndDirectives } from './parser/module';

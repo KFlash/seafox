@@ -2,7 +2,7 @@ import { ScopeState, declareUnboundVariable, addBindingToExports, addBlockName }
 import { nextToken } from '../scanner/scan';
 import { Token, KeywordDescTable } from '../token';
 import { Errors, report } from '../errors';
-import * as ESTree from './estree';
+import * as Types from './types';
 import { parseStatementListItem } from './statements';
 import {
   ParserState,
@@ -39,7 +39,7 @@ export function parseModuleItemListAndDirectives(
   parser: ParserState,
   context: Context,
   scope: ScopeState
-): ESTree.Statement[] {
+): Types.Statement[] {
   const statements: any[] = [];
 
   if (context & Context.OptionsDirectives) {
@@ -111,7 +111,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  let source: ESTree.Literal | null = null;
+  let source: Types.Literal | null = null;
 
   let specifiers: any = [];
 
@@ -240,7 +240,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
         const imported = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
-        let local: ESTree.Identifier;
+        let local: Types.Identifier;
 
         if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
@@ -319,7 +319,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
       };
 }
 
-export function parseModuleSpecifier(parser: ParserState, context: Context): ESTree.Literal {
+export function parseModuleSpecifier(parser: ParserState, context: Context): Types.Literal {
   // ModuleSpecifier :
   //   StringLiteral
   consume(parser, context, Token.FromKeyword, /* allowRegExp */ 0);
@@ -444,7 +444,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
   let specifiers: any[] = [];
   let declaration: any = null;
-  let source: ESTree.Literal | null = null;
+  let source: Types.Literal | null = null;
 
   switch (parser.token) {
     case Token.DefaultKeyword:
@@ -544,7 +544,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       const exportedBindings: string[] = []; // Temporary exported bindings
 
       let local: any;
-      let exported: ESTree.Identifier | null;
+      let exported: Types.Identifier | null;
       let value: string | null;
 
       while ((parser.token & 0b00000000001001110000000000000000) > 0) {
