@@ -20,6 +20,7 @@ describe('Expressions - Import call', () => {
     '(a, import(x).then()) => {}',
     'function failsParse() { return import.then(); }',
     'import(a, b)',
+    'const p = import(import.meta);',
     '(import(foo)) => {}',
     '[import(y=x)] = [1];',
     'import("") --',
@@ -1735,6 +1736,357 @@ describe('Expressions - Import call', () => {
       }
     ],
     [
+      `async function fn() { const str = await import("kuvos"); };`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'VariableDeclaration',
+                  kind: 'const',
+                  declarations: [
+                    {
+                      type: 'VariableDeclarator',
+                      init: {
+                        type: 'AwaitExpression',
+                        argument: {
+                          type: 'ImportExpression',
+                          source: {
+                            type: 'Literal',
+                            value: 'kuvos',
+                            start: 47,
+                            end: 54,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 47
+                              },
+                              end: {
+                                line: 1,
+                                column: 54
+                              }
+                            }
+                          },
+                          start: 40,
+                          end: 55,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 40
+                            },
+                            end: {
+                              line: 1,
+                              column: 55
+                            }
+                          }
+                        },
+                        start: 34,
+                        end: 55,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 34
+                          },
+                          end: {
+                            line: 1,
+                            column: 55
+                          }
+                        }
+                      },
+                      id: {
+                        type: 'Identifier',
+                        name: 'str',
+                        start: 28,
+                        end: 31,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 28
+                          },
+                          end: {
+                            line: 1,
+                            column: 31
+                          }
+                        }
+                      },
+                      start: 28,
+                      end: 55,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 28
+                        },
+                        end: {
+                          line: 1,
+                          column: 55
+                        }
+                      }
+                    }
+                  ],
+                  start: 22,
+                  end: 56,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 56
+                    }
+                  }
+                }
+              ],
+              start: 20,
+              end: 58,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 20
+                },
+                end: {
+                  line: 1,
+                  column: 58
+                }
+              }
+            },
+            async: true,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'fn',
+              start: 15,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 58,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 58
+              }
+            }
+          },
+          {
+            type: 'EmptyStatement',
+            start: 58,
+            end: 59,
+            loc: {
+              start: {
+                line: 1,
+                column: 58
+              },
+              end: {
+                line: 1,
+                column: 59
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 59,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 59
+          }
+        }
+      }
+    ],
+    [
+      `import("foo").then(imported => {});`,
+      Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'ImportExpression',
+                  source: {
+                    type: 'Literal',
+                    value: 'foo',
+                    start: 7,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 0,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'then',
+                  start: 14,
+                  end: 18,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 18
+                    }
+                  }
+                },
+                start: 0,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'ArrowFunctionExpression',
+                  body: {
+                    type: 'BlockStatement',
+                    body: [],
+                    start: 31,
+                    end: 33,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 31
+                      },
+                      end: {
+                        line: 1,
+                        column: 33
+                      }
+                    }
+                  },
+                  params: [
+                    {
+                      type: 'Identifier',
+                      name: 'imported',
+                      start: 19,
+                      end: 27,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 19
+                        },
+                        end: {
+                          line: 1,
+                          column: 27
+                        }
+                      }
+                    }
+                  ],
+                  async: false,
+                  expression: false,
+                  start: 19,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 34,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 34
+                }
+              }
+            },
+            start: 0,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 35,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 35
+          }
+        }
+      }
+    ],
+    [
       `import(x).then()`,
       Context.OptionsLoc,
       {
@@ -2124,9 +2476,7 @@ describe('Expressions - Import call', () => {
   ]) {
     it(source as string, () => {
       const parser = parseScript(source as string, {
-        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-        loc: ((ctx as any) & Context.OptionsLoc) !== 0,
-        module: ((ctx as any) & Context.Module) !== 0
+        loc: true
       });
       t.deepStrictEqual(parser, expected);
     });

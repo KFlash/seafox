@@ -264,7 +264,7 @@ export function parseVariableDeclarationListAndDeclarator(
   return list;
 }
 
-export function parseImportCallDeclaration(
+export function parseDynamicImportStatement(
   parser: ParserState,
   context: Context,
   start: number,

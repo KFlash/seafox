@@ -265,7 +265,7 @@ export function isExactlyStrictDirective(parser: ParserState, index: number, sta
 }
 
 export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
-  if (parser.token !== t) report(parser, Errors.Unexpected);
+  if (parser.token !== t) report(parser, Errors.UnexpectedToken, KeywordDescTable[t & Token.Kind]);
   nextToken(parser, context, allowRegExp);
 }
 

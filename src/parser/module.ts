@@ -20,7 +20,7 @@ import {
   parseClassDeclaration,
   parseHoistableDeclaration,
   parseVariableStatementOrLexicalDeclaration,
-  parseImportCallDeclaration,
+  parseDynamicImportStatement,
   parseImportMetaDeclaration
 } from './declaration';
 import {
@@ -292,7 +292,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
       consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
       break;
     case Token.LeftParen:
-      return parseImportCallDeclaration(parser, context, curStart, curLine, curColumn);
+      return parseDynamicImportStatement(parser, context, curStart, curLine, curColumn);
     case Token.Period:
       return parseImportMetaDeclaration(parser, context, curStart, curLine, curColumn);
     default:

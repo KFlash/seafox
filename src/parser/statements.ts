@@ -9,7 +9,7 @@ import {
   parseClassDeclaration,
   parseHoistableDeclaration,
   parseVariableStatementOrLexicalDeclaration,
-  parseImportCallDeclaration,
+  parseDynamicImportStatement,
   parseImportMetaDeclaration
 } from './declaration';
 import {
@@ -99,7 +99,7 @@ export function parseStatementListItem(
     case Token.LetKeyword:
       return parseLetIdentOrVarDeclarationStatement(parser, context, scope, labels, nestedLabels, origin);
     case Token.ImportKeyword:
-      return parseImportCallOrForbidImport(parser, context);
+      return parseImportDeclaration(parser, context);
     case Token.ExportKeyword:
       report(parser, Errors.Unexpected, 'export');
     default:
@@ -209,7 +209,7 @@ export function parseLabelledStatement(
 
   const body =
     allowFuncDecl === 0 ||
-    // Disallow if web compability is off
+    // Disallow if in strict mode, or if the web compability is off ( B.3.2 )
     (context & 0b00000000000000000000010000010000) > 0 ||
     parser.token !== Token.FunctionKeyword
       ? parseStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl)
@@ -231,18 +231,19 @@ export function parseLabelledStatement(
       };
 }
 
-export function parseImportCallOrForbidImport(parser: ParserState, context: Context): any {
+export function parseImportDeclaration(parser: ParserState, context: Context): any {
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  switch (parser.token) {
-    case Token.LeftParen:
-      return parseImportCallDeclaration(parser, context, start, line, column);
-    case Token.Period:
-      return parseImportMetaDeclaration(parser, context, start, line, column);
-    default:
-      report(parser, Errors.InvalidImportExportSloppy, 'import');
+  if (parser.token === Token.LeftParen) {
+    return parseDynamicImportStatement(parser, context, start, line, column);
   }
+
+  if (parser.token === Token.Period) {
+    return parseImportMetaDeclaration(parser, context, start, line, column);
+  }
+
+  report(parser, Errors.InvalidImportExportSloppy, 'import');
 }
 
 export function parseAsyncStatement(
@@ -729,11 +730,7 @@ export function parseForStatement(
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
-  scope = {
-    parent: scope,
-    type: ScopeKind.Block,
-    scopeError: void 0
-  };
+  scope = createParentScope(scope, ScopeKind.Block);
 
   let test: Types.Expression | null = null;
   let update: Types.Expression | null = null;
@@ -951,11 +948,7 @@ export function parseWhileStatement(
   const { start, line, column } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(
-    parser,
-    (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
-    0
-  );
+  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
   const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabels, 0);
 
@@ -1000,11 +993,7 @@ export function parseSwitchStatement(
 
   let seenDefault: 0 | 1 = 0;
 
-  scope = {
-    parent: scope,
-    type: ScopeKind.None,
-    scopeError: void 0
-  };
+  scope = createParentScope(scope, ScopeKind.None);
 
   while (parser.token !== Token.RightBrace) {
     const { start, line, column } = parser;
@@ -1079,15 +1068,12 @@ export function parseIfStatement(
 
   nextToken(parser, context, /* allowRegExp */ 0);
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
-  const test = parseExpressions(
-    parser,
-    (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
-    0
-  );
+
+  const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
-  const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
+  const consequent = parseScopedStatement(parser, context, scope, labels);
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
-    ? parseConsequentOrAlternative(parser, context, scope, labels)
+    ? parseScopedStatement(parser, context, scope, labels)
     : null;
   return context & Context.OptionsLoc
     ? {
@@ -1107,36 +1093,16 @@ export function parseIfStatement(
       };
 }
 
-/**
- * Parse either consequent or alternate.
- *
- * @param parser  Parser object
- * @param context Context masks
- * @param start Start pos of node
- * @param line
- * @param column
- */
-export function parseConsequentOrAlternative(
+export function parseScopedStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
   labels: any
-): any {
-  // Disallow if web compability is off
+): Types.Statement | Types.FunctionDeclaration {
+  // Disallow if in strict mode, or if the web compability is off ( B.3.2 )
   return (context & 0b00000000000000000000010000010000) > 0 || parser.token !== Token.FunctionKeyword
     ? parseStatement(parser, context, scope, Origin.None, labels, null, 0)
-    : parseFunctionDeclaration(
-        parser,
-        context,
-        {
-          parent: scope,
-          type: ScopeKind.Block,
-          scopeError: void 0
-        },
-        0,
-        0,
-        Origin.Statement
-      );
+    : parseFunctionDeclaration(parser, context, createParentScope(scope, ScopeKind.Block), 0, 0, Origin.Statement);
 }
 
 export function parseThrowStatement(parser: ParserState, context: Context): Types.ThrowStatement {
@@ -1283,11 +1249,7 @@ export function parseTryStatement(
     if ((parser.token as Token) === Token.LeftParen) {
       nextToken(parser, context, /* allowRegExp */ 0);
 
-      scope = {
-        parent: scope,
-        type: ScopeKind.Block,
-        scopeError: void 0
-      };
+      scope = createParentScope(scope, ScopeKind.Block);
 
       param = parseBindingPattern(
         parser,
@@ -1299,11 +1261,7 @@ export function parseTryStatement(
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-      additionalScope = {
-        parent: scope,
-        type: ScopeKind.CatchBlock,
-        scopeError: void 0
-      };
+      additionalScope = createParentScope(scope, ScopeKind.CatchBlock);
     }
 
     const body = parseBlock(parser, context, additionalScope, /* isCatchClause */ 1, labels, null);

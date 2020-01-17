@@ -4500,11 +4500,13 @@ export function parseImportExpression(
   line: number,
   column: number
 ): Types.ImportExpression {
+  // The argument to dynamic import is mandatory and an arbitrary expression
+
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
   if (parser.token === Token.Ellipsis) report(parser, Errors.InvalidSpreadInImport);
 
-  const source = parseExpression(parser, context | Context.DisallowIn, 0);
+  const source = parseExpression(parser, context, 0);
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
