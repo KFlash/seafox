@@ -122,7 +122,7 @@ export function parseHoistableDeclaration(
     start,
     line,
     column
-  );
+  ) as Types.FunctionDeclaration;
 }
 
 /**

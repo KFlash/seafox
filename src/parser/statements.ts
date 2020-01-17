@@ -2,7 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as Types from './types';
-import { ScopeState, ScopeKind } from './scope';
+import { ScopeState, ScopeKind, createParentScope } from './scope';
 import {
   parseVariableDeclarationListAndDeclarator,
   parseFunctionDeclaration,
@@ -137,17 +137,7 @@ export function parseStatement(
     case Token.VarKeyword:
       return parseVariableStatementOrLexicalDeclaration(parser, context, scope, BindingKind.Variable, Origin.None);
     case Token.LeftBrace:
-      return parseBlock(
-        parser,
-        context,
-        {
-          parent: scope,
-          type: ScopeKind.Block,
-          scopeError: void 0
-        },
-        labels,
-        nestedLabels
-      );
+      return parseBlock(parser, context, scope, /* isCatchClause */ 0, labels, nestedLabels);
     case Token.Semicolon:
       return parseEmptyStatement(parser, context);
     case Token.ReturnKeyword:
@@ -401,6 +391,7 @@ export function parseBlock(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
+  isCatchClause: 0 | 1,
   labels: any,
   nestedLabels: any
 ): Types.BlockStatement {
@@ -409,6 +400,8 @@ export function parseBlock(
   const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 1);
+
+  if (isCatchClause === 0) scope = createParentScope(scope, ScopeKind.Block);
 
   const body: Types.Statement[] = [];
 
@@ -1319,17 +1312,7 @@ export function parseTryStatement(
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const block = parseBlock(
-    parser,
-    context,
-    {
-      parent: scope,
-      type: ScopeKind.Block,
-      scopeError: void 0
-    },
-    labels,
-    null
-  );
+  const block = parseBlock(parser, context, scope, /* isCatchClause */ 0, labels, null);
 
   let handler: Types.CatchClause | null = null;
 
@@ -1367,7 +1350,7 @@ export function parseTryStatement(
       };
     }
 
-    const body = parseBlock(parser, context, additionalScope, labels, null);
+    const body = parseBlock(parser, context, additionalScope, /* isCatchClause */ 1, labels, null);
 
     handler =
       context & Context.OptionsLoc
@@ -1387,17 +1370,7 @@ export function parseTryStatement(
   }
 
   const finalizer: Types.BlockStatement | null = consumeOpt(parser, context, Token.FinallyKeyword, /* allowRegExp */ 0)
-    ? parseBlock(
-        parser,
-        context,
-        {
-          parent: scope,
-          type: ScopeKind.Block,
-          scopeError: void 0
-        },
-        labels,
-        null
-      )
+    ? parseBlock(parser, context, scope, /* isCatchClause */ 0, labels, null)
     : null;
 
   if (!handler && !finalizer) {

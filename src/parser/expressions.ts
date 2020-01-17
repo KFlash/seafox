@@ -791,14 +791,13 @@ export function parseIdentifierOrArrow(
       (token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000 ? Flags.HasStrictReserved : 0;
     const mutualFlag: Flags = (parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
 
-    const scope = {
-      parent: {
+    const scope = createParentScope(
+      {
         parent: void 0,
         type: ScopeKind.Block
       },
-      type: ScopeKind.Block,
-      scopeError: void 0
-    };
+      ScopeKind.Block
+    );
 
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
 
@@ -870,26 +869,14 @@ export function parsePrimaryExpression(
       if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
         report(parser, Errors.StrictEvalArguments);
       }
-
-      return parseAsyncArrowIdentifier(
-        parser,
-        context,
+      const scope = createParentScope(
         {
-          parent: {
-            parent: void 0,
-            type: ScopeKind.Block
-          },
-          type: ScopeKind.ArrowParams,
-          scopeError: void 0
+          parent: void 0,
+          type: ScopeKind.Block
         },
-        /* isAsync */ 0,
-        tokenValue,
-        token,
-        expr,
-        start,
-        line,
-        column
+        ScopeKind.ArrowParams
       );
+      return parseAsyncArrowIdentifier(parser, context, scope, 0, tokenValue, token, expr, start, line, column);
     }
 
     parser.assignable =
@@ -996,18 +983,17 @@ export function parseAsyncExpression(
       if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
       }
-
+      const scope = createParentScope(
+        {
+          parent: void 0,
+          type: ScopeKind.Block
+        },
+        ScopeKind.ArrowParams
+      );
       return parseAsyncArrowIdentifier(
         parser,
         context,
-        {
-          parent: {
-            parent: void 0,
-            type: ScopeKind.Block
-          },
-          type: ScopeKind.ArrowParams,
-          scopeError: void 0
-        },
+        scope,
         1,
         parser.tokenValue,
         parser.token,
@@ -1039,26 +1025,14 @@ export function parseAsyncExpression(
 
   if (parser.token === Token.Arrow) {
     if (inNew === 1) report(parser, Errors.InvalidAsyncArrow);
-
-    return parseAsyncArrowIdentifier(
-      parser,
-      context,
+    const scope = createParentScope(
       {
-        parent: {
-          parent: void 0,
-          type: ScopeKind.Block
-        },
-        type: ScopeKind.ArrowParams,
-        scopeError: void 0
+        parent: void 0,
+        type: ScopeKind.Block
       },
-      0,
-      'async',
-      token,
-      expr,
-      curStart,
-      curLine,
-      curColumn
+      ScopeKind.ArrowParams
     );
+    return parseAsyncArrowIdentifier(parser, context, scope, 0, 'async', token, expr, curStart, curLine, curColumn);
   }
 
   return expr;
@@ -1099,14 +1073,13 @@ export function parseAsyncArrowOrCallExpression(
 ): any {
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const scope = {
-    parent: {
+  const scope = createParentScope(
+    {
       parent: void 0,
       type: ScopeKind.Block
     },
-    type: ScopeKind.ArrowParams,
-    scopeError: void 0
-  };
+    ScopeKind.ArrowParams
+  );
 
   if (parser.token === Token.RightParen) {
     nextToken(parser, context, /* allowRegExp */ 0);
@@ -1779,24 +1752,14 @@ export function parseParenthesizedExpression(
     if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
     nextToken(parser, context, /* allowRegExp */ 0);
-
-    return parseArrowFunction(
-      parser,
-      context,
+    const scope = createParentScope(
       {
-        parent: {
-          parent: void 0,
-          type: ScopeKind.Block
-        },
-        type: ScopeKind.ArrowParams,
-        scopeError: void 0
+        parent: void 0,
+        type: ScopeKind.Block
       },
-      expr,
-      /* isAsync */ 0,
-      curStart,
-      curLine,
-      curColumn
+      ScopeKind.ArrowParams
     );
+    return parseArrowFunction(parser, context, scope, expr, 0, curStart, curLine, curColumn);
   }
 
   let expressions: any[] = [];
@@ -1805,14 +1768,13 @@ export function parseParenthesizedExpression(
 
   const { start: sStart, line: sLine, column: sColumn } = parser;
 
-  const scope = {
-    parent: {
+  const scope = createParentScope(
+    {
       parent: void 0,
       type: ScopeKind.Block
     },
-    type: ScopeKind.ArrowParams,
-    scopeError: void 0
-  };
+    ScopeKind.ArrowParams
+  );
 
   parser.assignable = 1;
 
@@ -2761,14 +2723,14 @@ export function parseFunctionExpression(
     start,
     line,
     column
-  );
+  ) as Types.FunctionExpression;
 }
 
 export function parseFunctionLiteral(
   parser: ParserState,
   context: Context,
-  scope: any,
-  id: any,
+  scope: ScopeState,
+  id: Types.Identifier | null,
   firstRestricted: Token | undefined,
   isDecl: 0 | 1,
   type: 'FunctionDeclaration' | 'FunctionExpression',
@@ -2776,7 +2738,7 @@ export function parseFunctionLiteral(
   start: number,
   line: number,
   column: number
-): any {
+): Types.FunctionDeclaration | Types.FunctionExpression {
   scope = createNestedBlockScope(ScopeKind.Block);
 
   const params = parseFormalParams(
@@ -2788,14 +2750,12 @@ export function parseFunctionLiteral(
     isMethod
   );
 
+  scope = createParentScope(scope, ScopeKind.FunctionBody);
+
   const body = parseFunctionBody(
     parser,
     (context | 0b00011000000000100000000000000000) ^ 0b00011000000000100000000000000000,
-    {
-      parent: scope,
-      type: ScopeKind.FunctionBody,
-      scopeError: void 0
-    },
+    scope,
     firstRestricted,
     isDecl,
     scope.scopeError
@@ -3274,7 +3234,7 @@ export function parseMethodDefinition(
     parser.start,
     parser.line,
     parser.column
-  );
+  ) as Types.FunctionExpression;
 }
 
 export function parseGetterSetter(parser: ParserState, context: Context, kind: PropertyKind): any {
