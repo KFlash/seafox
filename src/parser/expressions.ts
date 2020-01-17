@@ -94,7 +94,7 @@ export function parseExpression(parser: ParserState, context: Context, inGroup: 
 export function parseExpressions(parser: ParserState, context: Context, inGroup: 0 | 1): Types.Expression {
   const { start, line, column } = parser;
   const expr = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
-  return parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
+  return parseSequenceExpression(parser, context, expr, start, line, column);
 }
 
 export function parseSequenceExpression(
@@ -104,13 +104,15 @@ export function parseSequenceExpression(
   start: number,
   line: number,
   column: number
-): Types.SequenceExpression {
+): Types.SequenceExpression | any {
   const expressions: Types.Expression[] = [expr];
+
+  if (parser.token === Token.Comma) return expr;
 
   do {
     nextToken(parser, context, /* allowRegExp */ 1);
     expressions.push(parseExpression(parser, context, 0));
-  } while (parser.token === Token.Comma);
+  } while ((parser.token as Token) === Token.Comma);
 
   return context & Context.OptionsLoc
     ? {
@@ -871,24 +873,7 @@ export function parsePrimaryExpression(
         report(parser, Errors.StrictEvalArguments);
       }
 
-      return parseAsyncArrowIdentifier(
-        parser,
-        context,
-        createParentScope(
-          {
-            parent: void 0,
-            type: ScopeKind.Block
-          },
-          ScopeKind.ArrowParams
-        ),
-        /* isAsync */ 0,
-        tokenValue,
-        token,
-        expr,
-        start,
-        line,
-        column
-      );
+      return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
 
     parser.assignable =
@@ -996,16 +981,9 @@ export function parseAsyncExpression(
         report(parser, Errors.YieldInParameter);
       }
 
-      return parseAsyncArrowIdentifier(
+      return parseAsyncArrow(
         parser,
         context,
-        createParentScope(
-          {
-            parent: void 0,
-            type: ScopeKind.Block
-          },
-          ScopeKind.ArrowParams
-        ),
         1,
         parser.tokenValue,
         parser.token,
@@ -1038,33 +1016,15 @@ export function parseAsyncExpression(
   if (parser.token === Token.Arrow) {
     if (inNew === 1) report(parser, Errors.InvalidAsyncArrow);
 
-    return parseAsyncArrowIdentifier(
-      parser,
-      context,
-      createParentScope(
-        {
-          parent: void 0,
-          type: ScopeKind.Block
-        },
-        ScopeKind.ArrowParams
-      ),
-      0,
-      'async',
-      token,
-      expr,
-      curStart,
-      curLine,
-      curColumn
-    );
+    return parseAsyncArrow(parser, context, 0, 'async', token, expr, curStart, curLine, curColumn);
   }
 
   return expr;
 }
 
-export function parseAsyncArrowIdentifier(
+export function parseAsyncArrow(
   parser: ParserState,
   context: Context,
-  scope: ScopeState,
   isAsync: 0 | 1,
   value: string,
   token: Token,
@@ -1076,6 +1036,14 @@ export function parseAsyncArrowIdentifier(
   parser.flags =
     ((parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000) |
     ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? Flags.StrictEvalArguments : 0);
+
+  const scope = createParentScope(
+    {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    ScopeKind.ArrowParams
+  );
 
   addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
 
@@ -2755,14 +2723,14 @@ export function parseFunctionExpression(
     start,
     line,
     column
-  );
+  ) as Types.FunctionExpression;
 }
 
 export function parseFunctionLiteral(
   parser: ParserState,
   context: Context,
-  scope: any,
-  id: any,
+  scope: ScopeState,
+  id: Types.Identifier | null,
   firstRestricted: Token | undefined,
   isDecl: 0 | 1,
   type: 'FunctionDeclaration' | 'FunctionExpression',
@@ -2770,7 +2738,7 @@ export function parseFunctionLiteral(
   start: number,
   line: number,
   column: number
-): any {
+): Types.FunctionDeclaration | Types.FunctionExpression {
   scope = createNestedBlockScope(ScopeKind.Block);
 
   const params = parseFormalParams(
@@ -3264,7 +3232,7 @@ export function parseMethodDefinition(
     parser.start,
     parser.line,
     parser.column
-  );
+  ) as Types.FunctionExpression;
 }
 
 export function parseGetterSetter(parser: ParserState, context: Context, kind: PropertyKind): any {
@@ -4738,5 +4706,6 @@ export function parseNonDirectiveExpression(
    *   2. LeftHandSideExpression = AssignmentExpression
    */
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
-  return parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr;
+
+  return parseSequenceExpression(parser, context, expr, start, line, column);
 }

@@ -31,7 +31,7 @@ import {
   parseBindingPattern,
   parseDirectives,
   parseNonDirectiveExpression,
-  parseAsyncArrowIdentifier
+  parseAsyncArrow
 } from './expressions';
 import {
   ParserState,
@@ -91,7 +91,7 @@ export function parseStatementListItem(
     case Token.FunctionKeyword:
       return parseFunctionDeclaration(parser, context, scope, 0, 0, origin);
     case Token.AsyncKeyword:
-      return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 1);
+      return parseAsyncStatement(parser, context, scope, origin, labels, 1);
     case Token.ClassKeyword:
       return parseClassDeclaration(parser, context, scope, /* isHoisted */ 0, /* isExported */ 0);
     case Token.ConstKeyword:
@@ -161,7 +161,7 @@ export function parseStatement(
     case Token.TryKeyword:
       return parseTryStatement(parser, context, scope, labels);
     case Token.AsyncKeyword:
-      return parseAsyncArrowOrAsyncFunctionDeclaration(parser, context, scope, origin, labels, 0);
+      return parseAsyncStatement(parser, context, scope, origin, labels, 0);
     case Token.WhileKeyword:
       return parseWhileStatement(parser, context, scope, labels, nestedLabels);
     case Token.WithKeyword:
@@ -245,7 +245,7 @@ export function parseImportCallOrForbidImport(parser: ParserState, context: Cont
   }
 }
 
-export function parseAsyncArrowOrAsyncFunctionDeclaration(
+export function parseAsyncStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
@@ -276,7 +276,7 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
   }
 
   const asyncNewLine = parser.newLine;
-
+  let expr: any;
   if (asyncNewLine === 0) {
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
@@ -286,30 +286,20 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
 
     // async Identifier => ...
 
-    if ((parser.token & 0b00000000001000010000000000000000) > 0) {
+    if ((parser.token & Token.IsIdentifier) > 0) {
       if ((context & 0b00000000001000000000010000000000) > 0 && parser.token === Token.YieldKeyword) {
         report(parser, Errors.YieldInParameter);
       }
 
       if (parser.token === Token.AwaitKeyword) report(parser, Errors.UnexpectedLetStrictReserved);
 
-      if (
-        context & Context.Strict &&
-        (parser.token & 0b00100000000100000000000000000000) === 0b00100000000100000000000000000000
-      ) {
-        report(parser, Errors.Unexpected);
+      if (context & Context.Strict && (parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+        report(parser, Errors.StrictEvalArguments);
       }
 
-      let expr: Types.AsyncExpression = parseAsyncArrowIdentifier(
+      expr = parseAsyncArrow(
         parser,
         context,
-        createParentScope(
-          {
-            parent: void 0,
-            type: ScopeKind.Block
-          },
-          ScopeKind.ArrowParams
-        ),
         1,
         parser.tokenValue,
         parser.token,
@@ -319,25 +309,18 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
         column
       );
 
-      if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
+      expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
       return parseExpressionStatement(parser, context, expr, start, line, column);
     }
   }
 
-  let expr: Types.Expression | Types.AsyncExpression = parseIdentifierFromValue(
-    parser,
-    context,
-    tokenValue,
-    start,
-    line,
-    column
-  );
+  expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
   if (parser.token === Token.LeftParen) {
     expr = parseAsyncArrowOrCallExpression(
       parser,
-      (context | 0b00000000000000000010000000000000) ^ 0b00000000000000000010000000000000,
+      (context | Context.DisallowIn) ^ Context.DisallowIn,
       expr,
       1,
       asyncNewLine,
@@ -349,35 +332,16 @@ export function parseAsyncArrowOrAsyncFunctionDeclaration(
     );
   } else {
     if (parser.token === Token.Arrow) {
-      expr = parseAsyncArrowIdentifier(
-        parser,
-        context,
-        createParentScope(
-          {
-            parent: void 0,
-            type: ScopeKind.Block
-          },
-          ScopeKind.ArrowParams
-        ),
-        1,
-        'async',
-        parser.token,
-        expr,
-        start,
-        line,
-        column
-      );
+      expr = parseAsyncArrow(parser, context, /* isAsync */ 1, 'async', parser.token, expr, start, line, column);
     }
     parser.assignable = 1;
   }
 
   expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
-  if (parser.token === Token.Comma) expr = parseSequenceExpression(parser, context, expr, start, line, column);
+  expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
-
-  parser.assignable = 1;
 
   return parseExpressionStatement(parser, context, expr, start, line, column);
 }
@@ -716,9 +680,7 @@ export function parseForStatementWithVariableDeclarations(
   }
   init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
 
-  if (parser.token === Token.Comma) {
-    init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
-  }
+  init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
@@ -897,8 +859,7 @@ export function parseForStatement(
     init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
   }
 
-  if (parser.token === Token.Comma)
-    init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
+  init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
@@ -1516,33 +1477,14 @@ export function parseLetIdentOrVarDeclarationStatement(
   }
 
   if (parser.token === Token.Arrow) {
-    expr = parseAsyncArrowIdentifier(
-      parser,
-      context,
-      createParentScope(
-        {
-          parent: void 0,
-          type: ScopeKind.Block
-        },
-        ScopeKind.ArrowParams
-      ),
-      /* isAsync */ 0,
-      tokenValue,
-      token,
-      expr,
-      start,
-      line,
-      column
-    );
+    expr = parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
   } else {
     expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
     expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
   }
 
-  if (parser.token === Token.Comma) {
-    expr = parseSequenceExpression(parser, context, expr, start, line, column);
-  }
+  expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
   return parseExpressionStatement(parser, context, expr, start, line, column);
 }
@@ -1587,7 +1529,7 @@ export function parseExpressionOrLabelledStatement(
   return parseExpressionStatement(
     parser,
     context,
-    parser.token === Token.Comma ? parseSequenceExpression(parser, context, expr, start, line, column) : expr,
+    parseSequenceExpression(parser, context, expr, start, line, column),
     start,
     line,
     column
