@@ -107,7 +107,7 @@ export function parseSequenceExpression(
 ): Types.SequenceExpression | any {
   const expressions: Types.Expression[] = [expr];
 
-  if (parser.token === Token.Comma) return expr;
+  if (parser.token !== Token.Comma) return expr;
 
   do {
     nextToken(parser, context, /* allowRegExp */ 1);
