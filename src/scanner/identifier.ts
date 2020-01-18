@@ -87,16 +87,7 @@ export function scanIdentifierSlowPath(
 
     if (escaped === 0) return token;
 
-    // if (context & Context.AllowEscapedKeyword) {
-    // if (context & Context.Strict && (token === Token.LetKeyword || token === Token.StaticKeyword)) {
-    // return Token.EscapedFutureReserved;
-    //}
-    //if (token === void 0) return Token.Identifier;
-
-    return token;
-    //}
-
-    //return Token.EscapedIdentifier;
+    return token | Token.EscapedKeyword;
   }
 
   return Token.Identifier;

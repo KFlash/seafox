@@ -2,6 +2,7 @@ import { nextToken } from '../scanner/scan';
 import { Token } from '../token';
 import { Errors, report } from '../errors';
 import * as Types from './types';
+import { parseExpressionStatement } from './statements';
 import {
   ScopeState,
   ScopeKind,
@@ -29,7 +30,6 @@ import {
   parseBindingPattern,
   parseImportExpression,
   parseMemberExpression,
-  parseExpressionStatement,
   parseAssignmentExpression,
   parseImportMetaExpression,
   parseExpression

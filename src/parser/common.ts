@@ -313,7 +313,7 @@ export function isStrictReservedWord(parser: ParserState, context: Context, t: T
     report(parser, Errors.StrictEvalArguments);
   }
 
-  return (t & Token.Keyword) > 0 || (t & Token.FutureReserved) > 0 || t == Token.EscapedFutureReserved;
+  return (t & Token.Keyword) > 0 || (t & Token.FutureReserved) > 0 || t == Token.FutureStrictReserved;
 }
 
 export function validateIdentifier(parser: ParserState, context: Context, kind: BindingKind, t: Token): void {

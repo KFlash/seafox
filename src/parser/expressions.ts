@@ -243,9 +243,7 @@ export function parseMemberExpression(
   start: number,
   line: number,
   column: number
-): Types.Expression | Types.MemberExpression | Types.UpdateExpression {
-  if ((parser.token & Token.IsMemberOrCallExpression) !== Token.IsMemberOrCallExpression) return expr;
-
+): any {
   switch (parser.token) {
     /* Update expression */
     case Token.Increment:
@@ -254,6 +252,7 @@ export function parseMemberExpression(
     }
 
     /* Property */
+    case Token.Period:
     case Token.Period: {
       nextToken(parser, context, /* allowRegExp */ 0);
 
@@ -261,7 +260,9 @@ export function parseMemberExpression(
 
       const property = parsePropertyOrPrivatePropertyName(parser, context);
 
-      expr =
+      return parseMemberExpression(
+        parser,
+        context,
         context & Context.OptionsLoc
           ? {
               type: 'MemberExpression',
@@ -277,8 +278,13 @@ export function parseMemberExpression(
               object: expr,
               computed: false,
               property
-            };
-      break;
+            },
+        allowLHS,
+        inGroup,
+        start,
+        line,
+        column
+      );
     }
     /* Property */
     case Token.LeftBracket: {
@@ -290,7 +296,9 @@ export function parseMemberExpression(
 
       parser.assignable = 1;
 
-      expr =
+      return parseMemberExpression(
+        parser,
+        context,
         context & Context.OptionsLoc
           ? {
               type: 'MemberExpression',
@@ -306,8 +314,13 @@ export function parseMemberExpression(
               object: expr,
               computed: true,
               property
-            };
-      break;
+            },
+        allowLHS,
+        inGroup,
+        start,
+        line,
+        column
+      );
     }
 
     /* Call */
@@ -316,7 +329,9 @@ export function parseMemberExpression(
 
       parser.assignable = 0;
 
-      expr =
+      return parseMemberExpression(
+        parser,
+        context,
         context & Context.OptionsLoc
           ? {
               type: 'CallExpression',
@@ -330,24 +345,46 @@ export function parseMemberExpression(
               type: 'CallExpression',
               callee: expr,
               arguments: args
-            };
-      break;
-    }
-    case Token.TemplateTail: {
-      expr = parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column);
-      break;
-    }
-    case Token.TemplateCont: {
-      expr = parseTemplateExpression(
-        parser,
-        context,
-        expr,
-        parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
+            },
+        allowLHS,
+        inGroup,
         start,
         line,
         column
       );
-      break;
+    }
+
+    case Token.TemplateTail: {
+      return parseMemberExpression(
+        parser,
+        context,
+        parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
+        allowLHS,
+        inGroup,
+        start,
+        line,
+        column
+      );
+    }
+    case Token.TemplateCont: {
+      return parseMemberExpression(
+        parser,
+        context,
+        parseTemplateExpression(
+          parser,
+          context,
+          expr,
+          parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
+          start,
+          line,
+          column
+        ),
+        allowLHS,
+        inGroup,
+        start,
+        line,
+        column
+      );
     }
     /* Optional Property */
     case Token.QuestionMarkPeriod: {
@@ -355,7 +392,9 @@ export function parseMemberExpression(
 
       parser.assignable = 0;
 
-      expr =
+      return parseMemberExpression(
+        parser,
+        context,
         context & Context.OptionsLoc
           ? {
               type: 'ChainingExpression',
@@ -369,10 +408,16 @@ export function parseMemberExpression(
               type: 'ChainingExpression',
               base: expr,
               chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column)
-            };
+            },
+        allowLHS,
+        inGroup,
+        start,
+        line,
+        column
+      );
     }
   }
-  return parseMemberExpression(parser, context, expr, allowLHS, inGroup, start, line, column);
+  return expr;
 }
 
 export function parseMemberOrCallChain(
@@ -683,6 +728,11 @@ export function parseYieldExpression(
   line: number,
   column: number
 ): Types.YieldExpression | Types.Identifier | Types.ArrowFunctionExpression {
+  // YieldExpression[In] :
+  //     yield
+  //     yield [no LineTerminator here] AssignmentExpression[?In, Yield]
+  //     yield [no LineTerminator here] * AssignmentExpression[?In, Yield]
+
   parser.flags |= inGroup === 1 ? Flags.SeenYield : 0;
 
   if (context & Context.InYieldContext) {
@@ -845,7 +895,7 @@ export function parsePrimaryExpression(
    */
   const token = parser.token;
 
-  if ((token & Token.IsIdentifier) === Token.IsIdentifier) {
+  if ((token & (Token.EscapedKeyword | Token.IsIdentifier)) !== 0) {
     if (token === Token.YieldKeyword) {
       return parseYieldExpression(parser, context, inGroup, canAssign, start, line, column);
     }
@@ -875,6 +925,8 @@ export function parsePrimaryExpression(
 
       return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
+    if ((token & Token.EscapedKeyword) === Token.EscapedKeyword && token & Token.Keyword)
+      report(parser, Errors.StrictEvalArguments);
 
     parser.assignable =
       context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? 0 : 1;
@@ -1998,30 +2050,6 @@ export function parseParenthesizedExpression(
         type: 'ParenthesizedExpression',
         expression: expr
       } as any);
-}
-
-export function parseExpressionStatement(
-  parser: ParserState,
-  context: Context,
-  expression: any,
-  start: number,
-  line: number,
-  column: number
-): Types.ExpressionStatement {
-  expectSemicolon(parser, context);
-
-  return context & Context.OptionsLoc
-    ? {
-        type: 'ExpressionStatement',
-        expression,
-        start,
-        end: parser.endIndex,
-        loc: setLoc(parser, line, column)
-      }
-    : {
-        type: 'ExpressionStatement',
-        expression
-      };
 }
 
 export function parseLeftHandSideExpression(

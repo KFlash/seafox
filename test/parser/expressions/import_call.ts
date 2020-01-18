@@ -32,14 +32,31 @@ describe('Expressions - Import call', () => {
         parseScript(`${arg}`);
       });
     });
+  }
 
+  // Module
+  for (const arg of [
+    'import]',
+    'import[x]',
+    'import(...y)',
+    'import+',
+    'import = 1',
+    'let f = () => import("", "");',
+    '(async () => { await import("", "") });',
+    'import("",);',
+    '[import(x).then()] = [1];',
+    '(import(foo)) => {}',
+    '[import(y=x)] = [1];',
+    'import("") --',
+    'import("") >>>= 2',
+    'new import(x);'
+  ]) {
     it(`${arg}`, () => {
       t.throws(() => {
         parseModule(`${arg}`);
       });
     });
   }
-
   for (const [source, ctx, expected] of [
     [
       `let f = () => { import("foo"); };`,
@@ -87,7 +104,7 @@ describe('Expressions - Import call', () => {
     ],
     [
       `let f = () => { import("foo"); };`,
-      Context.OptionsNext | Context.OptionsLoc,
+      Context.OptionsLoc,
       {
         type: 'Program',
         sourceType: 'script',
@@ -2476,7 +2493,7 @@ describe('Expressions - Import call', () => {
   ]) {
     it(source as string, () => {
       const parser = parseScript(source as string, {
-        loc: true
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0
       });
       t.deepStrictEqual(parser, expected);
     });

@@ -342,7 +342,7 @@ export function parseExportDefault(
   // export default [lookahead not-in {function, class}] AssignmentExpression[In] ;
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  let declaration: any = null;
+  let declaration: Types.ExportDeclaration | Types.Expression | null = null;
 
   switch (parser.token) {
     case Token.FunctionKeyword:
@@ -360,8 +360,11 @@ export function parseExportDefault(
         // export default async function f () {}
         // export default async function () {}
         // export default async x => x
+
         const { tokenValue, start, line, column } = parser;
+
         nextToken(parser, context, /* allowRegExp */ 0);
+
         if (parser.newLine === 0) {
           if ((parser.token as Token) === Token.FunctionKeyword) {
             declaration = parseHoistableDeclaration(
@@ -377,8 +380,16 @@ export function parseExportDefault(
             );
           } else {
             if ((parser.token & 0b00000000001000010000000000000000) > 0) {
-              declaration = parseIdentifier(parser, context);
-              declaration = parseArrowFunction(parser, context, scope, [declaration], 1, start, line, column);
+              declaration = parseArrowFunction(
+                parser,
+                context,
+                scope,
+                [parseIdentifier(parser, context)],
+                1,
+                start,
+                line,
+                column
+              );
             } else {
               declaration = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 

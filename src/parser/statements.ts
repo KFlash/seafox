@@ -21,7 +21,6 @@ import {
   parseAssignmentExpression,
   parsePrimaryExpression,
   parseSequenceExpression,
-  parseExpressionStatement,
   parseIdentifierFromValue,
   parseAsyncArrowOrCallExpression,
   parseObjectLiteralOrPattern,
@@ -1244,7 +1243,7 @@ export function parseTryStatement(
     nextToken(parser, context, /* allowRegExp */ 1);
 
     let param: Types.ArrayPattern | Types.ObjectPattern | Types.Identifier | null = null;
-    let additionalScope: ScopeState = scope;
+    let catchScope: ScopeState = scope;
 
     if ((parser.token as Token) === Token.LeftParen) {
       nextToken(parser, context, /* allowRegExp */ 0);
@@ -1261,10 +1260,10 @@ export function parseTryStatement(
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
 
-      additionalScope = createParentScope(scope, ScopeKind.CatchBlock);
+      catchScope = createParentScope(scope, ScopeKind.CatchBlock);
     }
 
-    const body = parseBlock(parser, context, additionalScope, /* isCatchClause */ 1, labels, null);
+    const body = parseBlock(parser, context, catchScope, /* isCatchClause */ 1, labels, null);
 
     handler =
       context & Context.OptionsLoc
@@ -1492,4 +1491,28 @@ export function parseExpressionOrLabelledStatement(
     line,
     column
   );
+}
+
+export function parseExpressionStatement(
+  parser: ParserState,
+  context: Context,
+  expression: any,
+  start: number,
+  line: number,
+  column: number
+): Types.ExpressionStatement {
+  expectSemicolon(parser, context);
+
+  return context & Context.OptionsLoc
+    ? {
+        type: 'ExpressionStatement',
+        expression,
+        start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'ExpressionStatement',
+        expression
+      };
 }

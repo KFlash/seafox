@@ -391,7 +391,7 @@ export interface ExportAllDeclaration extends _ModuleDeclaration<'ExportAllDecla
 }
 
 export interface ExportDefaultDeclaration extends _ModuleDeclaration<'ExportDefaultDeclaration'> {
-  declaration: ExportDeclaration | Expression;
+  declaration: ExportDeclaration | Expression | null;
 }
 
 export interface ExportNamedDeclaration extends _ModuleDeclaration<'ExportNamedDeclaration'> {
