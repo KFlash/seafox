@@ -56,6 +56,7 @@ export function create(source: string): ParserState {
     tokenRegExp: undefined,
     lastChar: 0,
     assignable: 1,
+    containsEscapes: 0,
     exportedNames: [],
     exportedBindings: []
   };

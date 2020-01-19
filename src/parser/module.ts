@@ -471,9 +471,8 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         //   export * as x from "...";
         // ~>
         //   import * as .x from "..."; export {.x as x};
-
         nextToken(parser, context, /* allowRegExp */ 0); // Skips: 'as'
-
+        if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
         declareUnboundVariable(parser, parser.tokenValue);
 
         const exported = parseIdentifier(parser, context);
@@ -569,6 +568,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
         if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
+          if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
           if ((parser.token & 0b00000000000010000000000000000000) > 0) report(parser, Errors.InvalidKeywordAsAlias);
           value = parser.tokenValue;
           exported = parseIdentifier(parser, context);

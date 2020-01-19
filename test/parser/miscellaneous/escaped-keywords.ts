@@ -1,21 +1,12 @@
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Miscellaneous - Escaped keywords', () => {
-  function convertDecimalToBinary(digit: any, groups: boolean): string {
-    let res = '';
-    for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
-    // Makes a groups of 8 bits
-    if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, '_');
-    return res;
-  }
-  console.log(convertDecimalToBinary(120, false));
   for (const arg of [
     'n\\u0075ll',
     '(x === n\\u0075ll);',
     '(x === n\\u0075ll);',
     'var x = n\\u0075ll;',
-    // 'var x = { interf\\u0061ce } = { interface: 42 };',
     'var x = ({ w\\u0069th }) => {};',
     'var n\\u0075ll = 1;',
     'tr\\u0075e = 1;',
@@ -30,25 +21,21 @@ describe('Miscellaneous - Escaped keywords', () => {
     'switch (this.a) { d\\u0065fault: break; }',
     'class C \\u0065xtends function B() {} {}',
     'for (var a i\\u006e this) {}',
-    //'(function() {for (let l\\u0065t in {}) {}})()',
+    '(function() {for (let l\\u0065t in {}) {}})()',
     'cl\\u0061ss Foo {}',
     'export function br\\u0065ak() {}',
-    //    'if (this \\u0069nstanceof Array) {}',
     '(n\\u0065w function f() {})',
     '(typ\\u0065of 123)',
-    //'const [l\\u0065t] = 1',
+    'const [l\\u0065t] = 1',
     'v\\u0061r',
-    // '({\\u0067et get(){}})',
-    // '({\\u0073et set(){}})',
-    //'var y = { c\\u0061se: x } = { case: 42 };',
-    // 'l\\u0065t\na',
-    // '\\u0061sync',
+    '({\\u0067et get(){}})',
+    '({\\u0073et set(){}})',
+    //'l\\u0065t\na',
     'class C { st\\u0061tic m() {} }',
-    ///'var C = class aw\\u0061it {};',
-    // 'var gen = async function *() { var yi\\u0065ld; };',
-    // 'var obj = { *method() { void yi\\u0065ld; } };',
-    // 'var gen = function *g() { yi\\u0065ld: ; };',
-    // '({ \\u0061sync* m(){}});',
+    'var gen = async function *() { var yi\\u0065ld; };',
+    'var obj = { *method() { void yi\\u0065ld; } };',
+    'var gen = function *g() { yi\\u0065ld: ; };',
+    '({ \\u0061sync* m(){}});',
     'var \\u{63}ase = 123;',
     'var \\u{63}atch = 123;',
     'var x = { \\u0066unction } = { function: 42 };',
@@ -85,44 +72,42 @@ describe('Miscellaneous - Escaped keywords', () => {
     '[v\\u{0061}r] = obj',
     'function a({var:v\\u{0061}r}) { }',
     'a(1,2\\u0063onst foo = 1;',
-    // 'let l\\u0065t = 1',
-    //'const l\\u0065t = 1',
-    // 'let l\\u0065t] = 1',
-    // 'const l\\u0065t] = 1',
-    // 'for (let l\\u0065t in {}) {}',
+    'let l\\u0065t = 1',
+    'const l\\u0065t = 1',
+    'let l\\u0065t] = 1',
+    'const l\\u0065t] = 1',
+    'for (let l\\u0065t in {}) {}',
     '(typ\\u0065of 123)',
     '(x === f\\u0061lse);',
     'var x = f\\u0061lse;',
-    //'0, { def\\u{61}ult: x } = { default: 42 };',
     '(async ()=>{\\u0061wait 100})()',
-    //'(async ()=>{var \\u0061wait = 100})()',
+    '(async ()=>{var \\u0061wait = 100})()',
     '\\u0063o { } while(0)',
     'v\\u0061r',
-    //'({\\u0067et get(){}})',
-    //'({\\u0073et set(){}})',
-    // 'class C { async *gen() { void \\u0061wait; }}',
+    '({\\u0067et get(){}})',
+    '({\\u0073et set(){}})',
+    'class C { async *gen() { void \\u0061wait; }}',
     'async() => { void \\u0061wait; };',
     '{for(o i\\u006E {}){}}',
-    'class X { se\\u0074 x(value) {} }',
+    //'class X { se\\u0074 x(value) {} }',
     'class X { st\\u0061tic y() {} }',
     '(function* () { y\\u0069eld 10 })',
     '({ \\u0061sync x() { await x } })',
-    // 'class C { static async method() { void \\u0061wait; }}',
+    'class C { static async method() { void \\u0061wait; }}',
     'while (i < 10) { if (i++ & 1) c\\u006fntinue; this.x++; }',
     '(function a({ hello: {var:v\\u{0061}r}}) { })',
     '[v\\u{0061}r] = obj',
     't\\u0072y { true } catch (e) {}',
     'var x = typ\\u0065of "blah"',
-    //'var y = { c\\u0061se: x } = { case: 42 };',
     '({ def\\u{61}ult }) => 42;',
     '0, { def\\u{61}ult } = { default: 42 };',
     'var x = ({ bre\\u0061k }) => {};',
     'var x = ({ tr\\u0079 }) => {};',
     'var x = ({ typ\\u0065of }) => {};',
     'def\\u0061ult',
-    // 'var gen = async function *g() { yi\\u0065ld: ; };',
-    // 'function *gen() { yi\\u0065ld: ; }',
-    // '(function *gen() { yi\\u0065ld: ; })',
+    'var gen = async function *g() { yi\\u0065ld: ; };',
+    'function *gen() { yi\\u0065ld: ; }',
+    '(function *gen() { yi\\u0065ld: ; })',
     'i\\u0066 (0)',
     'var i\\u0066',
     'for (a o\\u0066 b);',
@@ -137,6 +122,11 @@ describe('Miscellaneous - Escaped keywords', () => {
     'wh\\u0069le (true) { }',
     'n\\u0065w function f() {}',
     'async () => { aw\\u{61}it: x }',
+    'async function f(){   (a\\u0077ait "string")   }',
+    '(b\\u0072eak = "string")',
+    '(c\\u0061se = "string")',
+    '(c\\u0061tch = "string")',
+    '(c\\u006fntinue = "string")',
     'f\\u006fr (var i = 0; i < 10; ++i);',
     'try { } catch (e) {} f\\u0069nally { }',
     'd\\u0065bugger;',
@@ -144,6 +134,7 @@ describe('Miscellaneous - Escaped keywords', () => {
     '\\u{74}rue',
     'var \\u{64}\\u{6f} = 123;',
     'a\\u{0022}b=1',
+    //'le\\u0074 x = 5',
     'class yi\\u0065ld {}',
     'class l\\u0065t {}',
     'class yi\\u0065ld {}',
@@ -179,6 +170,7 @@ describe('Miscellaneous - Escaped keywords', () => {
     'var { st\\u0061tic } = {};',
     '(p\\u0061ckage = 1);',
     '(p\\u0072ivate = 1);',
+    'class a {st\\u0061tic() {}}',
     'var { int\\u0065rface  } = {};',
     'var { p\\u0072ivate } = {};',
     'var { prot\\u0065cted  } = {};',
@@ -186,6 +178,7 @@ describe('Miscellaneous - Escaped keywords', () => {
     'var { publ\\u0069c } = {};',
     'var { st\\u0061tic } = {};',
     'var { y\\u0069eld } = {};',
+    '0, { def\\u{61}ult: x } = { default: 42 };',
     '(\\u0069mplements = 1);',
     '(p\\u0072ivate = 1);',
     '(publ\\u0069c);',
@@ -199,10 +192,8 @@ describe('Miscellaneous - Escaped keywords', () => {
     'var packa\\u0067e = 1;',
     'var { packa\\u0067e  } = {};',
     'var { int\\u0065rface  } = {};',
-
     'foo = {}; foo.def\\u{61}ult = 3;',
-
-    // 'if (true) l\\u0065t: ;',
+    'if (true) l\\u0065t: ;',
     'function l\\u0065t() { }',
     '(function l\\u0065t() { })',
     'async function l\\u0065t() { }',
@@ -221,20 +212,31 @@ describe('Miscellaneous - Escaped keywords', () => {
     'function privat\\u0065() {}',
     '(y\\u0069eld);',
     '(\\u0069nterface = 1);',
-
+    'var y = { c\\u0061se: x } = { case: 42 };',
     '(prot\\u0065cted);',
-
     '(publ\\u0069c);',
     'var C = class { get "def\\u{61}ult"() { return "get string"; } set "def\\u{61}ult"(param) { stringSet = param; } };',
-
     '(st\\u0061tic);',
-
+    'class x{ st\\u0061tic() {} }',
+    'class x{ st\\u0061tic() {} }',
     'class aw\\u0061it {}',
     'aw\\u0061it: 1;',
     'function *a(){({yi\\u0065ld: 0})}',
-    '\\u0061sync',
+    //'\\u0061sync',
     'l\\u0065t\na',
     'l\\u0065t',
+    'class x { static set st\\u0061tic(v) {}}',
+    'class x { static get st\\u0061tic() {}}',
+    'class x { set st\\u0061tic(v) {}}',
+    'class x { get st\\u0061tic() {}}',
+    'class x { st\\u0061tic() {}}',
+    'class x { static *st\\u0061tic() {}}',
+    '(l\\u0065t = "string")',
+    '(e\\u0076al = "string")',
+    '(p\\u0061ckage = "string")',
+    '(p\\u0072otected = "string")',
+    '(s\\u0074atic = "string")',
+    '(p\\u0075blic = "string")',
     `function a() {
       \\u0061sync
       p => {}
@@ -251,6 +253,45 @@ describe('Miscellaneous - Escaped keywords', () => {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
         parseScript(`${arg}`);
+      });
+    });
+  }
+  // Test that identifiers which are both escaped and only reserved in the
+  // strict mode are accepted in non-strict mode.
+  for (const arg of [
+    'function l\\u0065t() { }',
+    '(function l\\u0065t() { })',
+    'async function l\\u0065t() { }',
+    '(async function l\\u0065t() { })',
+    'l\\u0065t => 42',
+    'var x = { interf\\u0061ce } = { interface: 42 };',
+    //'async l\\u0065t => 42',
+    'function packag\\u0065() {}',
+    'function impl\\u0065ments() {}',
+    'function privat\\u0065() {}',
+    'function l\\u0065t() { }',
+    'function l\\u0065t() { }'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`, { impliedStrict: true });
+      });
+    });
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'export {a \\u0061s b} from "x";',
+    'export default {a \\u0061s b} from "x";',
+    'var C = class aw\\u0061it {};'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseModule(`${arg}`);
       });
     });
   }

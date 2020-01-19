@@ -87,6 +87,10 @@ export function scanIdentifierSlowPath(
 
     if (escaped === 0) return token;
 
+    parser.containsEscapes = 1;
+
+    if ((token & Token.Contextual) === Token.Contextual) return token;
+
     return token | Token.EscapedKeyword;
   }
 

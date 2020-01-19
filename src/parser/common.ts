@@ -121,6 +121,7 @@ export interface ParserState {
   lastChar: number;
   exportedNames: any;
   exportedBindings: any;
+  containsEscapes: 0 | 1;
   tokenRegExp: void | {
     pattern: string;
     flags: string;

@@ -108,13 +108,15 @@ export const enum Errors {
   UndeclaredExportedBinding,
   InvalidExportImportSource,
   InvalidKeywordAsAlias,
-  UnterminatedTemplateExpr
+  UnterminatedTemplateExpr,
+  EscapedKeyword
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.EscapedKeyword]: 'Unexpected escaped keyword',
   [Errors.UnterminatedTemplateExpr]: 'Missing } in template expression',
   [Errors.InvalidExportImportSource]: '%0 source must be string',
   [Errors.InvalidKeywordAsAlias]: 'Only a identifier can be used to indicate alias',

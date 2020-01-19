@@ -334,6 +334,7 @@ export function parseAsyncStatement(
     if (parser.token === Token.Arrow) {
       expr = parseAsyncArrow(parser, context, /* isAsync */ 1, 'async', parser.token, expr, start, line, column);
     }
+
     parser.assignable = 1;
   }
 
@@ -781,7 +782,7 @@ export function parseForStatement(
 
   if (parser.token === Token.OfKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, isAwait === 1 ? 'await' : 'of');
-
+    if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
     reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);

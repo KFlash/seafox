@@ -736,6 +736,7 @@ export function parseYieldExpression(
   parser.flags |= inGroup === 1 ? Flags.SeenYield : 0;
 
   if (context & Context.InYieldContext) {
+    if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
     nextToken(parser, context, /* allowRegExp */ 1);
     if (context & Context.InArgumentList) report(parser, Errors.YieldInParameter);
     if (canAssign === 0) report(parser, Errors.CantAssignTo);
@@ -786,6 +787,7 @@ export function parseAwaitExpression(
   if (inGroup === 1) parser.flags |= Flags.SeenAwait;
 
   if (context & Context.InAwaitContext) {
+    if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
     if (inNew === 1) report(parser, Errors.Unexpected);
 
     if (context & Context.InArgumentList) {
@@ -895,7 +897,7 @@ export function parsePrimaryExpression(
    */
   const token = parser.token;
 
-  if ((token & (Token.EscapedKeyword | Token.IsIdentifier)) !== 0) {
+  if ((token & 0b00010000001000010000000000000000) !== 0) {
     if (token === Token.YieldKeyword) {
       return parseYieldExpression(parser, context, inGroup, canAssign, start, line, column);
     }
@@ -908,7 +910,10 @@ export function parsePrimaryExpression(
 
     if (token === Token.LetKeyword) {
       if (context & Context.Strict) report(parser, Errors.StrictInvalidLetInExprPos);
-      if (kind & (BindingKind.Let | BindingKind.Const)) report(parser, Errors.InvalidLetConstBinding);
+      if (kind & (BindingKind.Let | BindingKind.Const)) {
+        if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+        report(parser, Errors.InvalidLetConstBinding);
+      }
     }
 
     const tokenValue = parser.tokenValue;
@@ -926,7 +931,7 @@ export function parsePrimaryExpression(
       return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
     if ((token & Token.EscapedKeyword) === Token.EscapedKeyword && token & Token.Keyword)
-      report(parser, Errors.StrictEvalArguments);
+      report(parser, Errors.EscapedKeyword);
 
     parser.assignable =
       context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? 0 : 1;
@@ -1017,7 +1022,7 @@ export function parseAsyncExpression(
       if (allowLHS === 0) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
-
+      if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
       return parseFunctionExpression(parser, context, 1, curStart, curLine, curColumn);
     }
 
@@ -1026,7 +1031,7 @@ export function parseAsyncExpression(
       if (allowLHS === 0) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
-
+      if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
       if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
@@ -3810,12 +3815,12 @@ export function parseObjectLiteralOrPattern(
 
           if (token === Token.AsyncKeyword) state |= PropertyKind.Async;
 
-          state |=
-            token === Token.GetKeyword
-              ? PropertyKind.Getter
-              : token === Token.SetKeyword
-              ? PropertyKind.Setter
-              : PropertyKind.Method;
+          if (token === Token.GetKeyword || token === Token.SetKeyword) {
+            if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+            state |= token === Token.GetKeyword ? PropertyKind.Getter : PropertyKind.Setter;
+          } else {
+            state |= PropertyKind.Method;
+          }
 
           value =
             (state & 0b00000000000000000000000110000000) > 0
@@ -3836,8 +3841,12 @@ export function parseObjectLiteralOrPattern(
 
           nextToken(parser, context, /* allowRegExp */ 0);
 
-          state |=
-            PropertyKind.Generator | PropertyKind.Method | (token === Token.AsyncKeyword ? PropertyKind.Async : 0);
+          state |= PropertyKind.Generator | PropertyKind.Method;
+
+          if (token === Token.AsyncKeyword) {
+            if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+            state |= PropertyKind.Async;
+          }
 
           if ((parser.token & 0b00000000001001110000000000000000) > 0) {
             key = parseIdentifier(parser, context);
