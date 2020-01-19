@@ -1082,7 +1082,7 @@ export function parseAsyncArrow(
   line: number,
   column: number
 ): Types.Identifier | Types.FunctionExpression | Types.CallExpression | Types.ArrowFunctionExpression {
-  if ((context & 0b00000000001000000000010000000000) > 0 && parser.token === Token.YieldKeyword) {
+  if ((context & 0b00000000001000000000010000000000) > 0 && token === Token.YieldKeyword) {
     report(parser, Errors.YieldInParameter);
   }
 
