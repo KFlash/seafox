@@ -1090,9 +1090,15 @@ export function parseAsyncArrow(
   line: number,
   column: number
 ): Types.Identifier | Types.FunctionExpression | Types.CallExpression | Types.ArrowFunctionExpression {
-  parser.flags =
-    ((parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000) |
-    ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? Flags.StrictEvalArguments : 0);
+  if (token === Token.AwaitKeyword) report(parser, Errors.InvalidAwaitAsyncArg);
+  if (context & Context.Strict) {
+    if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.StrictEvalArguments);
+    }
+    if (token === Token.YieldKeyword) {
+      report(parser, Errors.YieldInParameter);
+    }
+  }
 
   const scope = createParentScope(
     {

@@ -110,7 +110,8 @@ export const enum Errors {
   InvalidKeywordAsAlias,
   UnterminatedTemplateExpr,
   EscapedKeyword,
-  InvalidForAwait
+  InvalidForAwait,
+  InvalidAwaitAsyncArg
 }
 
 /*@internal*/
@@ -118,6 +119,7 @@ export const errorMessages: {
   [key: string]: string;
 } = {
   [Errors.InvalidForAwait]: 'for await (... of ...) is only valid in async functions and async generators',
+  [Errors.InvalidAwaitAsyncArg]: "Invalid use of 'await' as an argument name",
   [Errors.EscapedKeyword]: 'Unexpected escaped keyword',
   [Errors.UnterminatedTemplateExpr]: 'Missing } in template expression',
   [Errors.InvalidExportImportSource]: '%0 source must be string',

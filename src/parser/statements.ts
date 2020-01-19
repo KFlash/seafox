@@ -287,16 +287,6 @@ export function parseAsyncStatement(
     // async Identifier => ...
 
     if ((parser.token & Token.IsIdentifier) > 0) {
-      if ((context & 0b00000000001000000000010000000000) > 0 && parser.token === Token.YieldKeyword) {
-        report(parser, Errors.YieldInParameter);
-      }
-
-      if (parser.token === Token.AwaitKeyword) report(parser, Errors.UnexpectedLetStrictReserved);
-
-      if (context & Context.Strict && (parser.token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-        report(parser, Errors.StrictEvalArguments);
-      }
-
       expr = parseAsyncArrow(
         parser,
         context,
@@ -318,6 +308,7 @@ export function parseAsyncStatement(
   expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
   if (parser.token === Token.LeftParen) {
+    if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
     expr = parseAsyncArrowOrCallExpression(
       parser,
       (context | Context.DisallowIn) ^ Context.DisallowIn,
