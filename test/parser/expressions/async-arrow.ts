@@ -418,6 +418,34 @@ describe('Expressions - Async arrow', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `async package => 1;`,
+      Context.Empty,
+      {
+        body: [
+          {
+            expression: {
+              async: true,
+              body: {
+                type: 'Literal',
+                value: 1
+              },
+              expression: true,
+              params: [
+                {
+                  name: 'package',
+                  type: 'Identifier'
+                }
+              ],
+              type: 'ArrowFunctionExpression'
+            },
+            type: 'ExpressionStatement'
+          }
+        ],
+        sourceType: 'script',
+        type: 'Program'
+      }
+    ],
+    [
       `async g => (x = [await y])`,
       Context.Empty,
       {

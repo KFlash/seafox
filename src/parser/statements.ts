@@ -286,7 +286,7 @@ export function parseAsyncStatement(
 
     // async Identifier => ...
 
-    if ((parser.token & Token.IsIdentifier) > 0) {
+    if ((parser.token & (Token.FutureReserved | Token.IsIdentifier)) > 0) {
       expr = parseAsyncArrow(
         parser,
         context,

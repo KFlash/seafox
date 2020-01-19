@@ -1023,7 +1023,7 @@ export function parseAsyncExpression(
     }
 
     // async Identifier => ...
-    if ((parser.token & Token.IsIdentifier) === Token.IsIdentifier) {
+    if ((parser.token & (Token.FutureReserved | Token.IsIdentifier)) > 0) {
       if (allowLHS === 0) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
@@ -1088,8 +1088,13 @@ export function parseAsyncArrow(
 
   if (token === Token.AwaitKeyword) report(parser, Errors.InvalidAwaitAsyncArg);
 
-  if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-    report(parser, Errors.StrictEvalArguments);
+  if (context & Context.Strict) {
+    if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.StrictEvalArguments);
+    }
+    if ((token & Token.FutureReserved) === Token.FutureReserved) {
+      report(parser, Errors.UnexpectedStrictReserved);
+    }
   }
 
   const scope = createParentScope(
