@@ -1088,13 +1088,11 @@ export function parseAsyncArrow(
 
   if (token === Token.AwaitKeyword) report(parser, Errors.InvalidAwaitAsyncArg);
 
-  if (context & Context.Strict) {
-    if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-      report(parser, Errors.StrictEvalArguments);
-    }
-    if ((token & Token.FutureReserved) === Token.FutureReserved) {
-      report(parser, Errors.UnexpectedStrictReserved);
-    }
+  if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+    report(parser, Errors.StrictEvalArguments);
+  }
+  if (context & Context.Module && (token & Token.FutureReserved) === Token.FutureReserved) {
+    report(parser, Errors.UnexpectedStrictReserved);
   }
 
   const scope = createParentScope(
@@ -4522,12 +4520,10 @@ export function parseAndClassifyIdentifier(
   line: number,
   column: number
 ): Types.Identifier {
-  if (context & Context.Strict) {
-    if ((t & Token.FutureReserved) === Token.FutureReserved) {
-      report(parser, Errors.UnexpectedStrictReserved);
-    } else if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-      report(parser, Errors.UnexpectedStrictReserved);
-    }
+  if (context & Context.Module && (t & Token.FutureReserved) === Token.FutureReserved) {
+    report(parser, Errors.UnexpectedStrictReserved);
+  } else if (Context.Strict && (t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+    report(parser, Errors.UnexpectedStrictReserved);
   }
 
   if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {

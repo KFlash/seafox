@@ -19,6 +19,7 @@ describe('Declarations - Function', () => {
     ['async function method() { var x = await; }', Context.Empty],
     ['async function a() { return await; }', Context.Empty],
     ['async function x() { var a = (x, y, await) => { }; }', Context.Empty],
+    ['function x(package) { "use strict"; }', Context.Empty],
     ['async function x() { var a = (x, await, y) => { }; }', Context.Empty],
     ['async function x() { (b = (c = await => {}) => {}) => {}; }', Context.Empty],
     ['async function foo (foo) { super() };', Context.Empty],
