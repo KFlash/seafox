@@ -25,6 +25,7 @@ describe('Module - Export', () => {
     ['export { if }', Context.Empty],
     ['export new Foo();', Context.Empty],
     ['export typeof foo;', Context.Empty],
+    ['async package => 1;', Context.Empty],
     ['class Test {}; export default class Test {}', Context.Empty],
     ['export { encrypt }; export { encrypt }', Context.Empty],
     ['export { decrypt as encrypt }; function encrypt() {}', Context.Empty],

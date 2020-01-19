@@ -4522,7 +4522,8 @@ export function parseAndClassifyIdentifier(
 ): Types.Identifier {
   if (context & Context.Module && (t & Token.FutureReserved) === Token.FutureReserved) {
     report(parser, Errors.UnexpectedStrictReserved);
-  } else if (Context.Strict && (t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+  }
+  if (context & Context.Strict && (t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
     report(parser, Errors.UnexpectedStrictReserved);
   }
 

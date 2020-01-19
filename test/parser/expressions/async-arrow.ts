@@ -181,7 +181,6 @@ describe('Expressions - Async arrow', () => {
     ['async ((x, y)) => 0', Context.Empty],
     ['async  ...x => x;', Context.Empty],
     ['async yield => 1;', Context.Strict],
-    ['async package => 1;', Context.Strict],
     ['async (yield) => 1;', Context.Strict],
     ['async ([{x: y.z}]) => b', Context.Empty],
     ['async ([{x: y.z}] = a) => b', Context.Empty],
@@ -420,6 +419,34 @@ describe('Expressions - Async arrow', () => {
     [
       `async package => 1;`,
       Context.Empty,
+      {
+        body: [
+          {
+            expression: {
+              async: true,
+              body: {
+                type: 'Literal',
+                value: 1
+              },
+              expression: true,
+              params: [
+                {
+                  name: 'package',
+                  type: 'Identifier'
+                }
+              ],
+              type: 'ArrowFunctionExpression'
+            },
+            type: 'ExpressionStatement'
+          }
+        ],
+        sourceType: 'script',
+        type: 'Program'
+      }
+    ],
+    [
+      `async package => 1;`,
+      Context.Strict,
       {
         body: [
           {
