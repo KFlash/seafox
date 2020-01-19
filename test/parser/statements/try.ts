@@ -460,134 +460,135 @@ describe('Statements - Try', () => {
       `try {} catch(eval) {"use strict";}`,
       Context.OptionsLoc,
       {
-        "type": "Program",
-        "sourceType": "script",
-        "body": [
-            {
-                "type": "TryStatement",
-                "block": {
-                    "type": "BlockStatement",
-                    "body": [],
-                    "start": 4,
-                    "end": 6,
-                    "loc": {
-                        "start": {
-                            "line": 1,
-                            "column": 4
-                        },
-                        "end": {
-                            "line": 1,
-                            "column": 6
-                        }
-                    }
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'TryStatement',
+            block: {
+              type: 'BlockStatement',
+              body: [],
+              start: 4,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
                 },
-                "handler": {
-                    "type": "CatchClause",
-                    "param": {
-                        "type": "Identifier",
-                        "name": "eval",
-                        "start": 13,
-                        "end": 17,
-                        "loc": {
-                            "start": {
-                                "line": 1,
-                                "column": 13
-                            },
-                            "end": {
-                                "line": 1,
-                                "column": 17
-                            }
-                        }
-                    },
-                    "body": {
-                        "type": "BlockStatement",
-                        "body": [
-                            {
-                                "type": "ExpressionStatement",
-                                "expression": {
-                                    "type": "Literal",
-                                    "value": "use strict",
-                                    "start": 20,
-                                    "end": 32,
-                                    "loc": {
-                                        "start": {
-                                            "line": 1,
-                                            "column": 20
-                                        },
-                                        "end": {
-                                            "line": 1,
-                                            "column": 32
-                                        }
-                                    }
-                                },
-                                "start": 20,
-                                "end": 33,
-                                "loc": {
-                                    "start": {
-                                        "line": 1,
-                                        "column": 20
-                                    },
-                                    "end": {
-                                        "line": 1,
-                                        "column": 33
-                                    }
-                                }
-                            }
-                        ],
-                        "start": 19,
-                        "end": 34,
-                        "loc": {
-                            "start": {
-                                "line": 1,
-                                "column": 19
-                            },
-                            "end": {
-                                "line": 1,
-                                "column": 34
-                            }
-                        }
-                    },
-                    "start": 7,
-                    "end": 34,
-                    "loc": {
-                        "start": {
-                            "line": 1,
-                            "column": 7
-                        },
-                        "end": {
-                            "line": 1,
-                            "column": 34
-                        }
-                    }
-                },
-                "finalizer": null,
-                "start": 0,
-                "end": 34,
-                "loc": {
-                    "start": {
-                        "line": 1,
-                        "column": 0
-                    },
-                    "end": {
-                        "line": 1,
-                        "column": 34
-                    }
+                end: {
+                  line: 1,
+                  column: 6
                 }
-            }
-        ],
-        "start": 0,
-        "end": 34,
-        "loc": {
-            "start": {
-                "line": 1,
-                "column": 0
+              }
             },
-            "end": {
-                "line": 1,
-                "column": 34
+            handler: {
+              type: 'CatchClause',
+              param: {
+                type: 'Identifier',
+                name: 'eval',
+                start: 13,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              body: {
+                type: 'BlockStatement',
+                body: [
+                  {
+                    type: 'ExpressionStatement',
+                    expression: {
+                      type: 'Literal',
+                      value: 'use strict',
+                      start: 20,
+                      end: 32,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 20
+                        },
+                        end: {
+                          line: 1,
+                          column: 32
+                        }
+                      }
+                    },
+                    start: 20,
+                    end: 33,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 33
+                      }
+                    }
+                  }
+                ],
+                start: 19,
+                end: 34,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 19
+                  },
+                  end: {
+                    line: 1,
+                    column: 34
+                  }
+                }
+              },
+              start: 7,
+              end: 34,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 34
+                }
+              }
+            },
+            finalizer: null,
+            start: 0,
+            end: 34,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 34
+              }
             }
+          }
+        ],
+        start: 0,
+        end: 34,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 34
+          }
         }
-    }],
+      }
+    ],
     [
       `try { throw [3, 4, 5]; } catch ([...[x, y, z]]) {}`,
       Context.OptionsLoc,
