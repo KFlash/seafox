@@ -244,6 +244,8 @@ describe('Expressions - Object', () => {
     ['with (Math) { ({x=1}) };', Context.Empty],
     ['true ? {x=1} : 1;', Context.Empty],
     ['false ? 1 : {x=1};', Context.Empty],
+    ['({ x(package) { "use strict"; }   })', Context.Empty],
+    ['({ x(eval) { "use strict"; }   })', Context.Empty],
     ['"use strict"; ({ [...a] = [] })', Context.Empty],
     ['({ [...a] = [] })', Context.Empty],
     ['"use strict"; ({ [...a]  })-', Context.Empty],

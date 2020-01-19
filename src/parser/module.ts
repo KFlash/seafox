@@ -472,7 +472,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         // ~>
         //   import * as .x from "..."; export {.x as x};
         nextToken(parser, context, /* allowRegExp */ 0); // Skips: 'as'
-        if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+
         declareUnboundVariable(parser, parser.tokenValue);
 
         const exported = parseIdentifier(parser, context);

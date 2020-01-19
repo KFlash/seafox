@@ -653,7 +653,7 @@ export function parseForStatementWithVariableDeclarations(
 
   if (parser.token === Token.InKeyword) {
     if ((parser.assignable as 0 | 1) === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
-    if (isAwait === 1) report(parser, Errors.Unexpected);
+    if (isAwait === 1) report(parser, Errors.InvalidForAwait);
     nextToken(parser, context, /* allowRegExp */ 1);
 
     right = parseExpressions(parser, context, 0);
@@ -775,7 +775,7 @@ export function parseForStatement(
 
     conjuncted = parser.flags;
   } else if (token === Token.Semicolon) {
-    if (isAwait === 1) report(parser, Errors.Unexpected);
+    if (isAwait === 1) report(parser, Errors.InvalidForAwait);
   } else {
     init = parseLeftHandSideExpression(parser, context | 0b00000000000000000010000000000000, 0, /* allowLHS */ 1, 1);
   }
@@ -815,7 +815,7 @@ export function parseForStatement(
 
   if (parser.token === Token.InKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
-    if (isAwait === 1) report(parser, Errors.Unexpected);
+    if (isAwait === 1) report(parser, Errors.InvalidForAwait);
     reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);
@@ -844,7 +844,7 @@ export function parseForStatement(
         };
   }
 
-  if (isAwait === 1) report(parser, Errors.Unexpected);
+  if (isAwait === 1) report(parser, Errors.InvalidForAwait);
 
   if (parser.token === Token.Assign) {
     if ((token & Token.IsPatternStart) === Token.IsPatternStart) reinterpretToPattern(parser, init);

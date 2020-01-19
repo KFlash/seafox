@@ -184,6 +184,7 @@ export const enum Token {
   IdentifierOrKeyword = 0b00000000000000000000000010000100,
   Eval                = 0b00100000001100010000000010000101,
   Arguments           = 0b00100000001100010000000010000110,
+  Target              = 0b00000000001000010000000010001100,
  }
  /**
   * Array for mapping tokens to token values. The indices of the values
@@ -403,5 +404,6 @@ export const enum Token {
   true: { value: Token.TrueKeyword },
   with: { value: Token.WithKeyword },
   yield: { value: Token.YieldKeyword },
-  as: { value: Token.AsKeyword }
+  as: { value: Token.AsKeyword },
+  target: { value: Token.Target },
  });

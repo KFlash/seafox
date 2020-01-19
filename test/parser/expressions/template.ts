@@ -408,6 +408,206 @@ describe('Expressions - Template', () => {
 
   for (const [source, ctx, expected] of [
     [
+      '(904`a${2e308}${`aa`}·a`);',
+      Context.OptionsLoc,
+      {
+        "type": "Program",
+        "sourceType": "script",
+        "body": [
+            {
+                "type": "ExpressionStatement",
+                "expression": {
+                    "type": "TaggedTemplateExpression",
+                    "tag": {
+                        "type": "Literal",
+                        "value": 904,
+                        "start": 1,
+                        "end": 4,
+                        "loc": {
+                            "start": {
+                                "line": 1,
+                                "column": 1
+                            },
+                            "end": {
+                                "line": 1,
+                                "column": 4
+                            }
+                        }
+                    },
+                    "quasi": {
+                        "type": "TemplateLiteral",
+                        "expressions": [
+                            {
+                                "type": "Literal",
+                                "value": null,
+                                "start": 8,
+                                "end": 13,
+                                "loc": {
+                                    "start": {
+                                        "line": 1,
+                                        "column": 8
+                                    },
+                                    "end": {
+                                        "line": 1,
+                                        "column": 13
+                                    }
+                                }
+                            },
+                            {
+                                "type": "TemplateLiteral",
+                                "expressions": [],
+                                "quasis": [
+                                    {
+                                        "type": "TemplateElement",
+                                        "value": {
+                                            "cooked": "aa",
+                                            "raw": "aa"
+                                        },
+                                        "tail": true,
+                                        "start": 16,
+                                        "end": 20,
+                                        "loc": {
+                                            "start": {
+                                                "line": 1,
+                                                "column": 16
+                                            },
+                                            "end": {
+                                                "line": 1,
+                                                "column": 20
+                                            }
+                                        }
+                                    }
+                                ],
+                                "start": 16,
+                                "end": 20,
+                                "loc": {
+                                    "start": {
+                                        "line": 1,
+                                        "column": 16
+                                    },
+                                    "end": {
+                                        "line": 1,
+                                        "column": 20
+                                    }
+                                }
+                            }
+                        ],
+                        "quasis": [
+                            {
+                                "type": "TemplateElement",
+                                "value": {
+                                    "cooked": "a",
+                                    "raw": "a"
+                                },
+                                "tail": false,
+                                "start": 4,
+                                "end": 4,
+                                "loc": {
+                                    "start": {
+                                        "line": 1,
+                                        "column": 4
+                                    },
+                                    "end": {
+                                        "line": 1,
+                                        "column": 4
+                                    }
+                                }
+                            },
+                            {
+                                "type": "TemplateElement",
+                                "value": {
+                                    "cooked": "",
+                                    "raw": ""
+                                },
+                                "tail": false,
+                                "start": 13,
+                                "end": 13,
+                                "loc": {
+                                    "start": {
+                                        "line": 1,
+                                        "column": 13
+                                    },
+                                    "end": {
+                                        "line": 1,
+                                        "column": 13
+                                    }
+                                }
+                            },
+                            {
+                                "type": "TemplateElement",
+                                "value": {
+                                    "cooked": "·a",
+                                    "raw": "·a"
+                                },
+                                "tail": true,
+                                "start": 20,
+                                "end": 20,
+                                "loc": {
+                                    "start": {
+                                        "line": 1,
+                                        "column": 20
+                                    },
+                                    "end": {
+                                        "line": 1,
+                                        "column": 20
+                                    }
+                                }
+                            }
+                        ],
+                        "start": 1,
+                        "end": 24,
+                        "loc": {
+                            "start": {
+                                "line": 1,
+                                "column": 1
+                            },
+                            "end": {
+                                "line": 1,
+                                "column": 24
+                            }
+                        }
+                    },
+                    "start": 1,
+                    "end": 24,
+                    "loc": {
+                        "start": {
+                            "line": 1,
+                            "column": 1
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 24
+                        }
+                    }
+                },
+                "start": 0,
+                "end": 26,
+                "loc": {
+                    "start": {
+                        "line": 1,
+                        "column": 0
+                    },
+                    "end": {
+                        "line": 1,
+                        "column": 26
+                    }
+                }
+            }
+        ],
+        "start": 0,
+        "end": 26,
+        "loc": {
+            "start": {
+                "line": 1,
+                "column": 0
+            },
+            "end": {
+                "line": 1,
+                "column": 26
+            }
+        }
+    }],
+    [
       '`a ${(x) => ok} b`.length',
       Context.OptionsLoc,
       {
