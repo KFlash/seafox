@@ -924,10 +924,6 @@ export function parsePrimaryExpression(
       if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
-      if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-        report(parser, Errors.StrictEvalArguments);
-      }
-
       return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
     if ((token & Token.EscapedKeyword) === Token.EscapedKeyword && token & Token.Keyword)
@@ -1034,10 +1030,6 @@ export function parseAsyncExpression(
 
       if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
-      if (context & (Context.Strict | Context.InYieldContext) && parser.token === Token.YieldKeyword) {
-        report(parser, Errors.YieldInParameter);
-      }
-
       return parseAsyncArrow(
         parser,
         context,
@@ -1090,14 +1082,14 @@ export function parseAsyncArrow(
   line: number,
   column: number
 ): Types.Identifier | Types.FunctionExpression | Types.CallExpression | Types.ArrowFunctionExpression {
+  if ((context & 0b00000000001000000000010000000000) > 0 && parser.token === Token.YieldKeyword) {
+    report(parser, Errors.YieldInParameter);
+  }
+
   if (token === Token.AwaitKeyword) report(parser, Errors.InvalidAwaitAsyncArg);
-  if (context & Context.Strict) {
-    if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-      report(parser, Errors.StrictEvalArguments);
-    }
-    if (token === Token.YieldKeyword) {
-      report(parser, Errors.YieldInParameter);
-    }
+
+  if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+    report(parser, Errors.StrictEvalArguments);
   }
 
   const scope = createParentScope(

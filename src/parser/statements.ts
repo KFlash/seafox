@@ -308,6 +308,7 @@ export function parseAsyncStatement(
   expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
   if (parser.token === Token.LeftParen) {
+    // '\u0061sync () => {}'
     if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
     expr = parseAsyncArrowOrCallExpression(
       parser,
