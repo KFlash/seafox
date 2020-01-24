@@ -2198,9 +2198,9 @@ export function parseNullOrTrueOrFalseLiteral(
 }
 
 export function parseLiteral(parser: ParserState, context: Context): any {
-
-  if (context & Context.Strict && (parser.flags & Flags.Octals) === Flags.Octals) report(parser, Errors.StrictOctalLiteral);
-  const { tokenValue, start, line, column, index} = parser;
+  if (context & Context.Strict && (parser.flags & Flags.Octals) === Flags.Octals)
+    report(parser, Errors.StrictOctalLiteral);
+  const { tokenValue, start, line, column, index } = parser;
 
   parser.assignable = 0;
 
