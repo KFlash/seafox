@@ -7,7 +7,7 @@ import { parseModuleItemListAndDirectives } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { ScopeKind } from './parser/scope';
 import { Errors, report } from './errors';
-
+// Jayel H. Kiamco
 /**
  * Parse a script, optionally with various options.
  */

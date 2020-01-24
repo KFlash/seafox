@@ -162,8 +162,6 @@ export function scanImplicitOctalDigits(parser: ParserState, context: Context, s
   // Octal integer literals are not permitted in strict mode code
   if (context & Context.Strict) report(parser, Errors.StrictOctalEscape);
 
-  parser.flags |= Flags.Octals;
-
   let value = 0;
 
   while (char >= Chars.Zero && char <= Chars.Nine) {
@@ -182,6 +180,8 @@ export function scanImplicitOctalDigits(parser: ParserState, context: Context, s
   }
 
   parser.tokenValue = value;
+
+  parser.flags |= Flags.Octals;
 
   return Token.NumericLiteral;
 }

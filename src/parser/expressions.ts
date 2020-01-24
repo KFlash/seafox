@@ -956,7 +956,7 @@ export function parsePrimaryExpression(
       return parseFunctionExpression(parser, context, /* isAsync */ 0, start, line, column);
     case Token.FalseKeyword:
     case Token.TrueKeyword:
-      return parseExpressionFromLiteral(parser, context, parser.tokenValue === 'true', start, line, column);
+      return parseNullOrTrueOrFalseLiteral(parser, context, start, line, column);
     case Token.NullKeyword:
       return parseNullLiteral(parser, context, start, line, column);
     case Token.LeftBracket:
@@ -2150,43 +2150,19 @@ export function parseNullLiteral(
       };
 }
 
-export function parseExpressionFromLiteral(
+export function parseNullOrTrueOrFalseLiteral(
   parser: ParserState,
   context: Context,
-  value: any,
   start: number,
   line: number,
   column: number
 ): Types.Literal {
+  const raw = KeywordDescTable[parser.token & Token.Kind];
+  const value = parser.token === Token.NullKeyword ? null : raw === 'true';
+  const { index } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
 
   parser.assignable = 0;
-
-  return context & Context.OptionsLoc
-    ? {
-        type: 'Literal',
-        value,
-        start,
-        end: parser.endIndex,
-        loc: setLoc(parser, line, column)
-      }
-    : {
-        type: 'Literal',
-        value
-      };
-}
-
-export function parseLiteral(parser: ParserState, context: Context): any {
-  const value = parser.tokenValue;
-
-  const start = parser.start;
-  const line = parser.line;
-  const column = parser.column;
-  const index = parser.index;
-
-  parser.assignable = 0;
-
-  nextToken(parser, context, /* allowRegExp */ 0);
 
   if (context & Context.OptionsRaw) {
     const raw = parser.source.slice(start, index);
@@ -2218,6 +2194,48 @@ export function parseLiteral(parser: ParserState, context: Context): any {
     : {
         type: 'Literal',
         value
+      };
+}
+
+export function parseLiteral(parser: ParserState, context: Context): any {
+
+  if (context & Context.Strict && (parser.flags & Flags.Octals) === Flags.Octals) report(parser, Errors.StrictOctalLiteral);
+  const { tokenValue, start, line, column, index} = parser;
+
+  parser.assignable = 0;
+
+  nextToken(parser, context, /* allowRegExp */ 0);
+
+  if (context & Context.OptionsRaw) {
+    const raw = parser.source.slice(start, index);
+
+    return context & Context.OptionsLoc
+      ? {
+          type: 'Literal',
+          value: tokenValue,
+          raw,
+          start,
+          end: parser.endIndex,
+          loc: setLoc(parser, line, column)
+        }
+      : {
+          type: 'Literal',
+          value: tokenValue,
+          raw
+        };
+  }
+
+  return context & Context.OptionsLoc
+    ? {
+        type: 'Literal',
+        value: tokenValue,
+        start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'Literal',
+        value: tokenValue
       };
 }
 
@@ -4520,7 +4538,7 @@ export function parseAndClassifyIdentifier(
   line: number,
   column: number
 ): Types.Identifier {
-  if (context & Context.Module && (t & Token.FutureReserved) === Token.FutureReserved) {
+  if (context & (Context.Module | Context.Strict) && (t & Token.FutureReserved) === Token.FutureReserved) {
     report(parser, Errors.UnexpectedStrictReserved);
   }
   if (context & Context.Strict && (t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
@@ -4535,7 +4553,7 @@ export function parseAndClassifyIdentifier(
     report(parser, Errors.KeywordNotId);
   }
 
-  if (context & (Context.Module | Context.InYieldContext) && t === Token.YieldKeyword) {
+  if (context & (Context.Strict | Context.InYieldContext) && t === Token.YieldKeyword) {
     report(parser, Errors.YieldInParameter);
   }
   if (t === Token.LetKeyword) {

@@ -439,7 +439,7 @@ describe('Expressions - Template', () => {
                 expressions: [
                   {
                     type: 'Literal',
-                    value: null,
+                    value: Infinity,
                     start: 8,
                     end: 13,
                     loc: {

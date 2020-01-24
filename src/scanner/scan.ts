@@ -1,4 +1,4 @@
-import { ParserState, Context } from '../parser/common';
+import { ParserState, Context, Flags } from '../parser/common';
 import { Token } from '../token';
 import {
   Chars,
@@ -643,6 +643,7 @@ export function scan(
 export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1): void {
   parser.newLine = 0;
   const { source, length, index, offset } = parser;
+  parser.flags = (parser.flags | Flags.Octals) ^ Flags.Octals;
   parser.lastColumn = (parser.endIndex = index) - offset;
   parser.prevLinebase = parser.lineBase;
   parser.token = scan(parser, context, source, index, length, Token.EOF, /* lastIsCR */ 0, index === 0, allowRegExp);

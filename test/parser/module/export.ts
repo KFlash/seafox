@@ -370,8 +370,8 @@ describe('Module - Export', () => {
       t.throws(() => {
         parseModule(source as string, {
           directives: true,
-          globalReturn: false,
           preserveParens: true,
+          globalReturn: true,
           raw: true,
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0
         });

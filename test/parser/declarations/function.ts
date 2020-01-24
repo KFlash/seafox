@@ -17,6 +17,7 @@ describe('Declarations - Function', () => {
     ['async function f(){ async function fh([void await x]) { "use strict"; }   }', Context.Empty],
     ['async function f(){ async function fh([void await x]) { }', Context.Empty],
     ['async function method() { var x = await; }', Context.Empty],
+    ['(async function(eval){"use strict";})', Context.Empty],
     ['(async function(x=1){"use strict";})', Context.Empty],
     ['(async function(a, x=1){"use strict";})', Context.Empty],
     ['(async function({x}){"use strict";})', Context.Empty],

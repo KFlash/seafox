@@ -50,7 +50,7 @@ describe('Miscellaneous - Failure', () => {
     'while () {}',
     'while (test)',
     '`test${exp`',
-    //'`test${exp() exp}`',
+    '`test${exp() exp}`',
     `async
     function test(){
         await foo();
@@ -852,7 +852,7 @@ describe('Miscellaneous - Failure', () => {
     'function* g() { async function yield() {} }',
     'async function k() { function a() { await 4; } }',
     'function* a() { await 4; }',
-    // 'for (var [ v , c ] = 0 in undefined) { }',
+    'for (var [ v , c ] = 0 in undefined) { }',
     `({async async: 0})`,
     `({async async})`,
     `({async async, })`,
