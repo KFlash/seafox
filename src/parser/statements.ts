@@ -1404,7 +1404,7 @@ export function parseLetIdentOrVarDeclarationStatement(
   // 'Let' as identifier
   parser.assignable = 1;
 
-  if (context & Context.Strict) report(parser, Errors.UnexpectedLetStrictReserved);
+  if (context & Context.Strict) report(parser, Errors.StrictInvalidLetInExprPos);
 
   let expr: any = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 

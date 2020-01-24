@@ -897,15 +897,30 @@ export function parsePrimaryExpression(
    */
   const token = parser.token;
 
+  if (token === Token.YieldKeyword) {
+    return parseYieldExpression(parser, context, inGroup, canAssign, start, line, column);
+  }
+
+  if (token === Token.AwaitKeyword) return parseAwaitExpression(parser, context, inGroup, inNew, start, line, column);
+
   if ((token & 0b00010000001000010000000000000000) !== 0) {
-    if (token === Token.YieldKeyword) {
-      return parseYieldExpression(parser, context, inGroup, canAssign, start, line, column);
-    }
-
-    if (token === Token.AwaitKeyword) return parseAwaitExpression(parser, context, inGroup, inNew, start, line, column);
-
     if (token === Token.AsyncKeyword) {
       return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
+    }
+
+    const tokenValue = parser.tokenValue;
+
+    const expr = parseIdentifier(parser, context | Context.TaggedTemplate);
+
+    if (parser.token === Token.Arrow) {
+      if (allowLHS === 0) {
+        report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
+      }
+      if (canAssign === 0) {
+        report(parser, Errors.InvalidAssignmentTarget);
+      }
+
+      return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
 
     if (token === Token.LetKeyword) {
@@ -914,17 +929,6 @@ export function parsePrimaryExpression(
         if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
         report(parser, Errors.InvalidLetConstBinding);
       }
-    }
-
-    const tokenValue = parser.tokenValue;
-
-    const expr = parseIdentifier(parser, context | Context.TaggedTemplate);
-
-    if (parser.token === Token.Arrow) {
-      if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
-      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
-
-      return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
     if ((token & Token.EscapedKeyword) === Token.EscapedKeyword && token & Token.Keyword)
       report(parser, Errors.EscapedKeyword);

@@ -50,6 +50,7 @@ describe('Expressions - Arrow', () => {
     * a`,
       Context.Empty
     ],
+    [`let => {}`, Context.Strict],
     [`()=>{}/a`, Context.Empty],
     [`()=>{} = a`, Context.Empty],
     [`()=>{} = x`, Context.Empty],
