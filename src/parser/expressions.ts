@@ -960,7 +960,7 @@ export function parsePrimaryExpression(
       return parseFunctionExpression(parser, context, /* isAsync */ 0, start, line, column);
     case Token.FalseKeyword:
     case Token.TrueKeyword:
-      return parseNullOrTrueOrFalseLiteral(parser, context, start, line, column);
+      return parseNullOrTrueOrFalseLiteral(parser, context, token, start, line, column);
     case Token.NullKeyword:
       return parseNullLiteral(parser, context, start, line, column);
     case Token.LeftBracket:
@@ -2157,47 +2157,43 @@ export function parseNullLiteral(
 export function parseNullOrTrueOrFalseLiteral(
   parser: ParserState,
   context: Context,
+  token: Token,
   start: number,
   line: number,
   column: number
 ): Types.Literal {
-  const raw = KeywordDescTable[parser.token & Token.Kind];
-  const value = parser.token === Token.NullKeyword ? null : raw === 'true';
   const { index } = parser;
   nextToken(parser, context, /* allowRegExp */ 0);
 
   parser.assignable = 0;
 
   if (context & Context.OptionsRaw) {
-    const raw = parser.source.slice(start, index);
-
     return context & Context.OptionsLoc
       ? {
           type: 'Literal',
-          value,
-          raw,
+          value: token === Token.NullKeyword ? null : KeywordDescTable[token & Token.Kind] === 'true',
+          raw: parser.source.slice(start, index),
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
         }
       : {
           type: 'Literal',
-          value,
-          raw
+          value: token === Token.NullKeyword ? null : KeywordDescTable[token & Token.Kind] === 'true',
+          raw: parser.source.slice(start, index)
         };
   }
-
   return context & Context.OptionsLoc
     ? {
         type: 'Literal',
-        value,
+        value: token === Token.NullKeyword ? null : KeywordDescTable[token & Token.Kind] === 'true',
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
     : {
         type: 'Literal',
-        value
+        value: token === Token.NullKeyword ? null : KeywordDescTable[token & Token.Kind] === 'true'
       };
 }
 
