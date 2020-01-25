@@ -52,24 +52,19 @@ import {
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
   const statements: Types.Statement[] = [];
-  let isStrictDirective: 0 | 1 = 0;
 
   while (parser.token === Token.StringLiteral) {
-    const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
+    const { index, start, line, column, tokenValue } = parser;
     let expression = parseLiteral(parser, context);
     if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
-      isStrictDirective = 1;
       context |= Context.Strict;
     } else {
-      isStrictDirective = 0;
-    }
-
-    if (isStrictDirective === 0) {
       expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
     }
+
     expectSemicolon(parser, context);
 
-    statements.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
+    statements.push(parseDirectives(parser, context, index, expression, start, line, column));
   }
 
   while (parser.token !== Token.EOF) {

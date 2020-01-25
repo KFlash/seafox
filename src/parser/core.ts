@@ -48,7 +48,6 @@ export function create(source: string): ParserState {
     offset: 0,
     length: source.length,
     prevLinebase: 1,
-    isUnicodeEscape: 0,
     token: Token.EOF,
     newLine: 0,
     tokenValue: undefined,

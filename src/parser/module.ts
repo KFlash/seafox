@@ -44,14 +44,15 @@ export function parseModuleItemListAndDirectives(
 
   if (context & Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
-      const { start, line, column, isUnicodeEscape, tokenValue } = parser;
+      const { start, line, index, column } = parser;
       let expression = parseLiteral(parser, context);
       if ((parser.token as Token) !== Token.Semicolon) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
-      expectSemicolon(parser, context);
 
-      const directive = isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : tokenValue;
+      const directive = parser.source.slice(start, index);
+
+      expectSemicolon(parser, context);
 
       statements.push(
         context & Context.OptionsLoc

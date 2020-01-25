@@ -83,6 +83,8 @@ export const enum Errors {
   InvalidLineBreak,
   AsyncFunctionInSingleStatementContext,
   UnknownLabel,
+  LabelRedeclaration,
+  InvalidNestedStatement,
   IllegalContinue,
   StrictFunction,
   SloppyFunction,
@@ -150,6 +152,8 @@ export const errorMessages: {
   [Errors.SloppyFunction]:
     'In non-strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement',
   [Errors.ClassForbiddenAsStatement]: "Class declaration can't appear in single-statement context",
+  [Errors.LabelRedeclaration]: "Label '%0' has already been declared",
+  [Errors.InvalidNestedStatement]: 'continue statement must be nested within an iteration statement',
   [Errors.UnknownLabel]: "Undefined label '%0'",
   [Errors.IllegalContinue]: 'Illegal continue statement',
   [Errors.UnexpectedStrictReserved]: 'Unexpected strict mode reserved word',

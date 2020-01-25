@@ -1,9 +1,1025 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Miscellaneous - Directives', () => {
+  for (const arg of [
+    `function f(){
+      "x\\01"
+      "use strict";
+    }`,
+    `function f(){
+      "x\\1"
+      "use strict";
+    }`,
+    `function f(){
+      "x\\6";
+      "use strict";
+    }`,
+    `function f(){
+      "use strict";
+      "x\\2"
+    }`,
+    `function f(){
+      "use strict";
+      "x\\4"
+    }`,
+    `function f() {
+      "use strict";
+      eval = 1; // Error: Assigning to 'eval' in strict mode
+    }`,
+    '"\\1;" "use strict";',
+    '"use strict"; function f(){"\\1";}',
+    '"\\1;" "use strict"; null',
+    '"use strict"; with (a) b = c;',
+    '"use strict"; "\\1;"',
+    '"use strict"; "\\1;" null',
+    '"random\\x0\nnewline"',
+    '"random\\u00a\nnewline"',
+    '"random\\u{0\nnewline"',
+    '"random\\u{a\nnewline"',
+    "'random\\x foo'",
+    '"random\\u{a\rnewline"',
+    "'random\\u foo'",
+    "'random\\u0 foo'",
+    "'random\\u00 foo'",
+    "'random\\u0a foo'",
+    `"use strict"; (finally = x);`,
+    `"use strict"; (false = x);`,
+    `"use strict"; (if = x);`,
+    `"random\\ua\rnewline"`,
+    ` function fun() {
+      "use strict";
+             var public = 1;
+  }`,
+    ` function fun() {
+    "use strict";
+           var public = 1;
+}`,
+    `function foo() { "use strict"; with (a) b = c; }`,
+    '"use strict"; function foo() { with (a) b = c; }',
+    '"use strict"; function hello() { "\\000"; }',
+    '"use strict"; function hello() { "\\00"; }',
+    '"use strict"; function hello() { "\\0123"; }',
+    'function hello() { "use strict"; "\\000"; }',
+    'function hello() { "use strict"; "\\00"; }',
+    'function hello() { "use strict"; "\\0123"; }',
+    'function hello("\\000008") { "use strict"; }'
+  ]) {
+    it(`"use strict"; ${arg}`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; ${arg}`);
+      });
+    });
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseModule(`${arg}`);
+      });
+    });
+  }
   for (const [source, ctx, expected] of [
+    [
+      `'use strict'; foo`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw | Context.Module,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: "'use strict'",
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              raw: "'use strict'",
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 14,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 14,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `() => "use strict"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'ArrowFunctionExpression',
+              body: {
+                type: 'Literal',
+                value: 'use strict',
+                raw: '"use strict"',
+                start: 6,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              params: [],
+              async: false,
+              expression: true,
+              start: 0,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 18,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 18
+          }
+        }
+      }
+    ],
+    [
+      `"\\u0075se strict"`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"\\u0075se strict"',
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              raw: '"\\u0075se strict"',
+              start: 0,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ],
+    [
+      `function f() {
+        "use strict".foo;
+        eval = 1
+      }`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  directive: '"use strict"',
+                  expression: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'Literal',
+                      value: 'use strict',
+                      raw: '"use strict"',
+                      start: 23,
+                      end: 35,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 8
+                        },
+                        end: {
+                          line: 2,
+                          column: 20
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 36,
+                      end: 39,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 21
+                        },
+                        end: {
+                          line: 2,
+                          column: 24
+                        }
+                      }
+                    },
+                    start: 23,
+                    end: 39,
+                    loc: {
+                      start: {
+                        line: 2,
+                        column: 8
+                      },
+                      end: {
+                        line: 2,
+                        column: 24
+                      }
+                    }
+                  },
+                  start: 23,
+                  end: 40,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 8
+                    },
+                    end: {
+                      line: 2,
+                      column: 25
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'eval',
+                      start: 49,
+                      end: 53,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 8
+                        },
+                        end: {
+                          line: 3,
+                          column: 12
+                        }
+                      }
+                    },
+                    operator: '=',
+                    right: {
+                      type: 'Literal',
+                      value: 1,
+                      raw: '1',
+                      start: 56,
+                      end: 57,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 15
+                        },
+                        end: {
+                          line: 3,
+                          column: 16
+                        }
+                      }
+                    },
+                    start: 49,
+                    end: 57,
+                    loc: {
+                      start: {
+                        line: 3,
+                        column: 8
+                      },
+                      end: {
+                        line: 3,
+                        column: 16
+                      }
+                    }
+                  },
+                  start: 49,
+                  end: 57,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 8
+                    },
+                    end: {
+                      line: 3,
+                      column: 16
+                    }
+                  }
+                }
+              ],
+              start: 13,
+              end: 65,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 13
+                },
+                end: {
+                  line: 4,
+                  column: 7
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 65,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 4,
+                column: 7
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 65,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 4,
+            column: 7
+          }
+        }
+      }
+    ],
+    [
+      `"ignore me"
+      ++x`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"ignore me"',
+            expression: {
+              type: 'Literal',
+              value: 'ignore me',
+              raw: '"ignore me"',
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'x',
+                start: 20,
+                end: 21,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 8
+                  },
+                  end: {
+                    line: 2,
+                    column: 9
+                  }
+                }
+              },
+              operator: '++',
+              prefix: true,
+              start: 18,
+              end: 21,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 6
+                },
+                end: {
+                  line: 2,
+                  column: 9
+                }
+              }
+            },
+            start: 18,
+            end: 21,
+            loc: {
+              start: {
+                line: 2,
+                column: 6
+              },
+              end: {
+                line: 2,
+                column: 9
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 9
+          }
+        }
+      }
+    ],
+    [
+      `'foo';
+        "bar";`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: "'foo'",
+            expression: {
+              type: 'Literal',
+              value: 'foo',
+              raw: "'foo'",
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            start: 0,
+            end: 6,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 6
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            directive: '"bar"',
+            expression: {
+              type: 'Literal',
+              value: 'bar',
+              raw: '"bar"',
+              start: 15,
+              end: 20,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 8
+                },
+                end: {
+                  line: 2,
+                  column: 13
+                }
+              }
+            },
+            start: 15,
+            end: 21,
+            loc: {
+              start: {
+                line: 2,
+                column: 8
+              },
+              end: {
+                line: 2,
+                column: 14
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 21,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 14
+          }
+        }
+      }
+    ],
+    [
+      `"foo"/*abc
+          xyz*/"bar";`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"foo"',
+            expression: {
+              type: 'Literal',
+              value: 'foo',
+              raw: '"foo"',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            start: 0,
+            end: 5,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 5
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            directive: '"bar"',
+            expression: {
+              type: 'Literal',
+              value: 'bar',
+              raw: '"bar"',
+              start: 26,
+              end: 31,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 15
+                },
+                end: {
+                  line: 2,
+                  column: 20
+                }
+              }
+            },
+            start: 26,
+            end: 32,
+            loc: {
+              start: {
+                line: 2,
+                column: 15
+              },
+              end: {
+                line: 2,
+                column: 21
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 32,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 21
+          }
+        }
+      }
+    ],
+
+    [
+      `"use asm"; "use strict"; foo`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"use asm"',
+            expression: {
+              type: 'Literal',
+              raw: '"use asm"',
+              value: 'use asm',
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            directive: '"use strict"',
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              raw: '"use strict"',
+              start: 11,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            start: 11,
+            end: 24,
+            loc: {
+              start: {
+                line: 1,
+                column: 11
+              },
+              end: {
+                line: 1,
+                column: 24
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 25,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 25
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 25,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 25
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
+      `; 'use strict'; with ({}) {}`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'EmptyStatement',
+            start: 0,
+            end: 1,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 1
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              raw: "'use strict'",
+              start: 2,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            start: 2,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 2
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          {
+            type: 'WithStatement',
+            object: {
+              type: 'ObjectExpression',
+              properties: [],
+              start: 22,
+              end: 24,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 24
+                }
+              }
+            },
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 26,
+              end: 28,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 26
+                },
+                end: {
+                  line: 1,
+                  column: 28
+                }
+              }
+            },
+            start: 16,
+            end: 28,
+            loc: {
+              start: {
+                line: 1,
+                column: 16
+              },
+              end: {
+                line: 1,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 28,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 28
+          }
+        }
+      }
+    ],
     [
       `("use strict")`,
       Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
@@ -237,7 +1253,7 @@ describe('Miscellaneous - Directives', () => {
                 }
               }
             },
-            directive: 'use strict',
+            directive: '"use strict"',
             start: 0,
             end: 30,
             loc: {
@@ -292,7 +1308,7 @@ describe('Miscellaneous - Directives', () => {
                 }
               }
             },
-            directive: 'use strict',
+            directive: '"use strict"',
             start: 0,
             end: 13,
             loc: {
@@ -396,7 +1412,7 @@ describe('Miscellaneous - Directives', () => {
                 }
               }
             },
-            directive: 'USE STRICT',
+            directive: '"USE STRICT"',
             start: 0,
             end: 13,
             loc: {
@@ -523,7 +1539,7 @@ describe('Miscellaneous - Directives', () => {
                       }
                     }
                   },
-                  directive: 'use strict',
+                  directive: '"use strict"',
                   start: 15,
                   end: 27,
                   loc: {
@@ -660,28 +1676,108 @@ describe('Miscellaneous - Directives', () => {
         }
       }
     ]
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
-    // [`("use strict")`, Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,{}],
   ]) {
     it(source as string, () => {
       const parser = parseScript(source as string, {
+        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0,
+        directives: true,
+        raw: true
+      });
+      t.deepStrictEqual(parser, expected);
+    });
+  }
+
+  for (const [source, ctx, expected] of [
+    [
+      `'use strict'; foo`,
+      Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw | Context.Module,
+      {
+        type: 'Program',
+        sourceType: 'module',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: "'use strict'",
+            expression: {
+              type: 'Literal',
+              value: 'use strict',
+              raw: "'use strict'",
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 14,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 14,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 17,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 17
+          }
+        }
+      }
+    ]
+  ]) {
+    it(source as string, () => {
+      const parser = parseModule(source as string, {
         disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
         loc: ((ctx as any) & Context.OptionsLoc) !== 0,
         directives: true,

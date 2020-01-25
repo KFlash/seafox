@@ -26,7 +26,6 @@ export function scanStringLiteral(parser: ParserState, context: Context, source:
         if (code <= 0) handleStringError(parser, code as Escape, /* isTemplate */ 0);
         res += fromCodePoint(code);
         start = parser.index;
-        parser.isUnicodeEscape = 1;
         char = source.charCodeAt(parser.index);
       } else {
         char = readNext(parser);
@@ -132,6 +131,8 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
 
       const code = first - Chars.Zero;
 
+      parser.flags |= Flags.Octals;
+
       if (ch >= Chars.Zero && ch <= Chars.Seven) {
         let index = parser.index;
         const value = source.charCodeAt(index) - Chars.Zero;
@@ -143,8 +144,6 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
           }
         }
         parser.index = index + 1;
-
-        parser.flags |= Flags.Octals;
 
         return code * 8 + value;
       }

@@ -15,7 +15,6 @@ export const enum Context {
   OptionsDirectives = 1 << 5,
   OptionsGlobalReturn = 1 << 6,
   OptionsPreserveParens = 1 << 7,
-  AllowEscapedKeyword = 1 << 9,
   Strict = 1 << 10,
   Module = 1 << 11, // Current code should be parsed as a module body
   DisallowIn = 1 << 13,
@@ -112,7 +111,6 @@ export interface ParserState {
   line: number;
   lineBase: number;
   offset: number;
-  isUnicodeEscape: 0 | 1;
   token: Token;
   newLine: 0 | 1;
   tokenValue: any;
@@ -224,7 +222,7 @@ export function addLabel(parser: ParserState, label: any, labels: any, nestedLab
   let set = labels;
 
   while (set) {
-    if (set['#' + label]) report(parser, Errors.Unexpected);
+    if (set['#' + label]) report(parser, Errors.LabelRedeclaration);
     set = set.parentLabels;
   }
   labels = { parentLabels: labels, iterationLabels: null };

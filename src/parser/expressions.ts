@@ -2853,30 +2853,22 @@ export function parseFunctionBody(
   const savedContext = context;
 
   if (parser.token !== Token.RightBrace) {
-    let isStrictDirective: 0 | 1 = 0;
-
+    const isOctal = parser.flags & Flags.Octals;
     while (parser.token === Token.StringLiteral) {
-      const { index, start, line, column, tokenValue, isUnicodeEscape } = parser;
+      const { index, start, line, column, tokenValue } = parser;
       let expression = parseLiteral(parser, context);
+
       if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
-        isStrictDirective = 1;
         context |= Context.Strict;
-        // TC39 deemed "use strict" directives to be an error when occurring
-        // in the body of a function with non-simple parameter list, on
-        // 29/7/2015. https://goo.gl/ueA7Ln
         if (parser.flags & Flags.SimpleParameterList) report(parser, Errors.IllegalUseStrict);
-
-        //        if (parser.flags & Flags.Octals) report(parser, Errors.StrictOctalLiteral);
+        if (isOctal) report(parser, Errors.StrictOctalLiteral);
       } else {
-        isStrictDirective = 0;
-      }
-
-      if (isStrictDirective === 0) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
+
       expectSemicolon(parser, context);
 
-      body.push(parseDirectives(parser, context, isUnicodeEscape, tokenValue, expression, start, line, column));
+      body.push(parseDirectives(parser, context, index, expression, start, line, column));
     }
 
     if (context & Context.Strict) {
@@ -4640,8 +4632,7 @@ export function parseImportMetaExpression(
 export function parseDirectives(
   parser: ParserState,
   context: Context,
-  isUnicodeEscape: 0 | 1,
-  value: string,
+  end: number,
   expression: any,
   start: number,
   line: number,
@@ -4652,7 +4643,7 @@ export function parseDirectives(
       ? {
           type: 'ExpressionStatement',
           expression,
-          directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : value,
+          directive: parser.source.slice(start, end),
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
@@ -4660,7 +4651,7 @@ export function parseDirectives(
       : {
           type: 'ExpressionStatement',
           expression,
-          directive: isUnicodeEscape ? parser.source.slice(parser.start, parser.index) : value
+          directive: parser.source.slice(start, end)
         }
     : context & Context.OptionsLoc
     ? {
