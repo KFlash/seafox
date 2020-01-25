@@ -237,13 +237,30 @@ export function addLabel(parser: ParserState, label: any, labels: any, nestedLab
   return labels;
 }
 
-export function isValidBreakLabel(parser: ParserState, labels: any, label: string): 0 | 1 {
+export function checkBreakStatement(parser: ParserState, labels: any, value: string): 0 | 1 {
   if (labels === null) report(parser, Errors.Unexpected);
 
-  if (labels['#' + label]) return 1;
+  if (labels['#' + value]) return 1;
 
-  while ((labels = labels.parentLabels)) if (labels['#' + label]) return 1;
+  while ((labels = labels.parentLabels)) if (labels['#' + value]) return 1;
 
+  return 0;
+}
+
+export function checkContinueStatement(labels: any, value: string): 0 | 1 {
+  let iterationLabel: any;
+
+  while (labels) {
+    if (labels.iterationLabels) {
+      iterationLabel = labels.iterationLabels;
+      for (let i = 0; i < iterationLabel.length; i++) {
+        if (iterationLabel[i] === value) {
+          return 1;
+        }
+      }
+    }
+    labels = labels.parentLabels;
+  }
   return 0;
 }
 

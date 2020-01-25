@@ -3,6 +3,14 @@ import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - Member', () => {
+  for (const arg of ['foo\n++', 'if (foo\n++);', '++[]', '++([])', '(++[])', '++[a]', '[a]++', '[]++']) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`);
+      });
+    });
+  }
+
   for (const [source, ctx, expected] of [
     [
       `foo\n++\nbar`,
@@ -93,6 +101,327 @@ describe('Expressions - Member', () => {
         loc: {
           end: {
             column: 3,
+            line: 3
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `+a++ / 1`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'UnaryExpression',
+                operator: '+',
+                argument: {
+                  type: 'UpdateExpression',
+                  argument: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 1,
+                    end: 2,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 2
+                      }
+                    }
+                  },
+                  operator: '++',
+                  prefix: false,
+                  start: 1,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                prefix: true,
+                start: 0,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: 1,
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              operator: '/',
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 8,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 8
+          }
+        }
+      }
+    ],
+    [
+      `a++\nb`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 3,
+            expression: {
+              argument: {
+                end: 1,
+                loc: {
+                  end: {
+                    column: 1,
+                    line: 1
+                  },
+                  start: {
+                    column: 0,
+                    line: 1
+                  }
+                },
+                name: 'a',
+                start: 0,
+                type: 'Identifier'
+              },
+              end: 3,
+              loc: {
+                end: {
+                  column: 3,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              operator: '++',
+              prefix: false,
+              start: 0,
+              type: 'UpdateExpression'
+            },
+            loc: {
+              end: {
+                column: 3,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          },
+          {
+            end: 5,
+            expression: {
+              end: 5,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 2
+                },
+                start: {
+                  column: 0,
+                  line: 2
+                }
+              },
+              name: 'b',
+              start: 4,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 1,
+                line: 2
+              },
+              start: {
+                column: 0,
+                line: 2
+              }
+            },
+            start: 4,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 5,
+        loc: {
+          end: {
+            column: 1,
+            line: 2
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `a\n++\nb`,
+      Context.OptionsNext | Context.OptionsLoc,
+      {
+        body: [
+          {
+            end: 1,
+            expression: {
+              end: 1,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'a',
+              start: 0,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 1,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          },
+          {
+            end: 6,
+            expression: {
+              argument: {
+                end: 6,
+                loc: {
+                  end: {
+                    column: 1,
+                    line: 3
+                  },
+                  start: {
+                    column: 0,
+                    line: 3
+                  }
+                },
+                name: 'b',
+                start: 5,
+                type: 'Identifier'
+              },
+              end: 6,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 3
+                },
+                start: {
+                  column: 0,
+                  line: 2
+                }
+              },
+              operator: '++',
+              prefix: true,
+              start: 2,
+              type: 'UpdateExpression'
+            },
+            loc: {
+              end: {
+                column: 1,
+                line: 3
+              },
+              start: {
+                column: 0,
+                line: 2
+              }
+            },
+            start: 2,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 6,
+        loc: {
+          end: {
+            column: 1,
             line: 3
           },
           start: {

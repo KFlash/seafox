@@ -42,9 +42,9 @@ describe('Expressions - Call', () => {
   for (const arg of [
     'async(a)(b)async',
     '(a)(( async () => {}) => {})',
-    'async(async() () => {})(async() () => {})(y)(n)(c)', // crazy #1
-    'async(async() () => {})(async() () => {})(y)(n)(c)', // crazy #2
-    'async(async() () => {})(async() () => {})(async() () => {})(async() () => {})(async() () => {})' // crazy #3
+    'async(async() () => {})(async() () => {})(y)(n)(c)',
+    'async(async() () => {})(async() () => {})(y)(n)(c)',
+    'async(async() () => {})(async() () => {})(async() () => {})(async() () => {})(async() () => {})'
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {

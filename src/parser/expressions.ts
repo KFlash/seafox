@@ -2258,6 +2258,9 @@ export function parseUpdateExpression(
   if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
   const operator = KeywordDescTable[parser.token & Token.Kind] as Types.UpdateOperator;
 
+  if (arg.type !== 'Identifier' && arg.type !== 'MemberExpression') {
+    report(parser, Errors.Unexpected);
+  }
   nextToken(parser, context, /* allowRegExp */ 0);
 
   parser.assignable = 0;
@@ -2299,7 +2302,9 @@ export function parseUpdateExpressionPrefix(
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const arg = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 0);
-
+  if (arg.type !== 'Identifier' && arg.type !== 'MemberExpression') {
+    report(parser, Errors.Unexpected);
+  }
   if (parser.assignable === 0) {
     report(parser, Errors.InvalidIncDecTarget);
   }

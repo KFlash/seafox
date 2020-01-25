@@ -3,6 +3,77 @@ import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Function', () => {
+  for (const arg of [
+    '...x = []',
+    '[...[ x ] = []]',
+    '[...x = []]',
+    '[...{ x } = []]',
+    '[...[x], y]',
+    '[...x, y]',
+    '[...{ x }, y]',
+    '[...[ x ] = []] = []',
+    '[...x = []] = []',
+    '[...{ x } = []] = []',
+    '[...[x], y] = [1, 2, 3]',
+    '[...x, y] = [1, 2, 3]',
+    '[...{ x }, y] = [1, 2, 3]',
+    '...a,'
+  ]) {
+    it(`(function (${arg}) {})`, () => {
+      t.throws(() => {
+        parseScript(`(function (${arg}) {})`);
+      });
+    });
+    it(`const foo = (function (${arg}) {})`, () => {
+      t.throws(() => {
+        parseScript(`const foo = (function (${arg}) {})`);
+      });
+    });
+    it(`(function (${arg}) {})`, () => {
+      t.throws(() => {
+        parseModule(`(function (${arg}) {})`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '{...x}',
+    '{ x: y }',
+    '{ x, }',
+    '{ x: y = 33 }',
+    '{ fn = function () {}, xFn = function x() {} }',
+    '{ cover = (function () {}), xCover = (0, function() {})  }',
+    '{ arrow = () => {} }',
+    '{}',
+    '{ x: y } = { x: 23 }',
+    '{ poisoned: x = ++initEvalCount } = poisonedProperty',
+    '{ w: [x, y, z] = [4, 5, 6] } = { w: [7, undefined, ] }',
+    '{ x, } = { x: 23 }',
+    '[,] = g()',
+    '[{ u: v, w: x, y: z } = { u: 444, w: 555, y: 666 }] = []',
+    '[{ x, y, z } = { x: 44, y: 55, z: 66 }] = [{ x: 11, y: 22, z: 33 }]',
+    '[{ x, y, z } = { x: 44, y: 55, z: 66 }] = []',
+    '[x = 23] = [,]',
+    '[[...x] = [2, 1, 3]] = []',
+    '[[x, y, z] = [4, 5, 6]] = []',
+    '[ , , ...x]',
+    '[, ...x]',
+    '[,]',
+    '[{ x }]',
+    '[{ x }]',
+    '[{ u: v, w: x, y: z } = { u: 444, w: 555, y: 666 }]',
+    '[ a = b ]',
+    '[x = 23]',
+    '[[] = function() { a += 1; }()]',
+    'x = args = arguments'
+  ]) {
+    it(`(function(${arg}) {})`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`(function(${arg}) {})`);
+      });
+    });
+  }
+
   for (const [source, ctx] of [
     [`"use strict"; function package(){}`, Context.Empty],
     [`function f(...(x)){}`, Context.Empty],
@@ -22,44 +93,67 @@ describe('Expressions - Function', () => {
     ['(function([...[ x ] = []]) {})', Context.Empty],
     ['0, function(...x = []) {}', Context.Empty],
     ['0, function(...x = []) {};', Context.Empty],
-    [`let x; { var x; }`, Context.OptionsLoc],
-    [`function{}`, Context.OptionsLoc],
-    [`function(){`, Context.OptionsLoc],
-    [`var a = function()`, Context.OptionsLoc],
-    [`function test() { yield while } `, Context.OptionsLoc],
-    [`function(){}`, Context.OptionsLoc],
-    [`function a(...){}`, Context.OptionsLoc],
-    [`{ var x; } let x;`, Context.OptionsLoc],
-    [`function foo(a, a) { }`, Context.OptionsLoc | Context.Strict | Context.Module],
-    [`function foo(a) { let a; }`, Context.OptionsLoc],
-    [`function f(a, b, a, c = 10) { }`, Context.OptionsLoc],
-    [`function foo(a, b = () => a) { const b = 1; };`, Context.OptionsLoc],
-    [`(function (e) { var e; const e = undefined; });`, Context.OptionsLoc],
-    [`function x() {}const y = 4, x = 5;`, Context.OptionsLoc],
-    [`function x() {}const x = function() {};`, Context.OptionsLoc],
-    [`function f(){  for (var x;;); const x = 1  }`, Context.OptionsLoc],
-    [`{ function f(){} function f(){} }`, Context.OptionsLoc | Context.OptionsDisableWebCompat],
-    [
-      `(function() { { function* foo() {} function foo() {} } })()`,
-      Context.OptionsLoc | Context.OptionsDisableWebCompat
-    ],
-    [
-      `(function() { { async function foo() {} async function foo() {} } })()`,
-      Context.OptionsLoc | Context.OptionsDisableWebCompat
-    ]
+    [`let x; { var x; }`, Context.Empty],
+    [`function{}`, Context.Empty],
+    [`function(){`, Context.Empty],
+    [`var a = function()`, Context.Empty],
+    ['(function foo(007){ "use strict"; })', Context.Empty],
+    ['(function foo(){ "use strict"; 007 })', Context.Empty],
+    ['"use strict"; (function foo(){  007 })', Context.Empty],
+    ['(function break(){})', Context.Empty],
+    ['(function function(){})', Context.Empty],
+    ['function f(1, async = 1){}', Context.Empty],
+    ['function f("abc", async = 1){}', Context.Empty],
+    ['function f(1, async = b){}', Context.Empty],
+    ['(function implements(){})', Context.Strict],
+    ['(function public(){})', Context.Strict],
+    ['(function let(){})', Context.Strict],
+    ['(async function await(){})', Context.Empty],
+    ['(function f([...foo, bar] = obj){})', Context.Empty],
+    ['function f([...foo,,] = obj){}', Context.Empty],
+    ['function f([...[a, b],,] = obj){}', Context.Empty],
+    ['function f([...bar = foo] = obj){}', Context.Empty],
+    ['function f([... ...foo] = obj){}', Context.Empty],
+    ['function f([...] = obj){} ', Context.Empty],
+    ['function f([...,] = obj){}', Context.Empty],
+    ['function f([.x] = obj){}', Context.Empty],
+    ['function f([..x] = obj){}', Context.Empty],
+    ['function f({,} = x){} ', Context.Empty],
+    ['function f({,,} = x){}', Context.Empty],
+    ['function f({foo,,} = x){}', Context.Empty],
+    ['function f({,foo} = x){}', Context.Empty],
+    ['function f({,,foo} = x){}', Context.Empty],
+    ['function f({,,async} = await){}', Context.Empty],
+    ['function f({foo,,bar} = x){}', Context.Empty],
+    ['function f({...{a: b}}){}', Context.Empty],
+    ['function f({...a.b}){}', Context.Empty],
+    [`function test() { yield while } `, Context.Empty],
+    [`function(){}`, Context.Empty],
+    [`function a(...){}`, Context.Empty],
+    [`{ var x; } let x;`, Context.Empty],
+    [`function foo(a, a) { }`, Context.Empty | Context.Strict | Context.Module],
+    [`function foo(a) { let a; }`, Context.Empty],
+    [`function f(a, b, a, c = 10) { }`, Context.Empty],
+    [`function foo(a, b = () => a) { const b = 1; };`, Context.Empty],
+    [`(function (e) { var e; const e = undefined; });`, Context.Empty],
+    [`function x() {}const y = 4, x = 5;`, Context.Empty],
+    [`function x() {}const x = function() {};`, Context.Empty],
+    [`function f(){  for (var x;;); const x = 1  }`, Context.Empty],
+    [`{ function f(){} function f(){} }`, Context.OptionsDisableWebCompat],
+    [`(function() { { function* foo() {} function foo() {} } })()`, Context.OptionsDisableWebCompat],
+    [`(function() { { async function foo() {} async function foo() {} } })()`, Context.OptionsDisableWebCompat]
   ]) {
     it(source as string, () => {
       t.throws(() => {
         parseScript(source as string, {
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
-          module: ((ctx as any) & Context.Module) !== 0
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });
   }
 
-  const validSyntax = [
+  for (const arg of [
     '(function([[,] = function* g() {}]) {})',
     '(function([cover = (function () {}), xCover = (0, function() {})]) {})',
     '(function([fn = function () {}, xFn = function x() {}]) {})',
@@ -81,8 +175,8 @@ describe('Expressions - Function', () => {
     '(function b2(a, ...b) {})',
     'f( ({...c}=o, c) )',
     '(function fn({a = 1, ...b} = {}) {   return {a, b}; })',
-    // `(function package() { (function gave_away_the_package() { "use strict"; }) })`,
-    //`(function (eval) { (function () { "use strict"; })})`,
+    `(function package() { (function gave_away_the_package() { "use strict"; }) })`,
+    `(function (eval) { (function () { "use strict"; })})`,
     `function iceFapper(idiot) {}`,
     '(function([{ u: v, w: x, y: z } = { u: 444, w: 555, y: 666 }] = [{ u: 777, w: 888, y: 999 }]) {})',
     '(function({} = null) {})',
@@ -197,18 +291,10 @@ describe('Expressions - Function', () => {
     '(function foo([[x]]) { { function x() {}}})([[1]]);',
     // rest parameter shouldn't be shadowed
     '(function shadowingRestParameterDoesntBind(...x) { {  function x() {} } })(1);'
-  ];
-
-  for (const arg of validSyntax) {
+  ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
         parseScript(`${arg}`);
-      });
-    });
-
-    it(`${arg}`, () => {
-      t.doesNotThrow(() => {
-        parseModule(`${arg}`);
       });
     });
   }

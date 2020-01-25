@@ -42,12 +42,14 @@ import {
   consume,
   consumeOpt,
   setLoc,
-  isValidBreakLabel,
+  checkBreakStatement,
+  checkContinueStatement,
   reinterpretToPattern,
   addLabel,
   parseStatementWithLabelSet,
   isExactlyStrictDirective,
-  validateIdentifier
+  validateIdentifier,
+  Label
 } from './common';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
@@ -79,7 +81,7 @@ export function parseStatementListItem(
   scope: ScopeState,
   origin: Origin,
   labels: any,
-  nestedLabels: any
+  nestedLabels: Label[] | null
 ): Types.Statement {
   switch (parser.token) {
     case Token.FunctionKeyword:
@@ -107,7 +109,7 @@ export function parseStatement(
   scope: ScopeState,
   origin: Origin,
   labels: any,
-  nestedLabels: any,
+  nestedLabels: Label[] | null,
   allowFuncDecl: 0 | 1
 ): Types.Statement {
   // Statement ::
@@ -174,8 +176,8 @@ export function parseLabelledStatement(
   context: Context,
   scope: ScopeState,
   origin: Origin,
-  labels: string,
-  nestedLabels: any,
+  labels: Label[],
+  nestedLabels: Label[] | null,
   value: string[],
   token: Token,
   expr: any,
@@ -245,7 +247,7 @@ export function parseAsyncStatement(
   context: Context,
   scope: ScopeState,
   origin: Origin,
-  labels: string,
+  labels: Label[],
   allowFuncDecl: 0 | 1
 ): Types.AsyncDeclaration {
   const { token, tokenValue, start, line, column } = parser;
@@ -339,8 +341,8 @@ export function parseBlock(
   context: Context,
   scope: ScopeState,
   isCatchClause: 0 | 1,
-  labels: any,
-  nestedLabels: any
+  labels: Label[],
+  nestedLabels: Label[] | null
 ): Types.BlockStatement {
   // Block ::
   //   '{' StatementList '}'
@@ -881,7 +883,7 @@ export function parseDoWhileStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
+  labels: Label[],
   nestedLabel: any
 ): Types.DoWhileStatement {
   // DoStatement ::
@@ -927,8 +929,8 @@ export function parseWhileStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  nestedLabels: any
+  labels: Label[],
+  nestedLabels: Label[] | null
 ): Types.WhileStatement {
   // WhileStatement ::
   //   'while' '(' Expression ')' Statement
@@ -959,8 +961,8 @@ export function parseSwitchStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  nestedLabels: any
+  labels: Label[],
+  nestedLabels: Label[] | null
 ): Types.SwitchStatement {
   // SwitchStatement ::
   //   'switch' '(' Expression ')' '{' CaseClause* '}'
@@ -1119,19 +1121,19 @@ export function parseThrowStatement(parser: ParserState, context: Context): Type
       };
 }
 
-export function parseBreakStatement(parser: ParserState, context: Context, labels: any): Types.BreakStatement {
+export function parseBreakStatement(parser: ParserState, context: Context, labels: any[]): Types.BreakStatement {
   const { start: curStart, line: curLine, column: curColumn } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 1);
+
   let label: Types.Identifier | null = null;
-  if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) === 0) {
-    const { tokenValue, start, line, column } = parser;
 
-    nextToken(parser, context, /* allowRegExp */ 1);
-
-    label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-
-    if (isValidBreakLabel(parser, labels, tokenValue) === 0) report(parser, Errors.UnknownLabel, tokenValue);
+  if (parser.newLine === 0 && (parser.token & 0b00000000001001110000000000000000) > 0) {
+    const value = parser.tokenValue;
+    label = parseIdentifier(parser, context);
+    if (checkBreakStatement(parser, labels, value) === 0) {
+      report(parser, Errors.UnknownLabel, value);
+    }
   } else if ((context & (Context.InSwitch | Context.InIteration)) === 0) {
     report(parser, Errors.InvalidBreak);
   }
@@ -1152,37 +1154,24 @@ export function parseBreakStatement(parser: ParserState, context: Context, label
       };
 }
 
-export function parseContinueStatement(parser: ParserState, context: Context, labels: any): Types.ContinueStatement {
-  // ContinueStatement ::
-  //   'continue' Identifier? ';'
+export function parseContinueStatement(
+  parser: ParserState,
+  context: Context,
+  labels: Label[]
+): Types.ContinueStatement {
   if ((context & Context.InIteration) === 0) report(parser, Errors.IllegalContinue);
+
   const { start: curStart, line: curLine, column: curColumn } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 1);
 
   let label: Types.Identifier | null = null;
-  if (parser.newLine === 0 && (parser.token & Token.IsAutoSemicolon) !== Token.IsAutoSemicolon) {
-    const { tokenValue, start, line, column } = parser;
-    nextToken(parser, context, /* allowRegExp */ 1);
-    label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
-    let found: 0 | 1 = 0;
-    let iterationLabel: any;
-
-    l: while (labels) {
-      if (labels.iterationLabels) {
-        iterationLabel = labels.iterationLabels;
-        for (let i = 0; i < iterationLabel.length; i++) {
-          if (iterationLabel[i] === tokenValue) {
-            found = 1;
-            break l;
-          }
-        }
-      }
-      labels = labels.parentLabels;
-    }
-
-    if (found === 0) {
-      report(parser, Errors.UnknownLabel, tokenValue);
+  if (parser.newLine === 0 && (parser.token & 0b00000000001001110000000000000000) > 0) {
+    const value = parser.tokenValue;
+    label = parseIdentifier(parser, context);
+    if (checkContinueStatement(labels, value) === 0) {
+      report(parser, Errors.UnknownLabel, value);
     }
   }
   expectSemicolon(parser, context);
@@ -1205,7 +1194,7 @@ export function parseTryStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any
+  labels: Label[]
 ): Types.TryStatement {
   // TryStatement ::
   //   'try' Block Catch
@@ -1301,8 +1290,8 @@ export function parseWithStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  nestedLabels: any
+  labels: Label[],
+  nestedLabels: Label[] | null
 ): Types.WithStatement {
   // WithStatement ::
   //   'with' '(' Expression ')' Statement
@@ -1358,8 +1347,8 @@ export function parseLetIdentOrVarDeclarationStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any,
-  nestedLabels: any,
+  labels: Label[],
+  nestedLabels: Label[] | null,
   origin: Origin
 ): Types.VariableDeclaration | Types.LabeledStatement | Types.ExpressionStatement {
   const { token, tokenValue, start, line, column } = parser;
@@ -1440,8 +1429,8 @@ export function parseExpressionOrLabelledStatement(
   context: Context,
   scope: ScopeState,
   origin: Origin,
-  labels: any,
-  nestedLabels: any,
+  labels: Label[],
+  nestedLabels: Label[] | null,
   allowFuncDecl: 0 | 1
 ): Types.LabeledStatement | Types.ExpressionStatement {
   const { tokenValue, token, start, line, column } = parser;

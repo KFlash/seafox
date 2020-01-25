@@ -40,19 +40,24 @@ describe('Expressions - Group', () => {
     'true',
     'false' /*'enum',*/
   ]) {
-    it(`should fail on '(${arg}) = foo'`, () => {
+    it(`'(${arg}) = foo'`, () => {
       t.throws(() => {
         parseScript(`(${arg}) = foo`);
       });
     });
-    it(`should fail on '(${arg}) = foo'`, () => {
+    it(`"use strict"; '(${arg}) = foo'`, () => {
+      t.throws(() => {
+        parseScript(`"use strict"; (${arg}) = foo`);
+      });
+    });
+    it(`'(${arg}) = foo'`, () => {
       t.throws(() => {
         parseModule(`(${arg}) = foo`);
       });
     });
-    it(`foo = { get x(){  "use strict"; ( ${arg} = "sentinal 79845134");   }}`, () => {
+    it(`foo = { get x(){  "use strict"; ( ${arg} = "string");   }}`, () => {
       t.throws(() => {
-        parseScript(`foo = { get x(){  "use strict"; ( ${arg} = "sentinal 79845134");   }}`);
+        parseScript(`foo = { get x(){  "use strict"; ( ${arg} = "string");   }}`);
       });
     });
   }
@@ -380,7 +385,6 @@ describe('Expressions - Group', () => {
     '(x, (y)) => 0',
     '((x, y, z)) => 0',
     '(x, (y, z)) => 0',
-    '((x, y), z) => 0',
     '({[foo]: bar()} = baz)',
     '({[foo]: a + b} = baz)',
     '({[foo]: bar()}) => baz',
@@ -408,7 +412,6 @@ describe('Expressions - Group', () => {
     '()\n=>a',
     '([x.y]=z) => z',
     '({ a: (a = d) } = {})',
-    '([x]=await y)=>z',
     '(({x:y}) += x)',
     '({foo: {x:y} += x})',
     '({x:y} += x)',
@@ -544,7 +547,7 @@ describe('Expressions - Group', () => {
     'eval',
     'arguments'
   ]) {
-    it(`should fail on '(${arg} = foo )'`, () => {
+    it(`'(${arg} = foo )'`, () => {
       t.throws(() => {
         parseScript(`"use strict"; (${arg} = foo)`);
       });
@@ -576,7 +579,7 @@ describe('Expressions - Group', () => {
     '{x}.length',
     '{x: y}.length'
   ]) {
-    it(`should fail on '(${arg})=> y'`, () => {
+    it(`'(${arg})=> y'`, () => {
       t.throws(() => {
         parseScript(`(${arg})=> y`);
       });
@@ -706,19 +709,19 @@ describe('Expressions - Group', () => {
     '(...a = x,) => {}',
     '(...a = x,) => {}'
   ]) {
-    it(`should fail on '${arg}'`, () => {
+    it(`'${arg}'`, () => {
       t.throws(() => {
         parseScript(`${arg}`);
       });
     });
 
-    it(`should fail on '${arg}'`, () => {
+    it(`'${arg}'`, () => {
       t.throws(() => {
         parseModule(`${arg}`);
       });
     });
 
-    it(`should fail on '${arg}'`, () => {
+    it(`'${arg}'`, () => {
       t.throws(() => {
         parseScript(`"use strict"; ${arg}`);
       });
