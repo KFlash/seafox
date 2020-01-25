@@ -1058,9 +1058,9 @@ export function parseIfStatement(
 
   const test = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
   consume(parser, context, Token.RightParen, /* allowRegExp */ 1);
-  const consequent = parseScopedStatement(parser, context, scope, labels);
+  const consequent = parseConsequentOrAlternative(parser, context, scope, labels);
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
-    ? parseScopedStatement(parser, context, scope, labels)
+    ? parseConsequentOrAlternative(parser, context, scope, labels)
     : null;
   return context & Context.OptionsLoc
     ? {
@@ -1080,13 +1080,14 @@ export function parseIfStatement(
       };
 }
 
-export function parseScopedStatement(
+export function parseConsequentOrAlternative(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
   labels: any
 ): Types.Statement | Types.FunctionDeclaration {
-  // Disallow if in strict mode, or if the web compability is off ( B.3.2 )
+  // Disallow function declarations under if / else in strict mode, or
+  // if the web compability is off ( B.3.4 )
   return (context & 0b00000000000000000000010000010000) > 0 || parser.token !== Token.FunctionKeyword
     ? parseStatement(parser, context, scope, Origin.None, labels, null, 0)
     : parseFunctionDeclaration(parser, context, createParentScope(scope, ScopeKind.Block), 0, 0, Origin.Statement);

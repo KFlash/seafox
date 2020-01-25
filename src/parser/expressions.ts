@@ -1730,7 +1730,7 @@ export function parseArrowFunction(
   } else {
     body = parseFunctionBody(
       parser,
-      (context | 0b00010000100000000000000000000000) ^ 0b00010000100000000000000000000000,
+      (context | 0b00010000100000000010000000000000) ^ 0b00010000100000000010000000000000,
       scope,
       void 0,
       1,
@@ -2806,7 +2806,7 @@ export function parseFunctionLiteral(
 
   const body = parseFunctionBody(
     parser,
-    (context | 0b00011000000000100000000000000000) ^ 0b00011000000000100000000000000000,
+    (context | 0b00011000000000100010000000000000) ^ 0b00011000000000100010000000000000,
     createParentScope(scope, ScopeKind.FunctionBody),
     firstRestricted,
     isDecl,
@@ -2850,18 +2850,23 @@ export function parseFunctionBody(
   consume(parser, context, Token.LeftBrace, /* allowRegExp */ 1);
 
   const body: Types.Statement[] = [];
-  const savedContext = context;
 
   if (parser.token !== Token.RightBrace) {
-    const isOctal = parser.flags & Flags.Octals;
+    const isOctal = parser.flags & Flags.Octals ? 1 : 0;
+    const isStrict = context & Context.Strict ? 1 : 0;
+
     while (parser.token === Token.StringLiteral) {
       const { index, start, line, column, tokenValue } = parser;
       let expression = parseLiteral(parser, context);
-
       if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
         context |= Context.Strict;
-        if (parser.flags & Flags.SimpleParameterList) report(parser, Errors.IllegalUseStrict);
-        if (isOctal) report(parser, Errors.StrictOctalLiteral);
+        if (parser.flags & Flags.SimpleParameterList) {
+          report(parser, Errors.IllegalUseStrict);
+        }
+
+        if (isOctal === 1) {
+          report(parser, Errors.StrictOctalLiteral);
+        }
       } else {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
@@ -2872,6 +2877,10 @@ export function parseFunctionBody(
     }
 
     if (context & Context.Strict) {
+      if (isStrict === 0 && scopeError && (context & Context.InGlobal) === 0) {
+        reportScopeError(scopeError);
+      }
+
       if (firstRestricted) {
         if ((firstRestricted & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
           report(parser, Errors.StrictEvalArguments);
@@ -2879,9 +2888,6 @@ export function parseFunctionBody(
         if ((firstRestricted & Token.FutureReserved) === Token.FutureReserved) {
           report(parser, Errors.UnexpectedStrictReserved);
         }
-      }
-      if (scopeError && (savedContext & Context.Strict) === 0 && (context & Context.InGlobal) === 0) {
-        reportScopeError(scopeError);
       }
 
       if ((parser.flags & Flags.StrictEvalArguments) === Flags.StrictEvalArguments) {
@@ -2895,16 +2901,7 @@ export function parseFunctionBody(
     parser.flags = (parser.flags | 0b00000000000000000000110011100000) ^ 0b00000000000000000000110011100000;
 
     while ((parser.token as Token) !== Token.RightBrace) {
-      body.push(
-        parseStatementListItem(
-          parser,
-          (context | Context.DisallowIn) ^ Context.DisallowIn,
-          scope,
-          Origin.TopLevel,
-          null,
-          null
-        )
-      );
+      body.push(parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null));
     }
   }
   consume(parser, context, Token.RightBrace, isDecl === 1 ? 1 : 0);
@@ -3347,6 +3344,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
   }
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
+  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
   return context & Context.OptionsLoc
     ? {
