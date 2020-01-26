@@ -2198,8 +2198,6 @@ export function parseNullOrTrueOrFalseLiteral(
 }
 
 export function parseLiteral(parser: ParserState, context: Context): any {
-  if (context & Context.Strict && (parser.flags & Flags.Octals) === Flags.Octals)
-    report(parser, Errors.StrictOctalLiteral);
   const { tokenValue, start, line, column, index } = parser;
 
   parser.assignable = 0;
@@ -4444,14 +4442,14 @@ export function parseSpreadOrRestElement(
 
       return context & Context.OptionsLoc
         ? {
-            type: isPattern ? 'RestElement' : 'SpreadElement',
+            type: 'SpreadElement',
             argument,
             start: curStart,
             end: parser.endIndex,
             loc: setLoc(parser, curLine, curColumn)
           }
         : {
-            type: isPattern ? 'RestElement' : 'SpreadElement',
+            type: 'SpreadElement',
             argument
           };
     }

@@ -108,7 +108,7 @@ export function parseStatement(
   context: Context,
   scope: ScopeState,
   origin: Origin,
-  labels: any,
+  labels: Label[],
   nestedLabels: Label[] | null,
   allowFuncDecl: 0 | 1
 ): Types.Statement {
@@ -178,7 +178,7 @@ export function parseLabelledStatement(
   origin: Origin,
   labels: Label[],
   nestedLabels: Label[] | null,
-  value: string[],
+  value: string,
   token: Token,
   expr: any,
   allowFuncDecl: 0 | 1,
@@ -418,7 +418,7 @@ export function parseForStatementWithVariableDeclarations(
   context: Context,
   scope: ScopeState,
   isAwait: false | 0 | 1,
-  labels: string,
+  labels: Label[],
   curStart: number,
   curLine: number,
   curColumn: number
@@ -708,7 +708,7 @@ export function parseForStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any
+  labels: Label[]
 ): Types.ForStatement | Types.ForInStatement | Types.ForOfStatement {
   const { start: curStart, line: curLine, column: curColumn } = parser;
 
@@ -1048,7 +1048,7 @@ export function parseIfStatement(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any
+  labels: Label[]
 ): Types.IfStatement {
   // IfStatement ::
   //   'if' '(' Expression ')' Statement ('else' Statement)?
@@ -1086,7 +1086,7 @@ export function parseConsequentOrAlternative(
   parser: ParserState,
   context: Context,
   scope: ScopeState,
-  labels: any
+  labels: Label[]
 ): Types.Statement | Types.FunctionDeclaration {
   // Disallow function declarations under if / else in strict mode, or
   // if the web compability is off ( B.3.4 )
@@ -1121,7 +1121,7 @@ export function parseThrowStatement(parser: ParserState, context: Context): Type
       };
 }
 
-export function parseBreakStatement(parser: ParserState, context: Context, labels: any[]): Types.BreakStatement {
+export function parseBreakStatement(parser: ParserState, context: Context, labels: Label[]): Types.BreakStatement {
   const { start: curStart, line: curLine, column: curColumn } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 1);
@@ -1129,10 +1129,11 @@ export function parseBreakStatement(parser: ParserState, context: Context, label
   let label: Types.Identifier | null = null;
 
   if (parser.newLine === 0 && (parser.token & 0b00000000001001110000000000000000) > 0) {
-    const value = parser.tokenValue;
-    label = parseIdentifier(parser, context);
-    if (checkBreakStatement(parser, labels, value) === 0) {
-      report(parser, Errors.UnknownLabel, value);
+    const { tokenValue, start, line, column } = parser;
+    nextToken(parser, context, 1);
+    label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+    if (checkBreakStatement(parser, labels, tokenValue) === 0) {
+      report(parser, Errors.UnknownLabel, tokenValue);
     }
   } else if ((context & (Context.InSwitch | Context.InIteration)) === 0) {
     report(parser, Errors.InvalidBreak);
@@ -1168,10 +1169,11 @@ export function parseContinueStatement(
   let label: Types.Identifier | null = null;
 
   if (parser.newLine === 0 && (parser.token & 0b00000000001001110000000000000000) > 0) {
-    const value = parser.tokenValue;
-    label = parseIdentifier(parser, context);
-    if (checkContinueStatement(labels, value) === 0) {
-      report(parser, Errors.UnknownLabel, value);
+    const { tokenValue, start, line, column } = parser;
+    nextToken(parser, context, 1);
+    label = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+    if (checkContinueStatement(labels, tokenValue) === 0) {
+      report(parser, Errors.UnknownLabel, tokenValue);
     }
   }
   expectSemicolon(parser, context);
@@ -1437,9 +1439,9 @@ export function parseExpressionOrLabelledStatement(
 
   let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, /* allowLHS */ 1, 1, 0, start, line, column);
 
-  if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.Unexpected);
+  if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.RestricedLetProduction);
 
-  if (parser.token === Token.Colon) {
+  if ((token & 0b00000000001001010000000000000000) > 0 && parser.token === Token.Colon) {
     return parseLabelledStatement(
       parser,
       context,

@@ -2,7 +2,7 @@ import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
-describe('Miscellaneous - Comments', () => {
+describe('Miscellaneous - HTML comments', () => {
   for (const [source, ctx, expected] of [
     [
       `/* not comment*/; i-->0`,

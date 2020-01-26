@@ -113,7 +113,8 @@ export const enum Errors {
   UnterminatedTemplateExpr,
   EscapedKeyword,
   InvalidForAwait,
-  InvalidAwaitAsyncArg
+  InvalidAwaitAsyncArg,
+  RestricedLetProduction
 }
 
 /*@internal*/
@@ -121,6 +122,7 @@ export const errorMessages: {
   [key: string]: string;
 } = {
   [Errors.InvalidForAwait]: 'for await (... of ...) is only valid in async functions and async generators',
+  [Errors.RestricedLetProduction]: '`let \n [` is a restricted production at the start of a statement',
   [Errors.InvalidAwaitAsyncArg]: "Invalid use of 'await' as an argument name",
   [Errors.EscapedKeyword]: 'Unexpected escaped keyword',
   [Errors.StrictInvalidLetInExprPos]: "The identifier 'let' must not be in expression position in strict mode",
