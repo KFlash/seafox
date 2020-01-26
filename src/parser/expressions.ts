@@ -1099,6 +1099,8 @@ export function parseAsyncArrow(
     report(parser, Errors.UnexpectedStrictReserved);
   }
 
+  parser.flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
+
   const scope = createParentScope(
     {
       parent: void 0,
