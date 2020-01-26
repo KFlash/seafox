@@ -161,7 +161,439 @@ describe('Expressions - Object', () => {
         parseScript(`x = ${arg}`);
       });
     });
+
+    it(`x = ${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`x = ${arg}`);
+      });
+    });
   }
+
+  for (const arg of [
+    'm',
+    "'m'",
+    '"m"',
+    '"m n"',
+    'true',
+    'false',
+    'null',
+    '1.2',
+    '1e1',
+    '1E1',
+    '.12e3',
+
+    // Keywords
+    'async',
+    'await',
+    'break',
+    'case',
+    'catch',
+    'class',
+    'const',
+    'continue',
+    'debugger',
+    'default',
+    'delete',
+    'do',
+    'else',
+    'enum',
+    'export',
+    'extends',
+    'finally',
+    'for',
+    'function',
+    'if',
+    'implements',
+    'import',
+    'in',
+    'instanceof',
+    'interface',
+    'let',
+    'new',
+    'package',
+    'private',
+    'protected',
+    'public',
+    'return',
+    'static',
+    'super',
+    'switch',
+    'this',
+    'throw',
+    'try',
+    'typeof',
+    'var',
+    'void',
+    'while',
+    'with',
+    'yield'
+  ]) {
+    it(`({ ${arg}(x, y) {}});`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`({ ${arg}(x, y) {}});`);
+      });
+    });
+
+    it(`({ ${arg}(x, y) {}});`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`({ ${arg}(x, y) {}});`, {
+          disableWebCompat: true
+        });
+      });
+    });
+  }
+
+  // Object assignment
+  for (const arg of [
+    '{ x: x[yield] }',
+    '{ x: [ x ] }',
+    '{ x: [x = yield] } ',
+    '{ x: { x = yield } }',
+    '{ x: { y } }',
+    '{...rest}',
+    '{...x} ',
+    '{...rest["0"]}',
+    '{...src.y}',
+    '{...src.y.x}',
+    '{...rest}',
+    '{ a: c }',
+    '{ a: c }',
+    '{ a: { a: { a: c } } }',
+    '{ x: { x } }',
+    '{ ["x" + "y"]: x }',
+    '{ a: x, }',
+    ' { x: [ x ] } = { x: undefined }',
+    '{ w, a: x, y }',
+    '{ w, a: x }',
+    '{ x: prop = "x" in {} }',
+    ' { x: y = function* x() {}, x: gen = function*() {} }',
+    '{ x: y = function x() {}, x: fn = function() {} }',
+    '{ x: y = class x {}, x: cls = class {}, x: e = class { static name() {} } }',
+    '{ x: arrow = () => {} }',
+    '{ y: x = 1 }',
+    '{ c }',
+    '{ y = function x() {}, fn = function() {} } ',
+    '{ x = 1 }',
+    '{ w, x, y }',
+    '{}',
+    '{ w, x, y }',
+    '{ w, x = b, y }',
+    '{ w, x, y = c }',
+    '{ w, x, y = a ? x : b }'
+  ]) {
+    it(`a = ${arg} = b`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = b`);
+      });
+    });
+    it(`a = ${arg} = { a: 2 };`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = { a: 2 };`);
+      });
+    });
+    it(`a = ${arg} = 51`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = 51`);
+      });
+    });
+    it(`a = ${arg} = false`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = false`);
+      });
+    });
+    it(`a = ${arg} = { x: { y: 2 } };`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = { x: { y: 2 } };`);
+      });
+    });
+    it(`a = ${arg} = { x: null }`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = { x: null }`);
+      });
+    });
+    it(`a = ${arg} = {};`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = {};`);
+      });
+    });
+    it(`a = ${arg} = { x: [] };`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = { x: [] };`);
+      });
+    });
+    it(`a = ${arg} = { 1: [] = [(a = b)] };`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`a = ${arg} = { 1: [] = [(a = b)] };`);
+      });
+    });
+  }
+
+  for (const arg of [
+    '*method(a,) {}',
+    '*[anonSym]() {}',
+    '*id() {}',
+    'async method(a,) {}',
+    'async method(x, y = x, z = y) {}',
+    'async() {}',
+    '*async() {}',
+    '*await() {}',
+    'async get(){}',
+    'async set(){}',
+    'async static(){}',
+    'method(a, b, c) {}',
+    'method(a,) {}',
+    'method(a, b,) {}',
+    'method(x = y, y) {}',
+    'async *method(...a) {}',
+    'foo: 1, foo: 2',
+    '"foo": 1, "foo": 2',
+    'foo: 1, "foo": 2',
+    '1: 1, 1: 2',
+    '1: 1, "1": 2',
+    'foo: 1, get foo() {}',
+    'foo: 1, set foo(v) {}',
+    '"foo": 1, get "foo"() {}',
+    '"foo": 1, set "foo"(v) {}',
+    '1: 1, get 1() {}',
+    '1: 1, set 1(v) {}',
+    'get foo() {}, get foo() {}',
+    'set foo(_) {}, set foo(v) {}',
+    'foo: 1, get "foo"() {}',
+    'foo: 1, set "foo"(v) {}',
+    '"foo": 1, get foo() {}',
+    '"foo": 1, set foo(v) {}',
+    '1: 1, get "1"() {}',
+    '1: 1, set "1"(v) {}',
+    '"a":a',
+    '1:a',
+    '"1":a',
+    '"a":a,b',
+    `a:a,b,c`,
+    '1:a,b',
+    '"1":a,b',
+    'a,"b":b',
+    'a,1:b',
+    'a,"1":b',
+    'a,b',
+    'a:a,b',
+    'a,b:b',
+    'a:a,b,c',
+    'a,b:b,c',
+    'a,b,c:c',
+    'a:a,b:b,c',
+    'a:a,b,c:c',
+    'a,b:b,c:c',
+    '"1": 1, get 1() {}',
+    '"1": 1, set 1(v) {}',
+    'foo: 1, bar: 2',
+    '"foo": 1, "bar": 2',
+    '1: 1, 2: 2',
+    'foo: bar = 5 + baz',
+    'get foo() {}',
+    'get "foo"() {}',
+    'get 1() {}',
+    'set foo(v) {}',
+    'set "foo"(v) {}',
+    'set 1(v) {}',
+    'if: 4',
+    'interface: 5',
+    'super: 6',
+    'eval: 7',
+    'arguments: 8',
+    'async x(){}',
+    'async 0(){}',
+    'async get(){}',
+    'async set(){}',
+    'async static(){}',
+    'async async(){}',
+    'async : 0',
+    'async(){}',
+    '*async(){}',
+    'get: 1, get: 2',
+    'set: 1, set: 2',
+    'async',
+    'await',
+    'async *method(a, b,) {}',
+    'async *method(a, async,) {}',
+    'async *method(x, y = x, z = y) {}',
+    'async *method(x = y, y) {}',
+    'prop: 12',
+    'get foo(){return 1;}',
+    'get foo(){return 1;}',
+    'set foo(arg){return 1;}',
+    'set foo(arg){}',
+    '1 : true',
+    'prop : true',
+    'true : 1',
+    "get ['unicod\\u{000065}Escape']() { return 'get string'; }",
+    '[++counter]: ++counter, [++counter]: ++counter, [++counter]: ++counter, [++counter]: ++counter',
+    'async: foo',
+    'await: foo',
+    '*method([[x, y, z] = [4, 5, 6]]) {}',
+    '*method([[x, async, z] = [4, 5, 6]]) {}',
+    'async *method([[,] = g()]) {}',
+    'async *method([x = 23]) {}',
+    'async *method([x]) {}',
+    'async *method([_, x]) {}',
+    'async *method([...[x, y, z]]) {}',
+    'async *method([...x]) {}',
+    'async *method([[x, y, z] = [4, 5, 6]] = [[7, 8, 9]]) {}',
+    'async *method([[...x] = function() {}()] = [[2, 1, 3]]) {}',
+    'async *method([[x]] = [null]) {}',
+    'async *method([x = 23] = [undefined]) {}',
+    'async *method([x] = g[Symbol.iterator] = function() {}) {}',
+    'async *method([...x] = {}) {}',
+    'async *method([...async] = {}) {}',
+    'async *method({ w: [x, y, z] = [4, 5, 6] } = {}) {}',
+    'async *method({ [function foo() {}]: x } = {}) {}',
+    'async *method({ x: y = thrower() } = {}) {}',
+    'foo: 1, get foo() {}',
+    'foo: 1, set foo(v) {}',
+    '"foo": 1, get "foo"() {}',
+    '"foo": 1, set "foo"(v) {}',
+    '1: 1, get 1() {}',
+    '1: 1, set 1(v) {}',
+    'get foo() {}, get foo() {}',
+    'set foo(_) {}, set foo(v) {}',
+    'foo: 1, get "foo"() {}',
+    'foo: 1, set "foo"(v) {}',
+    'get width() { return m_width }, set width(width) { m_width = width; }',
+    'method({ arrow = () => {} }) {}',
+    'method({ x: y, }) {}',
+    'id: function*() {}',
+    'null: 42',
+    '"answer": 42',
+    'get if() {}',
+    '__proto__: 2 ',
+    'set i(x) {}, i: 42 ',
+    '[a]:()=>{}',
+    'async',
+    'async: true',
+    'async() { }',
+    'async foo() { }',
+    'foo() { }',
+    'x, y, z () {}',
+    '[x]: "x"',
+    'async delete() {}',
+    'async [foo](){}',
+    'async 100(){}',
+    "async 'foo'(){}",
+    'async "foo"(){}',
+    'async, foo',
+    '.9(){}, 0x84(){}, 0b1(){}, 0o27(){}, 1e234(){}',
+    '"foo"(){}',
+    'async foo(){}',
+    ' yield: 1 ',
+    ' get yield() { } ',
+    ' await: 1 ',
+    ' get await() { } ',
+    '1: 1, get "1"() {}',
+    '1: 1, set "1"(v) {}',
+    '"1": 1, get 1() {}',
+    '"1": 1, set 1(v) {}',
+    'foo: 1, bar: 2',
+    '"foo": 1, "bar": 2',
+    '1: 1, 2: 2',
+    'get foo() {}',
+    'get "foo"() {}',
+    'get 1() {}',
+    'set foo(v) {}',
+    'set "foo"(v) {}',
+    'set 1(v) {}',
+    'foo: 1, get bar() {}',
+    'foo: 1, set bar(v) {}',
+    '"foo": 1, get "bar"() {}',
+    '"foo": 1, set "bar"(v) {}',
+    '1: 1, get 2() {}',
+    '1: 1, set 2(v) {}',
+    'get: 1, get foo() {}',
+    'set: 1, set foo(_) {}',
+    'get(){}',
+    'set(){}',
+    'static(){}',
+    'async(){}',
+    '*get() {}',
+    '*set() {}',
+    '*static() {}',
+    '*async(){}',
+    'get : 0',
+    'set : 0',
+    'static : 0',
+    'async : 0',
+    'set get(a){}',
+    'set foo(b){}, set bar(d){}',
+    'set foo(c){}, bar(){}',
+    'foo: typeof x',
+    'foo: true / false',
+    ' ...y ',
+    ' a: 1, ...y ',
+    ' b: 1, ...y ',
+    ' y, ...y',
+    ' ...z = y',
+    ' ...y, y ',
+    ' ...y, ...y',
+    ' a: 1, ...y, b: 1',
+    ' ...y, b: 1',
+    ' ...1',
+    ' ...null',
+    ' ...undefined',
+    ' ...1 in {}',
+    ' ...[]',
+    ' ...async function() { }',
+    ' ...async () => { }',
+    '...obj',
+    '...obj',
+    'async: {a: b}',
+    '"foo": {a: b}',
+    '"foo": [a]',
+    '"foo": ({a: b})',
+    '"foo": [a]',
+    '"foo": 123',
+    '"foo": [a]',
+    '"foo": [async]',
+    '"foo": {x} = "bar"',
+    '"foo": [x] = "bar"',
+    '"foo": (x) = "bar"',
+    '"foo": (x) = async',
+    'key: bar = x',
+    'key: bar + x',
+    'key: bar.foo = x',
+    'key: bar.foo + x',
+    'key: bar.foo + x',
+    'async: async.await + x',
+    'key: await /foo/g',
+    'key: bar/x',
+    'key: bar, foo: zoo',
+    'x:y} = { ',
+    '} = {',
+    'x = 1} = {',
+    'x, y = 1, z = 2} = {',
+    'a: [b = 1, c = 2][1]} = {a:[]',
+    'a: [b = 1, c = 2].b} = {a:[]',
+    'async'
+  ]) {
+    it(`({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`({ ${arg} })`);
+      });
+    });
+    it(`({ ${arg} }) = {}`, () => {
+      t.throws(() => {
+        parseScript(`({ ${arg} }) = {}`);
+      });
+    });
+    it(`({ ${arg} }) = {}`, () => {
+      t.throws(() => {
+        parseModule(`({ ${arg} }) = {}`);
+      });
+    });
+    it(`"use strict"; ({ ${arg} })`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`"use strict"; ({ ${arg} })`);
+      });
+    });
+  }
+
   for (const [source, ctx] of [
     ['({y={x={}={}={}={}={}={}={}={}}={}}),', Context.Empty],
     ['({a=1, b=2, c=3, x=({}={})}),', Context.Empty],
@@ -295,6 +727,65 @@ describe('Expressions - Object', () => {
     ['({x: {..} = y})', Context.Empty],
     ['({x: [..]})', Context.Empty],
     ['({x: {..}})', Context.Empty],
+    ['({ async get : 0 }', Context.Empty],
+    ['({get +:3})', Context.Empty],
+    ['({*x: 0})', Context.Empty],
+    ['({[fgrumpy] 1(){}})', Context.Empty],
+    ['({ *x: 0 })', Context.Empty],
+    ['({ , })', Context.Empty],
+    ['({ * *x(){} })', Context.Empty],
+    ['({ a: () {}a })', Context.Empty],
+    ['({ a: ()a })', Context.Empty],
+    ['({async async});', Context.Empty],
+    ['({async set foo(value) { }})', Context.Empty],
+    ['({async foo: 1});', Context.Empty],
+    ['({async set foo(){}});', Context.Empty],
+    ['({x:y;a:b})', Context.Empty],
+    ['({x:y;})', Context.Empty],
+    ['({;x:y,a:b})', Context.Empty],
+    ['({;}', Context.Empty],
+    ['wrap({a=b});', Context.Empty],
+    ['{ 1: {} [a] }', Context.Empty],
+    ['{ 1: {} = a }', Context.Empty],
+    ['{ 1: {} + a }', Context.Empty],
+    ['{ 1: {} /- a }', Context.Empty],
+    ['{ 1: {} ? a : b }', Context.Empty],
+    ['{ 1: [] [a] }', Context.Empty],
+    ['{ 1: [] = a }', Context.Empty],
+    ['s = {"foo": false = x} = x', Context.Empty],
+    ['s = {"foo": null = x} = x', Context.Empty],
+    ['s = {"foo": this = x} = x', Context.Empty],
+    ['s = {"foo": super = x} = x', Context.Empty],
+    ['s = {"foo": yield = x} = x', Context.Strict],
+    ['s = {"foo": yield a = x} = x', Context.Empty],
+    ['s = {"foo": yield /fail/g = x} = x', Context.Empty],
+    ['function *g() {   s = {"foo": yield = x} = x   }', Context.Empty],
+    ['function *g() {   s = {"foo": yield a = x} = x   }', Context.Empty],
+    ['s = {"foo": await a = x} = x', Context.Empty],
+    ['s = {"foo": await /fail/g = x} = x', Context.Empty],
+    ['async function g() {   s = {"foo": await = x} = x   }', Context.Empty],
+    ['async function g() {   s = {"foo": await a = x} = x   }', Context.Empty],
+    ['async function g() {   s = {"foo": await /brains/ = x} = x   }', Context.Empty],
+    ['s = {"foo": true = x}', Context.Empty],
+    ['s = {"foo": yield / x}', Context.Strict],
+    ['s = {"foo": yield}', Context.Strict],
+    ['s = {"foo": yield /x/}', Context.Strict],
+    ['s = {"foo": yield /x/g}', Context.Strict],
+    ['s = {"foo": yield / x}', Context.Strict],
+    ['function *f(){   s = {"foo": yield / x}   }', Context.Empty],
+    ['s = {"foo": this = x} = x', Context.Empty],
+    ['({"x": y+z} = x)', Context.Empty],
+    ['({"x": y+z}) => x', Context.Empty],
+
+    ['({ , })', Context.Empty],
+    ['({ * *x(){} })', Context.Empty],
+    ['({get +:3})', Context.Empty],
+    ['({*x: 0})', Context.Empty],
+    ['({[fgrumpy] 1(){}})', Context.Empty],
+    ['({ *x: 0 })', Context.Empty],
+    ['({ , })', Context.Empty],
+    ['({ * *x(){} })', Context.Empty],
+
     ['({[foo]-(a) {}})', Context.Empty],
     ['({a: b => []} = [2])', Context.Empty],
     ['({b => []} = [2])', Context.Empty],
@@ -489,7 +980,6 @@ describe('Expressions - Object', () => {
     ['({set a([a.b]){}})', Context.Empty],
     ['({*a([a.b]){}})', Context.Empty],
     ['({Object = 0, String = 0}) = {};', Context.Empty],
-    ['({a, b}) = {a: 1, b:2}', Context.Empty],
     ['({a, b}) = {a: 1, b:2}', Context.Empty],
     ['"use\\040strict";', Context.Strict],
     ['var x = 012;', Context.Strict],

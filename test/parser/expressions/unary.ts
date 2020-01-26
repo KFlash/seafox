@@ -1,8 +1,35 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
+import { parseScript, parseModule } from '../../../src/seafox';
 
 describe('Expressions - Unary', () => {
+  for (const arg of [
+    'delete {}.x',
+    'typeof x === "undefined"',
+    'delete o["y"]',
+    'delete Number(7)',
+    'delete ((x) => x)',
+    'delete ((x) => x).foo',
+    'delete new Number(8)',
+    'delete a[2]',
+    'delete false;',
+    'delete null;',
+    'delete this;',
+    'delete true;',
+    'delete o[Math.pow(2,30)]'
+  ]) {
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseScript(`${arg}`);
+      });
+    });
+    it(`${arg}`, () => {
+      t.doesNotThrow(() => {
+        parseModule(`${arg}`);
+      });
+    });
+  }
+
   for (const arg of [
     'new - x.x',
     'new - x()',
@@ -35,6 +62,9 @@ describe('Expressions - Unary', () => {
     '! async({a = 1}, {b = 2}, {c = 3} = {});',
     '! async({a = 1}, {b = 2} = {}, {c = 3} = {});',
     '! async({a = 1});',
+    '(((x)))\n++;',
+    'function *f() { delete yield; }',
+    'if (a\n++\nb);',
     'async function f(){   async function fh({x: ! await x}) {}   }',
     'async function f(){   function fh([! await x]) { }   }',
     'async function f(){   function fh({x: ! await x}) { "use strict"; }   }',
@@ -49,6 +79,61 @@ describe('Expressions - Unary', () => {
     it(`${arg}`, () => {
       t.throws(() => {
         parseScript(`${arg}`);
+      });
+    });
+  }
+
+  for (const arg of [
+    'delete ("x"[(yield)])',
+    'delete (((((foo(yield)))))).bar',
+    'delete yield.foo',
+    'delete async \n (...) => x',
+    'delete async; () => x;',
+    '(delete (((x))) \n x)',
+    'delete (async \n () => x)',
+    'delete async (x) => y',
+    'delete ((a)) => b)',
+    'delete (((x)) => x)',
+    'delete ()=>bar',
+    'typeof async({a = 1}, {b = 2}, {c = 3} = {});',
+    'typeof async({a = 1}, {b = 2} = {}, {c = 3} = {});',
+    'typeof async({a = 1});',
+    'delete x',
+    'delete foo[await x]',
+    'delete foo[yield x]',
+    'delete foo=>bar',
+    'delete (foo)=>bar',
+    'delete x\nfoo',
+    'delete (x)\n/f/',
+    'delete x\n/f/',
+    'delete x\nfoo',
+    'delete x',
+    'delete ((true)++)',
+    '(async () \n ++)',
+    'delete ((foo) \n ++)',
+    '(foo \n ++)',
+    'delete ((((true)))=x)',
+    'delete ((true)=x)',
+    'delete ()=b',
+    'delete ((()=b))',
+    'delete ([foo].bar)=>b)',
+    'delete ((a))=>b)',
+    'delete (a + b)=>b)',
+    'delete foo => x;',
+    'delete (foo) => x;',
+    'delete (((foo)));',
+    'delete foo'
+  ]) {
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseScript(`${arg}`, {
+          impliedStrict: true
+        });
+      });
+    });
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseModule(`${arg}`);
       });
     });
   }

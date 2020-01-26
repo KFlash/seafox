@@ -4052,7 +4052,7 @@ export function parseObjectLiteralOrPattern(
 
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
-              mutualFlag = parser.assignable === 0 ? mutualFlag | Flags.NotDestructible : 0;
+              mutualFlag = Flags.Empty;
 
               if ((parser.token & Token.IsAssignOp) === Token.IsAssignOp) {
                 if (parser.token !== Token.Assign) mutualFlag |= Flags.NotDestructible;
@@ -4200,14 +4200,10 @@ export function parseObjectLiteralOrPattern(
 
             mutualFlag = parser.flags;
 
-            parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
-
             if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
-              mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
+              // TODO
             } else if ((parser.flags & Flags.MustDestruct) !== Flags.MustDestruct) {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
-
-              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
               if ((parser.token & Token.IsAssignOp) > 0) {
                 value = parseAssignmentOrPattern(
@@ -4229,7 +4225,7 @@ export function parseObjectLiteralOrPattern(
                 if ((parser.token as Token) === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
-                mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+                mutualFlag |= (parser.assignable as 0 | 1) === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
               }
             }
           } else {
@@ -4244,10 +4240,9 @@ export function parseObjectLiteralOrPattern(
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
-              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
+              mutualFlag = Flags.Empty;
 
               if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBrace) {
-                mutualFlag |= (parser.token as Token) !== Token.Assign ? Flags.NotDestructible : 0;
                 value = parseAssignmentExpression(parser, context, isPattern, 0, value, start, line, column);
               }
             }
