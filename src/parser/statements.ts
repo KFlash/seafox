@@ -52,7 +52,7 @@ import {
   Label
 } from './common';
 
-export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
+export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): any {
   const statements: Types.Statement[] = [];
 
   while (parser.token === Token.StringLiteral) {
@@ -220,11 +220,11 @@ export function parseLabelledStatement(
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
-    : {
+    : ({
         type: 'LabeledStatement',
         label: expr,
         body
-      };
+      } as any);
 }
 
 export function parseImportDeclaration(parser: ParserState, context: Context): any {
@@ -368,10 +368,10 @@ export function parseBlock(
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
-    : {
+    : ({
         type: 'BlockStatement',
         body
-      };
+      } as any);
 }
 export function parseEmptyStatement(parser: ParserState, context: Context): Types.EmptyStatement {
   const { start, line, column } = parser;
@@ -793,13 +793,13 @@ export function parseForStatement(
           end: parser.endIndex,
           loc: setLoc(parser, curLine, curColumn)
         }
-      : {
+      : ({
           type: 'ForOfStatement',
           body,
           left: init,
           right,
           await: isAwait === 1
-        };
+        } as any);
   }
 
   if (parser.token === Token.InKeyword) {
@@ -918,11 +918,11 @@ export function parseDoWhileStatement(
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
-    : {
+    : ({
         type: 'DoWhileStatement',
         body,
         test
-      };
+      } as any);
 }
 
 export function parseWhileStatement(

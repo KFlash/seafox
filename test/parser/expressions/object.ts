@@ -1112,8 +1112,7 @@ describe('Expressions - Object', () => {
       t.throws(() => {
         parseScript(source as string, {
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
-          module: ((ctx as any) & Context.Module) !== 0
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });
@@ -1127,8 +1126,7 @@ describe('Expressions - Object', () => {
       t.throws(() => {
         parseModule(source as string, {
           disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-          impliedStrict: ((ctx as any) & Context.Strict) !== 0,
-          module: ((ctx as any) & Context.Module) !== 0
+          impliedStrict: ((ctx as any) & Context.Strict) !== 0
         });
       });
     });
