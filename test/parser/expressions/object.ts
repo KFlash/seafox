@@ -625,6 +625,8 @@ describe('Expressions - Object', () => {
     ['({e=[]}==(;', Context.Empty],
     ['({x=1}[-1]);', Context.Empty],
     ['({x=y}[-9])', Context.Empty],
+    ['x={async * [foo]""', Context.Empty],
+    ['let x = {[async () => x!: z}', Context.Empty],
     ['({set a(package=foo){}})', Context.Strict],
     ['({set a(package=foo){ "use strict"; }})', Context.Empty],
     ['({x=y}.x.z[-9])', Context.Empty],
