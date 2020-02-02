@@ -38,7 +38,7 @@ export type Node =
   | Pattern
   | VariableDeclarator;
 
-export interface _Statement<T extends string> extends _Node<T> {}
+export type _Statement = _Node<T>;
 
 export interface T_Statement extends T_Declaration {
   ExpressionStatement: ExpressionStatement;
@@ -101,7 +101,7 @@ export type Statement =
   | ForOfStatement
   | Declaration;
 
-export interface _Expression<T extends string> extends _Node<T> {}
+export type _Expression = _Node<T>;
 export interface T_Expression {
   Identifier: Identifier;
   Literal: Literal | RegExpLiteral | BigIntLiteral;
@@ -164,7 +164,7 @@ export type Expression =
 export type ForInitialiser = Expression | VariableDeclaration;
 export type ImportClause = ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier;
 export type IterationStatement = DoWhileStatement | ForInStatement | ForOfStatement | ForStatement | WhileStatement;
-export interface _Pattern<T extends string> extends _Node<T> {}
+export type _Pattern = _Node<T>;
 
 export type DestructuringPattern =
   | Identifier
@@ -174,7 +174,7 @@ export type DestructuringPattern =
   | AssignmentPattern
   | MemberExpression;
 export type Pattern = Identifier | ObjectPattern | ArrayPattern | AssignmentPattern | RestElement;
-export interface _Declaration<T extends string> extends _Statement<T> {}
+export type _Declaration = _Statement<T>;
 export interface T_Declaration {
   FunctionDeclaration: FunctionDeclaration;
   VariableDeclaration: VariableDeclaration;
@@ -182,7 +182,7 @@ export interface T_Declaration {
 }
 
 export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDeclaration;
-export interface _ModuleDeclaration<T extends string> extends _Node<T> {}
+export type _ModuleDeclaration = _Node<T>;
 export interface T_ModuleDeclaration {
   ImportDeclaration: ImportDeclaration;
   ExportNamedDeclaration: ExportNamedDeclaration;
@@ -376,14 +376,14 @@ export interface ContinueStatement extends _Statement<'ContinueStatement'> {
   label: Identifier | null;
 }
 
-export interface DebuggerStatement extends _Statement<'DebuggerStatement'> {}
+export type DebuggerStatement = _Statement<'DebuggerStatement'>;
 
 export interface DoWhileStatement extends _Statement<'DoWhileStatement'> {
   body: Statement;
   test: Expression;
 }
 
-export interface EmptyStatement extends _Statement<'EmptyStatement'> {}
+export type EmptyStatement = _Statement<'EmptyStatement'>;
 
 export interface ExportAllDeclaration extends _ModuleDeclaration<'ExportAllDeclaration'> {
   source: Literal | null;
@@ -465,16 +465,16 @@ export interface IfStatement extends _Statement<'IfStatement'> {
   alternate: Statement | null;
 }
 
-export interface Import extends _Node<'Import'> {}
+export type Import = _Node<'Import'>;
 
 export interface ImportDeclaration extends _ModuleDeclaration<'ImportDeclaration'> {
   specifiers: ImportClause[];
   source: Literal;
 }
 
-export interface ImportDefaultSpecifier extends _ModuleSpecifier<'ImportDefaultSpecifier'> {}
+export type ImportDefaultSpecifier = _ModuleSpecifier<'ImportDefaultSpecifier'>;
 
-export interface ImportNamespaceSpecifier extends _ModuleSpecifier<'ImportNamespaceSpecifier'> {}
+export type ImportNamespaceSpecifier = _ModuleSpecifier<'ImportNamespaceSpecifier'>;
 
 export interface ImportSpecifier extends _ModuleSpecifier<'ImportSpecifier'> {
   imported: Identifier;
@@ -596,7 +596,7 @@ export interface SpreadElement extends _Node<'SpreadElement'> {
   argument: Expression;
 }
 
-export interface Super extends _Node<'Super'> {}
+export type Super = _Node<'Super'>;
 
 export interface SwitchCase extends _Node<'SwitchCase'> {
   test: Expression | null;
@@ -623,7 +623,7 @@ export interface TemplateLiteral extends _Expression<'TemplateLiteral'> {
   expressions: Expression[];
 }
 
-export interface ThisExpression extends _Expression<'ThisExpression'> {}
+export type ThisExpression = _Expression<'ThisExpression'>;
 
 export interface ThrowStatement extends _Statement<'ThrowStatement'> {
   argument: Expression;

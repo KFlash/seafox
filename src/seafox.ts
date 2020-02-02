@@ -5,15 +5,12 @@ import { skipHashBang } from './scanner/comments';
 import { parseModuleItemListAndDirectives } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { create } from './parser/core';
-import { ScopeKind } from './parser/scope';
-import { Errors, report } from './errors';
+import { ScopeKind, ScopeState } from './parser/scope';
 
 /**
  * The parser options.
  */
 export interface Options {
-  // Allow module code
-  module?: boolean;
   // Enable stage 3 support (ESNext)
   next?: boolean;
   // Disable web compability
@@ -30,18 +27,11 @@ export interface Options {
   impliedStrict?: boolean;
   // Adds a source attribute in every node’s loc object when the locations option is `true`
   source?: string;
-  // Distinguish Identifier from IdentifierPattern
-  identifierPattern?: boolean;
-  // Enable React JSX parsing
-  jsx?: boolean;
   // Enable non-standard parenthesized expression node
   preserveParens?: boolean;
 }
 
-/**
- * Consumes a sequence of tokens and produces an syntax tree
- */
-export function parseRoot(source: string, options: Options | void, context: Context): any {
+export function parseRoot(source: string, options: Options | void, context: Context): Program {
   if (options != null) {
     if (options.next) context |= Context.OptionsNext;
     if (options.loc) context |= Context.OptionsLoc;
@@ -61,29 +51,20 @@ export function parseRoot(source: string, options: Options | void, context: Cont
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const scope: any = {
+  const scope: ScopeState = {
     parent: void 0,
     type: ScopeKind.Block
   };
-  let body: any[] = [];
 
   // https://tc39.es/ecma262/#sec-scripts
   // https://tc39.es/ecma262/#sec-modules
 
-  let sourceType: 'module' | 'script' = 'script';
+  const sourceType: 'module' | 'script' = context & Context.Module ? 'module' : 'script';
 
-  if (context & Context.Module) {
-    sourceType = 'module';
-    body = parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope);
-
-    const exportedBindings = parser.exportedBindings;
-
-    for (const key in exportedBindings) {
-      if (scope[key] === void 0) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
-    }
-  } else {
-    body = parseStatementList(parser, context | Context.InGlobal, scope);
-  }
+  const body: any[] =
+    sourceType === 'module'
+      ? parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope)
+      : parseStatementList(parser, context | Context.InGlobal, scope);
 
   return context & Context.OptionsLoc
     ? {
@@ -124,4 +105,4 @@ export function parseModule(source: string, options?: Options): Program {
   return parseRoot(source, options, Context.Strict | Context.Module);
 }
 
-export const version = '0.0.15';
+export const version = '0.0.16';

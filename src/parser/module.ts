@@ -76,6 +76,12 @@ export function parseModuleItemListAndDirectives(
   while (parser.token !== Token.EOF) {
     statements.push(parseModuleItem(parser, context, scope));
   }
+
+  const exportedBindings = parser.exportedBindings;
+  for (const key in exportedBindings) {
+    if ((scope as any)[key] === void 0) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
+  }
+
   return statements;
 }
 
@@ -435,10 +441,10 @@ export function parseExportDefault(
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
-    : {
+    : ({
         type: 'ExportDefaultDeclaration',
         declaration
-      };
+      } as any);
 }
 
 export function parseExportDeclaration(parser: ParserState, context: Context, scope: ScopeState): any {
@@ -488,11 +494,11 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
               }
-            : {
+            : ({
                 type: 'ExportAllDeclaration',
                 source,
                 exported
-              }
+              } as any)
         ];
 
         source = parseModuleSpecifier(parser, context);
