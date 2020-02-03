@@ -1925,7 +1925,7 @@ export function parseParenthesizedExpression(
 
       if (parser.flags & Flags.NotDestructible) report(parser, Errors.InvalidRestArg);
 
-      if (inSequence && (parser.token as Token) === Token.RightParen) {
+      if (inSequence === 1 && (parser.token as Token) === Token.RightParen) {
         expressions.push(expr);
       }
       mutualFlag |= Flags.MustDestruct | Flags.SimpleParameterList;
@@ -1935,7 +1935,10 @@ export function parseParenthesizedExpression(
 
       expr = parseExpression(parser, context, inGroup);
 
-      if (inSequence && ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightParen)) {
+      if (
+        inSequence === 1 &&
+        ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightParen)
+      ) {
         expressions.push(expr);
       }
 
@@ -1946,7 +1949,7 @@ export function parseParenthesizedExpression(
         }
       }
 
-      if (inSequence) {
+      if (inSequence === 1) {
         while (consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) {
           expressions.push(parseExpression(parser, context, inGroup));
         }
@@ -1974,7 +1977,7 @@ export function parseParenthesizedExpression(
       return expr;
     }
 
-    if (inSequence && ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightParen)) {
+    if (inSequence === 1 && ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightParen)) {
       expressions.push(expr);
     }
 
@@ -1982,7 +1985,7 @@ export function parseParenthesizedExpression(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    if (!inSequence) {
+    if (inSequence === 0) {
       inSequence = 1;
       expressions = [expr];
     }
@@ -1993,7 +1996,7 @@ export function parseParenthesizedExpression(
     }
   }
 
-  if (inSequence) {
+  if (inSequence === 1) {
     parser.assignable = 0;
     expr =
       context & Context.OptionsLoc
