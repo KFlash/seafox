@@ -277,7 +277,7 @@ export interface AssignmentExpression extends _Expression<'AssignmentExpression'
 }
 
 export interface AssignmentPattern extends _Pattern<'AssignmentPattern'> {
-  left: Identifier | ObjectPattern | ArrayPattern;
+  left: any;
   right: Expression;
 }
 
@@ -533,7 +533,7 @@ export interface PrivateName extends _Node<'PrivateName'> {
 }
 
 export interface MethodDefinition extends _Node<'MethodDefinition'> {
-  key: PropertyName;
+  key: PropertyName | null;
   value: FunctionExpression;
   kind: 'constructor' | 'method' | 'get' | 'set';
   computed: boolean;

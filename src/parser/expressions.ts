@@ -2420,7 +2420,7 @@ export function parseArrayLiteral(
    * SpreadElement:
    * ...AssignmentExpression
    */
-  const expr: any = parseArrayExpressionOrPattern(
+  const expr: Types.ArrayExpression = parseArrayExpressionOrPattern(
     parser,
     context,
     void 0,
@@ -2526,6 +2526,7 @@ export function parseArrayExpressionOrPattern(
 
       if ((token & 0b00000000001001110000000000000000) > 0) {
         left = parsePrimaryExpression(parser, context, kind, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
+
         if (parser.token === Token.Assign) {
           if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
           left = parseAssignmentOrPattern(parser, context, isPattern, inGroup, left, '=', start, line, column);
@@ -2746,7 +2747,7 @@ export function parseFunctionExpression(
   let id: Types.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  let scope: ScopeState = createTopLevelScope(ScopeKind.Block);
+  let scope = createTopLevelScope(ScopeKind.Block);
 
   if ((parser.token & 0b00000000001001110000000000000000) > 0) {
     const { token, tokenValue, start, line, column } = parser;
@@ -2862,9 +2863,12 @@ export function parseFunctionBody(
 
     while (parser.token === Token.StringLiteral) {
       const { index, start, line, column, tokenValue } = parser;
+
       let expression = parseLiteral(parser, context);
+
       if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
         context |= Context.Strict;
+
         if (parser.flags & Flags.SimpleParameterList) {
           report(parser, Errors.IllegalUseStrict);
         }
@@ -2971,14 +2975,14 @@ export function parseClassTail(
   parser: ParserState,
   context: Context,
   inheritedContext: Context,
-  id: any,
+  id: Types.Identifier | null,
   inGroup: 0 | 1,
   isDecl: 0 | 1,
   type: 'ClassDeclaration' | 'ClassExpression',
   start: number,
   line: number,
   column: number
-): any {
+): Types.ClassDeclaration | Types.ClassExpression {
   let superClass: Types.Expression | null = null;
 
   if (parser.token === Token.ExtendsKeyword) {
@@ -3075,14 +3079,14 @@ export function parseClassElementList(
   context: Context,
   inheritedContext: Context,
   mutualFlag: Flags,
-  key: any,
+  key: Types.Expression | null,
   isComputed: 0 | 1,
   inGroup: 0 | 1,
   type: PropertyKind,
   curStart: number,
   curLine: number,
   curColumn: number
-): any {
+): Types.MethodDefinition {
   const { token, start, line, column } = parser;
 
   if ((token & 0b00000000001001110000000000000000) > 0) {
@@ -3243,7 +3247,7 @@ export function parseIdentifierFromValue(
       };
 }
 
-export function parseComputedPropertyName(parser: ParserState, context: Context, inGroup: 0 | 1) {
+export function parseComputedPropertyName(parser: ParserState, context: Context, inGroup: 0 | 1): Types.Expression {
   nextToken(parser, context, /* allowRegExp */ 1);
   const key = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
   consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
@@ -3283,7 +3287,7 @@ export function parseMethodDefinition(
   ) as Types.FunctionExpression;
 }
 
-export function parseGetterSetter(parser: ParserState, context: Context, kind: PropertyKind): any {
+export function parseGetterSetter(parser: ParserState, context: Context, kind: PropertyKind): Types.FunctionExpression {
   const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
