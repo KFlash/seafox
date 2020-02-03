@@ -10,6 +10,7 @@ import {
   createNestedBlockScope,
   createTopLevelScope,
   createParentScope,
+  createArrowScope,
   addBlockName,
   addVarOrBlock
 } from './scope';
@@ -1051,7 +1052,7 @@ export function parseAsyncExpression(
   if (inNew === 0 && parser.token === Token.LeftParen) {
     return parseAsyncArrowOrCallExpression(
       parser,
-      (context | Context.DisallowIn) ^ Context.DisallowIn,
+      context,
       expr,
       canAssign,
       parser.newLine,
@@ -1098,13 +1099,7 @@ export function parseAsyncArrow(
 
   parser.flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
 
-  const scope = createParentScope(
-    {
-      parent: void 0,
-      type: ScopeKind.Block
-    },
-    ScopeKind.ArrowParams
-  );
+  const scope = createArrowScope();
 
   addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
 
@@ -1125,13 +1120,7 @@ export function parseAsyncArrowOrCallExpression(
 ): any {
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const scope = createParentScope(
-    {
-      parent: void 0,
-      type: ScopeKind.Block
-    },
-    ScopeKind.ArrowParams
-  );
+  context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
   if (parser.token === Token.RightParen) {
     nextToken(parser, context, /* allowRegExp */ 0);
@@ -1141,7 +1130,18 @@ export function parseAsyncArrowOrCallExpression(
 
       if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
 
-      return parseArrowFunctionAfterParen(parser, context, scope, Flags.Empty, [], canAssign, 1, start, line, column);
+      return parseArrowFunctionAfterParen(
+        parser,
+        context,
+        createArrowScope(),
+        Flags.Empty,
+        [],
+        canAssign,
+        1,
+        start,
+        line,
+        column
+      );
     }
 
     return context & Context.OptionsLoc
@@ -1161,6 +1161,8 @@ export function parseAsyncArrowOrCallExpression(
   }
 
   parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
+
+  const scope = createArrowScope();
 
   let expr: any = null;
 
@@ -1807,22 +1809,7 @@ export function parseParenthesizedExpression(
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
-    return parseArrowFunction(
-      parser,
-      context,
-      createParentScope(
-        {
-          parent: void 0,
-          type: ScopeKind.Block
-        },
-        ScopeKind.ArrowParams
-      ),
-      expr,
-      /* isAsync */ 0,
-      curStart,
-      curLine,
-      curColumn
-    );
+    return parseArrowFunction(parser, context, createArrowScope(), expr, /* isAsync */ 0, curStart, curLine, curColumn);
   }
 
   let expressions: any[] = [];
@@ -1831,13 +1818,7 @@ export function parseParenthesizedExpression(
 
   const { start: sStart, line: sLine, column: sColumn } = parser;
 
-  const scope = createParentScope(
-    {
-      parent: void 0,
-      type: ScopeKind.Block
-    },
-    ScopeKind.ArrowParams
-  );
+  const scope = createArrowScope();
 
   parser.assignable = 1;
 
@@ -2747,7 +2728,7 @@ export function parseFunctionExpression(
   let id: Types.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  let scope = createTopLevelScope(ScopeKind.Block);
+  let scope = createTopLevelScope();
 
   if ((parser.token & 0b00000000001001110000000000000000) > 0) {
     const { token, tokenValue, start, line, column } = parser;

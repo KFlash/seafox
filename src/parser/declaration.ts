@@ -81,7 +81,7 @@ export function parseHoistableDeclaration(
   let id: Types.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  let parent: ScopeState = createTopLevelScope(ScopeKind.Block);
+  let parent: ScopeState = createTopLevelScope();
 
   if ((parser.token & 0b00000000001001110000000000000000) > 0) {
     const { token, tokenValue, start, line, column } = parser;

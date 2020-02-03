@@ -51,7 +51,7 @@ export function parseRoot(source: string, context: Context, options?: Options): 
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const scope = createTopLevelScope(ScopeKind.Block);
+  const scope = createTopLevelScope();
 
   // https://tc39.es/ecma262/#sec-scripts
   // https://tc39.es/ecma262/#sec-modules

@@ -40,16 +40,26 @@ export function createNestedBlockScope(type: ScopeKind): ScopeState {
   };
 }
 
-export function createTopLevelScope(type: ScopeKind): ScopeState {
+export function createTopLevelScope(): ScopeState {
   return {
     parent: void 0,
-    type
+    type: ScopeKind.Block
   };
 }
 export function createParentScope(parent: ScopeState, type: ScopeKind): ScopeState {
   return {
     parent,
     type,
+    scopeError: void 0
+  };
+}
+export function createArrowScope(): ScopeState {
+  return {
+    parent: {
+      parent: void 0,
+      type: ScopeKind.Block
+    },
+    type: ScopeKind.ArrowParams,
     scopeError: void 0
   };
 }

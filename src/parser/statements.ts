@@ -280,7 +280,9 @@ export function parseAsyncStatement(
   }
 
   const asyncNewLine = parser.newLine;
+
   let expr: any;
+
   if (asyncNewLine === 0) {
     // async function ...
     if (parser.token === Token.FunctionKeyword) {
@@ -314,9 +316,10 @@ export function parseAsyncStatement(
   if (parser.token === Token.LeftParen) {
     // '\u0061sync () => {}'
     if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+
     expr = parseAsyncArrowOrCallExpression(
       parser,
-      (context | Context.DisallowIn) ^ Context.DisallowIn,
+      context,
       expr,
       1,
       asyncNewLine,
