@@ -53,11 +53,18 @@ import {
 } from './common';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
+  // StatementList ::
+  //   (StatementListItem)* <end_token>
+
   const statements: Types.Statement[] = [];
+
+  let expression: Types.Literal | Types.Expression;
 
   while (parser.token === Token.StringLiteral) {
     const { index, start, line, column, tokenValue } = parser;
-    let expression = parseLiteral(parser, context);
+
+    expression = parseLiteral(parser, context);
+
     if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
       context |= Context.Strict;
     } else {

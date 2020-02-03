@@ -733,13 +733,15 @@ export function parseYieldExpression(
   //     yield [no LineTerminator here] AssignmentExpression[?In, Yield]
   //     yield [no LineTerminator here] * AssignmentExpression[?In, Yield]
 
-  parser.flags |= inGroup === 1 ? Flags.SeenYield : 0;
+  if (inGroup === 1) parser.flags |= Flags.SeenYield;
 
   if (context & Context.InYieldContext) {
     if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
-    nextToken(parser, context, /* allowRegExp */ 1);
     if (context & Context.InArgumentList) report(parser, Errors.YieldInParameter);
     if (canAssign === 0) report(parser, Errors.CantAssignTo);
+
+    nextToken(parser, context, /* allowRegExp */ 1);
+
     if (parser.token === Token.QuestionMark) report(parser, Errors.InvalidTernaryYield);
 
     let argument = null;
@@ -747,7 +749,7 @@ export function parseYieldExpression(
 
     if (parser.newLine === 0) {
       isDelegate = consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 1);
-      if (parser.token & Token.IsExpressionStart || isDelegate === 1) {
+      if (isDelegate === 1 || (parser.token & Token.IsExpressionStart) === Token.IsExpressionStart) {
         argument = parseExpression(parser, context, 0);
       }
     }
@@ -788,13 +790,12 @@ export function parseAwaitExpression(
 
   if (context & Context.InAwaitContext) {
     if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+
     if (inNew === 1) report(parser, Errors.Unexpected);
 
     if (context & Context.InArgumentList) {
       report(parser, Errors.AwaitInParameter);
     }
-
-    // TODO: Check for escaped ident, and throw
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -843,16 +844,12 @@ export function parseIdentifierOrArrow(
   if (parser.token === Token.Arrow) {
     parser.flags |=
       (token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000 ? Flags.HasStrictReserved : 0;
+
+    // TODO: Merge this into one with the one above?
+
     const mutualFlag: Flags = (parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
 
-    const scope = {
-      parent: {
-        parent: void 0,
-        type: ScopeKind.Block
-      },
-      type: ScopeKind.Block,
-      scopeError: void 0
-    };
+    const scope = createNestedBlockScope(ScopeKind.Block);
 
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
 
