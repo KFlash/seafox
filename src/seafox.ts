@@ -5,7 +5,7 @@ import { skipHashBang } from './scanner/comments';
 import { parseModuleItemListAndDirectives } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { create } from './parser/core';
-import { ScopeKind, ScopeState } from './parser/scope';
+import { ScopeKind, ScopeState, createTopLevelScope } from './parser/scope';
 
 /**
  * The parser options.
@@ -51,17 +51,14 @@ export function parseRoot(source: string, options: Options | void, context: Cont
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  const scope: ScopeState = {
-    parent: void 0,
-    type: ScopeKind.Block
-  };
+  const scope = createTopLevelScope(ScopeKind.Block);
 
   // https://tc39.es/ecma262/#sec-scripts
   // https://tc39.es/ecma262/#sec-modules
 
   const sourceType: 'module' | 'script' = context & Context.Module ? 'module' : 'script';
 
-  const body: any[] =
+  const body =
     sourceType === 'module'
       ? parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope)
       : parseStatementList(parser, context | Context.InGlobal, scope);
