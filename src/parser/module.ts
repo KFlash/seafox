@@ -35,11 +35,7 @@ import {
   parseAsyncArrowOrCallExpression
 } from './expressions';
 
-export function parseModuleItemListAndDirectives(
-  parser: ParserState,
-  context: Context,
-  scope: ScopeState
-): Types.Statement[] {
+export function parseModuleItemList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
   const statements: Types.Statement[] = [];
 
   if (context & Context.OptionsDirectives) {

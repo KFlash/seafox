@@ -2,7 +2,7 @@ import { Context } from './parser/common';
 import { Program } from './parser/types';
 import { nextToken } from './scanner/scan';
 import { skipHashBang } from './scanner/comments';
-import { parseModuleItemListAndDirectives } from './parser/module';
+import { parseModuleItemList } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { create } from './parser/core';
 import { ScopeKind, ScopeState, createTopLevelScope } from './parser/scope';
@@ -31,8 +31,8 @@ export interface Options {
   preserveParens?: boolean;
 }
 
-export function parseRoot(source: string, options: Options | void, context: Context): Program {
-  if (options != null) {
+export function parseRoot(source: string, context: Context, options?: Options): Program {
+  if (options !== undefined) {
     if (options.next) context |= Context.OptionsNext;
     if (options.loc) context |= Context.OptionsLoc;
     if (options.disableWebCompat) context |= Context.OptionsDisableWebCompat;
@@ -59,9 +59,7 @@ export function parseRoot(source: string, options: Options | void, context: Cont
   const sourceType: 'module' | 'script' = context & Context.Module ? 'module' : 'script';
 
   const body =
-    sourceType === 'module'
-      ? parseModuleItemListAndDirectives(parser, context | Context.InGlobal, scope)
-      : parseStatementList(parser, context | Context.InGlobal, scope);
+    sourceType === 'module' ? parseModuleItemList(parser, context, scope) : parseStatementList(parser, context, scope);
 
   return context & Context.OptionsLoc
     ? {
@@ -92,14 +90,14 @@ export function parseRoot(source: string, options: Options | void, context: Cont
  * Parse a script, optionally with various options.
  */
 export function parseScript(source: string, options?: Options): Program {
-  return parseRoot(source, options, Context.Empty);
+  return parseRoot(source, Context.InGlobal, options);
 }
 
 /**
  * Parse a module, optionally with various options.
  */
 export function parseModule(source: string, options?: Options): Program {
-  return parseRoot(source, options, Context.Strict | Context.Module);
+  return parseRoot(source, Context.Strict | Context.Module | Context.InGlobal, options);
 }
 
 export const version = '0.0.16';
