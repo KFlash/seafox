@@ -7,6 +7,7 @@ import { Errors, report } from '../errors';
 export interface ScopeState {
   parent: ScopeState | undefined;
   type: ScopeKind;
+  declared: string[];
   scopeError?: ScopeError | null;
 }
 
@@ -31,11 +32,13 @@ export const enum ScopeKind {
 
 export function createNestedBlockScope(type: ScopeKind): ScopeState {
   return {
-    parent: {
-      parent: void 0,
-      type
-    },
     type,
+    parent: {
+      type,
+      parent: void 0,
+      declared: []
+    },
+    declared: [],
     scopeError: void 0
   };
 }
@@ -43,23 +46,27 @@ export function createNestedBlockScope(type: ScopeKind): ScopeState {
 export function createTopLevelScope(): ScopeState {
   return {
     parent: void 0,
+    declared: [],
     type: ScopeKind.Block
   };
 }
 export function createParentScope(parent: ScopeState, type: ScopeKind): ScopeState {
   return {
     parent,
+    declared: [],
     type,
     scopeError: void 0
   };
 }
 export function createArrowScope(): ScopeState {
   return {
+    type: ScopeKind.ArrowParams,
     parent: {
       parent: void 0,
+      declared: [],
       type: ScopeKind.Block
     },
-    type: ScopeKind.ArrowParams,
+    declared: [],
     scopeError: void 0
   };
 }
@@ -115,7 +122,7 @@ export function addVarName(
   let value: any;
 
   do {
-    value = scope['#' + name];
+    value = scope.declared['#' + name];
     if (value) {
       if (
         (value & 0b00000000000000000000000011110100) > 0 &&
@@ -133,7 +140,7 @@ export function addVarName(
         report(parser, Errors.DuplicateBinding, name);
       }
     }
-    scope['#' + name] = kind;
+    scope.declared['#' + name] = kind;
 
     scope = scope.parent;
   } while (scope && (scope.type & ScopeKind.FunctionRoot) === 0);
@@ -159,7 +166,7 @@ export function addBlockName(
 ) {
   if (scope === void 0) return;
 
-  const value = scope['#' + name];
+  const value = scope.declared['#' + name];
   if (value) {
     if (value && (value & 0b00000000000000000000000000001000) === 0) {
       if ((kind & 0b00000000000000000000000000000001) > 0) {
@@ -183,15 +190,18 @@ export function addBlockName(
 
   if (
     (scope.type & ScopeKind.FunctionBody) > 0 &&
-    parent['#' + name] &&
-    (parent['#' + name] & 0b00000000000000000000000000001000) === 0
+    parent.declared['#' + name] &&
+    (parent.declared['#' + name] & 0b00000000000000000000000000001000) === 0
   ) {
     report(parser, Errors.DuplicateBinding, name);
   }
 
-  if ((scope.type & ScopeKind.CatchBlock) > 0 && (parent['#' + name] & 0b00000000000000000000001100000000) > 0) {
+  if (
+    (scope.type & ScopeKind.CatchBlock) > 0 &&
+    (parent.declared['#' + name] & 0b00000000000000000000001100000000) > 0
+  ) {
     report(parser, Errors.ShadowedCatchClause, name);
   }
 
-  scope['#' + name] = kind;
+  scope.declared['#' + name] = kind;
 }

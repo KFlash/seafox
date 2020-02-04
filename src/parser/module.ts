@@ -74,8 +74,9 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
   }
 
   const exportedBindings = parser.exportedBindings;
+
   for (const key in exportedBindings) {
-    if ((scope as any)[key] === void 0) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
+    if (scope.declared[key as any] === void 0) report(parser, Errors.UndeclaredExportedBinding, key.slice(1));
   }
 
   return statements;
