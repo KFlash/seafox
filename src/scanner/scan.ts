@@ -6,7 +6,6 @@ import {
   skipMultiLineComment,
   skipSingleHTMLComment,
   scanIdentifierSlowPath,
-  scanIdentifier,
   scanIdentifierOrKeyword,
   scanUnicodeEscapeIdStart,
   scanStringLiteral,
@@ -325,7 +324,7 @@ export function scan(
       }
 
       if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
-        return scanIdentifierSlowPath(parser, context, source, '', /* maybeKeyword */ 0, 0);
+        return scanIdentifierSlowPath(parser, source, '', /* maybeKeyword */ 0, 0);
       }
       report(parser, Errors.IllegalCaracter, fromCodePoint(char));
     }
@@ -354,11 +353,11 @@ export function scan(
 
       // `A`...`Z`, `_var`, `$var`
       case Token.Identifier:
-        return scanIdentifier(parser, context, source, char);
+        return scanIdentifierOrKeyword(parser, source, char, 0);
 
       // `a`...`z`
       case Token.IdentifierOrKeyword:
-        return scanIdentifierOrKeyword(parser, context, source, char);
+        return scanIdentifierOrKeyword(parser, source, char, 1);
 
       // `1`...`9`
       case Token.NumericLiteral:
@@ -374,7 +373,7 @@ export function scan(
 
       // `\\u{N}var`
       case Token.EscapedIdentifier:
-        return scanUnicodeEscapeIdStart(parser, context, source);
+        return scanUnicodeEscapeIdStart(parser, source);
 
       // `0`, `0exxx`, `0Exxx`, `0.xxx`, `0X`, `0x`, `0B`, `0b`, `oO`, `0o`
       case Token.LeadingZero:
@@ -473,7 +472,7 @@ export function scan(
         }
 
         if (char === Chars.Asterisk) {
-          parser.index = skipMultiLineComment(parser, source, ++index);
+          parser.index = skipMultiLineComment(parser, source, length, ++index) as number;
           continue;
         }
 

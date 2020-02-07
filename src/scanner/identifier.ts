@@ -1,26 +1,9 @@
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
 import { Token, descKeywordTable } from '../token';
 import { report, Errors } from '../errors';
-import { Chars, isIdentifierPart, CharTypes, fromCodePoint, toHex, unicodeLookup } from './';
+import { Chars, isIdentifierPart, CharTypes, CharFlags, fromCodePoint, toHex, unicodeLookup } from './';
 
-export function scanIdentifier(parser: ParserState, context: Context, source: string, char: number): Token {
-  // run to the next non-idPart
-  while (
-    (CharTypes[char] & 0b00000000000000000000000000000101) > 0 ||
-    // Note: "while((unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1)" would be enough to
-    // make this work. This is just a performance tweak
-    (char > 0x7f && (unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1)
-  ) {
-    char = source.charCodeAt(++parser.index);
-  }
-
-  const value = source.slice(parser.start, parser.index);
-  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 0, 0);
-  parser.tokenValue = value;
-  return Token.Identifier;
-}
-
-export function scanIdentifierOrKeyword(parser: ParserState, context: Context, source: string, char: number): Token {
+export function scanIdentifierOrKeyword(parser: ParserState, source: string, char: number, maybeKeyword: 0 | 1): Token {
   // run to the next non-idPart
   while (
     (CharTypes[char] & 0b00000000000000000000000000000101) > 0 ||
@@ -31,14 +14,13 @@ export function scanIdentifierOrKeyword(parser: ParserState, context: Context, s
     char = source.charCodeAt(++parser.index);
   }
   const value = source.slice(parser.start, parser.index);
-  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, context, source, value, 1, 0);
+  if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, source, value, maybeKeyword, 0);
   parser.tokenValue = value;
   return descKeywordTable[value] || Token.Identifier;
 }
 
 export function scanIdentifierSlowPath(
   parser: ParserState,
-  _context: Context,
   source: string,
   value: string,
   maybeKeyword: 0 | 1,
@@ -89,9 +71,7 @@ export function scanIdentifierSlowPath(
 
     parser.containsEscapes = 1;
 
-    if ((token & Token.Contextual) === Token.Contextual) return token;
-
-    return token | Token.EscapedKeyword;
+    return (token & Token.Contextual) === Token.Contextual ? token : token | Token.EscapedKeyword;
   }
 
   return Token.Identifier;
@@ -127,22 +107,24 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
   }
 
   // \uNNNN
+  if ((CharTypes[char] & CharFlags.Hex) === 0) report(parser, Errors.InvalidHexEscapeSequence); // first one is mandatory
 
-  let i = 0;
-  for (i = 0; i < 4; i++) {
-    const digit = toHex(source.charCodeAt(parser.index));
-    if (digit < 0) report(parser, Errors.InvalidHexEscapeSequence);
-    code = (code << 4) | digit;
-    parser.index++;
-  }
+  const ch2 = toHex(source.charCodeAt(parser.index + 1));
+  if (ch2 < 0) report(parser, Errors.InvalidHexEscapeSequence);
+  const ch3 = toHex(source.charCodeAt(parser.index + 2));
+  if (ch3 < 0) report(parser, Errors.InvalidHexEscapeSequence);
+  const ch4 = source.charCodeAt(parser.index + 3);
+  if ((CharTypes[ch4] & CharFlags.Hex) === 0) report(parser, Errors.InvalidHexEscapeSequence);
 
-  return code;
+  parser.index += 4;
+
+  return (toHex(char) << 12) | (ch2 << 8) | (ch3 << 4) | toHex(ch4);
 }
 
-export function scanUnicodeEscapeIdStart(parser: ParserState, context: Context, source: string): Token {
+export function scanUnicodeEscapeIdStart(parser: ParserState, source: string): Token {
   const cookedChar = scanUnicodeEscape(parser, source);
   if (isIdentifierPart(cookedChar)) {
-    return scanIdentifierSlowPath(parser, context, source, fromCodePoint(cookedChar), /* maybeKeyword */ 1, 1);
+    return scanIdentifierSlowPath(parser, source, fromCodePoint(cookedChar), /* maybeKeyword */ 1, 1);
   }
   parser.index++; // skip: '\'
   report(parser, Errors.InvalidUnicodeEscapeSequence);

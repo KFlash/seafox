@@ -35,26 +35,27 @@ describe('src/scanner/scan', () => {
   fail('fails on \\', '\\u2E2F', Context.Empty);
   fail('fails on \\uD800', '\\uD800', Context.Empty);
   fail('fails on \\uD83B\\uDE00', '\\uD83B\\uDE00', Context.Empty);
-  //fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.Empty);
-  //fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.Empty);
+  fail('fails on \\u0', '\\u0', Context.Empty);
+  fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.Empty);
+  fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.Empty);
   fail('fails on \\u00Xvwxyz', '\\u00Xvwxyz', Context.Empty);
-  //fail('fails on \\u0Xvwxyz', '\\u0Xvwxyz', Context.Empty);
-  // fail('fails on \\uXvwxyz', '\\uXvwxyz', Context.Empty);
+  fail('fails on \\u0Xvwxyz', '\\u0Xvwxyz', Context.Empty);
+  fail('fails on \\uXvwxyz', '\\uXvwxyz', Context.Empty);
   fail('fails on \\Xvwxyz', '\\Xvwxyz', Context.Empty);
   fail('fails on abc\\u007', 'abc\\u007', Context.Empty);
   fail('fails on abc\\u00', 'abc\\u00', Context.Empty);
   fail('fails on abc\\u0', 'abc\\u0', Context.Strict);
   fail('fails on abc\\u', 'abc\\u', Context.Strict);
   fail('fails on abc\\', 'abc\\', Context.Strict);
-  // fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xvwxyz;', Context.Strict);
-  // fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xvwxyz', Context.Strict);
-  // fail('fails on abc\\u00Xvwxyz', 'abc\\u00Xvwxyz', Context.Strict);
-  // fail('fails on abc\\u0Xvwxyz', 'abc\\u0Xvwxyz', Context.OptionsNext);
-  // fail('fails on abc\\uXvwxyz', 'abc\\uXvwxyz', Context.OptionsNext);
-  // fail('fails on `abc\\Xvwxyz', '`abc\\Xvwxyz', Context.OptionsNext);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xvwxyz;', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xvwxyz', Context.Strict);
+  fail('fails on abc\\u00Xvwxyz', 'abc\\u00Xvwxyz', Context.Strict);
+  fail('fails on abc\\u0Xvwxyz', 'abc\\u0Xvwxyz', Context.OptionsNext);
+  fail('fails on abc\\uXvwxyz', 'abc\\uXvwxyz', Context.OptionsNext);
+  fail('fails on `abc\\Xvwxyz', '`abc\\Xvwxyz', Context.OptionsNext);
   fail('fails on \\u00', '\\u00', Context.OptionsNext);
   fail('fails on \\u007', '\\u007', Context.OptionsNext);
-  // fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.OptionsNext);
+  fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.OptionsNext);
   fail('fails on abc\\u{}', 'abc\\u{}', Context.OptionsNext);
   fail('fails on abc\\u}', 'abc\\u}', Context.OptionsNext);
   fail('fails on abc\\u{', 'abc\\u{', Context.OptionsNext);
@@ -83,9 +84,17 @@ describe('src/scanner/scan', () => {
   fail('fails on \\u00Xvwxyz', '\\u00Xvwxyz', Context.Empty);
   fail('fails on \\u{10401', '\\u{10401', Context.Empty);
   fail('fails on \\u{110000}', '\\u{110000}', Context.Empty);
-  //fail('fails on \\u0x11ffff', '\\u0x11ffff', Context.Empty);
+  fail('fails on \\u0x11ffff', '\\u0x11ffff', Context.Empty);
 
   const tokens: Array<[Context, Token, string, string]> = [
+    [Context.OptionsRaw, Token.Identifier, '𐨪', '𐨪'],
+    [Context.OptionsRaw, Token.Identifier, '𐅫', '𐅫'],
+    [Context.OptionsRaw, Token.Identifier, '𓁬', '𓁬'],
+    [Context.OptionsRaw, Token.Identifier, '𒅹', '𒅹'],
+    [Context.OptionsRaw, Token.Identifier, '𑄥', '𑄥'],
+    [Context.OptionsRaw, Token.Identifier, 'a𑁪', 'a𑁪'],
+    [Context.OptionsRaw, Token.Identifier, 'a𑄁', 'a𑄁'],
+    [Context.OptionsRaw, Token.Identifier, 'a𐒤', 'a𐒤'],
     [Context.OptionsRaw, Token.Identifier, 'abc', 'abc'],
     [Context.OptionsRaw, Token.Identifier, 'ab_c', 'ab_c'],
     [Context.OptionsRaw, Token.Identifier, '$_abc', '$_abc'],
