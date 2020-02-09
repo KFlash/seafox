@@ -150,8 +150,6 @@ workflows:
           <<: *filter_ignore_dev
       - bundle:
           <<: *filter_ignore_dev
-      - test-6:
-          <<: *filter_ignore_dev
       - test-8:
           <<: *filter_ignore_dev
       - test-10:
