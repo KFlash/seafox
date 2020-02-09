@@ -4,7 +4,7 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-describe('src/scanner/scan', () => {
+describe('scanner - identifiers', () => {
   interface Opts {
     source: string;
     context: Context;
@@ -76,7 +76,6 @@ describe('src/scanner/scan', () => {
   fail('fails on abc\\u0', 'abc\\u0', Context.OptionsNext);
   fail('fails on abc\\u00', 'abc\\u00', Context.OptionsNext);
   fail('fails on abc\\u007', 'abc\\u007', Context.OptionsNext);
-
   fail('fails on \\u0', '\\u0', Context.OptionsNext);
   fail('fails on \\u', '\\u', Context.OptionsNext);
   fail('fails on \\', '\\', Context.OptionsNext);
@@ -85,7 +84,6 @@ describe('src/scanner/scan', () => {
   fail('fails on \\u0', '\\u0', Context.OptionsNext);
   fail('fails on \\u0', '\\u0', Context.OptionsNext);
   fail('fails on \\u0', '\\u0', Context.OptionsNext);
-
   fail('fails on \\u{70bc', '\\u{70bc', Context.OptionsNext);
   fail('fails on \\u{70', '\\u{70', Context.OptionsNext);
   fail('fails on \\u104', '\\u104', Context.Empty);

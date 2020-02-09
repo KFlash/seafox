@@ -4,7 +4,7 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-describe('Lexer - numeric literals', () => {
+describe('Scanner - numeric literals', () => {
   describe('scan()', () => {
     function fail(name: string, source: string, context: Context) {
       it(name, () => {
@@ -15,7 +15,6 @@ describe('Lexer - numeric literals', () => {
 
     fail('fails on 123abc', '123abc', Context.Empty);
     fail('fails on .8n', '.8n', Context.Empty);
-    //fail('fails on 2017.8n', '2017.8n', Context.Empty);
     fail('fails on 0e0n', '0e0n', Context.Empty);
     fail('fails on 08_0;', '08_0;', Context.Empty);
     fail('fails on 0o9n', '0o9n', Context.Empty);
@@ -97,7 +96,6 @@ describe('Lexer - numeric literals', () => {
     fail('fails on 0o0_', '0o0_', Context.Empty);
     fail('fails on 0b_1', '0b_1', Context.Empty);
     fail('fails on 0b0_', '0b0_', Context.Empty);
-
     // fail('fails on 0b00101|', '0b00101|', Context.Empty);
     // fail('fails on 0b00101abc', '0b00101abc', Context.Empty);
     fail('fails on 0b001013', '0b001013', Context.Empty);
@@ -123,7 +121,6 @@ describe('Lexer - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '1_2.1_2', 12.12],
       [Context.OptionsRaw, Token.NumericLiteral, '1_2.1_20e-10_0', 1.212e-99],
       [Context.OptionsRaw, Token.NumericLiteral, '1.0e-10_0', 1e-100],
-
       [Context.OptionsRaw, Token.NumericLiteral, '.57', 0.57],
       [Context.OptionsRaw, Token.NumericLiteral, '1', 1],
       [Context.OptionsRaw, Token.NumericLiteral, '31', 31],
@@ -162,7 +159,6 @@ describe('Lexer - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '0E-1', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '0e+1', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '.00', 0],
-
       [Context.OptionsRaw, Token.NumericLiteral, '.0e1', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '0.0', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '0.e1', 0],
@@ -175,7 +171,6 @@ describe('Lexer - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '0E-1', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '0e+1', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '.00', 0],
-
       [Context.OptionsRaw, Token.NumericLiteral, '0e1', 0],
       [Context.OptionsRaw, Token.NumericLiteral, '1e2', 100],
       [Context.OptionsRaw, Token.NumericLiteral, '5e6', 5000000],
@@ -283,7 +278,6 @@ describe('Lexer - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '0O077', 63],
       [Context.OptionsRaw, Token.NumericLiteral, '0O1234567', 342391],
       [Context.OptionsRaw, Token.NumericLiteral, '0O12345670003567234567435', 96374499007469390000],
-
       [Context.OptionsRaw, Token.NumericLiteral, '0123', 83],
       [Context.OptionsRaw, Token.NumericLiteral, '01', 1],
       [Context.OptionsRaw, Token.NumericLiteral, '043', 35],
@@ -303,13 +297,11 @@ describe('Lexer - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '0B011_11_1_1_11_11111_1111111_1111_11111', 536870911],
       [Context.OptionsRaw, Token.NumericLiteral, '0B010_01', 9],
       [Context.OptionsRaw, Token.NumericLiteral, '0B0_1', 1],
-
       [Context.OptionsRaw, Token.NumericLiteral, '0O0_7_7', 63],
       [Context.OptionsRaw, Token.NumericLiteral, '0O01_1', 9],
       [Context.OptionsRaw, Token.NumericLiteral, '0X0_1', 1],
       [Context.OptionsRaw, Token.NumericLiteral, '0X0_1_0', 16],
       [Context.OptionsRaw, Token.NumericLiteral, '0Xa', 10],
-
       [Context.OptionsRaw, Token.BigIntLiteral, '1_0n', void 0],
       [Context.OptionsRaw, Token.BigIntLiteral, '1_0123456789n', void 0],
       [Context.OptionsRaw, Token.BigIntLiteral, '123456789_0n', void 0]

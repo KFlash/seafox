@@ -4,7 +4,7 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-describe('src/scanner/scan', () => {
+describe('Scanner - Punctuator', () => {
   describe('scan()', () => {
     interface Opts {
       source: string;
@@ -70,7 +70,6 @@ describe('src/scanner/scan', () => {
       [Context.Empty, Token.RightBracket, ']'],
       [Context.Empty, Token.Colon, ':'],
       [Context.Empty, Token.QuestionMark, '?'],
-      // [Context.OptionsJSX, Token.JSXAutoClose, "/>"],
 
       /* Update operators */
       [Context.Empty, Token.Increment, '++'],
@@ -180,7 +179,5 @@ describe('src/scanner/scan', () => {
         }
       );
     });
-
-    // TODO
   });
 });

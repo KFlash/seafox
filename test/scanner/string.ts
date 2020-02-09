@@ -4,16 +4,7 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-describe('src/scanner/scan', () => {
-  interface Opts {
-    source: string;
-    context: Context;
-    token: Token;
-    hasNext: boolean;
-    line: number;
-    column: number;
-  }
-
+describe('Scanner - String literal', () => {
   const tokens: Array<[Context, Token, string, string]> = [
     [Context.OptionsRaw, Token.StringLiteral, '"abc"', 'abc'],
     [Context.OptionsRaw, Token.StringLiteral, '"\\123"', 'S'],

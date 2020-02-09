@@ -4,7 +4,7 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-describe('scanner - regexp', () => {
+describe('Scanner - Regular expression', () => {
   const tokens: Array<[Context, Token, string, any]> = [
     [Context.OptionsRaw, Token.RegularExpression, '/a/', /a/],
     [Context.OptionsRaw, Token.RegularExpression, '/(\\w+)\\s(\\w+)/g', /(\w+)\s(\w+)/g],
