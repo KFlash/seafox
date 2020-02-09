@@ -49,7 +49,8 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
         parser.newLine = 1;
         parser.offset = i;
       }
-    } else if ((char & ~1) === Chars.LineSeparator) {
+    }
+    if ((char & ~1) === Chars.LineSeparator) {
       parser.offset = i;
       parser.newLine = 1;
       parser.lineBase++;

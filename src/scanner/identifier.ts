@@ -91,10 +91,19 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
   let code = 0;
   let char = source.charCodeAt((parser.index += 2));
   if (char === Chars.LeftBrace) {
+    // '\\u{'
+    if (parser.index === source.length) report(parser, Errors.InvalidHexEscapeSequence);
+
+    // \u{N}
+    // The first digit is required, so handle it *out* of the loop.
     let digit = toHex(source.charCodeAt(++parser.index));
+
     if (digit < 0) report(parser, Errors.InvalidHexEscapeSequence);
+
     while (digit >= 0) {
       code = (code << 4) | digit;
+      // Check this early to avoid `code` wrapping to a negative on overflow (which is
+      // reserved for abnormal conditions).
       if (code > Chars.LastUnicodeChar) report(parser, Errors.UnicodeOverflow);
       digit = toHex((char = source.charCodeAt(++parser.index)));
     }
@@ -103,22 +112,20 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
     if (code < 0 || char !== Chars.RightBrace) report(parser, Errors.InvalidHexEscapeSequence);
 
     parser.index++; // consumes '}'
+
     return code;
   }
 
   // \uNNNN
-  if ((CharTypes[char] & CharFlags.Hex) === 0) report(parser, Errors.InvalidHexEscapeSequence); // first one is mandatory
-
+  const ch1 = toHex(char);
   const ch2 = toHex(source.charCodeAt(parser.index + 1));
-  if (ch2 < 0) report(parser, Errors.InvalidHexEscapeSequence);
   const ch3 = toHex(source.charCodeAt(parser.index + 2));
-  if (ch3 < 0) report(parser, Errors.InvalidHexEscapeSequence);
   const ch4 = source.charCodeAt(parser.index + 3);
   if ((CharTypes[ch4] & CharFlags.Hex) === 0) report(parser, Errors.InvalidHexEscapeSequence);
 
   parser.index += 4;
 
-  return (toHex(char) << 12) | (ch2 << 8) | (ch3 << 4) | toHex(ch4);
+  return (ch1 << 12) | (ch2 << 8) | (ch3 << 4) | toHex(ch4);
 }
 
 export function scanUnicodeEscapeIdStart(parser: ParserState, source: string): Token {

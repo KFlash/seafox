@@ -47,18 +47,45 @@ describe('src/scanner/scan', () => {
   fail('fails on abc\\u0', 'abc\\u0', Context.Strict);
   fail('fails on abc\\u', 'abc\\u', Context.Strict);
   fail('fails on abc\\', 'abc\\', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xv$wxyz;', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u007X$vwxyz;', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u00xyz', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u007$Xvwxyz;', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u00$7Xvwxyz;', Context.Strict);
+  fail('fails on abc\\u007Xvwxyz', 'abc\\u0$07Xvwxyz;', Context.Strict);
   fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xvwxyz;', Context.Strict);
   fail('fails on abc\\u007Xvwxyz', 'abc\\u007Xvwxyz', Context.Strict);
   fail('fails on abc\\u00Xvwxyz', 'abc\\u00Xvwxyz', Context.Strict);
   fail('fails on abc\\u0Xvwxyz', 'abc\\u0Xvwxyz', Context.OptionsNext);
   fail('fails on abc\\uXvwxyz', 'abc\\uXvwxyz', Context.OptionsNext);
   fail('fails on `abc\\Xvwxyz', '`abc\\Xvwxyz', Context.OptionsNext);
+  fail('fails on `abc\\Xvwxyz', '`abc\\X', Context.OptionsNext);
+  fail('fails on `abc\\Xvwxyz', '`abc\\Xv', Context.OptionsNext);
+  fail('fails on `abc\\Xvwxyz', '`abc\\X__', Context.OptionsNext);
+  fail('fails on `abc\\Xvwxyz', '`abc\\1Xyz', Context.OptionsNext);
+  fail('fails on `abc\\Xvwxyz', '`abc\\X--vwxyz', Context.OptionsNext);
   fail('fails on \\u00', '\\u00', Context.OptionsNext);
   fail('fails on \\u007', '\\u007', Context.OptionsNext);
   fail('fails on \\u007Xvwxyz', '\\u007Xvwxyz', Context.OptionsNext);
+  fail('fails on \\u007Xvwxyz', '\\u007vwxyz', Context.OptionsNext);
   fail('fails on abc\\u{}', 'abc\\u{}', Context.OptionsNext);
   fail('fails on abc\\u}', 'abc\\u}', Context.OptionsNext);
   fail('fails on abc\\u{', 'abc\\u{', Context.OptionsNext);
+  fail('fails on abc\\', 'abc\\', Context.OptionsNext);
+  fail('fails on abc\\u', 'abc\\u', Context.OptionsNext);
+  fail('fails on abc\\u0', 'abc\\u0', Context.OptionsNext);
+  fail('fails on abc\\u00', 'abc\\u00', Context.OptionsNext);
+  fail('fails on abc\\u007', 'abc\\u007', Context.OptionsNext);
+
+  fail('fails on \\u0', '\\u0', Context.OptionsNext);
+  fail('fails on \\u', '\\u', Context.OptionsNext);
+  fail('fails on \\', '\\', Context.OptionsNext);
+  fail('fails on \\u0', '\\u0', Context.OptionsNext);
+  fail('fails on \\u0', '\\u0', Context.OptionsNext);
+  fail('fails on \\u0', '\\u0', Context.OptionsNext);
+  fail('fails on \\u0', '\\u0', Context.OptionsNext);
+  fail('fails on \\u0', '\\u0', Context.OptionsNext);
+
   fail('fails on \\u{70bc', '\\u{70bc', Context.OptionsNext);
   fail('fails on \\u{70', '\\u{70', Context.OptionsNext);
   fail('fails on \\u104', '\\u104', Context.Empty);
@@ -75,6 +102,7 @@ describe('src/scanner/scan', () => {
   fail('fails on a\\u{4ff', 'a\\u{4ff', Context.Empty);
   fail('fails on \\u{!', '\\u{!', Context.Empty);
   fail('fails on \\u{}', '\\u{}', Context.Empty);
+  fail('fails on \\u{', '\\u{', Context.Empty);
   fail('fails on \\u', '\\u', Context.Empty);
   fail('fails on \\8', '\\8', Context.Empty);
   fail('fails on \\9', '\\9', Context.Empty);
@@ -138,6 +166,16 @@ describe('src/scanner/scan', () => {
     [Context.OptionsRaw, Token.Identifier, 'aᢆ', 'aᢆ'],
     [Context.OptionsRaw, Token.Identifier, 'a፰', 'a፰'],
     [Context.OptionsRaw, Token.Identifier, '$00xxx\\u0069\\u0524\\u{20BB7}', '$00xxxiԤη'],
+    [Context.OptionsRaw, Token.Identifier, 'ab\\u{000072}', 'abr'],
+    [Context.OptionsRaw, Token.Identifier, 'ab\\u{00072}', 'abr'],
+    [Context.OptionsRaw, Token.Identifier, 'ab\\u{0072}', 'abr'],
+    [Context.OptionsRaw, Token.Identifier, 'ab\\u{072}', 'abr'],
+    [Context.OptionsRaw, Token.Identifier, 'ab\\u{72}', 'abr'],
+    [Context.OptionsRaw, Token.Identifier, '\\u{000070}bc', 'pbc'],
+    [Context.OptionsRaw, Token.Identifier, '\\u{070}bc', 'pbc'],
+    [Context.OptionsRaw, Token.Identifier, '\\u{000000000000000000070}bc', 'pbc'],
+    [Context.OptionsRaw, Token.Identifier, 'a\\u{0000000000000000000071}c', 'aqc'],
+    [Context.OptionsRaw, Token.Identifier, 'ab\\u{0000000000000000000072}', 'abr'],
     [Context.OptionsRaw, Token.Identifier, 'Ф', 'Ф'],
     [Context.OptionsRaw, Token.Identifier, '𞸀', '𞸀'],
     [Context.OptionsRaw, Token.Identifier, '_𞸃', '_𞸃'],
