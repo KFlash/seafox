@@ -86,30 +86,6 @@ describe('Miscellaneous - Directives', () => {
   for (const [source, ctx, expected] of [
     [
       `'use strict'; foo`,
-      Context.Empty,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'Literal',
-              value: 'use strict'
-            }
-          },
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'Identifier',
-              name: 'foo'
-            }
-          }
-        ]
-      }
-    ],
-    [
-      `'use strict'; foo`,
       Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw | Context.Module,
       {
         type: 'Program',

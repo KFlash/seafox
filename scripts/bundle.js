@@ -5,9 +5,47 @@ const { terser } = require('rollup-plugin-terser');
 const ts = require('typescript');
 const project = require('./project');
 
-async function createBundle() {
+bundle();
+
+async function bundle() {
   if (process.argv.slice(2)[0] === 'bench') {
-    console.log(`creating cjs bundle`);
+    await bunldeCJS();
+  } else {
+    await bundleES6();
+    await bundleES5();
+  }
+}
+
+// bundle cjs(es6)
+async function bunldeCJS() {
+  console.log(`creating cjs bundle`);
+
+  const bundle = await rollup.rollup({
+    input: project.entry.path,
+    plugins: [
+      typescript2({
+        tsconfig: project['tsconfig.json'].path,
+        typescript: ts
+      })
+    ]
+  });
+
+  const file = join(project.dist.path, `seafox.cjs.js`);
+
+  console.log(`writing ${feName}`);
+
+  await bundle.write({
+    file,
+    name: 'seafox',
+    format: 'cjs'
+  });
+  console.log(`done`);
+}
+
+// bundle es6()
+async function bundleES6() {
+  for (const type of ['normal', 'minified']) {
+    console.log(`creating ${type} bundle`);
 
     const bundle = await rollup.rollup({
       input: project.entry.path,
@@ -15,66 +53,64 @@ async function createBundle() {
         typescript2({
           tsconfig: project['tsconfig.json'].path,
           typescript: ts
-        })
+        }),
+        ...(type === 'minified' ? [terser()] : [])
       ]
     });
 
-    const fileName = join(project.dist.path, `seafox.cjs.js`);
+    const suffix = type === 'minified' ? '.min' : '';
 
-    console.log(`writing ${fileName}`);
+    let minfile = join(project.dist.path, `seafox.esm${suffix}.js`);
+
+    console.log(`writing ${minfile}`);
 
     await bundle.write({
-      file: fileName,
+      file: minfile,
       name: 'seafox',
-      format: 'cjs'
+      format: 'esm'
     });
-  } else {
-    for (const type of ['normal', 'minified']) {
-      console.log(`creating ${type} bundle`);
 
-      const bundle = await rollup.rollup({
-        input: project.entry.path,
-        plugins: [
-          typescript2({
-            tsconfig: project['tsconfig.json'].path,
-            typescript: ts
-          }),
-          ...(type === 'minified' ? [terser()] : [])
-        ]
-      });
+    minfile = join(project.dist.path, `seafox.und${suffix}.js`);
 
-      const suffix = type === 'minified' ? '.min' : '';
+    console.log(`writing ${minfile}`);
 
-      // 'cjs' | 'esm' | 'umd'
-
-      for (const format of ['esm']) {
-        const fileName = join(project.dist.path, `seafox.${format}${suffix}.js`);
-
-        console.log(`writing ${fileName}`);
-
-        await bundle.write({
-          file: fileName,
-          name: 'seafox',
-          format
-        });
-      }
-
-      for (const format of ['umd']) {
-        const fileName = join(project.dist.path, `seafox.${format}${suffix}.js`);
-
-        console.log(`writing ${fileName}`);
-
-        await bundle.write({
-          file: fileName,
-          exports: 'named',
-          name: 'seafox',
-          format
-        });
-      }
-    }
+    await bundle.write({
+      file: minfile,
+      exports: 'named',
+      name: 'seafox',
+      format: 'umd'
+    });
   }
-
-  console.log(`done`);
 }
 
-createBundle();
+// bundle es5(umd)
+async function bundleES5() {
+  for (const type of ['normal', 'minified']) {
+    console.log(`creating ${type} es5 bundle`);
+
+    const bundle = await rollup.rollup({
+      input: project.entry.path,
+      plugins: [
+        typescript2({
+          tsconfig: project['tsconfig.json'].path,
+          tsconfigOverride: { compilerOptions: { target: 'es5' } },
+          typescript: ts
+        }),
+        ...(type === 'minified' ? [terser()] : [])
+      ]
+    });
+
+    const suffix = type === 'minified' ? '.min' : '';
+
+    const fleName = join(project.dist.path, `seafox.umd.es5${suffix}.js`);
+
+    console.log(`writing ${fleName}`);
+
+    await bundle.write({
+      file: fleName,
+      exports: 'named',
+      name: 'seafox',
+      format: 'umd'
+    });
+  }
+}

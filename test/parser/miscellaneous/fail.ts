@@ -13,7 +13,6 @@ describe('Miscellaneous - Failure', () => {
     '0e',
     '1e-',
     '1e+',
-    '0n',
     '/foo\\u{00000',
     '"use strict"; function* eval(){}',
     '"use strict"; !function* arguments(){}',

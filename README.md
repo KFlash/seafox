@@ -4,6 +4,8 @@
 
 <br>
 
+[![CircleCI](https://circleci.com/gh/KFlash/seafox.svg?style=svg)](https://circleci.com/gh/KFlash/seafox)
+
 ## Features
 
 * Conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification
