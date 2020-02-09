@@ -1367,7 +1367,7 @@ export function parseLetIdentOrVarDeclarationStatement(
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  if ((parser.token & 0b00000010001001110000000000000000) > 0) {
+  if ((parser.token & 0b00000010001001110000000000000000) > 0 && parser.containsEscapes === 0) {
     /* VariableDeclarations ::
      *  ('let') (Identifier ('=' AssignmentExpression)?)+[',']
      */

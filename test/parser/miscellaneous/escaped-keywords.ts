@@ -134,6 +134,12 @@ describe('Miscellaneous - Escaped keywords', () => {
     '\\u{74}rue',
     'var \\u{64}\\u{6f} = 123;',
     'a\\u{0022}b=1',
+    '({ g\\u0065t x(){} });',
+    'le\\u0074 a',
+    'i\\u0066 (0)',
+    'var i\\u0066',
+    'function *a(){var yi\\u0065ld}',
+    'function *a(){yi\\u0065ld 0}',
     //'le\\u0074 x = 5',
     'class yi\\u0065ld {}',
     'class l\\u0065t {}',
@@ -237,6 +243,9 @@ describe('Miscellaneous - Escaped keywords', () => {
     '(p\\u0072otected = "string")',
     '(s\\u0074atic = "string")',
     '(p\\u0075blic = "string")',
+    '({i\\u0066: 0})',
+    'var le\\u0074',
+    'function *a(){({yi\\u0065ld: 0})}',
     `function a() {
       \\u0061sync
       p => {}

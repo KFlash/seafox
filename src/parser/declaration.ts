@@ -81,7 +81,7 @@ export function parseHoistableDeclaration(
   let id: Types.Identifier | null = null;
   let firstRestricted: Token | undefined;
 
-  let parent: ScopeState = createTopLevelScope();
+  let parent = createTopLevelScope();
 
   if ((parser.token & 0b00000000001001110000000000000000) > 0) {
     const { token, tokenValue, start, line, column } = parser;
@@ -105,7 +105,7 @@ export function parseHoistableDeclaration(
     nextToken(parser, context, /* allowRegExp */ 0);
 
     id = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
-  } else if ((origin & Origin.Hoisted) === 0) {
+  } else if ((origin & Origin.Hoisted) !== Origin.Hoisted) {
     report(parser, Errors.DeclNoName, 'Function');
   }
 
