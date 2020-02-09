@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
+import { parseScript } from '../../../src/seafox';
 
 describe('Expressions - New', () => {
   for (const arg of [

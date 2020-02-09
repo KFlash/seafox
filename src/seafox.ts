@@ -5,7 +5,7 @@ import { skipHashBang } from './scanner/comments';
 import { parseModuleItemList } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { create } from './parser/core';
-import { ScopeKind, ScopeState, createTopLevelScope } from './parser/scope';
+import { createTopLevelScope } from './parser/scope';
 
 /**
  * The parser options.

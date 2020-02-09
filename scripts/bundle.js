@@ -32,7 +32,7 @@ async function bunldeCJS() {
 
   const file = join(project.dist.path, `seafox.cjs.js`);
 
-  console.log(`writing ${feName}`);
+  console.log(`writing ${file}`);
 
   await bundle.write({
     file,
