@@ -1861,7 +1861,9 @@ export function parseParenthesizedExpression(
 
         mutualFlag |= Flags.NotDestructible;
 
-        if ((parser.token & Token.IsAssignOp) > 0) {
+        const token = parser.token;
+
+        if ((token & Token.IsAssignOp) > 0) {
           if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
           expr = parseAssignmentOrPattern(
@@ -1870,18 +1872,18 @@ export function parseParenthesizedExpression(
             0,
             0,
             expr,
-            KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+            KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
             start,
             line,
             column
           );
-        } else if ((parser.token & Token.IsBinaryOp) > 0) {
-          expr = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, expr as any);
+        } else if ((token & Token.IsBinaryOp) > 0) {
+          expr = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, expr as any);
           if ((parser.token as Token) === Token.QuestionMark) {
             expr = parseConditionalExpression(parser, context, expr, start, line, column);
           }
         } else {
-          if ((parser.token as Token) === Token.QuestionMark) {
+          if (token === Token.QuestionMark) {
             expr = parseConditionalExpression(parser, context, expr, start, line, column);
           } else {
             mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -2527,7 +2529,9 @@ export function parseArrayExpressionOrPattern(
 
           left = parseMemberExpression(parser, context, left, 1, 0, start, line, column);
 
-          if ((parser.token & Token.IsAssignOp) > 0) {
+          const token = parser.token;
+
+          if ((token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
             left = parseAssignmentOrPattern(
@@ -2536,21 +2540,21 @@ export function parseArrayExpressionOrPattern(
               isPattern,
               0,
               left,
-              KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+              KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
               start,
               line,
               column
             );
-          } else if ((parser.token & Token.IsBinaryOp) > 0) {
+          } else if ((token & Token.IsBinaryOp) > 0) {
             mutualFlag |= Flags.NotDestructible;
 
-            left = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, left as any);
+            left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left as any);
 
             if ((parser.token as Token) === Token.QuestionMark) {
               left = parseConditionalExpression(parser, context, left, start, line, column);
             }
           } else {
-            if ((parser.token as Token) === Token.QuestionMark) {
+            if (token === Token.QuestionMark) {
               mutualFlag |= Flags.NotDestructible;
               left = parseConditionalExpression(parser, context, left, start, line, column);
             } else {
@@ -2575,7 +2579,9 @@ export function parseArrayExpressionOrPattern(
 
           mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
-          if ((parser.token & Token.IsAssignOp) > 0) {
+          const token = parser.token;
+
+          if ((token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
             left = parseAssignmentOrPattern(
@@ -2584,18 +2590,18 @@ export function parseArrayExpressionOrPattern(
               isPattern,
               0,
               left,
-              KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+              KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
               start,
               line,
               column
             );
-          } else if ((parser.token & Token.IsBinaryOp) > 0) {
-            left = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, left as any);
+          } else if ((token & Token.IsBinaryOp) > 0) {
+            left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left as any);
             if ((parser.token as Token) === Token.QuestionMark) {
               left = parseConditionalExpression(parser, context, left, start, line, column);
             }
           } else {
-            if ((parser.token as Token) === Token.QuestionMark) {
+            if (token === Token.QuestionMark) {
               left = parseConditionalExpression(parser, context, left, start, line, column);
             } else {
               mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -3615,11 +3621,13 @@ export function parseObjectLiteralOrPattern(
 
             value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
 
-            const { token } = parser;
+            const token = parser.token;
 
             value = parseMemberExpression(parser, context, value, 1, inGroup, start, line, column);
 
-            if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightBrace) {
+            const t = parser.token;
+
+            if ((t as Token) === Token.Comma || (t as Token) === Token.RightBrace) {
               if (
                 (token as Token) === Token.Assign ||
                 (token as Token) === Token.RightBrace ||
@@ -3633,7 +3641,7 @@ export function parseObjectLiteralOrPattern(
               } else {
                 mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
-            } else if ((parser.token & Token.IsAssignOp) === Token.IsAssignOp) {
+            } else if ((t & Token.IsAssignOp) === Token.IsAssignOp) {
               if (parser.assignable === 0) {
                 mutualFlag |= Flags.NotDestructible;
               } else if ((token as Token) !== Token.Assign) {
@@ -3644,8 +3652,8 @@ export function parseObjectLiteralOrPattern(
               value = parseAssignmentExpression(parser, context, isPattern, inGroup, value, start, line, column);
             } else {
               mutualFlag |= Flags.NotDestructible;
-              if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
-                value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value as any);
+              if ((t & Token.IsBinaryOp) === Token.IsBinaryOp) {
+                value = parseBinaryExpression(parser, context, 0, 0, t, start, line, column, value as any);
               }
               if ((parser.token as Token) === Token.QuestionMark) {
                 value = parseConditionalExpression(parser, context, value, start, line, column);
@@ -3694,23 +3702,25 @@ export function parseObjectLiteralOrPattern(
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
-              if (((parser.token as Token) & Token.IsAssignOp) === Token.IsAssignOp) {
+              const token = parser.token;
+
+              if (((token as Token) & Token.IsAssignOp) === Token.IsAssignOp) {
                 value = parseAssignmentOrPattern(
                   parser,
                   context,
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
                   start,
                   line,
                   column
                 );
               } else {
-                if ((parser.token & Token.IsBinaryOp) > 0) {
-                  value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value as any);
+                if ((token & Token.IsBinaryOp) > 0) {
+                  value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
                 }
-                if ((parser.token as Token) === Token.QuestionMark) {
+                if ((token as Token) === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
                 mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -3902,7 +3912,9 @@ export function parseObjectLiteralOrPattern(
 
               mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
-              if ((parser.token & Token.IsAssignOp) > 0) {
+              const token = parser.token;
+
+              if ((token & Token.IsAssignOp) > 0) {
                 value = parseAssignmentOrPattern(
                   parser,
                   context,
@@ -3915,8 +3927,8 @@ export function parseObjectLiteralOrPattern(
                   column
                 );
               } else {
-                if ((parser.token & Token.IsBinaryOp) > 0) {
-                  value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value as any);
+                if ((token & Token.IsBinaryOp) > 0) {
+                  value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
                 }
 
                 if ((parser.token as Token) === Token.QuestionMark) {
@@ -4041,8 +4053,10 @@ export function parseObjectLiteralOrPattern(
 
               mutualFlag = Flags.Empty;
 
-              if ((parser.token & Token.IsAssignOp) === Token.IsAssignOp) {
-                if (parser.token !== Token.Assign) mutualFlag |= Flags.NotDestructible;
+              const token = parser.token;
+
+              if ((token & Token.IsAssignOp) === Token.IsAssignOp) {
+                if (token !== Token.Assign) mutualFlag |= Flags.NotDestructible;
 
                 value = parseAssignmentOrPattern(
                   parser,
@@ -4050,14 +4064,14 @@ export function parseObjectLiteralOrPattern(
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
                   start,
                   line,
                   column
                 );
               } else {
-                if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
-                  value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value as any);
+                if ((token & Token.IsBinaryOp) === Token.IsBinaryOp) {
+                  value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
                 }
                 if (parser.token === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
@@ -4191,22 +4205,22 @@ export function parseObjectLiteralOrPattern(
               // TODO
             } else if ((parser.flags & Flags.MustDestruct) !== Flags.MustDestruct) {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
-
-              if ((parser.token & Token.IsAssignOp) > 0) {
+              const token = parser.token;
+              if ((token & Token.IsAssignOp) > 0) {
                 value = parseAssignmentOrPattern(
                   parser,
                   context,
                   isPattern,
                   0,
                   value as any,
-                  KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
                   start,
                   line,
                   column
                 );
               } else {
-                if ((parser.token & Token.IsBinaryOp) > 0) {
-                  value = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, value as any);
+                if ((token & Token.IsBinaryOp) > 0) {
+                  value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
                 }
 
                 if ((parser.token as Token) === Token.QuestionMark) {
@@ -4380,13 +4394,13 @@ export function parseSpreadOrRestElement(
         if (parser.flags & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
         argument = parseMemberExpression(parser, context, argument, 1, 0, start, line, column);
         mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
-
-        if ((parser.token & Token.IsAssignOp) === Token.IsAssignOp) {
-          if (parser.token !== Token.Assign) mutualFlag |= Flags.NotDestructible;
+        const t = parser.token;
+        if ((t & Token.IsAssignOp) === Token.IsAssignOp) {
+          if (t !== Token.Assign) mutualFlag |= Flags.NotDestructible;
           argument = parseAssignmentExpression(parser, context, isPattern, 0, argument, start, line, column);
         } else {
-          if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
-            argument = parseBinaryExpression(parser, context, 0, 0, parser.token, start, line, column, argument as any);
+          if ((t & Token.IsBinaryOp) === Token.IsBinaryOp) {
+            argument = parseBinaryExpression(parser, context, 0, 0, t, start, line, column, argument as any);
           }
           if (parser.token === Token.QuestionMark) {
             argument = parseConditionalExpression(parser, context, argument, start, line, column);
