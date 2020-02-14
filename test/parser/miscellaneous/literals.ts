@@ -1,70 +1,31 @@
-import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
+import { fail } from '../core';
+import { Context } from '../../../src/parser/common';
 
-describe('Miscellaneous - Literal', () => {
-  for (const arg of [
-    "'use strict'; ('\\1')",
-    "'use strict'; ('\\4')",
-    "'use strict'; ('\\11')",
-    "'use strict'; ('\\000')",
-    "'use strict'; ('\\00')",
-    "'use strict'; ('\\123')",
-    "('\\00n') 'use strict'; ",
-    "('\\00') 'use strict'; ",
-    "('\\000') 'use strict'; ",
-    "('\\4') 'use strict'; ",
-    "('\\1') 'use strict'; ",
-    "('\\123') 'use strict'; ",
-    "('\\00n') 'use strict'; ",
-    "('\\00') 'use strict'; ",
-    "('\\000') 'use strict'; ",
-    "('\\4') 'use strict'; ",
-    "('\\1') 'use strict'; ",
-    "('\\123') 'use strict'; ",
-    "('\\x')",
-    '(")',
-    "('\\9')",
-    '\\0009',
-    '("\\u{FFFFFFF}")',
-    "'",
-    "(')"
-  ]) {
-    it(`"use strict"; ${arg}`, () => {
-      t.throws(() => {
-        parseScript(`"use strict"; ${arg}`);
-      });
-    });
-
-    it(`var ${arg}`, () => {
-      t.throws(() => {
-        parseScript(`var ${arg}`);
-      });
-    });
-
-    it(`function () { ${arg} }`, () => {
-      t.throws(() => {
-        parseScript(`function () { ${arg} }`);
-      });
-    });
-
-    it(`${arg}`, () => {
-      t.throws(() => {
-        parseScript(`${arg}`);
-      });
-    });
-
-    it(`${arg}`, () => {
-      t.throws(() => {
-        parseModule(`${arg}`);
-      });
-    });
-  }
-
-  for (const arg of ["('\\\\\\'')", '("x")', '(1n)', "('\\0')", "('\\7a')", '(441_34)']) {
-    it(`${arg}`, () => {
-      t.doesNotThrow(() => {
-        parseScript(`${arg}`, { next: true });
-      });
-    });
-  }
-});
+fail('Miscellaneous - Literals (fail)', [
+  [`"use strict"; 'use strict'; ('\\1')`, Context.Empty],
+  [`"use strict"; 'use strict'; ('\\4')`, Context.Empty],
+  [`"use strict"; 'use strict'; ('\\11')`, Context.Empty],
+  [`"use strict"; 'use strict'; ('\\000')`, Context.Empty],
+  [`"use strict"; 'use strict'; ('\\00')`, Context.Empty],
+  [`"use strict"; ('\\00n') 'use strict';`, Context.Empty],
+  [`"use strict"; ('\\00') 'use strict';`, Context.Empty],
+  [`"use strict"; ('\\000') 'use strict';`, Context.Empty],
+  [`"use strict"; ('\\4') 'use strict';`, Context.Empty],
+  [`"use strict"; ('\\1') 'use strict';`, Context.Empty],
+  [`('\\00n') 'use strict';`, Context.Empty],
+  [`('\\00') 'use strict';`, Context.Empty],
+  [`('\\4') 'use strict';`, Context.Empty],
+  [`('\\1') 'use strict';`, Context.Empty],
+  [`('\\123') 'use strict';`, Context.Empty],
+  [`('\\x')`, Context.Empty],
+  [`('\\x')`, Context.Strict],
+  [`(")`, Context.Empty],
+  [`('\\9')`, Context.Empty],
+  [`('\\9')`, Context.Strict | Context.Module],
+  [`\\0009`, Context.Empty],
+  [`("\\u{FFFFFFF}")`, Context.Empty],
+  [`'use strict'; ('\\1')`, Context.Empty],
+  [`'use strict'; ('\\4')`, Context.Empty],
+  [`'use strict'; ('\\11')`, Context.Empty],
+  [`'use strict'; ('\\00')`, Context.Empty]
+]);

@@ -1,1281 +1,121 @@
+import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
-import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
 
-describe('Expressions - Binary', () => {
-  for (const arg of [
-    '(-1) = a',
-    '(- 0) = a',
-    '1 = a',
-    '(-1) *= a',
-    '(- 0) *= a',
-    '1 *= a',
-    '(-1) /= a',
-    '++(a + b)',
-    '(a = b) <<= c',
-    'a + b %= c',
-    '(a = b) /= c',
-    '(- 0) /= a',
-    '1 /= a',
-    '(-1) %= a',
-    '(- 0) %= a',
-    '1 %= a',
-    '(-1) += a',
-    '(- 0) += a',
-    '1 += a',
-    '(-1) -= a',
-    '(- 0) -= a',
-    '1 -= a',
-    '(-1) <<= a',
-    '(- 0) <<= a',
-    '1 <<= a',
-    '(-1) >>= a',
-    '(- 0) >>= a',
-    '1 >>= a',
-    '(-1) >>>= a',
-    '(- 0) >>>= a',
-    '1 >>>= a',
-    '(-1) &= a',
-    '(- 0) &= a',
-    '1 &= a',
-    '(-1) ^= a',
-    '(- 0) ^= a',
-    '1 ^= a',
-    'a - a = 1',
-    'a - 4 = 1',
-    '(-1) |= a',
-    '(- 0) |= a',
-    '1 |= a'
-  ]) {
-    it(`${arg}`, () => {
-      t.throws(() => {
-        parseScript(`${arg}`);
-      });
-    });
-  }
+fail('Expressions - Binary (fail)', [
+  ['function f(){ switch (x){ case z: break y }}', Context.Empty],
+  ['(-1) = a', Context.Empty],
+  ['(- 0) = a', Context.Empty],
+  ['1 = a', Context.Empty],
+  ['(-1) *= a', Context.Empty],
+  ['(- 0) *= a', Context.Empty],
+  ['1 *= a', Context.Empty],
+  ['(-1) /= a', Context.Empty],
+  ['++(a + b)', Context.Empty],
+  ['(a = b) <<= c', Context.Empty],
+  ['a + b %= c', Context.Empty],
+  ['(a = b) /= c', Context.Empty],
+  ['(- 0) /= a', Context.Empty],
+  ['1 /= a', Context.Empty],
+  ['(-1) %= a', Context.Empty],
+  ['(- 0) %= a', Context.Empty],
+  ['1 %= a', Context.Empty],
+  ['(-1) += a', Context.Empty],
+  ['(- 0) += a', Context.Empty],
+  ['1 += a', Context.Empty],
+  ['(-1) -= a', Context.Empty],
+  ['(- 0) -= a', Context.Empty],
+  ['1 -= a', Context.Empty],
+  ['(-1) <<= a', Context.Empty],
+  ['(- 0) <<= a', Context.Empty],
+  ['1 <<= a', Context.Empty],
+  ['(-1) >>= a', Context.Empty],
+  ['(- 0) >>= a', Context.Empty],
+  ['1 >>= a', Context.Empty],
+  ['(-1) >>>= a', Context.Empty],
+  ['(- 0) >>>= a', Context.Empty],
+  ['1 >>>= a', Context.Empty],
+  ['(-1) &= a', Context.Empty],
+  ['(- 0) &= a', Context.Empty],
+  ['1 &= a', Context.Empty],
+  ['(-1) ^= a', Context.Empty],
+  ['(- 0) ^= a', Context.Empty],
+  ['1 ^= a', Context.Empty],
+  ['a - a = 1', Context.Empty],
+  ['a - 4 = 1', Context.Empty],
+  ['(-1) |= a', Context.Empty],
+  ['(- 0) |= a', Context.Empty],
+  ['1 |= a', Context.Empty]
+]);
 
-  for (const arg of [
-    '(a * b * c)',
-    '(a * b) * c',
-    'a * (b * c)',
-    'a * b + c',
-    '(a * b) + c',
-    'a * (b + c)',
-    'a * b - c',
-    '(a * b) - c',
-    'a * (b - c)',
-    'a / b / c',
-    '(a / b) / c',
-    'a / (b / c)',
-    'a * b / c',
-    '(a * b) / c',
-    'a * (b / c)',
-    'a / b + c',
-    '(a / b) + c',
-    'a / (b + c)',
-    'a % b % c',
-    '(a % b) % c',
-    'a % (b % c)',
-    'a * b % c',
-    '(a * b) % c',
-    'a * (b % c)',
-    'a % b + c',
-    '(a % b) + c',
-    'a % (b + c)',
-    'a + b + c',
-    '(a + b) + c',
-    'a + (b + c)',
-    'a + b << c',
-    '(a + b) << c',
-    'a + (b << c)',
-    'a + b >> c',
-    '(a + b) >> c',
-    'a + (b >> c)',
-    'a + b >>> c',
-    '(a + b) >>> c',
-    'a + (b >>> c)',
-    'a - b - c',
-    '(a - b) - c',
-    'a - (b - c)',
-    'a + b - c',
-    'a << (b << c)',
-    'a << b instanceof c',
-    '(a << b) instanceof c',
-    'a << (b instanceof c)',
-    'a << b in c',
-    '(a << b) in c',
-    'a << (b in c)',
-    'a >> b >> c',
-    '(a >> b) >> c',
-    'a >> (b >> c)',
-    'a << b >> c',
-    '(a << b) >> c',
-    'a << (b >> c)',
-    'a >> b < c',
-    '(a >> b) < c',
-    'a >> (b < c)',
-    'a >>> b >>> c',
-    '(a >>> b) >>> c',
-    'a >>> (b >>> c)',
-    'a << b >>> c',
-    '(a << b) >>> c',
-    'a << (b >>> c)',
-    'a >>> b < c',
-    '(a >>> b) < c',
-    'a >>> (b < c)',
-    'a < b < c',
-    '(a < b) < c',
-    'a < (b < c)',
-    'a < b == c',
-    '(a < b) == c',
-    'a < (b == c)',
-    'a < b != c',
-    '(a < b) != c',
-    'a < (b != c)',
-    'a < b === c',
-    '(a < b) === c',
-    'a < (b === c)',
-    'a < b !== c',
-    '(a < b) !== c',
-    'a < (b !== c)',
-    'a > b > c',
-    'a in (b == c)',
-    'a == b == c',
-    '(a == b) == c',
-    'a == (b == c)',
-    'a == b & c',
-    '(a == b) & c',
-    'a == (b & c)',
-    'a != b != c',
-    '(a != b) != c',
-    'a != (b != c)',
-    'a == b != c',
-    '(a == b) != c',
-    'a == (b != c)',
-    'a != b & c',
-    '(a != b) & c',
-    'a != (b & c)',
-    'a === b === c',
-    '(a === b) === c',
-    'a === (b === c)',
-    'a == b === c',
-    'a & b & c',
-    '(a & b) & c',
-    'a & (b & c)',
-    'a & b ^ c',
-    '(a & b) ^ c',
-    'a & (b ^ c)',
-    'a ^ b ^ c',
-    '(a ^ b) ^ c',
-    'a ^ (b ^ c)',
-    'a ^ b | c',
-    '(a ^ b) | c',
-    'a ^ (b | c)',
-    'a | b | c',
-    'a + (b /= c)',
-    'a %= b %= c',
-    'a << b < c',
-    '(a << b) < c',
-    'a << (b < c)',
-    'a << b > c',
-    '(a << b) > c',
-    'a << (b > c)',
-    'a >>= b + c',
-    '(a >>= b) + c',
-    'a >>= (b + c)',
-    'a &= b + c',
-    '(a &= b) + c',
-    'a &= (b + c)',
-    'a + (b |= c)',
-    'delete (a + b)',
-    'void a + b',
-    '(void a) + b',
-    'void (a + b)',
-    '!void a',
-    '!(void a)',
-    'typeof a + b',
-    '(typeof a) + b',
-    'typeof (a + b)',
-    '!typeof a',
-    '!(typeof a)',
-    '++a + b',
-    '(++a) + b',
-    '(-1).a',
-    '(-1).a = b',
-    '(-1).a += b',
-    '(-1).a++',
-    '++(-1).a',
-    '(-1).a()',
-    '(- 0)[a]',
-    '(- 0)[a] = b',
-    '(- 0)[a] += b',
-    '(- 0)[a]++',
-    '++(- 0)[a]',
-    '(- 0)[a]()',
-    'new (- 0)()',
-    '(- 0).a',
-    '(- 0).a = b',
-    '(- 0).a += b',
-    '(- 0).a++',
-    '++(- 0).a',
-    '(- 0).a()',
-    '(1)[a]',
-    '(1)[a] = b',
-    '(1)[a] += b',
-    '(1)[a]++',
-    '++(1)[a]',
-    '(1)[a]()',
-    'new (1)()',
-    '(1).a',
-    '(1).a = b',
-    '(1).a += b',
-    '(1).a++',
-    '++(1).a',
-    '(1).a()',
-    '({ }).x',
-    'x = { }',
-    '(function () { })()',
-    'x = function () { }',
-    'var a',
-    'var a = 1',
-    'var a, b',
-    'var a = 1, b = 2',
-    'var a, b, c',
-    'var a = 1, b = 2, c = 3',
-    'const a = 1',
-    'const a = (1, 2)'
-  ]) {
-    it(`${arg}`, () => {
-      t.doesNotThrow(() => {
-        parseScript(`${arg}`);
-      });
-    });
-    it(`${arg}`, () => {
-      t.doesNotThrow(() => {
-        parseModule(`${arg}`);
-      });
-    });
-  }
-
-  for (const [source, ctx, expected] of [
-    [
-      `(a * b) / c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+pass('Expressions - Binary (pass)', [
+  [
+    `(a + b) >> c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
               type: 'BinaryExpression',
               left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                operator: '*',
+                type: 'Identifier',
+                name: 'a',
                 start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
                 end: 6,
                 loc: {
                   start: {
                     line: 1,
-                    column: 1
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 10,
-                end: 11,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 1,
-                    column: 11
-                  }
-                }
-              },
-              operator: '/',
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `a % (b % c)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 1
-                  }
-                }
-              },
-              right: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 9,
-                  end: 10,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 9
-                    },
-                    end: {
-                      line: 1,
-                      column: 10
-                    }
-                  }
-                },
-                operator: '%',
-                start: 5,
-                end: 10,
-                loc: {
-                  start: {
-                    line: 1,
                     column: 5
                   },
                   end: {
                     line: 1,
-                    column: 10
-                  }
-                }
-              },
-              operator: '%',
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `a << b instanceof c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                operator: '<<',
-                start: 0,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
                     column: 6
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 18,
-                end: 19,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 18
-                  },
-                  end: {
-                    line: 1,
-                    column: 19
-                  }
-                }
-              },
-              operator: 'instanceof',
-              start: 0,
-              end: 19,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 19
-                }
-              }
-            },
-            start: 0,
-            end: 19,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 19
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 19,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 19
-          }
-        }
-      }
-    ],
-    [
-      `(a << b) instanceof c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                operator: '<<',
-                start: 1,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 1
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 20,
-                end: 21,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 20
-                  },
-                  end: {
-                    line: 1,
-                    column: 21
-                  }
-                }
-              },
-              operator: 'instanceof',
-              start: 0,
-              end: 21,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 21
-                }
-              }
-            },
-            start: 0,
-            end: 21,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 21
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 21,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 21
-          }
-        }
-      }
-    ],
-    [
-      `a >>> b >>> c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                operator: '>>>',
-                start: 0,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 12,
-                end: 13,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 12
-                  },
-                  end: {
-                    line: 1,
-                    column: 13
-                  }
-                }
-              },
-              operator: '>>>',
-              start: 0,
-              end: 13,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 13
-                }
-              }
-            },
-            start: 0,
-            end: 13,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 13
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 13,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 13
-          }
-        }
-      }
-    ],
-    [
-      `a in (b == c)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 1
-                  }
-                }
-              },
-              right: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 11,
-                  end: 12,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 11
-                    },
-                    end: {
-                      line: 1,
-                      column: 12
-                    }
-                  }
-                },
-                operator: '==',
-                start: 6,
-                end: 12,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 6
-                  },
-                  end: {
-                    line: 1,
-                    column: 12
-                  }
-                }
-              },
-              operator: 'in',
-              start: 0,
-              end: 13,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 13
-                }
-              }
-            },
-            start: 0,
-            end: 13,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 13
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 13,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 13
-          }
-        }
-      }
-    ],
-    [
-      `(a != b) != c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                operator: '!=',
-                start: 1,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 1
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 12,
-                end: 13,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 12
-                  },
-                  end: {
-                    line: 1,
-                    column: 13
-                  }
-                }
-              },
-              operator: '!=',
-              start: 0,
-              end: 13,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 13
-                }
-              }
-            },
-            start: 0,
-            end: 13,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 13
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 13,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 13
-          }
-        }
-      }
-    ],
-    [
-      `a & b ^ c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                operator: '&',
-                start: 0,
-                end: 5,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 5
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 8,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 8
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              operator: '^',
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `a + (b /= c)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 1
-                  }
-                }
-              },
-              right: {
-                type: 'AssignmentExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                operator: '/=',
-                right: {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 10,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                start: 5,
-                end: 11,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 5
-                  },
-                  end: {
-                    line: 1,
-                    column: 11
                   }
                 }
               },
               operator: '+',
-              start: 0,
+              start: 1,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 11,
               end: 12,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 11
                 },
                 end: {
                   line: 1,
@@ -1283,6 +123,7 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            operator: '>>',
             start: 0,
             end: 12,
             loc: {
@@ -1295,33 +136,165 @@ describe('Expressions - Binary', () => {
                 column: 12
               }
             }
-          }
-        ],
-        start: 0,
-        end: 12,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 12
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
           }
         }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
       }
-    ],
-    [
-      `a >>= b + c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
+    }
+  ],
+  [
+    `(a % b) + c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '%',
+              start: 1,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '+',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `a << b instanceof c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
               left: {
                 type: 'Identifier',
                 name: 'a',
@@ -1338,44 +311,128 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              operator: '>>=',
               right: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
                   }
+                }
+              },
+              operator: '<<',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
                 },
-                right: {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 10,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 18,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 18
                 },
-                operator: '+',
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            operator: 'instanceof',
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          },
+          start: 0,
+          end: 19,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 19
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 19,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 19
+        }
+      }
+    }
+  ],
+  [
+    `a >> (b >> c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
                 start: 6,
-                end: 11,
+                end: 7,
                 loc: {
                   start: {
                     line: 1,
@@ -1383,112 +440,43 @@ describe('Expressions - Binary', () => {
                   },
                   end: {
                     line: 1,
-                    column: 11
+                    column: 7
                   }
                 }
               },
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `!(void a)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UnaryExpression',
-              operator: '!',
-              argument: {
-                type: 'UnaryExpression',
-                operator: 'void',
-                argument: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 7,
-                  end: 8,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 7
-                    },
-                    end: {
-                      line: 1,
-                      column: 8
-                    }
-                  }
-                },
-                prefix: true,
-                start: 2,
-                end: 8,
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 11,
+                end: 12,
                 loc: {
                   start: {
                     line: 1,
-                    column: 2
+                    column: 11
                   },
                   end: {
                     line: 1,
-                    column: 8
+                    column: 12
                   }
                 }
               },
-              prefix: true,
-              start: 0,
-              end: 9,
+              operator: '>>',
+              start: 6,
+              end: 12,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 6
                 },
                 end: {
                   line: 1,
-                  column: 9
+                  column: 12
                 }
               }
             },
+            operator: '>>',
             start: 0,
-            end: 9,
+            end: 13,
             loc: {
               start: {
                 line: 1,
@@ -1496,66 +484,64 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 9
+                column: 13
               }
             }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 9
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
           }
         }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
       }
-    ],
-    [
-      `++a + b`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+    }
+  ],
+  [
+    `(a << b) in c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
               type: 'BinaryExpression',
               left: {
-                type: 'UpdateExpression',
-                argument: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 2,
-                  end: 3,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 2
-                    },
-                    end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                },
-                operator: '++',
-                prefix: true,
-                start: 0,
-                end: 3,
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 1
                   },
                   end: {
                     line: 1,
-                    column: 3
+                    column: 2
                   }
                 }
               },
@@ -1575,13 +561,13 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              operator: '+',
-              start: 0,
+              operator: '<<',
+              start: 1,
               end: 7,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 1
                 },
                 end: {
                   line: 1,
@@ -1589,6 +575,929 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 12,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a < b == c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              operator: '<',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            operator: '==',
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `a in (b == c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '==',
+              start: 6,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a != (b != c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '!=',
+              start: 6,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            operator: '!=',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a === (b === c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 13,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              operator: '===',
+              start: 7,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            operator: '===',
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    `a ^ b ^ c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              operator: '^',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 8,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '^',
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `void a + b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'UnaryExpression',
+              operator: 'void',
+              argument: {
+                type: 'Identifier',
+                name: 'a',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              prefix: true,
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            operator: '+',
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `a + (b |= c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '|=',
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 10,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              start: 5,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '+',
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `++a + b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'a',
+                start: 2,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              operator: '++',
+              prefix: true,
+              start: 0,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            operator: '+',
             start: 0,
             end: 7,
             loc: {
@@ -1601,34 +1510,48 @@ describe('Expressions - Binary', () => {
                 column: 7
               }
             }
-          }
-        ],
-        start: 0,
-        end: 7,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 7
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
           }
         }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
       }
-    ],
-    [
-      `(-1).a`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+    }
+  ],
+  [
+    `(-1).a += b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
               type: 'MemberExpression',
-
               object: {
                 type: 'UnaryExpression',
                 operator: '-',
@@ -1692,8 +1615,25 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            operator: '+=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
             start: 0,
-            end: 6,
+            end: 11,
             loc: {
               start: {
                 line: 1,
@@ -1701,65 +1641,63 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 6
+                column: 11
               }
             }
-          }
-        ],
-        start: 0,
-        end: 6,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 6
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
           }
         }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
       }
-    ],
-    [
-      `(- 0)[a] = b`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
-              left: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 3,
-                    end: 4,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 3
-                      },
-                      end: {
-                        line: 1,
-                        column: 4
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 1,
+    }
+  ],
+  [
+    `(- 0)[a] = b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 3,
                   end: 4,
                   loc: {
                     start: {
                       line: 1,
-                      column: 1
+                      column: 3
                     },
                     end: {
                       line: 1,
@@ -1767,59 +1705,60 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                start: 0,
-                end: 8,
+                prefix: true,
+                start: 1,
+                end: 4,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 1
                   },
                   end: {
                     line: 1,
-                    column: 8
+                    column: 4
                   }
                 }
               },
-              operator: '=',
-              right: {
+              computed: true,
+              property: {
                 type: 'Identifier',
-                name: 'b',
-                start: 11,
-                end: 12,
+                name: 'a',
+                start: 6,
+                end: 7,
                 loc: {
                   start: {
                     line: 1,
-                    column: 11
+                    column: 6
                   },
                   end: {
                     line: 1,
-                    column: 12
+                    column: 7
                   }
                 }
               },
               start: 0,
-              end: 12,
+              end: 8,
               loc: {
                 start: {
                   line: 1,
                   column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
                 },
                 end: {
                   line: 1,
@@ -1839,62 +1778,60 @@ describe('Expressions - Binary', () => {
                 column: 12
               }
             }
-          }
-        ],
-        start: 0,
-        end: 12,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 12
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
           }
         }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
       }
-    ],
-
-    [
-      `(- 0).a = b`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
-              left: {
-                type: 'MemberExpression',
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 3,
-                    end: 4,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 3
-                      },
-                      end: {
-                        line: 1,
-                        column: 4
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 1,
+    }
+  ],
+  [
+    `(- 0)[a]()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'CallExpression',
+            callee: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 3,
                   end: 4,
                   loc: {
                     start: {
                       line: 1,
-                      column: 1
+                      column: 3
                     },
                     end: {
                       line: 1,
@@ -1902,30 +1839,30 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
+                prefix: true,
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
                   }
-                },
-
-                start: 0,
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 6,
                 end: 7,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 6
                   },
                   end: {
                     line: 1,
@@ -1933,10 +1870,1122 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              operator: '=',
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            arguments: [],
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `new (- 0)()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'NewExpression',
+            callee: {
+              type: 'UnaryExpression',
+              operator: '-',
+              argument: {
+                type: 'Literal',
+                value: 0,
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              prefix: true,
+              start: 5,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            arguments: [],
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `(- 0).a += b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 3,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                prefix: true,
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            operator: '+=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `++(- 0).a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 5,
+                  end: 6,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 6
+                    }
+                  }
+                },
+                prefix: true,
+                start: 3,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              start: 2,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '++',
+            prefix: true,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `(1).a += b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            operator: '+=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `!(void a)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: '!',
+            argument: {
+              type: 'UnaryExpression',
+              operator: 'void',
+              argument: {
+                type: 'Identifier',
+                name: 'a',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              prefix: true,
+              start: 2,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `a &= b + c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            operator: '&=',
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 9,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              operator: '+',
+              start: 5,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `a << b > c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
               right: {
                 type: 'Identifier',
                 name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '<<',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            operator: '>',
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `a << b < c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '<<',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            operator: '<',
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `(a << b) > c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              operator: '<<',
+              start: 1,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            operator: '>',
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `a %= b %= c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            operator: '%=',
+            right: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '%=',
+              right: {
+                type: 'Identifier',
+                name: 'c',
                 start: 10,
                 end: 11,
                 loc: {
@@ -1950,12 +2999,12 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              start: 0,
+              start: 5,
               end: 11,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 5
                 },
                 end: {
                   line: 1,
@@ -1975,88 +3024,53 @@ describe('Expressions - Binary', () => {
                 column: 11
               }
             }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 11
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
           }
         }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
       }
-    ],
-    [
-      `(- 0).a += b`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
+    }
+  ],
+  [
+    `a != b != c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
               left: {
-                type: 'MemberExpression',
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 3,
-                    end: 4,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 3
-                      },
-                      end: {
-                        line: 1,
-                        column: 4
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 1,
-                  end: 4,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 4
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-
+                type: 'Identifier',
+                name: 'a',
                 start: 0,
-                end: 7,
+                end: 1,
                 loc: {
                   start: {
                     line: 1,
@@ -2064,14 +3078,848 @@ describe('Expressions - Binary', () => {
                   },
                   end: {
                     line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '!=',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '!=',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `(a < b) === c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '<',
+              start: 1,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 12,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            operator: '===',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `(a * b) / c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '*',
+              start: 1,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '/',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `a % (b % c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 9,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 9
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              operator: '%',
+              start: 5,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            operator: '%',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `a << b instanceof c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '<<',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 18,
+              end: 19,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 18
+                },
+                end: {
+                  line: 1,
+                  column: 19
+                }
+              }
+            },
+            operator: 'instanceof',
+            start: 0,
+            end: 19,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 19
+              }
+            }
+          },
+          start: 0,
+          end: 19,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 19
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 19,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 19
+        }
+      }
+    }
+  ],
+  [
+    `(a << b) instanceof c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
                     column: 7
                   }
                 }
               },
-              operator: '+=',
+              operator: '<<',
+              start: 1,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 20,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 20
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            operator: 'instanceof',
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          },
+          start: 0,
+          end: 21,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 21
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 21,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 21
+        }
+      }
+    }
+  ],
+  [
+    `a >>> b >>> c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
               right: {
                 type: 'Identifier',
                 name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              operator: '>>>',
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 12,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            operator: '>>>',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a in (b == c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
                 start: 11,
                 end: 12,
                 loc: {
@@ -2085,12 +3933,909 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              start: 0,
+              operator: '==',
+              start: 6,
               end: 12,
               loc: {
                 start: {
                   line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `(a != b) != c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              operator: '!=',
+              start: 1,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 12,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            operator: '!=',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a & b ^ c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              operator: '&',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
                   column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 8,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '^',
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `a + (b /= c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'AssignmentExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '/=',
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 10,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              start: 5,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '+',
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `a >>= b + c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            operator: '>>=',
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 10,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              operator: '+',
+              start: 6,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `!(void a)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: '!',
+            argument: {
+              type: 'UnaryExpression',
+              operator: 'void',
+              argument: {
+                type: 'Identifier',
+                name: 'a',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              prefix: true,
+              start: 2,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `++a + b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'UpdateExpression',
+              argument: {
+                type: 'Identifier',
+                name: 'a',
+                start: 2,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              operator: '++',
+              prefix: true,
+              start: 0,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            operator: '+',
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          },
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
+      }
+    }
+  ],
+  [
+    `(-1).a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'MemberExpression',
+
+            object: {
+              type: 'UnaryExpression',
+              operator: '-',
+              argument: {
+                type: 'Literal',
+                value: 1,
+                start: 2,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              prefix: true,
+              start: 1,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            computed: false,
+            property: {
+              type: 'Identifier',
+              name: 'a',
+              start: 5,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            start: 0,
+            end: 6,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 6
+              }
+            }
+          },
+          start: 0,
+          end: 6,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 6
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 6,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 6
+        }
+      }
+    }
+  ],
+  [
+    `(- 0)[a] = b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 3,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                prefix: true,
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
                 },
                 end: {
                   line: 1,
@@ -2110,238 +4855,48 @@ describe('Expressions - Binary', () => {
                 column: 12
               }
             }
-          }
-        ],
-        start: 0,
-        end: 12,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 12
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
           }
         }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
       }
-    ],
-    [
-      `++(- 0).a`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 5,
-                    end: 6,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 5
-                      },
-                      end: {
-                        line: 1,
-                        column: 6
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 3,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                },
+    }
+  ],
 
-                start: 2,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              operator: '++',
-              prefix: true,
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `new (- 0)()`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'NewExpression',
-              callee: {
-                type: 'UnaryExpression',
-                operator: '-',
-                argument: {
-                  type: 'Literal',
-                  value: 0,
-                  start: 7,
-                  end: 8,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 7
-                    },
-                    end: {
-                      line: 1,
-                      column: 8
-                    }
-                  }
-                },
-                prefix: true,
-                start: 5,
-                end: 8,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 5
-                  },
-                  end: {
-                    line: 1,
-                    column: 8
-                  }
-                }
-              },
-              arguments: [],
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `(- 0).a`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+  [
+    `(- 0).a = b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
               type: 'MemberExpression',
               object: {
                 type: 'UnaryExpression',
@@ -2407,128 +4962,25 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
-            start: 0,
-            end: 7,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 7
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 7,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 7
-          }
-        }
-      }
-    ],
-    [
-      `(- 0).a++`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 3,
-                    end: 4,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 3
-                      },
-                      end: {
-                        line: 1,
-                        column: 4
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 1,
-                  end: 4,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 4
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-
-                start: 0,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              operator: '++',
-              prefix: false,
-              start: 0,
-              end: 9,
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 10,
+              end: 11,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 10
                 },
                 end: {
                   line: 1,
-                  column: 9
+                  column: 11
                 }
               }
             },
             start: 0,
-            end: 9,
+            end: 11,
             loc: {
               start: {
                 line: 1,
@@ -2536,262 +4988,71 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 9
+                column: 11
               }
             }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `++(- 0).a`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 5,
-                    end: 6,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 5
-                      },
-                      end: {
-                        line: 1,
-                        column: 6
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 3,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                },
-
-                start: 2,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              operator: '++',
-              prefix: true,
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
             },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
+            end: {
+              line: 1,
+              column: 11
             }
           }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
         }
       }
-    ],
-    [
-      `++(1)[a]`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 3,
-                  end: 4,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 4
-                    }
-                  }
-                },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-
-                start: 2,
-                end: 8,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 8
-                  }
-                }
-              },
-              operator: '++',
-              prefix: true,
-              start: 0,
-              end: 8,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 8
-                }
-              }
-            },
-            start: 0,
-            end: 8,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 8
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 8,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 8
-          }
-        }
-      }
-    ],
-    [
-      `({ }).x`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+    }
+  ],
+  [
+    `(- 0).a += b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
               type: 'MemberExpression',
               object: {
-                type: 'ObjectExpression',
-                properties: [],
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 3,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                prefix: true,
                 start: 1,
                 end: 4,
                 loc: {
@@ -2808,7 +5069,7 @@ describe('Expressions - Binary', () => {
               computed: false,
               property: {
                 type: 'Identifier',
-                name: 'x',
+                name: 'a',
                 start: 6,
                 end: 7,
                 loc: {
@@ -2836,8 +5097,25 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            operator: '+=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
             start: 0,
-            end: 7,
+            end: 12,
             loc: {
               start: {
                 line: 1,
@@ -2845,57 +5123,57 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 7
+                column: 12
               }
             }
-          }
-        ],
-        start: 0,
-        end: 7,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 7
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
           }
         }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
       }
-    ],
-    [
-      `a || b || c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'LogicalExpression',
-              left: {
-                type: 'LogicalExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
+    }
+  ],
+  [
+    `++(- 0).a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
                   start: 5,
                   end: 6,
                   loc: {
@@ -2909,13 +5187,13 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                operator: '||',
-                start: 0,
+                prefix: true,
+                start: 3,
                 end: 6,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 3
                   },
                   end: {
                     line: 1,
@@ -2923,36 +5201,125 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              right: {
+              computed: false,
+              property: {
                 type: 'Identifier',
-                name: 'c',
-                start: 10,
-                end: 11,
+                name: 'a',
+                start: 8,
+                end: 9,
                 loc: {
                   start: {
                     line: 1,
-                    column: 10
+                    column: 8
                   },
                   end: {
                     line: 1,
-                    column: 11
+                    column: 9
                   }
                 }
               },
-              operator: '||',
-              start: 0,
-              end: 11,
+
+              start: 2,
+              end: 9,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 2
                 },
                 end: {
                   line: 1,
-                  column: 11
+                  column: 9
                 }
               }
             },
+            operator: '++',
+            prefix: true,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `new (- 0)()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'NewExpression',
+            callee: {
+              type: 'UnaryExpression',
+              operator: '-',
+              argument: {
+                type: 'Literal',
+                value: 0,
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              prefix: true,
+              start: 5,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            arguments: [],
             start: 0,
             end: 11,
             loc: {
@@ -2965,54 +5332,277 @@ describe('Expressions - Binary', () => {
                 column: 11
               }
             }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 11
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
           }
         }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
       }
-    ],
-    [
-      `a && b && c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'LogicalExpression',
-              left: {
-                type: 'LogicalExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
+    }
+  ],
+  [
+    `(- 0).a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'MemberExpression',
+            object: {
+              type: 'UnaryExpression',
+              operator: '-',
+              argument: {
+                type: 'Literal',
+                value: 0,
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              prefix: true,
+              start: 1,
+              end: 4,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 4
+                }
+              }
+            },
+            computed: false,
+            property: {
+              type: 'Identifier',
+              name: 'a',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          },
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
+      }
+    }
+  ],
+  [
+    `(- 0).a++`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 3,
+                  end: 4,
                   loc: {
                     start: {
                       line: 1,
-                      column: 0
+                      column: 3
                     },
                     end: {
                       line: 1,
-                      column: 1
+                      column: 4
                     }
                   }
                 },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
+                prefix: true,
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            operator: '++',
+            prefix: false,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `++(- 0).a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
                   start: 5,
                   end: 6,
                   loc: {
@@ -3026,13 +5616,672 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                operator: '&&',
-                start: 0,
+                prefix: true,
+                start: 3,
                 end: 6,
                 loc: {
                   start: {
                     line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 8,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+
+              start: 2,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '++',
+            prefix: true,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `++(1)[a]`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+
+              start: 2,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            operator: '++',
+            prefix: true,
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          },
+          start: 0,
+          end: 8,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 8
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 8,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 8
+        }
+      }
+    }
+  ],
+  [
+    `({ }).x`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'MemberExpression',
+            object: {
+              type: 'ObjectExpression',
+              properties: [],
+              start: 1,
+              end: 4,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 4
+                }
+              }
+            },
+            computed: false,
+            property: {
+              type: 'Identifier',
+              name: 'x',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          },
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
+      }
+    }
+  ],
+  [
+    `a || b || c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
                     column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '||',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '||',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `a && b && c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '&&',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '&&',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `a && b || c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '&&',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '||',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `a || b && c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
                   },
                   end: {
                     line: 1,
@@ -3057,12 +6306,12 @@ describe('Expressions - Binary', () => {
                 }
               },
               operator: '&&',
-              start: 0,
+              start: 5,
               end: 11,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 5
                 },
                 end: {
                   line: 1,
@@ -3070,6 +6319,7 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            operator: '||',
             start: 0,
             end: 11,
             loc: {
@@ -3082,150 +6332,48 @@ describe('Expressions - Binary', () => {
                 column: 11
               }
             }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `a && b || c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'LogicalExpression',
-              left: {
-                type: 'LogicalExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                operator: '&&',
-                start: 0,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 10,
-                end: 11,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 1,
-                    column: 11
-                  }
-                }
-              },
-              operator: '||',
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
             },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
+            end: {
+              line: 1,
+              column: 11
             }
           }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
         }
       }
-    ],
-    [
-      `a || b && c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'LogicalExpression',
+    }
+  ],
+  [
+    `a ^ b | c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
               left: {
                 type: 'Identifier',
                 name: 'a',
@@ -3243,16 +6391,149 @@ describe('Expressions - Binary', () => {
                 }
               },
               right: {
-                type: 'LogicalExpression',
+                type: 'Identifier',
+                name: 'b',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              operator: '^',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 8,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '|',
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `a == b != c === d !== e`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'BinaryExpression',
                 left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 0,
+                    end: 1,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 0
+                      },
+                      end: {
+                        line: 1,
+                        column: 1
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'b',
+                    start: 5,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 5
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  },
+                  operator: '==',
+                  start: 0,
                   end: 6,
                   loc: {
                     start: {
                       line: 1,
-                      column: 5
+                      column: 0
                     },
                     end: {
                       line: 1,
@@ -3276,110 +6557,9 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                operator: '&&',
-                start: 5,
-                end: 11,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 5
-                  },
-                  end: {
-                    line: 1,
-                    column: 11
-                  }
-                }
-              },
-              operator: '||',
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `a ^ b | c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                operator: '^',
+                operator: '!=',
                 start: 0,
-                end: 5,
+                end: 11,
                 loc: {
                   start: {
                     line: 1,
@@ -3387,13 +6567,149 @@ describe('Expressions - Binary', () => {
                   },
                   end: {
                     line: 1,
-                    column: 5
+                    column: 11
                   }
                 }
               },
               right: {
                 type: 'Identifier',
-                name: 'c',
+                name: 'd',
+                start: 16,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              operator: '===',
+              start: 0,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'e',
+              start: 22,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 22
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            operator: '!==',
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          },
+          start: 0,
+          end: 23,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 23
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 23,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 23
+        }
+      }
+    }
+  ],
+  [
+    `++(- 0)[a]`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 5,
+                  end: 6,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 6
+                    }
+                  }
+                },
+                prefix: true,
+                start: 3,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
                 start: 8,
                 end: 9,
                 loc: {
@@ -3407,22 +6723,23 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              operator: '|',
-              start: 0,
-              end: 9,
+              start: 2,
+              end: 10,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 2
                 },
                 end: {
                   line: 1,
-                  column: 9
+                  column: 10
                 }
               }
             },
+            operator: '++',
+            prefix: true,
             start: 0,
-            end: 9,
+            end: 10,
             loc: {
               start: {
                 line: 1,
@@ -3430,242 +6747,62 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 9
+                column: 10
               }
             }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `a == b != c === d !== e`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'BinaryExpression',
-                  left: {
-                    type: 'BinaryExpression',
-                    left: {
-                      type: 'Identifier',
-                      name: 'a',
-                      start: 0,
-                      end: 1,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 0
-                        },
-                        end: {
-                          line: 1,
-                          column: 1
-                        }
-                      }
-                    },
-                    right: {
-                      type: 'Identifier',
-                      name: 'b',
-                      start: 5,
-                      end: 6,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 5
-                        },
-                        end: {
-                          line: 1,
-                          column: 6
-                        }
-                      }
-                    },
-                    operator: '==',
-                    start: 0,
-                    end: 6,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 0
-                      },
-                      end: {
-                        line: 1,
-                        column: 6
-                      }
-                    }
-                  },
-                  right: {
-                    type: 'Identifier',
-                    name: 'c',
-                    start: 10,
-                    end: 11,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 10
-                      },
-                      end: {
-                        line: 1,
-                        column: 11
-                      }
-                    }
-                  },
-                  operator: '!=',
-                  start: 0,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'd',
-                  start: 16,
-                  end: 17,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 16
-                    },
-                    end: {
-                      line: 1,
-                      column: 17
-                    }
-                  }
-                },
-                operator: '===',
-                start: 0,
-                end: 17,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 17
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'e',
-                start: 22,
-                end: 23,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 22
-                  },
-                  end: {
-                    line: 1,
-                    column: 23
-                  }
-                }
-              },
-              operator: '!==',
-              start: 0,
-              end: 23,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 23
-                }
-              }
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
             },
-            start: 0,
-            end: 23,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 23
-              }
+            end: {
+              line: 1,
+              column: 10
             }
           }
-        ],
-        start: 0,
-        end: 23,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 23
-          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
         }
       }
-    ],
-    [
-      `++(- 0)[a]`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
+    }
+  ],
 
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 5,
-                    end: 6,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 5
-                      },
-                      end: {
-                        line: 1,
-                        column: 6
-                      }
-                    }
-                  },
-                  prefix: true,
+  [
+    `(- 0).a()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'CallExpression',
+
+            callee: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
                   start: 3,
-                  end: 6,
+                  end: 4,
                   loc: {
                     start: {
                       line: 1,
@@ -3673,155 +6810,34 @@ describe('Expressions - Binary', () => {
                     },
                     end: {
                       line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                },
-                start: 2,
-                end: 10,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 10
-                  }
-                }
-              },
-              operator: '++',
-              prefix: true,
-              start: 0,
-              end: 10,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 10
-                }
-              }
-            },
-            start: 0,
-            end: 10,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 10
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 10,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 10
-          }
-        }
-      }
-    ],
-
-    [
-      `(- 0).a()`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'CallExpression',
-
-              callee: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 3,
-                    end: 4,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 3
-                      },
-                      end: {
-                        line: 1,
-                        column: 4
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 1,
-                  end: 4,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
                       column: 4
                     }
                   }
                 },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
+                prefix: true,
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
                   }
-                },
-                start: 0,
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 6,
                 end: 7,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 6
                   },
                   end: {
                     line: 1,
@@ -3829,331 +6845,6 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              arguments: [],
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `(1)[a] = b`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
-              left: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                start: 0,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              operator: '=',
-              right: {
-                type: 'Identifier',
-                name: 'b',
-                start: 9,
-                end: 10,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 9
-                  },
-                  end: {
-                    line: 1,
-                    column: 10
-                  }
-                }
-              },
-              start: 0,
-              end: 10,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 10
-                }
-              }
-            },
-            start: 0,
-            end: 10,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 10
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 10,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 10
-          }
-        }
-      }
-    ],
-    [
-      `(1)[a]++`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                start: 0,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              operator: '++',
-              prefix: false,
-              start: 0,
-              end: 8,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 8
-                }
-              }
-            },
-            start: 0,
-            end: 8,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 8
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 8,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 8
-          }
-        }
-      }
-    ],
-    [
-      `(1).a()`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'CallExpression',
-
-              callee: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                start: 0,
-                end: 5,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 5
-                  }
-                }
-              },
-              arguments: [],
               start: 0,
               end: 7,
               loc: {
@@ -4167,6 +6858,331 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            arguments: [],
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `(1)[a] = b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `(1)[a]++`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            operator: '++',
+            prefix: false,
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          },
+          start: 0,
+          end: 8,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 8
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 8,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 8
+        }
+      }
+    }
+  ],
+  [
+    `(1).a()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'CallExpression',
+
+            callee: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            arguments: [],
             start: 0,
             end: 7,
             loc: {
@@ -4179,105 +7195,105 @@ describe('Expressions - Binary', () => {
                 column: 7
               }
             }
-          }
-        ],
-        start: 0,
-        end: 7,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 7
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
           }
         }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
       }
-    ],
-    [
-      `(1)[a] += b`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
-              left: {
-                type: 'MemberExpression',
+    }
+  ],
+  [
+    `(1)[a] += b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
 
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                start: 0,
-                end: 6,
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 1,
+                end: 2,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 1
                   },
                   end: {
                     line: 1,
-                    column: 6
+                    column: 2
                   }
                 }
               },
-              operator: '+=',
-              right: {
+              computed: true,
+              property: {
                 type: 'Identifier',
-                name: 'b',
-                start: 10,
-                end: 11,
+                name: 'a',
+                start: 4,
+                end: 5,
                 loc: {
                   start: {
                     line: 1,
-                    column: 10
+                    column: 4
                   },
                   end: {
                     line: 1,
-                    column: 11
+                    column: 5
                   }
                 }
               },
               start: 0,
-              end: 11,
+              end: 6,
               loc: {
                 start: {
                   line: 1,
                   column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            operator: '+=',
+            right: {
+              type: 'Identifier',
+              name: 'b',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
                 },
                 end: {
                   line: 1,
@@ -4297,72 +7313,71 @@ describe('Expressions - Binary', () => {
                 column: 11
               }
             }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 11
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
           }
         }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
       }
-    ],
-    [
-      `1+2;`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'Literal',
-                value: 1,
-                start: 0,
-                end: 1,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 1
-                  }
-                }
-              },
-              right: {
-                type: 'Literal',
-                value: 2,
-                start: 2,
-                end: 3,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 3
-                  }
-                }
-              },
-              operator: '+',
+    }
+  ],
+  [
+    `1+2;`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Literal',
+              value: 1,
               start: 0,
-              end: 3,
+              end: 1,
               loc: {
                 start: {
                   line: 1,
                   column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'Literal',
+              value: 2,
+              start: 2,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
                 },
                 end: {
                   line: 1,
@@ -4370,8 +7385,9 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            operator: '+',
             start: 0,
-            end: 4,
+            end: 3,
             loc: {
               start: {
                 line: 1,
@@ -4379,371 +7395,50 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 4
+                column: 3
               }
             }
-          }
-        ],
-        start: 0,
-        end: 4,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 4
-          }
-        }
-      }
-    ],
-    [
-      `x - y + z`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'y',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                operator: '-',
-                start: 0,
-                end: 5,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 5
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'z',
-                start: 8,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 8
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              operator: '+',
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
+          start: 0,
+          end: 4,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
             },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
+            end: {
+              line: 1,
+              column: 4
             }
           }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
+        }
+      ],
+      start: 0,
+      end: 4,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 4
         }
       }
-    ],
-    [
-      `x * y % z`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'y',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                operator: '*',
-                start: 0,
-                end: 5,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 5
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'z',
-                start: 8,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 8
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              operator: '%',
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `-(x ** y)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UnaryExpression',
-              operator: '-',
-              argument: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 2,
-                  end: 3,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 2
-                    },
-                    end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'y',
-                  start: 7,
-                  end: 8,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 7
-                    },
-                    end: {
-                      line: 1,
-                      column: 8
-                    }
-                  }
-                },
-                operator: '**',
-                start: 2,
-                end: 8,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 8
-                  }
-                }
-              },
-              prefix: true,
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `x in y`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+    }
+  ],
+  [
+    `x - y + z`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
               type: 'BinaryExpression',
               left: {
                 type: 'Identifier',
@@ -4764,22 +7459,22 @@ describe('Expressions - Binary', () => {
               right: {
                 type: 'Identifier',
                 name: 'y',
-                start: 5,
-                end: 6,
+                start: 4,
+                end: 5,
                 loc: {
                   start: {
                     line: 1,
-                    column: 5
+                    column: 4
                   },
                   end: {
                     line: 1,
-                    column: 6
+                    column: 5
                   }
                 }
               },
-              operator: 'in',
+              operator: '-',
               start: 0,
-              end: 6,
+              end: 5,
               loc: {
                 start: {
                   line: 1,
@@ -4787,10 +7482,331 @@ describe('Expressions - Binary', () => {
                 },
                 end: {
                   line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'z',
+              start: 8,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '+',
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `x * y % z`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'x',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'y',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              operator: '*',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'z',
+              start: 8,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '%',
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `-(x ** y)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: '-',
+            argument: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'x',
+                start: 2,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'y',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              operator: '**',
+              start: 2,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `x in y`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'x',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'y',
+              start: 5,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
                   column: 6
                 }
               }
             },
+            operator: 'in',
             start: 0,
             end: 6,
             loc: {
@@ -4803,452 +7819,51 @@ describe('Expressions - Binary', () => {
                 column: 6
               }
             }
-          }
-        ],
-        start: 0,
-        end: 6,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 6
+          start: 0,
+          end: 6,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 6
+            }
           }
         }
+      ],
+      start: 0,
+      end: 6,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 6
+        }
       }
-    ],
-    [
-      `a=b+=c-=d**=e*=f/=g%=h<<=i>>=j>>>=k&=l^=m|=n`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'AssignmentExpression',
-              left: {
-                type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 1
-                  }
-                }
-              },
-              operator: '=',
-              right: {
-                type: 'AssignmentExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 2,
-                  end: 3,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 2
-                    },
-                    end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                },
-                operator: '+=',
-                right: {
-                  type: 'AssignmentExpression',
-                  left: {
-                    type: 'Identifier',
-                    name: 'c',
-                    start: 5,
-                    end: 6,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 5
-                      },
-                      end: {
-                        line: 1,
-                        column: 6
-                      }
-                    }
-                  },
-                  operator: '-=',
-                  right: {
-                    type: 'AssignmentExpression',
-                    left: {
-                      type: 'Identifier',
-                      name: 'd',
-                      start: 8,
-                      end: 9,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 8
-                        },
-                        end: {
-                          line: 1,
-                          column: 9
-                        }
-                      }
-                    },
-                    operator: '**=',
-                    right: {
-                      type: 'AssignmentExpression',
-                      left: {
-                        type: 'Identifier',
-                        name: 'e',
-                        start: 12,
-                        end: 13,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 12
-                          },
-                          end: {
-                            line: 1,
-                            column: 13
-                          }
-                        }
-                      },
-                      operator: '*=',
-                      right: {
-                        type: 'AssignmentExpression',
-                        left: {
-                          type: 'Identifier',
-                          name: 'f',
-                          start: 15,
-                          end: 16,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 15
-                            },
-                            end: {
-                              line: 1,
-                              column: 16
-                            }
-                          }
-                        },
-                        operator: '/=',
-                        right: {
-                          type: 'AssignmentExpression',
-                          left: {
-                            type: 'Identifier',
-                            name: 'g',
-                            start: 18,
-                            end: 19,
-                            loc: {
-                              start: {
-                                line: 1,
-                                column: 18
-                              },
-                              end: {
-                                line: 1,
-                                column: 19
-                              }
-                            }
-                          },
-                          operator: '%=',
-                          right: {
-                            type: 'AssignmentExpression',
-                            left: {
-                              type: 'Identifier',
-                              name: 'h',
-                              start: 21,
-                              end: 22,
-                              loc: {
-                                start: {
-                                  line: 1,
-                                  column: 21
-                                },
-                                end: {
-                                  line: 1,
-                                  column: 22
-                                }
-                              }
-                            },
-                            operator: '<<=',
-                            right: {
-                              type: 'AssignmentExpression',
-                              left: {
-                                type: 'Identifier',
-                                name: 'i',
-                                start: 25,
-                                end: 26,
-                                loc: {
-                                  start: {
-                                    line: 1,
-                                    column: 25
-                                  },
-                                  end: {
-                                    line: 1,
-                                    column: 26
-                                  }
-                                }
-                              },
-                              operator: '>>=',
-                              right: {
-                                type: 'AssignmentExpression',
-                                left: {
-                                  type: 'Identifier',
-                                  name: 'j',
-                                  start: 29,
-                                  end: 30,
-                                  loc: {
-                                    start: {
-                                      line: 1,
-                                      column: 29
-                                    },
-                                    end: {
-                                      line: 1,
-                                      column: 30
-                                    }
-                                  }
-                                },
-                                operator: '>>>=',
-                                right: {
-                                  type: 'AssignmentExpression',
-                                  left: {
-                                    type: 'Identifier',
-                                    name: 'k',
-                                    start: 34,
-                                    end: 35,
-                                    loc: {
-                                      start: {
-                                        line: 1,
-                                        column: 34
-                                      },
-                                      end: {
-                                        line: 1,
-                                        column: 35
-                                      }
-                                    }
-                                  },
-                                  operator: '&=',
-                                  right: {
-                                    type: 'AssignmentExpression',
-                                    left: {
-                                      type: 'Identifier',
-                                      name: 'l',
-                                      start: 37,
-                                      end: 38,
-                                      loc: {
-                                        start: {
-                                          line: 1,
-                                          column: 37
-                                        },
-                                        end: {
-                                          line: 1,
-                                          column: 38
-                                        }
-                                      }
-                                    },
-                                    operator: '^=',
-                                    right: {
-                                      type: 'AssignmentExpression',
-                                      left: {
-                                        type: 'Identifier',
-                                        name: 'm',
-                                        start: 40,
-                                        end: 41,
-                                        loc: {
-                                          start: {
-                                            line: 1,
-                                            column: 40
-                                          },
-                                          end: {
-                                            line: 1,
-                                            column: 41
-                                          }
-                                        }
-                                      },
-                                      operator: '|=',
-                                      right: {
-                                        type: 'Identifier',
-                                        name: 'n',
-                                        start: 43,
-                                        end: 44,
-                                        loc: {
-                                          start: {
-                                            line: 1,
-                                            column: 43
-                                          },
-                                          end: {
-                                            line: 1,
-                                            column: 44
-                                          }
-                                        }
-                                      },
-                                      start: 40,
-                                      end: 44,
-                                      loc: {
-                                        start: {
-                                          line: 1,
-                                          column: 40
-                                        },
-                                        end: {
-                                          line: 1,
-                                          column: 44
-                                        }
-                                      }
-                                    },
-                                    start: 37,
-                                    end: 44,
-                                    loc: {
-                                      start: {
-                                        line: 1,
-                                        column: 37
-                                      },
-                                      end: {
-                                        line: 1,
-                                        column: 44
-                                      }
-                                    }
-                                  },
-                                  start: 34,
-                                  end: 44,
-                                  loc: {
-                                    start: {
-                                      line: 1,
-                                      column: 34
-                                    },
-                                    end: {
-                                      line: 1,
-                                      column: 44
-                                    }
-                                  }
-                                },
-                                start: 29,
-                                end: 44,
-                                loc: {
-                                  start: {
-                                    line: 1,
-                                    column: 29
-                                  },
-                                  end: {
-                                    line: 1,
-                                    column: 44
-                                  }
-                                }
-                              },
-                              start: 25,
-                              end: 44,
-                              loc: {
-                                start: {
-                                  line: 1,
-                                  column: 25
-                                },
-                                end: {
-                                  line: 1,
-                                  column: 44
-                                }
-                              }
-                            },
-                            start: 21,
-                            end: 44,
-                            loc: {
-                              start: {
-                                line: 1,
-                                column: 21
-                              },
-                              end: {
-                                line: 1,
-                                column: 44
-                              }
-                            }
-                          },
-                          start: 18,
-                          end: 44,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 18
-                            },
-                            end: {
-                              line: 1,
-                              column: 44
-                            }
-                          }
-                        },
-                        start: 15,
-                        end: 44,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 15
-                          },
-                          end: {
-                            line: 1,
-                            column: 44
-                          }
-                        }
-                      },
-                      start: 12,
-                      end: 44,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 12
-                        },
-                        end: {
-                          line: 1,
-                          column: 44
-                        }
-                      }
-                    },
-                    start: 8,
-                    end: 44,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 8
-                      },
-                      end: {
-                        line: 1,
-                        column: 44
-                      }
-                    }
-                  },
-                  start: 5,
-                  end: 44,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 44
-                    }
-                  }
-                },
-                start: 2,
-                end: 44,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 44
-                  }
-                }
-              },
+    }
+  ],
+  [
+    `a=b+=c-=d**=e*=f/=g%=h<<=i>>=j>>>=k&=l^=m|=n`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
               start: 0,
-              end: 44,
+              end: 1,
               loc: {
                 start: {
                   line: 1,
@@ -5256,147 +7871,111 @@ describe('Expressions - Binary', () => {
                 },
                 end: {
                   line: 1,
-                  column: 44
+                  column: 1
                 }
               }
             },
-            start: 0,
-            end: 44,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 44
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 44,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 44
-          }
-        }
-      }
-    ],
-    [
-      `a|=b^=c&=d>>>=e>>=f<<=g%=h/=i*=j**=k-=l+=m=n`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
+            operator: '=',
+            right: {
               type: 'AssignmentExpression',
               left: {
                 type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
+                name: 'b',
+                start: 2,
+                end: 3,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 2
                   },
                   end: {
                     line: 1,
-                    column: 1
+                    column: 3
                   }
                 }
               },
-              operator: '|=',
+              operator: '+=',
               right: {
                 type: 'AssignmentExpression',
                 left: {
                   type: 'Identifier',
-                  name: 'b',
-                  start: 3,
-                  end: 4,
+                  name: 'c',
+                  start: 5,
+                  end: 6,
                   loc: {
                     start: {
                       line: 1,
-                      column: 3
+                      column: 5
                     },
                     end: {
                       line: 1,
-                      column: 4
+                      column: 6
                     }
                   }
                 },
-                operator: '^=',
+                operator: '-=',
                 right: {
                   type: 'AssignmentExpression',
                   left: {
                     type: 'Identifier',
-                    name: 'c',
-                    start: 6,
-                    end: 7,
+                    name: 'd',
+                    start: 8,
+                    end: 9,
                     loc: {
                       start: {
                         line: 1,
-                        column: 6
+                        column: 8
                       },
                       end: {
                         line: 1,
-                        column: 7
+                        column: 9
                       }
                     }
                   },
-                  operator: '&=',
+                  operator: '**=',
                   right: {
                     type: 'AssignmentExpression',
                     left: {
                       type: 'Identifier',
-                      name: 'd',
-                      start: 9,
-                      end: 10,
+                      name: 'e',
+                      start: 12,
+                      end: 13,
                       loc: {
                         start: {
                           line: 1,
-                          column: 9
+                          column: 12
                         },
                         end: {
                           line: 1,
-                          column: 10
+                          column: 13
                         }
                       }
                     },
-                    operator: '>>>=',
+                    operator: '*=',
                     right: {
                       type: 'AssignmentExpression',
                       left: {
                         type: 'Identifier',
-                        name: 'e',
-                        start: 14,
-                        end: 15,
+                        name: 'f',
+                        start: 15,
+                        end: 16,
                         loc: {
                           start: {
                             line: 1,
-                            column: 14
+                            column: 15
                           },
                           end: {
                             line: 1,
-                            column: 15
+                            column: 16
                           }
                         }
                       },
-                      operator: '>>=',
+                      operator: '/=',
                       right: {
                         type: 'AssignmentExpression',
                         left: {
                           type: 'Identifier',
-                          name: 'f',
+                          name: 'g',
                           start: 18,
                           end: 19,
                           loc: {
@@ -5410,31 +7989,31 @@ describe('Expressions - Binary', () => {
                             }
                           }
                         },
-                        operator: '<<=',
+                        operator: '%=',
                         right: {
                           type: 'AssignmentExpression',
                           left: {
                             type: 'Identifier',
-                            name: 'g',
-                            start: 22,
-                            end: 23,
+                            name: 'h',
+                            start: 21,
+                            end: 22,
                             loc: {
                               start: {
                                 line: 1,
-                                column: 22
+                                column: 21
                               },
                               end: {
                                 line: 1,
-                                column: 23
+                                column: 22
                               }
                             }
                           },
-                          operator: '%=',
+                          operator: '<<=',
                           right: {
                             type: 'AssignmentExpression',
                             left: {
                               type: 'Identifier',
-                              name: 'h',
+                              name: 'i',
                               start: 25,
                               end: 26,
                               loc: {
@@ -5448,124 +8027,92 @@ describe('Expressions - Binary', () => {
                                 }
                               }
                             },
-                            operator: '/=',
+                            operator: '>>=',
                             right: {
                               type: 'AssignmentExpression',
                               left: {
                                 type: 'Identifier',
-                                name: 'i',
-                                start: 28,
-                                end: 29,
+                                name: 'j',
+                                start: 29,
+                                end: 30,
                                 loc: {
                                   start: {
                                     line: 1,
-                                    column: 28
+                                    column: 29
                                   },
                                   end: {
                                     line: 1,
-                                    column: 29
+                                    column: 30
                                   }
                                 }
                               },
-                              operator: '*=',
+                              operator: '>>>=',
                               right: {
                                 type: 'AssignmentExpression',
                                 left: {
                                   type: 'Identifier',
-                                  name: 'j',
-                                  start: 31,
-                                  end: 32,
+                                  name: 'k',
+                                  start: 34,
+                                  end: 35,
                                   loc: {
                                     start: {
                                       line: 1,
-                                      column: 31
+                                      column: 34
                                     },
                                     end: {
                                       line: 1,
-                                      column: 32
+                                      column: 35
                                     }
                                   }
                                 },
-                                operator: '**=',
+                                operator: '&=',
                                 right: {
                                   type: 'AssignmentExpression',
                                   left: {
                                     type: 'Identifier',
-                                    name: 'k',
-                                    start: 35,
-                                    end: 36,
+                                    name: 'l',
+                                    start: 37,
+                                    end: 38,
                                     loc: {
                                       start: {
                                         line: 1,
-                                        column: 35
+                                        column: 37
                                       },
                                       end: {
                                         line: 1,
-                                        column: 36
+                                        column: 38
                                       }
                                     }
                                   },
-                                  operator: '-=',
+                                  operator: '^=',
                                   right: {
                                     type: 'AssignmentExpression',
                                     left: {
                                       type: 'Identifier',
-                                      name: 'l',
-                                      start: 38,
-                                      end: 39,
+                                      name: 'm',
+                                      start: 40,
+                                      end: 41,
                                       loc: {
                                         start: {
                                           line: 1,
-                                          column: 38
+                                          column: 40
                                         },
                                         end: {
                                           line: 1,
-                                          column: 39
+                                          column: 41
                                         }
                                       }
                                     },
-                                    operator: '+=',
+                                    operator: '|=',
                                     right: {
-                                      type: 'AssignmentExpression',
-                                      left: {
-                                        type: 'Identifier',
-                                        name: 'm',
-                                        start: 41,
-                                        end: 42,
-                                        loc: {
-                                          start: {
-                                            line: 1,
-                                            column: 41
-                                          },
-                                          end: {
-                                            line: 1,
-                                            column: 42
-                                          }
-                                        }
-                                      },
-                                      operator: '=',
-                                      right: {
-                                        type: 'Identifier',
-                                        name: 'n',
-                                        start: 43,
-                                        end: 44,
-                                        loc: {
-                                          start: {
-                                            line: 1,
-                                            column: 43
-                                          },
-                                          end: {
-                                            line: 1,
-                                            column: 44
-                                          }
-                                        }
-                                      },
-                                      start: 41,
+                                      type: 'Identifier',
+                                      name: 'n',
+                                      start: 43,
                                       end: 44,
                                       loc: {
                                         start: {
                                           line: 1,
-                                          column: 41
+                                          column: 43
                                         },
                                         end: {
                                           line: 1,
@@ -5573,12 +8120,12 @@ describe('Expressions - Binary', () => {
                                         }
                                       }
                                     },
-                                    start: 38,
+                                    start: 40,
                                     end: 44,
                                     loc: {
                                       start: {
                                         line: 1,
-                                        column: 38
+                                        column: 40
                                       },
                                       end: {
                                         line: 1,
@@ -5586,12 +8133,12 @@ describe('Expressions - Binary', () => {
                                       }
                                     }
                                   },
-                                  start: 35,
+                                  start: 37,
                                   end: 44,
                                   loc: {
                                     start: {
                                       line: 1,
-                                      column: 35
+                                      column: 37
                                     },
                                     end: {
                                       line: 1,
@@ -5599,12 +8146,12 @@ describe('Expressions - Binary', () => {
                                     }
                                   }
                                 },
-                                start: 31,
+                                start: 34,
                                 end: 44,
                                 loc: {
                                   start: {
                                     line: 1,
-                                    column: 31
+                                    column: 34
                                   },
                                   end: {
                                     line: 1,
@@ -5612,12 +8159,12 @@ describe('Expressions - Binary', () => {
                                   }
                                 }
                               },
-                              start: 28,
+                              start: 29,
                               end: 44,
                               loc: {
                                 start: {
                                   line: 1,
-                                  column: 28
+                                  column: 29
                                 },
                                 end: {
                                   line: 1,
@@ -5638,12 +8185,12 @@ describe('Expressions - Binary', () => {
                               }
                             }
                           },
-                          start: 22,
+                          start: 21,
                           end: 44,
                           loc: {
                             start: {
                               line: 1,
-                              column: 22
+                              column: 21
                             },
                             end: {
                               line: 1,
@@ -5664,12 +8211,12 @@ describe('Expressions - Binary', () => {
                           }
                         }
                       },
-                      start: 14,
+                      start: 15,
                       end: 44,
                       loc: {
                         start: {
                           line: 1,
-                          column: 14
+                          column: 15
                         },
                         end: {
                           line: 1,
@@ -5677,12 +8224,12 @@ describe('Expressions - Binary', () => {
                         }
                       }
                     },
-                    start: 9,
+                    start: 12,
                     end: 44,
                     loc: {
                       start: {
                         line: 1,
-                        column: 9
+                        column: 12
                       },
                       end: {
                         line: 1,
@@ -5690,12 +8237,12 @@ describe('Expressions - Binary', () => {
                       }
                     }
                   },
-                  start: 6,
+                  start: 8,
                   end: 44,
                   loc: {
                     start: {
                       line: 1,
-                      column: 6
+                      column: 8
                     },
                     end: {
                       line: 1,
@@ -5703,12 +8250,12 @@ describe('Expressions - Binary', () => {
                     }
                   }
                 },
-                start: 3,
+                start: 5,
                 end: 44,
                 loc: {
                   start: {
                     line: 1,
-                    column: 3
+                    column: 5
                   },
                   end: {
                     line: 1,
@@ -5716,12 +8263,12 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              start: 0,
+              start: 2,
               end: 44,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 2
                 },
                 end: {
                   line: 1,
@@ -5741,70 +8288,522 @@ describe('Expressions - Binary', () => {
                 column: 44
               }
             }
-          }
-        ],
-        start: 0,
-        end: 44,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 44
+          start: 0,
+          end: 44,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 44
+            }
           }
         }
+      ],
+      start: 0,
+      end: 44,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 44
+        }
       }
-    ],
-    [
-      `a / b / c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
+    }
+  ],
+  [
+    `a|=b^=c&=d>>>=e>>=f<<=g%=h/=i*=j**=k-=l+=m=n`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            operator: '|=',
+            right: {
+              type: 'AssignmentExpression',
               left: {
-                type: 'BinaryExpression',
+                type: 'Identifier',
+                name: 'b',
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              operator: '^=',
+              right: {
+                type: 'AssignmentExpression',
                 left: {
                   type: 'Identifier',
-                  name: 'a',
-                  start: 0,
-                  end: 1,
+                  name: 'c',
+                  start: 6,
+                  end: 7,
                   loc: {
                     start: {
                       line: 1,
-                      column: 0
+                      column: 6
                     },
                     end: {
                       line: 1,
-                      column: 1
+                      column: 7
                     }
                   }
                 },
+                operator: '&=',
                 right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 4,
-                  end: 5,
+                  type: 'AssignmentExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'd',
+                    start: 9,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  operator: '>>>=',
+                  right: {
+                    type: 'AssignmentExpression',
+                    left: {
+                      type: 'Identifier',
+                      name: 'e',
+                      start: 14,
+                      end: 15,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 14
+                        },
+                        end: {
+                          line: 1,
+                          column: 15
+                        }
+                      }
+                    },
+                    operator: '>>=',
+                    right: {
+                      type: 'AssignmentExpression',
+                      left: {
+                        type: 'Identifier',
+                        name: 'f',
+                        start: 18,
+                        end: 19,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 18
+                          },
+                          end: {
+                            line: 1,
+                            column: 19
+                          }
+                        }
+                      },
+                      operator: '<<=',
+                      right: {
+                        type: 'AssignmentExpression',
+                        left: {
+                          type: 'Identifier',
+                          name: 'g',
+                          start: 22,
+                          end: 23,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 22
+                            },
+                            end: {
+                              line: 1,
+                              column: 23
+                            }
+                          }
+                        },
+                        operator: '%=',
+                        right: {
+                          type: 'AssignmentExpression',
+                          left: {
+                            type: 'Identifier',
+                            name: 'h',
+                            start: 25,
+                            end: 26,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 25
+                              },
+                              end: {
+                                line: 1,
+                                column: 26
+                              }
+                            }
+                          },
+                          operator: '/=',
+                          right: {
+                            type: 'AssignmentExpression',
+                            left: {
+                              type: 'Identifier',
+                              name: 'i',
+                              start: 28,
+                              end: 29,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 28
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 29
+                                }
+                              }
+                            },
+                            operator: '*=',
+                            right: {
+                              type: 'AssignmentExpression',
+                              left: {
+                                type: 'Identifier',
+                                name: 'j',
+                                start: 31,
+                                end: 32,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 31
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 32
+                                  }
+                                }
+                              },
+                              operator: '**=',
+                              right: {
+                                type: 'AssignmentExpression',
+                                left: {
+                                  type: 'Identifier',
+                                  name: 'k',
+                                  start: 35,
+                                  end: 36,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 35
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 36
+                                    }
+                                  }
+                                },
+                                operator: '-=',
+                                right: {
+                                  type: 'AssignmentExpression',
+                                  left: {
+                                    type: 'Identifier',
+                                    name: 'l',
+                                    start: 38,
+                                    end: 39,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 38
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 39
+                                      }
+                                    }
+                                  },
+                                  operator: '+=',
+                                  right: {
+                                    type: 'AssignmentExpression',
+                                    left: {
+                                      type: 'Identifier',
+                                      name: 'm',
+                                      start: 41,
+                                      end: 42,
+                                      loc: {
+                                        start: {
+                                          line: 1,
+                                          column: 41
+                                        },
+                                        end: {
+                                          line: 1,
+                                          column: 42
+                                        }
+                                      }
+                                    },
+                                    operator: '=',
+                                    right: {
+                                      type: 'Identifier',
+                                      name: 'n',
+                                      start: 43,
+                                      end: 44,
+                                      loc: {
+                                        start: {
+                                          line: 1,
+                                          column: 43
+                                        },
+                                        end: {
+                                          line: 1,
+                                          column: 44
+                                        }
+                                      }
+                                    },
+                                    start: 41,
+                                    end: 44,
+                                    loc: {
+                                      start: {
+                                        line: 1,
+                                        column: 41
+                                      },
+                                      end: {
+                                        line: 1,
+                                        column: 44
+                                      }
+                                    }
+                                  },
+                                  start: 38,
+                                  end: 44,
+                                  loc: {
+                                    start: {
+                                      line: 1,
+                                      column: 38
+                                    },
+                                    end: {
+                                      line: 1,
+                                      column: 44
+                                    }
+                                  }
+                                },
+                                start: 35,
+                                end: 44,
+                                loc: {
+                                  start: {
+                                    line: 1,
+                                    column: 35
+                                  },
+                                  end: {
+                                    line: 1,
+                                    column: 44
+                                  }
+                                }
+                              },
+                              start: 31,
+                              end: 44,
+                              loc: {
+                                start: {
+                                  line: 1,
+                                  column: 31
+                                },
+                                end: {
+                                  line: 1,
+                                  column: 44
+                                }
+                              }
+                            },
+                            start: 28,
+                            end: 44,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 28
+                              },
+                              end: {
+                                line: 1,
+                                column: 44
+                              }
+                            }
+                          },
+                          start: 25,
+                          end: 44,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 25
+                            },
+                            end: {
+                              line: 1,
+                              column: 44
+                            }
+                          }
+                        },
+                        start: 22,
+                        end: 44,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 22
+                          },
+                          end: {
+                            line: 1,
+                            column: 44
+                          }
+                        }
+                      },
+                      start: 18,
+                      end: 44,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 18
+                        },
+                        end: {
+                          line: 1,
+                          column: 44
+                        }
+                      }
+                    },
+                    start: 14,
+                    end: 44,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 44
+                      }
+                    }
+                  },
+                  start: 9,
+                  end: 44,
                   loc: {
                     start: {
                       line: 1,
-                      column: 4
+                      column: 9
                     },
                     end: {
                       line: 1,
-                      column: 5
+                      column: 44
                     }
                   }
                 },
-                operator: '/',
+                start: 6,
+                end: 44,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 44
+                  }
+                }
+              },
+              start: 3,
+              end: 44,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 3
+                },
+                end: {
+                  line: 1,
+                  column: 44
+                }
+              }
+            },
+            start: 0,
+            end: 44,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 44
+              }
+            }
+          },
+          start: 0,
+          end: 44,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 44
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 44,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 44
+        }
+      }
+    }
+  ],
+  [
+    `a / b / c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
                 start: 0,
-                end: 5,
+                end: 1,
                 loc: {
                   start: {
                     line: 1,
@@ -5812,13 +8811,701 @@ describe('Expressions - Binary', () => {
                   },
                   end: {
                     line: 1,
+                    column: 1
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
                     column: 5
+                  }
+                }
+              },
+              operator: '/',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 8,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 8
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            operator: '/',
+            start: 0,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
+    `a << (b in c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
                   }
                 }
               },
               right: {
                 type: 'Identifier',
                 name: 'c',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: 'in',
+              start: 6,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            operator: '<<',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a << b in c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      },
+      body: [
+        {
+          type: 'ExpressionStatement',
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          },
+          expression: {
+            type: 'BinaryExpression',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            },
+            left: {
+              type: 'BinaryExpression',
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              },
+              left: {
+                type: 'Identifier',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                },
+                name: 'a'
+              },
+              operator: '<<',
+              right: {
+                type: 'Identifier',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                },
+                name: 'b'
+              }
+            },
+            operator: 'in',
+            right: {
+              type: 'Identifier',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              },
+              name: 'c'
+            }
+          }
+        }
+      ],
+      sourceType: 'script'
+    }
+  ],
+  [
+    `(a << b) >> c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              operator: '<<',
+              start: 1,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 12,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            operator: '>>',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 13,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 13
+        }
+      }
+    }
+  ],
+  [
+    `a != (b & c)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Identifier',
+              name: 'a',
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'b',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'c',
+                start: 10,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              operator: '&',
+              start: 6,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '!=',
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `(a ^ b) ^ c`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Identifier',
+                name: 'a',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'b',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              operator: '^',
+              start: 1,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'c',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '^',
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `!typeof a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: '!',
+            argument: {
+              type: 'UnaryExpression',
+              operator: 'typeof',
+              argument: {
+                type: 'Identifier',
+                name: 'a',
                 start: 8,
                 end: 9,
                 loc: {
@@ -5832,13 +9519,13 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              operator: '/',
-              start: 0,
+              prefix: true,
+              start: 1,
               end: 9,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 1
                 },
                 end: {
                   line: 1,
@@ -5846,6 +9533,7 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
+            prefix: true,
             start: 0,
             end: 9,
             loc: {
@@ -5858,218 +9546,55 @@ describe('Expressions - Binary', () => {
                 column: 9
               }
             }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `a << (b in c)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 1
-                  }
-                }
-              },
-              right: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 11,
-                  end: 12,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 11
-                    },
-                    end: {
-                      line: 1,
-                      column: 12
-                    }
-                  }
-                },
-                operator: 'in',
-                start: 6,
-                end: 12,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 6
-                  },
-                  end: {
-                    line: 1,
-                    column: 12
-                  }
-                }
-              },
-              operator: '<<',
-              start: 0,
-              end: 13,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 13
-                }
-              }
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
             },
-            start: 0,
-            end: 13,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 13
-              }
+            end: {
+              line: 1,
+              column: 9
             }
           }
-        ],
-        start: 0,
-        end: 13,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 13
-          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
         }
       }
-    ],
-    [
-      `a << b in c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        },
-        body: [
-          {
-            type: 'ExpressionStatement',
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            },
-            expression: {
-              type: 'BinaryExpression',
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              },
-              left: {
-                type: 'BinaryExpression',
-                start: 0,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                },
-                left: {
-                  type: 'Identifier',
-                  start: 0,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  },
-                  name: 'a'
-                },
-                operator: '<<',
-                right: {
-                  type: 'Identifier',
+    }
+  ],
+  [
+    `++(- 0).a`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'UnaryExpression',
+                operator: '-',
+                argument: {
+                  type: 'Literal',
+                  value: 0,
                   start: 5,
                   end: 6,
                   loc: {
@@ -6081,124 +9606,56 @@ describe('Expressions - Binary', () => {
                       line: 1,
                       column: 6
                     }
+                  }
+                },
+                prefix: true,
+                start: 3,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
                   },
-                  name: 'b'
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
                 }
               },
-              operator: 'in',
-              right: {
+              computed: false,
+              property: {
                 type: 'Identifier',
-                start: 10,
-                end: 11,
+                name: 'a',
+                start: 8,
+                end: 9,
                 loc: {
                   start: {
                     line: 1,
-                    column: 10
+                    column: 8
                   },
                   end: {
                     line: 1,
-                    column: 11
-                  }
-                },
-                name: 'c'
-              }
-            }
-          }
-        ],
-        sourceType: 'script'
-      }
-    ],
-    [
-      `(a << b) >> c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                operator: '<<',
-                start: 1,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 1
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
+                    column: 9
                   }
                 }
               },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 12,
-                end: 13,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 12
-                  },
-                  end: {
-                    line: 1,
-                    column: 13
-                  }
-                }
-              },
-              operator: '>>',
-              start: 0,
-              end: 13,
+              start: 2,
+              end: 9,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 2
                 },
                 end: {
                   line: 1,
-                  column: 13
+                  column: 9
                 }
               }
             },
+            operator: '++',
+            prefix: true,
             start: 0,
-            end: 13,
+            end: 9,
             loc: {
               start: {
                 line: 1,
@@ -6206,89 +9663,74 @@ describe('Expressions - Binary', () => {
               },
               end: {
                 line: 1,
-                column: 13
+                column: 9
               }
             }
-          }
-        ],
-        start: 0,
-        end: 13,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 13
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
           }
         }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
       }
-    ],
-    [
-      `a != (b & c)`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'Identifier',
-                name: 'a',
-                start: 0,
-                end: 1,
+    }
+  ],
+  [
+    `++(1)[a]`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 3,
+                end: 4,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 3
                   },
                   end: {
                     line: 1,
-                    column: 1
+                    column: 4
                   }
                 }
               },
-              right: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 10,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                operator: '&',
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'a',
                 start: 6,
-                end: 11,
+                end: 7,
                 loc: {
                   start: {
                     line: 1,
@@ -6296,11 +9738,180 @@ describe('Expressions - Binary', () => {
                   },
                   end: {
                     line: 1,
-                    column: 11
+                    column: 7
                   }
                 }
               },
-              operator: '!=',
+              start: 2,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            operator: '++',
+            prefix: true,
+            start: 0,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          },
+          start: 0,
+          end: 8,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 8
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 8,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 8
+        }
+      }
+    }
+  ],
+  [
+    `(- 0)[a]().a++`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
+
+              object: {
+                type: 'CallExpression',
+
+                callee: {
+                  type: 'MemberExpression',
+
+                  object: {
+                    type: 'UnaryExpression',
+                    operator: '-',
+                    argument: {
+                      type: 'Literal',
+                      value: 0,
+                      start: 3,
+                      end: 4,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 3
+                        },
+                        end: {
+                          line: 1,
+                          column: 4
+                        }
+                      }
+                    },
+                    prefix: true,
+                    start: 1,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  computed: true,
+                  property: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 6,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  },
+                  start: 0,
+                  end: 8,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 8
+                    }
+                  }
+                },
+                arguments: [],
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
               start: 0,
               end: 12,
               loc: {
@@ -6314,603 +9925,8 @@ describe('Expressions - Binary', () => {
                 }
               }
             },
-            start: 0,
-            end: 12,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 12
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 12,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 12
-          }
-        }
-      }
-    ],
-    [
-      `(a ^ b) ^ c`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'BinaryExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
-                  }
-                },
-                right: {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 5,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 5
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                operator: '^',
-                start: 1,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 1
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              right: {
-                type: 'Identifier',
-                name: 'c',
-                start: 10,
-                end: 11,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 1,
-                    column: 11
-                  }
-                }
-              },
-              operator: '^',
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 11,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 11
-          }
-        }
-      }
-    ],
-    [
-      `!typeof a`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UnaryExpression',
-              operator: '!',
-              argument: {
-                type: 'UnaryExpression',
-                operator: 'typeof',
-                argument: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                },
-                prefix: true,
-                start: 1,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 1
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              prefix: true,
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `++(- 0).a`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'UnaryExpression',
-                  operator: '-',
-                  argument: {
-                    type: 'Literal',
-                    value: 0,
-                    start: 5,
-                    end: 6,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 5
-                      },
-                      end: {
-                        line: 1,
-                        column: 6
-                      }
-                    }
-                  },
-                  prefix: true,
-                  start: 3,
-                  end: 6,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 6
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                },
-                start: 2,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              },
-              operator: '++',
-              prefix: true,
-              start: 0,
-              end: 9,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 9
-                }
-              }
-            },
-            start: 0,
-            end: 9,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 9
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 9,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 9
-          }
-        }
-      }
-    ],
-    [
-      `++(1)[a]`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 3,
-                  end: 4,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 4
-                    }
-                  }
-                },
-                computed: true,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 6,
-                  end: 7,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 7
-                    }
-                  }
-                },
-                start: 2,
-                end: 8,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 8
-                  }
-                }
-              },
-              operator: '++',
-              prefix: true,
-              start: 0,
-              end: 8,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 8
-                }
-              }
-            },
-            start: 0,
-            end: 8,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 8
-              }
-            }
-          }
-        ],
-        start: 0,
-        end: 8,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
-          },
-          end: {
-            line: 1,
-            column: 8
-          }
-        }
-      }
-    ],
-    [
-      `(- 0)[a]().a++`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
-
-                object: {
-                  type: 'CallExpression',
-
-                  callee: {
-                    type: 'MemberExpression',
-
-                    object: {
-                      type: 'UnaryExpression',
-                      operator: '-',
-                      argument: {
-                        type: 'Literal',
-                        value: 0,
-                        start: 3,
-                        end: 4,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 3
-                          },
-                          end: {
-                            line: 1,
-                            column: 4
-                          }
-                        }
-                      },
-                      prefix: true,
-                      start: 1,
-                      end: 4,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 1
-                        },
-                        end: {
-                          line: 1,
-                          column: 4
-                        }
-                      }
-                    },
-                    computed: true,
-                    property: {
-                      type: 'Identifier',
-                      name: 'a',
-                      start: 6,
-                      end: 7,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 6
-                        },
-                        end: {
-                          line: 1,
-                          column: 7
-                        }
-                      }
-                    },
-                    start: 0,
-                    end: 8,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 0
-                      },
-                      end: {
-                        line: 1,
-                        column: 8
-                      }
-                    }
-                  },
-                  arguments: [],
-                  start: 0,
-                  end: 10,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 0
-                    },
-                    end: {
-                      line: 1,
-                      column: 10
-                    }
-                  }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 11,
-                  end: 12,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 11
-                    },
-                    end: {
-                      line: 1,
-                      column: 12
-                    }
-                  }
-                },
-                start: 0,
-                end: 12,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 12
-                  }
-                }
-              },
-              operator: '++',
-              prefix: false,
-              start: 0,
-              end: 14,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 14
-                }
-              }
-            },
+            operator: '++',
+            prefix: false,
             start: 0,
             end: 14,
             loc: {
@@ -6923,75 +9939,75 @@ describe('Expressions - Binary', () => {
                 column: 14
               }
             }
-          }
-        ],
-        start: 0,
-        end: 14,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 14
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
           }
         }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
       }
-    ],
-    [
-      `(1).a++`,
-      Context.OptionsNext | Context.OptionsLoc,
-      {
-        type: 'Program',
-        sourceType: 'script',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'UpdateExpression',
-              argument: {
-                type: 'MemberExpression',
+    }
+  ],
+  [
+    `(1).a++`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UpdateExpression',
+            argument: {
+              type: 'MemberExpression',
 
-                object: {
-                  type: 'Literal',
-                  value: 1,
-                  start: 1,
-                  end: 2,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 2
-                    }
+              object: {
+                type: 'Literal',
+                value: 1,
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
                   }
-                },
-                computed: false,
-                property: {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 4,
-                  end: 5,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 5
-                    }
-                  }
-                },
-                start: 0,
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 4,
                 end: 5,
                 loc: {
                   start: {
                     line: 1,
-                    column: 0
+                    column: 4
                   },
                   end: {
                     line: 1,
@@ -6999,10 +10015,8 @@ describe('Expressions - Binary', () => {
                   }
                 }
               },
-              operator: '++',
-              prefix: false,
               start: 0,
-              end: 7,
+              end: 5,
               loc: {
                 start: {
                   line: 1,
@@ -7010,10 +10024,12 @@ describe('Expressions - Binary', () => {
                 },
                 end: {
                   line: 1,
-                  column: 7
+                  column: 5
                 }
               }
             },
+            operator: '++',
+            prefix: false,
             start: 0,
             end: 7,
             loc: {
@@ -7026,29 +10042,33 @@ describe('Expressions - Binary', () => {
                 column: 7
               }
             }
-          }
-        ],
-        start: 0,
-        end: 7,
-        loc: {
-          start: {
-            line: 1,
-            column: 0
           },
-          end: {
-            line: 1,
-            column: 7
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
           }
         }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
       }
-    ]
-  ]) {
-    it(source as string, () => {
-      const parser = parseScript(source as string, {
-        disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-        loc: ((ctx as any) & Context.OptionsLoc) !== 0
-      });
-      t.deepStrictEqual(parser, expected);
-    });
-  }
-});
+    }
+  ]
+]);

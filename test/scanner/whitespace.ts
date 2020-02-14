@@ -71,28 +71,28 @@ describe('Scanner - Whitespace', () => {
     column: 8
   });
 
-  pass('skips exotic whitespace 1', {
+  pass('skips exotic whitespace (1)', {
     source: '\u2003',
     hasNext: false,
     line: 1,
     column: 1
   });
 
-  pass('skips exotic whitespace 2', {
+  pass('skips exotic whitespace (2)', {
     source: '\u8202',
     hasNext: false,
     line: 1,
     column: 1
   });
 
-  pass('skips exotic whitespace 3', {
+  pass('skips exotic whitespace (3)', {
     source: '\u8197\u8202',
     hasNext: false,
     line: 1,
     column: 2
   });
 
-  pass('skips exotic whitespace 4', {
+  pass('skips exotic whitespace (4)', {
     source: '\u2001\u2002\u2003',
     hasNext: false,
     line: 1,
@@ -104,12 +104,5 @@ describe('Scanner - Whitespace', () => {
     hasNext: false,
     line: 4,
     column: 5
-  });
-
-  pass('skips mixed whitespace1', {
-    source: '// -->',
-    hasNext: false,
-    line: 1,
-    column: 6
   });
 });

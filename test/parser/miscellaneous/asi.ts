@@ -51,7 +51,8 @@ describe('Miscellaneous - ASI', () => {
     it(`${arg}`, () => {
       t.throws(() => {
         parseScript(`${arg}`, {
-          disableWebCompat: true
+          disableWebCompat: true,
+          impliedStrict: true
         });
       });
     });

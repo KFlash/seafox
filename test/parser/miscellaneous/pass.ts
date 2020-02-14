@@ -1,5 +1,6 @@
+import { parseRoot } from '../../../src/seafox';
+import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
 
 describe('Miscellaneous - Pass', () => {
   for (const arg of [
@@ -606,7 +607,7 @@ describe('Miscellaneous - Pass', () => {
     try { gc; } catch(e) { gc = nop; }`,
     `a = let\n{}`,
     `throw(protected(x=>{"use strict"}))`,
-    `for ({da = 2e308} of ([, , , (arguments[((f))]).break = (null)] = (/(?=\B\b)/gmuy === njbcpwhomopc.switch))) continue`,
+    `for ({da = 2e308} of ([, , , (arguments[((f))]).break = (null)] = (/(?=\\B\\b)/gmuy === njbcpwhomopc.switch))) continue`,
     `for (var c, f; (/[+-\\l-]/u); ((class {}).with)) var i;`,
     `if ((([(((null))), , (([(2e308).r = (((2e308)) ? this : ("")), aihgi] = ({}))), (2e308), ("")]))) for (jdrdckxlyikhuari in (nroofnmvdiahc ++)) arguments: for (var c, f; (/[+-\l-]/u); ((class {}).with)) var i;`,
     `({}.length);`,
@@ -18603,7 +18604,7 @@ let kTrapMsgs = [
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseScript(`${arg}`, { raw: true });
+        parseRoot(`${arg}`, Context.OptionsRaw);
       });
     });
   }

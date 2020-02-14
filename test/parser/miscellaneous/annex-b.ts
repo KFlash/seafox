@@ -1,7 +1,9 @@
-import * as t from 'assert';
 import { parseScript, parseModule } from '../../../src/seafox';
+import { Context } from '../../../src/parser/common';
+import { parseRoot } from '../../../src/seafox';
+import * as t from 'assert';
 
-describe('Miscellaneous - Trailing comma', () => {
+describe('Miscellaneous - Annex B', () => {
   for (const arg of [
     'x --> is eol-comment\nvar y = 37;\n',
     '"\\n" --> is eol-comment\nvar y = 37;\n',
@@ -10,15 +12,13 @@ describe('Miscellaneous - Trailing comma', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseScript(`${arg}`, {
-          disableWebCompat: true
-        });
+        parseRoot(`${arg}`, Context.OptionsDisableWebCompat);
       });
     });
 
     it(`${arg}`, () => {
       t.throws(() => {
-        parseModule(`${arg}`);
+        parseRoot(`${arg}`, Context.Strict | Context.Module);
       });
     });
   }
@@ -268,7 +268,7 @@ case 1:
   ]) {
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseScript(`${arg}`);
+        parseScript(`${arg}`, { next: true, globalReturn: true });
       });
     });
   }

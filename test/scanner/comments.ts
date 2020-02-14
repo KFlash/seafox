@@ -114,6 +114,13 @@ describe('Scanner - comments', () => {
     column: 3
   });
 
+  pass('skips single line comment and HTML comment', {
+    source: '// -->',
+    hasNext: false,
+    line: 1,
+    column: 6
+  });
+
   passAll(
     lt => `skips ${lt}s`,
     lt => ({
