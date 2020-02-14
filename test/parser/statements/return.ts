@@ -2,6 +2,7 @@ import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 
 fail('Statements - Return (fail)', [
+  // ['return', Context.Empty],
   ['() => return', Context.Empty],
   ['*() => {return}', Context.Empty]
 ]);

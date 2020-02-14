@@ -1,7 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 
-fail('Statements - Fail', [
+fail('Statements - Continue (fail)', [
   ['continue foo', Context.Empty],
   ['foo: { do continue foo; while(z) }', Context.Empty],
   ['foo: if (x) do continue foo; while(z)', Context.Empty],

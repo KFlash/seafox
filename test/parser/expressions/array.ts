@@ -292,6 +292,402 @@ fail('Expressions - Array (fail)', [
 
 pass('Expressions - Array (pass)', [
   [
+    `[["b"] === e ? f : g ]`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrayExpression',
+            elements: [
+              {
+                type: 'ConditionalExpression',
+                test: {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Literal',
+                        value: 'b',
+                        start: 2,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      }
+                    ],
+                    start: 1,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'e',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  operator: '===',
+                  start: 1,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                consequent: {
+                  type: 'Identifier',
+                  name: 'f',
+                  start: 15,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 15
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                alternate: {
+                  type: 'Identifier',
+                  name: 'g',
+                  start: 19,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 19
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                start: 1,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          start: 0,
+          end: 22,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 22
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 22,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 22
+        }
+      }
+    }
+  ],
+  [
+    `[ [b].c.d === e ? f : g ]`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrayExpression',
+            elements: [
+              {
+                type: 'ConditionalExpression',
+                test: {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'ArrayExpression',
+                        elements: [
+                          {
+                            type: 'Identifier',
+                            name: 'b',
+                            start: 3,
+                            end: 4,
+                            loc: {
+                              start: {
+                                line: 1,
+                                column: 3
+                              },
+                              end: {
+                                line: 1,
+                                column: 4
+                              }
+                            }
+                          }
+                        ],
+                        start: 2,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      },
+                      computed: false,
+                      property: {
+                        type: 'Identifier',
+                        name: 'c',
+                        start: 6,
+                        end: 7,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 6
+                          },
+                          end: {
+                            line: 1,
+                            column: 7
+                          }
+                        }
+                      },
+                      start: 2,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 2
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'd',
+                      start: 8,
+                      end: 9,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 8
+                        },
+                        end: {
+                          line: 1,
+                          column: 9
+                        }
+                      }
+                    },
+                    start: 2,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 2
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'e',
+                    start: 14,
+                    end: 15,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 15
+                      }
+                    }
+                  },
+                  operator: '===',
+                  start: 2,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 2
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                },
+                consequent: {
+                  type: 'Identifier',
+                  name: 'f',
+                  start: 18,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                alternate: {
+                  type: 'Identifier',
+                  name: 'g',
+                  start: 22,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 22
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                start: 2,
+                end: 23,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 23
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 25,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 25
+              }
+            }
+          },
+          start: 0,
+          end: 25,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 25
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 25,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 25
+        }
+      }
+    }
+  ],
+  [
     `[1 <= 0]`,
     Context.OptionsLoc,
     {

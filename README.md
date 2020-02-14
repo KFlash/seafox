@@ -4,7 +4,11 @@
 
 <br>
 
-[![CircleCI](https://circleci.com/gh/KFlash/seafox.svg?style=svg)](https://circleci.com/gh/KFlash/seafox)
+<p align="center">
+    <a href="https://www.npmjs.com/package/seafox"><img src="https://img.shields.io/npm/v/seafox.svg?style=flat-square" alt="Seafox NPM"/></a>
+    <a href="https://circleci.com/gh/KFlash/seafox"><img src="https://circleci.com/gh/KFlash/seafox.svg?style=svg" alt="Circle" /></a>
+    <a href="https://github.com/KFlash/seafox/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/KFlash/seafox.svg" alt="License" /></a>
+</p>
 
 ## Features
 
@@ -14,8 +18,8 @@
 * Emits an ESTree-compatible abstract syntax tree.
 * No backtracking
 * Low memory usage
-* Very well tested (~40 000 unit tests with full code coverage)
-* Lightweight - ~88 KB minified
+* Very well tested (~30 000 unit tests with full code coverage)
+* Lightweight - ~87 KB minified
 
 ## Installation
 

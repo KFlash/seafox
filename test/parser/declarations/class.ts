@@ -23,6 +23,8 @@ fail('Declarations - Class (fail)', [
   ],
   ['class public {}', Context.Empty],
   ['class protected {}', Context.Empty],
+  ['class x extends a++ {}', Context.Empty],
+  ['class x extends a-- {}', Context.Empty],
   ['class package {}', Context.Empty],
   ['class implements {}', Context.Empty],
   ['class interface {}', Context.Empty],
