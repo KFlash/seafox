@@ -76,7 +76,9 @@ export function parseHoistableDeclaration(
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const isGenerator =
-    (origin & Origin.Statement) === 0 ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0) : 0;
+    (origin & Origin.Statement) !== Origin.Statement
+      ? consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 0)
+      : 0;
 
   let id: Types.Identifier | null = null;
   let firstRestricted: Token | undefined;

@@ -105,10 +105,10 @@ export function parseSequenceExpression(
   start: number,
   line: number,
   column: number
-): Types.SequenceExpression | any {
-  const expressions: Types.Expression[] = [expr];
-
+): Types.SequenceExpression | Types.Expression {
   if (parser.token !== Token.Comma) return expr;
+
+  const expressions: Types.Expression[] = [expr];
 
   do {
     nextToken(parser, context, /* allowRegExp */ 1);
@@ -140,9 +140,13 @@ export function parseConditionalExpression(
   column: number
 ): Types.ConditionalExpression {
   nextToken(parser, context, /* allowRegExp */ 1); // skips: '?'
+
   const consequent = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+
   consume(parser, context, Token.Colon, /* allowRegExp */ 1);
+
   const alternate = parseExpression(parser, context, 0);
+
   parser.assignable = 0;
 
   return context & Context.OptionsLoc
@@ -187,9 +191,7 @@ export function parseBinaryExpression(
 
     // Since ?? is the lowest-precedence binary operator, it suffices to merge the 'Coalescing' and 'IsLogic' tokens and check
     // whether these have a higher value than the 'Coalescing' token.
-    if (((token | t) & 0b01000000100000000000000000000000) > Token.Coalescing) {
-      report(parser, Errors.InvalidCoalescing);
-    }
+    if (((token | t) & 0b01000000100000000000000000000000) > Token.Coalescing) report(parser, Errors.InvalidCoalescing);
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
@@ -228,9 +230,7 @@ export function parseBinaryExpression(
 }
 
 export function parsePropertyOrPrivatePropertyName(parser: ParserState, context: Context): Types.Identifier {
-  if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-    return parseIdentifier(parser, context);
-  }
+  if ((parser.token & 0b00000000001001110000000000000000) > 0) return parseIdentifier(parser, context);
   // Private name (stage 3)
   report(parser, Errors.InvalidDotProperty);
 }
@@ -291,7 +291,7 @@ export function parseMemberExpression(
     case Token.LeftBracket: {
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
+      const property = parseExpressions(parser, context, inGroup);
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
@@ -463,7 +463,7 @@ export function parseMemberOrCallChain(
     case Token.LeftBracket: {
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
+      const property = parseExpressions(parser, context, 0);
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
