@@ -291,7 +291,7 @@ export function parseMemberExpression(
     case Token.LeftBracket: {
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      const property = parseExpressions(parser, context, inGroup);
+      const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
@@ -463,7 +463,7 @@ export function parseMemberOrCallChain(
     case Token.LeftBracket: {
       nextToken(parser, context, /* allowRegExp */ 1);
 
-      const property = parseExpressions(parser, context, 0);
+      const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
 
       consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
