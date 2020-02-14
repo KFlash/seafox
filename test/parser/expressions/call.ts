@@ -10,7 +10,7 @@ fail('Expressions - Call (fail)', [
   ['a.b( c() ).d.e(()).f.g', Context.Empty],
   ['foo({a=1})', Context.Empty],
   ['(async((a), ...[b] = xxx))', Context.Empty],
-  ['(async((a), ...(b) = xxx))', Context.Empty],
+  ['(async((a), ...(b) = xxx))', Context.Strict | Context.Module],
   ['async({a=1})', Context.Empty],
   ['yield({a=1})', Context.Empty],
   ['foo({a=1})', Context.Empty],
@@ -26,12 +26,12 @@ fail('Expressions - Call (fail)', [
   ['foo(a,b,,)', Context.Empty],
   ['foo()["bar"', Context.Empty],
   ['foo().bar.', Context.Empty],
-  ['foo()`bar', Context.Empty],
+  ['foo()`bar', Context.Strict | Context.Module],
   ['foo(', Context.Empty],
   ['foo(...)', Context.Empty],
   ['async(a)(b)async', Context.Empty],
   ['(a)(( async () => {}) => {})', Context.Empty],
-  ['async(async() () => {})(async() () => {})(y)(n)(c)', Context.Empty],
+  ['async(async() () => {})(async() () => {})(y)(n)(c)', Context.Strict | Context.Module],
   ['async(async() () => {})(async() () => {})(y)(n)(c)', Context.Empty],
   ['async(async() () => {})(async() () => {})(async() () => {})(async() () => {})(async() () => {})', Context.Empty]
 ]);

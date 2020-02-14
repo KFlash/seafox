@@ -1,7 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
+import { parseRoot, parseScript } from '../../../src/seafox';
 
 fail('Expressions - Function (fail)', [
   [`"use strict"; function package(){}`, Context.Empty],
@@ -91,17 +91,17 @@ for (const arg of [
 ]) {
   it(`(function (${arg}) {})`, () => {
     t.throws(() => {
-      parseScript(`(function (${arg}) {})`);
+      parseRoot(`(function (${arg}) {})`, Context.Empty);
     });
   });
   it(`const foo = (function (${arg}) {})`, () => {
     t.throws(() => {
-      parseScript(`const foo = (function (${arg}) {})`);
+      parseRoot(`const foo = (function (${arg}) {})`, Context.Empty);
     });
   });
   it(`(function (${arg}) {})`, () => {
     t.throws(() => {
-      parseModule(`(function (${arg}) {})`);
+      parseRoot(`(function (${arg}) {})`, Context.Strict | Context.Module);
     });
   });
 }
@@ -139,7 +139,7 @@ for (const arg of [
 ]) {
   it(`(function(${arg}) {})`, () => {
     t.doesNotThrow(() => {
-      parseScript(`(function(${arg}) {})`);
+      parseRoot(`(function(${arg}) {})`, Context.Empty);
     });
   });
 }
@@ -364,7 +364,7 @@ for (const arg of [
 ]) {
   it(`${arg}`, () => {
     t.doesNotThrow(() => {
-      parseScript(`${arg}`);
+      parseRoot(`${arg}`, Context.Empty);
     });
   });
 }

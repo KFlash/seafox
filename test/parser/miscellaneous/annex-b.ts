@@ -1,6 +1,6 @@
-import { parseScript, parseModule } from '../../../src/seafox';
+import { parseScript, parseRoot } from '../../../src/seafox';
 import { Context } from '../../../src/parser/common';
-import { parseRoot } from '../../../src/seafox';
+
 import * as t from 'assert';
 
 describe('Miscellaneous - Annex B', () => {

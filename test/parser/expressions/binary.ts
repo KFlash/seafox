@@ -2,9 +2,8 @@ import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 
 fail('Expressions - Binary (fail)', [
-  ['function f(){ switch (x){ case z: break y }}', Context.Empty],
   ['(-1) = a', Context.Empty],
-  ['(- 0) = a', Context.Empty],
+  ['(- 0) = a', Context.Strict | Context.Module],
   ['1 = a', Context.Empty],
   ['(-1) *= a', Context.Empty],
   ['(- 0) *= a', Context.Empty],
@@ -17,7 +16,7 @@ fail('Expressions - Binary (fail)', [
   ['(- 0) /= a', Context.Empty],
   ['1 /= a', Context.Empty],
   ['(-1) %= a', Context.Empty],
-  ['(- 0) %= a', Context.Empty],
+  ['(- 0) %= a', Context.Strict | Context.Module],
   ['1 %= a', Context.Empty],
   ['(-1) += a', Context.Empty],
   ['(- 0) += a', Context.Empty],
@@ -26,10 +25,10 @@ fail('Expressions - Binary (fail)', [
   ['(- 0) -= a', Context.Empty],
   ['1 -= a', Context.Empty],
   ['(-1) <<= a', Context.Empty],
-  ['(- 0) <<= a', Context.Empty],
+  ['(- 0) <<= a', Context.Strict | Context.Module],
   ['1 <<= a', Context.Empty],
   ['(-1) >>= a', Context.Empty],
-  ['(- 0) >>= a', Context.Empty],
+  ['(- 0) >>= a', Context.Strict | Context.Module],
   ['1 >>= a', Context.Empty],
   ['(-1) >>>= a', Context.Empty],
   ['(- 0) >>>= a', Context.Empty],
@@ -38,13 +37,13 @@ fail('Expressions - Binary (fail)', [
   ['(- 0) &= a', Context.Empty],
   ['1 &= a', Context.Empty],
   ['(-1) ^= a', Context.Empty],
-  ['(- 0) ^= a', Context.Empty],
+  ['(- 0) ^= a', Context.Strict | Context.Module],
   ['1 ^= a', Context.Empty],
   ['a - a = 1', Context.Empty],
   ['a - 4 = 1', Context.Empty],
   ['(-1) |= a', Context.Empty],
   ['(- 0) |= a', Context.Empty],
-  ['1 |= a', Context.Empty]
+  ['1 |= a', Context.Strict | Context.Module]
 ]);
 
 pass('Expressions - Binary (pass)', [

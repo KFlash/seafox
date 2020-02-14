@@ -1,4 +1,4 @@
-import { pass, fail, failModule } from '../core';
+import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 
 fail('Expressions - Array (fail)', [

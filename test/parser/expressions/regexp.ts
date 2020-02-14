@@ -1,4 +1,4 @@
-import { pass, fail } from '../core';
+import { pass } from '../core';
 import { Context } from '../../../src/parser/common';
 
 pass('Expressions - Regular expression', [

@@ -1,6 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseModule } from '../../../src/seafox';
+import { parseModule, parseRoot } from '../../../src/seafox';
 
 describe('Next - Import Meta', () => {
   for (const arg of [
@@ -25,10 +25,7 @@ describe('Next - Import Meta', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseModule(`${arg}`, {
-          impliedStrict: true,
-          next: true
-        });
+        parseRoot(`${arg}`, Context.Strict | Context.Module | Context.OptionsNext);
       });
     });
   }
