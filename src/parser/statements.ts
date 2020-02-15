@@ -762,6 +762,10 @@ export function parseForStatement(
         ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column)
         : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column);
 
+    if (parser.token & Token.IsAssignOp) {
+      if (parser.token !== Token.Assign) report(parser, Errors.InvalidCompoundAssign);
+    }
+
     conjuncted = parser.flags;
 
     if ((context & Context.OptionsDisableWebCompat) === 0 && conjuncted & Flags.SeenProto) {

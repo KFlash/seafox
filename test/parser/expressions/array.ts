@@ -292,6 +292,123 @@ fail('Expressions - Array (fail)', [
 
 pass('Expressions - Array (pass)', [
   [
+    `[].x+=y`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 0,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'x',
+                start: 3,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              start: 0,
+              end: 4,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 4
+                }
+              }
+            },
+            operator: '+=',
+            right: {
+              type: 'Identifier',
+              name: 'y',
+              start: 6,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          },
+          start: 0,
+          end: 7,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 7
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 7,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 7
+        }
+      }
+    }
+  ],
+  [
     `[["b"] === e ? f : g ]`,
     Context.OptionsLoc,
     {

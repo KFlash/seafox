@@ -115,13 +115,15 @@ export const enum Errors {
   InvalidForAwait,
   InvalidAwaitAsyncArg,
   RestricedLetProduction,
-  InvalidObjLitShorthand
+  InvalidObjLitShorthand,
+  InvalidCompoundAssign
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.InvalidCompoundAssign]: 'Cannot compound assign to an object or array pattern',
   [Errors.InvalidObjLitShorthand]: 'A object shorthand with initializer must be a pattern',
   [Errors.InvalidForAwait]: 'for await (... of ...) is only valid in async functions and async generators',
   [Errors.RestricedLetProduction]: '`let \n [` is a restricted production at the start of a statement',

@@ -47,7 +47,6 @@ fail('Statements - For of (fail)', [
   ['for ({...rest, b} of [{}]) ;', Context.Empty],
   ['for(o.p = 0 of {});', Context.Empty],
   ['for(o[0] = 0 of {});', Context.Empty],
-
   ['for ((a++) of c);', Context.Empty],
   ['for (+a().b of c);', Context.Empty],
   ['for (void a.b of c);', Context.Empty],
@@ -73,7 +72,6 @@ fail('Statements - For of (fail)', [
   ['for(f() = 0 of {});', Context.Empty],
   ['for(({a}) of 0);', Context.Empty],
   ['for(([a]) of 0);', Context.Empty],
-
   ['for(f() = 0 of {});', Context.Empty],
   ['for(({a}) of 0);', Context.Empty],
   ['for(([a]) of 0);', Context.Empty],
