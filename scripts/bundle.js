@@ -70,7 +70,7 @@ async function bundleES6() {
       format: 'esm'
     });
 
-    minfile = join(project.dist.path, `seafox.und${suffix}.js`);
+    minfile = join(project.dist.path, `seafox.umd${suffix}.js`);
 
     console.log(`writing ${minfile}`);
 
