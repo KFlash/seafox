@@ -60,3 +60,12 @@ This is the available options:
 }
 ```
 
+## What is Seafox?
+
+This is my private parser code made public. It strictly conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification, and can not be used as an drop-in replacement for other parsers.
+
+The main reason for this is that all parsers uses a `parse()` method - Seafox uses either [`parseScript`](https://tc39.github.io/ecma262/#sec-parse-script) or [`parseModule`](https://tc39.github.io/ecma262/#sec-parsemodule).
+
+`Seafo`x main focus is performance, and if you are soft hearted and / or can't understand super low level code - this parser isn't for you :)
+
+I would recommend to use the [`Meriyah parser`](https://github.com/meriyah/meriyah/) instead of `Seafox` if you need a parser that behave like other public parsers, and also if you are in need of performance even the fact that Seafox is 15 - 25 % faster than the mentioned parser.
