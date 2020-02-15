@@ -1281,9 +1281,8 @@ export function parseAsyncArrowOrCallExpression(
     if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
     return parseArrowFunctionAfterParen(parser, context, scope, mutualFlag, params, canAssign, 1, start, line, column);
   }
-  if ((context & Context.OptionsDisableWebCompat) === 0 && parser.flags & Flags.SeenProto) {
-    report(parser, Errors.DuplicateProto);
-  }
+
+  if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
 
   parser.flags = (parser.flags | 0b00000000000000000000110000000000) ^ 0b00000000000000000000110000000000;
 
@@ -1918,38 +1917,34 @@ export function parseParenthesizedExpression(
 
       expr = parseExpression(parser, context, inGroup);
 
-      if (
-        inSequence === 1 &&
-        ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightParen)
-      ) {
-        expressions.push(expr);
-      }
-
-      if ((parser.token as Token) === Token.Comma) {
-        if (inSequence === 0) {
-          inSequence = 1;
+      if ((parser.token as Token) === Token.Comma || (parser.token as Token) === Token.RightParen) {
+        if (inSequence === 1) {
+          expressions.push(expr);
+        } else {
           expressions = [expr];
         }
-      }
 
-      if (inSequence === 1) {
-        while (consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) {
-          expressions.push(parseExpression(parser, context, inGroup));
+        if (inSequence === 1 || (parser.token as Token) === Token.Comma) {
+          while (consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) {
+            expressions.push(parseExpression(parser, context, inGroup));
+          }
+
+          parser.assignable = 0;
+
+          expr =
+            context & Context.OptionsLoc
+              ? {
+                  type: 'SequenceExpression',
+                  expressions,
+                  start: sStart,
+                  end: parser.endIndex,
+                  loc: setLoc(parser, sLine, sColumn)
+                }
+              : {
+                  type: 'SequenceExpression',
+                  expressions
+                };
         }
-
-        expr =
-          context & Context.OptionsLoc
-            ? {
-                type: 'SequenceExpression',
-                expressions,
-                start: sStart,
-                end: parser.endIndex,
-                loc: setLoc(parser, sLine, sColumn)
-              }
-            : {
-                type: 'SequenceExpression',
-                expressions
-              };
       }
 
       consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
@@ -2026,9 +2021,7 @@ export function parseParenthesizedExpression(
     report(parser, Errors.UncompleteArrow);
   }
 
-  if ((context & Context.OptionsDisableWebCompat) === 0 && parser.flags & Flags.SeenProto) {
-    report(parser, Errors.DuplicateProto);
-  }
+  if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
 
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
@@ -2417,9 +2410,7 @@ export function parseArrayLiteral(
     column
   );
 
-  if ((context & Context.OptionsDisableWebCompat) === 0 && parser.flags & Flags.SeenProto) {
-    report(parser, Errors.DuplicateProto);
-  }
+  if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
 
   if ((parser.flags & Flags.MustDestruct) === Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
@@ -3529,12 +3520,9 @@ export function parseObjectLiteral(
     line,
     column
   );
-  if (
-    (context & Context.OptionsDisableWebCompat) !== Context.OptionsDisableWebCompat &&
-    parser.flags & Flags.SeenProto
-  ) {
-    report(parser, Errors.DuplicateProto);
-  }
+
+  if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
+
   if (parser.flags & Flags.MustDestruct) {
     report(parser, Errors.InvalidShorthandPropInit);
   }
@@ -3544,7 +3532,7 @@ export function parseObjectLiteral(
 
 export function isAssignRightBraceOrComma(t: Token): boolean {
   // If encounter "({...=", "({...," or "})", this could be either the end of the object property,
-  // an assignment or an serie of object properties.
+  // an assignment or object properties.
   // Examples:
   //      ({x})
   //      ({x = y})
@@ -3554,7 +3542,7 @@ export function isAssignRightBraceOrComma(t: Token): boolean {
 
 export function isRightBraceOrComma(t: Token): boolean {
   // If encounter  "({...," or "})", this could be either the end of the object property,
-  // or an assignment.
+  // or object properties.
   // Examples:
   //      ({x})
   //      ({x, y})
@@ -3580,9 +3568,9 @@ export function parseObjectLiteralOrPattern(
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
-  let mutualFlag: Flags = Flags.Empty;
+  let mutualFlag = Flags.Empty;
   let prototypeCount = 0;
-  let key: any = null;
+  let key = null;
   let value;
   let state = PropertyKind.None;
   let kind = 'init';
@@ -3631,7 +3619,6 @@ export function parseObjectLiteralOrPattern(
             value = parseAssignmentOrPattern(parser, context, reinterpret, inGroup, key, '=', start, line, column);
           } else {
             mutualFlag |= inGroup === 1 && token === Token.AwaitKeyword ? Flags.SeenAwait : 0;
-
             value = key;
           }
         } else if (parser.token === Token.Colon) {
@@ -3639,7 +3626,7 @@ export function parseObjectLiteralOrPattern(
 
           const { start, line, column } = parser;
 
-          if (tokenValue === '__proto__') prototypeCount++;
+          if ((context & Context.OptionsDisableWebCompat) === 0 && tokenValue === '__proto__') prototypeCount++;
 
           if ((parser.token & 0b00000000001001110000000000000000) > 0) {
             const { token: tokenAfterColon, tokenValue: valueAfterColon } = parser;
@@ -3719,7 +3706,7 @@ export function parseObjectLiteralOrPattern(
             if (isRightBraceOrComma(parser.token)) {
               if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
             } else if (parser.flags & Flags.MustDestruct) {
-              report(parser, Errors.InvalidDestructuringTarget);
+              report(parser, Errors.InvalidObjLitShorthand);
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
@@ -3752,19 +3739,34 @@ export function parseObjectLiteralOrPattern(
           } else {
             value = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 1);
 
-            mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+            const token = parser.token;
 
-            if (isRightBraceOrComma(parser.token)) {
-              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+            if ((token & Token.IsAssignOp) > 0) {
+              if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
+
+              value = parseAssignmentOrPattern(
+                parser,
+                context,
+                reinterpret,
+                inGroup,
+                value,
+                KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
+                start,
+                line,
+                column
+              );
+
+              mutualFlag |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
             } else {
-              value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
-
-              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
-
-              if ((parser.token as Token) !== Token.Comma && (token as Token) !== Token.RightBrace) {
-                if ((parser.token as Token) !== Token.Assign) mutualFlag |= Flags.NotDestructible;
-                value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
+              if ((token & Token.IsBinaryOp) > 0) {
+                value = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, value);
               }
+
+              value =
+                (parser.token as Token) === Token.QuestionMark
+                  ? parseConditionalExpression(parser, context, value, start, line, column)
+                  : value;
+              mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
             }
           }
         } else if (parser.token === Token.LeftBracket) {
@@ -3861,14 +3863,17 @@ export function parseObjectLiteralOrPattern(
         if (parser.token === Token.Colon) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
-          const { start, line, column } = parser;
+          let { start, line, column, token } = parser;
 
-          if (tokenValue === '__proto__') prototypeCount++;
+          if ((token & 0b00000000001001110000000000000000) > 0) {
+            // https://tc39.github.io/ecma262/#sec-__proto__-property-names-in-object-initializers
+            if ((context & Context.OptionsDisableWebCompat) === 0 && tokenValue === '__proto__') prototypeCount++;
 
-          if ((parser.token & 0b00000000001001110000000000000000) > 0) {
             value = parsePrimaryExpression(parser, context, type, 0, /* allowLHS */ 1, 1, inGroup, start, line, column);
 
-            const { token, tokenValue: valueAfterColon } = parser;
+            token = parser.token;
+
+            const valueAfterColon = parser.tokenValue;
 
             value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
@@ -3882,16 +3887,16 @@ export function parseObjectLiteralOrPattern(
               } else {
                 mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
-            } else if ((parser.token as Token) === Token.Assign) {
+            } else if ((token as Token) === Token.Assign) {
               mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             } else {
               mutualFlag |= Flags.NotDestructible;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
-          } else if ((parser.token & 0b00000010000000000000000000000000) > 0) {
+          } else if ((token & 0b00000010000000000000000000000000) > 0) {
             value =
-              (parser.token as Token) === Token.LeftBrace
+              (token as Token) === Token.LeftBrace
                 ? parseObjectLiteralOrPattern(
                     parser,
                     context,
@@ -3924,38 +3929,44 @@ export function parseObjectLiteralOrPattern(
             parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
 
             if (isRightBraceOrComma(parser.token)) {
-              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+              mutualFlag |= Flags.Destructible;
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
-
-              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
               const token = parser.token;
 
               if ((token & Token.IsAssignOp) > 0) {
+                if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
+
                 value = parseAssignmentOrPattern(
                   parser,
                   context,
                   reinterpret,
-                  0,
-                  value as any,
-                  KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+                  inGroup,
+                  value,
+                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
                   start,
                   line,
                   column
                 );
+
+                mutualFlag |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
               } else {
                 if ((token & Token.IsBinaryOp) > 0) {
-                  value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
+                  value = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, value);
                 }
 
                 if ((parser.token as Token) === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
-                mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+
+                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
             }
           } else {
+            // https://tc39.github.io/ecma262/#sec-__proto__-property-names-in-object-initializers
+            if ((context & Context.OptionsDisableWebCompat) === 0 && tokenValue === '__proto__') prototypeCount++;
+
             value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
 
             mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;

@@ -114,13 +114,15 @@ export const enum Errors {
   EscapedKeyword,
   InvalidForAwait,
   InvalidAwaitAsyncArg,
-  RestricedLetProduction
+  RestricedLetProduction,
+  InvalidObjLitShorthand
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.InvalidObjLitShorthand]: 'A object shorthand with initializer must be a pattern',
   [Errors.InvalidForAwait]: 'for await (... of ...) is only valid in async functions and async generators',
   [Errors.RestricedLetProduction]: '`let \n [` is a restricted production at the start of a statement',
   [Errors.InvalidAwaitAsyncArg]: "Invalid use of 'await' as an argument name",

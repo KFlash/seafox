@@ -639,7 +639,7 @@ fail('Miscellaneous - Fail', [
   ['((...a = []) => {})', Context.Empty],
   ['(async (...a = []) => {})', Context.Empty],
   ['[]=>0', Context.Empty],
-  //'(1, x)=0;',
+  ['(1, x)=0;', Context.Empty],
   ['"foo" | "bar" = ("foo");', Context.Empty],
   ['"foo" = (myRandBool ? "foo" : ("foo"));', Context.Empty],
   ['(...a, ...b) => {}', Context.Empty],
@@ -1087,7 +1087,6 @@ fail('Miscellaneous - Fail', [
   ['new', Context.OptionsRaw],
   ['x && new', Context.OptionsRaw],
   ['new\nif(x);', Context.OptionsRaw],
-
   ['try{}catch(/foo/){}', Context.OptionsRaw],
   ['try /foo/; catch(e){}', Context.OptionsRaw],
   ['try{}catch(e)/foo/', Context.OptionsRaw],
@@ -1099,7 +1098,6 @@ fail('Miscellaneous - Fail', [
   ['x + b <<= y;', Context.OptionsRaw],
   ['x + b <<= y;', Context.OptionsRaw],
   ['x >>>| y;', Context.OptionsRaw],
-
   ['5e+', Context.OptionsRaw],
   ['5e*foo', Context.OptionsRaw],
   ["'foo\nbar'", Context.OptionsRaw],
