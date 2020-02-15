@@ -12,6 +12,7 @@ fail('Expressions - Object (fail)', [
   ['({ a = 42, b: c = d, })', Context.Empty],
   ['x = {key: true = a}', Context.Empty],
   ['x = {key: typeof = a}', Context.Empty],
+  ['({[foo]() {}} = y)', Context.Empty],
   ['({ident: a`b` = x})', Context.Empty],
   ['x = {key: bar.foo + x = y}', Context.Empty],
   ['var obj = { foo = 123, bar: x = 123 };', Context.Empty],
@@ -3536,6 +3537,206 @@ pass('Expressions - object', [
           column: 32
         }
       }
+    }
+  ],
+  [
+    `for ({  "a": x[(y)] = a  } in (z)) {}`,
+    Context.OptionsLoc,
+    {
+      body: [
+        {
+          body: {
+            body: [],
+            end: 37,
+            loc: {
+              end: {
+                column: 37,
+                line: 1
+              },
+              start: {
+                column: 35,
+                line: 1
+              }
+            },
+            start: 35,
+            type: 'BlockStatement'
+          },
+          end: 37,
+          left: {
+            end: 26,
+            loc: {
+              end: {
+                column: 26,
+                line: 1
+              },
+              start: {
+                column: 5,
+                line: 1
+              }
+            },
+            properties: [
+              {
+                computed: false,
+                end: 23,
+                key: {
+                  end: 11,
+                  loc: {
+                    end: {
+                      column: 11,
+                      line: 1
+                    },
+                    start: {
+                      column: 8,
+                      line: 1
+                    }
+                  },
+                  start: 8,
+                  type: 'Literal',
+                  value: 'a'
+                },
+                kind: 'init',
+                loc: {
+                  end: {
+                    column: 23,
+                    line: 1
+                  },
+                  start: {
+                    column: 8,
+                    line: 1
+                  }
+                },
+                method: false,
+                shorthand: false,
+                start: 8,
+                type: 'Property',
+                value: {
+                  end: 23,
+                  left: {
+                    computed: true,
+                    end: 19,
+                    loc: {
+                      end: {
+                        column: 19,
+                        line: 1
+                      },
+                      start: {
+                        column: 13,
+                        line: 1
+                      }
+                    },
+                    object: {
+                      end: 14,
+                      loc: {
+                        end: {
+                          column: 14,
+                          line: 1
+                        },
+                        start: {
+                          column: 13,
+                          line: 1
+                        }
+                      },
+                      name: 'x',
+                      start: 13,
+                      type: 'Identifier'
+                    },
+                    property: {
+                      end: 17,
+                      loc: {
+                        end: {
+                          column: 17,
+                          line: 1
+                        },
+                        start: {
+                          column: 16,
+                          line: 1
+                        }
+                      },
+                      name: 'y',
+                      start: 16,
+                      type: 'Identifier'
+                    },
+                    start: 13,
+                    type: 'MemberExpression'
+                  },
+                  loc: {
+                    end: {
+                      column: 23,
+                      line: 1
+                    },
+                    start: {
+                      column: 13,
+                      line: 1
+                    }
+                  },
+                  right: {
+                    end: 23,
+                    loc: {
+                      end: {
+                        column: 23,
+                        line: 1
+                      },
+                      start: {
+                        column: 22,
+                        line: 1
+                      }
+                    },
+                    name: 'a',
+                    start: 22,
+                    type: 'Identifier'
+                  },
+                  start: 13,
+                  type: 'AssignmentPattern'
+                }
+              }
+            ],
+            start: 5,
+            type: 'ObjectPattern'
+          },
+          loc: {
+            end: {
+              column: 37,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
+            }
+          },
+          right: {
+            end: 32,
+            loc: {
+              end: {
+                column: 32,
+                line: 1
+              },
+              start: {
+                column: 31,
+                line: 1
+              }
+            },
+            name: 'z',
+            start: 31,
+            type: 'Identifier'
+          },
+          start: 0,
+          type: 'ForInStatement'
+        }
+      ],
+      end: 37,
+      loc: {
+        end: {
+          column: 37,
+          line: 1
+        },
+        start: {
+          column: 0,
+          line: 1
+        }
+      },
+      sourceType: 'script',
+      start: 0,
+      type: 'Program'
     }
   ],
   [
