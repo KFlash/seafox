@@ -259,7 +259,6 @@ export function parseMemberExpression(
     }
 
     /* Property */
-    case Token.Period:
     case Token.Period: {
       nextToken(parser, context, /* allowRegExp */ 0);
 
