@@ -1,5 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
+import { parseRoot } from '../../../src/seafox';
+import * as t from 'assert';
 
 fail('Declarations - Var (fail)', [
   [`var {};`, Context.Empty],
@@ -197,6 +199,62 @@ fail('Declarations - Var (fail)', [
   [`var x = a; let x = b;`, Context.Empty],
   [`var x; let x;`, Context.OptionsDisableWebCompat]
 ]);
+
+for (const arg of [
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'debugger',
+  'default',
+  'delete',
+  'do',
+  'else',
+  'export',
+  'extends',
+  'finally',
+  'for',
+  'function',
+  'if',
+  'import',
+  'in',
+  'instanceof',
+  'new',
+  'return',
+  'super',
+  'switch',
+  'this',
+  'throw',
+  'try',
+  'typeof',
+  'var',
+  'void',
+  'while',
+  'with',
+  'null',
+  'true',
+  'false',
+  // future reserved keyword,
+  'enum'
+]) {
+  it(`for (const ${arg} = x;;);`, () => {
+    t.throws(() => {
+      parseRoot(`for (const ${arg} = x;;);`, Context.Empty);
+    });
+  });
+  it(`var ${arg}`, () => {
+    t.throws(() => {
+      parseRoot(`var ${arg}`, Context.OptionsDisableWebCompat);
+    });
+  });
+  it(`const ${arg} = x;`, () => {
+    t.throws(() => {
+      parseRoot(`const ${arg} = x;`, Context.Empty);
+    });
+  });
+}
 
 pass('Declarations - Var (pass)', [
   [

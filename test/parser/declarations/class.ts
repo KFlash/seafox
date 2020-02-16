@@ -1,5 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
+import { parseRoot } from '../../../src/seafox';
+import * as t from 'assert';
 
 fail('Declarations - Class (fail)', [
   ['class A {async **f(){}}', Context.Empty],
@@ -72,6 +74,61 @@ fail('Declarations - Class (fail)', [
   ['class { get constructor() {} }', Context.Empty],
   ['class {  * constructor() { }', Context.Empty]
 ]);
+
+// Tests reserved keywords
+for (const arg of [
+  'implements',
+  'interface',
+  'let',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'static',
+  'var',
+  'yield'
+]) {
+  it(`class ${arg} {};`, () => {
+    t.throws(() => {
+      parseRoot(`class ${arg} {};`, Context.OptionsDisableWebCompat);
+    });
+  });
+
+  it(`"use strict"; class ${arg} {};`, () => {
+    t.throws(() => {
+      parseRoot(`"use strict"; class ${arg} {};`, Context.OptionsDisableWebCompat);
+    });
+  });
+
+  it(`"use strict"; class ${arg} {};`, () => {
+    t.throws(() => {
+      parseRoot(`"use strict"; class ${arg} {};`, Context.Strict | Context.Module);
+    });
+  });
+}
+
+for (const arg of [
+  'class',
+  'class name extends',
+  'class extends',
+  'class name {',
+  'class name { get x() }',
+  'class name { set x() {) }',
+  'class {}',
+  'class extends base {}',
+  'class name { *'
+]) {
+  it(`${arg}`, () => {
+    t.throws(() => {
+      parseRoot(`${arg}`, Context.OptionsDisableWebCompat);
+    });
+  });
+  it(`${arg}`, () => {
+    t.throws(() => {
+      parseRoot(`${arg}`, Context.Empty);
+    });
+  });
+}
 
 pass('Declarations - Class (pass)', [
   [

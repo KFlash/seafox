@@ -1,7 +1,6 @@
+import { parseRoot } from '../../../src/seafox';
 import * as t from 'assert';
-import { parseScript, parseModule } from '../../../src/seafox';
-
-// Tests from @kuvos / Tenko
+import { Context } from '../../../src/parser/common';
 
 describe('Miscellaneous - Lexical', () => {
   for (const arg of [
@@ -51,18 +50,13 @@ describe('Miscellaneous - Lexical', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseScript(`${arg}`, { preserveParens: true });
-      });
-    });
-    it(`${arg}`, () => {
-      t.throws(() => {
-        parseScript(`${arg}`, { disableWebCompat: true });
+        parseRoot(`${arg}`, Context.Empty);
       });
     });
 
     it(`${arg}`, () => {
       t.throws(() => {
-        parseModule(`${arg}`, { disableWebCompat: true });
+        parseRoot(`${arg}`, Context.Empty);
       });
     });
   }
@@ -76,13 +70,13 @@ describe('Miscellaneous - Lexical', () => {
   ]) {
     it(`${arg}`, () => {
       t.throws(() => {
-        parseScript(`${arg}`, { disableWebCompat: true });
+        parseRoot(`${arg}`, Context.OptionsDisableWebCompat);
       });
     });
 
     it(`${arg}`, () => {
       t.doesNotThrow(() => {
-        parseScript(`${arg}`, { disableWebCompat: false });
+        parseRoot(`${arg}`, Context.Empty);
       });
     });
   }

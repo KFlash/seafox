@@ -1,5 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
+import { parseRoot } from '../../../src/seafox';
+import * as t from 'assert';
 
 fail('Declarations - Let (fail)', [
   ['const [a, let, b] = [1, 2, 3];', Context.Empty],
@@ -363,6 +365,56 @@ fail('Declarations - Let (fail)', [
   ['let x; { var x }', Context.OptionsDisableWebCompat],
   ['{ var x; } let x', Context.OptionsDisableWebCompat]
 ]);
+
+// Valid 'let' as identifier cases
+for (const arg of [
+  'var let;',
+  'var foo, let;',
+  'try { } catch (let) { }',
+  'function let() { }',
+  '(function let() { })',
+  'function foo(let) { }',
+  'function foo(bar, let) { }',
+  'let = 1;',
+  'var foo = let = 1;',
+  'let * 2;',
+  '++let;',
+  'let++;',
+  'let: 34',
+  'function let(let) { let: let(let + let(0)); }',
+  '({ let: 1 })',
+  '({ get let() { 1 } })',
+  'let(100)',
+  'L: let\nx',
+  'L: let\n{x}',
+  'let',
+  'let = 1',
+  'for (let = 1; let < 1; let++) {}',
+  'for (let in {}) {}',
+  'for (var let = 1; let < 1; let++) {}',
+  'for (var let in {}) {}',
+  'for (var [let] = 1; let < 1; let++) {}',
+  'for (var [let] in {}) {}',
+  'var let',
+  'let;',
+  `let.let = foo`,
+  'var [let] = []',
+  'let f = /* before */async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }/* after */;',
+  'let g = /* before */async /* a */ ( /* b */ ) /* c */ => /* d */ 0/* after */;',
+  'let h = /* before */async /* a */ a /* b */ => /* c */ 0/* after */;'
+]) {
+  it(`function f() { ${arg}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`function f() { ${arg}}`, Context.Empty);
+    });
+  });
+
+  it(`function * gen() { function foo() { ${arg}}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`function * gen() { function foo() { ${arg}}}`, Context.Empty);
+    });
+  });
+}
 
 pass('Declarations - Let (pass)', [
   [
