@@ -1708,8 +1708,10 @@ export function parseArrowFunctionAfterParen(
   }
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000110000011110) ^ 0b00000000000000000000110000011110) |
-    (inGroup === 1 && parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty) |
+    ((parser.flags | 0b00000000000000000000110000011110) ^
+      (inGroup === 1 && parser.flags & Flags.SeenAwait
+        ? 0b00000000000000000000000000011110
+        : 0b00000000000000000000110000011110)) |
     mutualFlag;
 
   if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
@@ -2694,7 +2696,10 @@ export function parseArrayExpressionOrPattern(
         } else if (parser.assignable === 0) {
           mutualFlag |= Flags.NotDestructible;
         } else if (token === Token.LeftParen) {
-          mutualFlag |= parser.assignable === 1 && (kind & 9) !== 0 ? Flags.AssignableDestruct : Flags.NotDestructible;
+          mutualFlag |=
+            parser.assignable === 1 && (kind & 0b00000000000000000000000000001001) !== 0
+              ? Flags.AssignableDestruct
+              : Flags.NotDestructible;
         }
       }
 
@@ -2955,8 +2960,10 @@ export function parseFunctionBody(
   consume(parser, context, Token.RightBrace, isDecl === 1 ? 1 : 0);
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000) |
-    (inGroup === 1 && parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty);
+    0b00000000000000000000110100000000 ^
+    (inGroup === 1 && parser.flags & Flags.SeenAwait
+      ? 0b00000000000000000000010100000000
+      : 0b00000000000000000000110100000000);
 
   return context & Context.OptionsLoc
     ? {
