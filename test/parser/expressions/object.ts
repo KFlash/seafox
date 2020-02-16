@@ -12,6 +12,8 @@ fail('Expressions - Object (fail)', [
   ['({ a = 42, b: c = d, })', Context.Empty],
   ['x = {key: true = a}', Context.Empty],
   ['x = {key: typeof = a}', Context.Empty],
+  ['({static * continue(){}});', Context.Empty],
+  ['({statdic * codntinue(){}});', Context.Empty],
   ['({[foo]() {}} = y)', Context.Empty],
   ['({ident: a`b` = x})', Context.Empty],
   ['x = {key: bar.foo + x = y}', Context.Empty],
@@ -20410,130 +20412,6 @@ pass('Expressions - object', [
         end: {
           line: 1,
           column: 21
-        }
-      }
-    }
-  ],
-  [
-    `({static * continue(){}});`,
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'ObjectExpression',
-            properties: [
-              {
-                type: 'Property',
-                key: {
-                  type: 'Identifier',
-                  name: 'continue',
-                  start: 11,
-                  end: 19,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 11
-                    },
-                    end: {
-                      line: 1,
-                      column: 19
-                    }
-                  }
-                },
-                value: {
-                  type: 'FunctionExpression',
-                  params: [],
-                  body: {
-                    type: 'BlockStatement',
-                    body: [],
-                    start: 21,
-                    end: 23,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 21
-                      },
-                      end: {
-                        line: 1,
-                        column: 23
-                      }
-                    }
-                  },
-                  async: false,
-                  generator: true,
-                  id: null,
-                  start: 19,
-                  end: 23,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 19
-                    },
-                    end: {
-                      line: 1,
-                      column: 23
-                    }
-                  }
-                },
-                kind: 'init',
-                computed: false,
-                method: true,
-                shorthand: false,
-                start: 2,
-                end: 23,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 2
-                  },
-                  end: {
-                    line: 1,
-                    column: 23
-                  }
-                }
-              }
-            ],
-            start: 1,
-            end: 24,
-            loc: {
-              start: {
-                line: 1,
-                column: 1
-              },
-              end: {
-                line: 1,
-                column: 24
-              }
-            }
-          },
-          start: 0,
-          end: 26,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 26
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 26,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 26
         }
       }
     }

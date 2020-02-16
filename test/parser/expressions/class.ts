@@ -143,7 +143,7 @@ fail('Expressions - Class (fail)', [
   [`class x{   async static static(){}    }`, Context.Empty],
   [`class x { y }`, Context.Empty],
   [`class v extends.foo {}`, Context.Empty],
-  //`class x { foo() { return { static foo() {} } } }`,
+  [`class x { foo() { return { static foo() {} } } }`, Context.Empty],
   [`class x {foo = x}`, Context.Empty],
   [`class x {    static prototype(){}    }`, Context.Empty],
   ['class x extends`${08}`{}', Context.Empty],

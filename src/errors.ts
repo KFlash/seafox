@@ -116,13 +116,17 @@ export const enum Errors {
   InvalidAwaitAsyncArg,
   RestricedLetProduction,
   InvalidObjLitShorthand,
-  InvalidCompoundAssign
+  InvalidCompoundAssign,
+  InvalidStaticModifier,
+  InvalidGeneratorMethod
 }
 
 /*@internal*/
 export const errorMessages: {
   [key: string]: string;
 } = {
+  [Errors.InvalidGeneratorMethod]: 'Invalid start of a generator method',
+  [Errors.InvalidStaticModifier]: "'static' isn't an valid modifier on object literal / pattern",
   [Errors.InvalidCompoundAssign]: 'Cannot compound assign to an object or array pattern',
   [Errors.InvalidObjLitShorthand]: 'A object shorthand with initializer must be a pattern',
   [Errors.InvalidForAwait]: 'for await (... of ...) is only valid in async functions and async generators',

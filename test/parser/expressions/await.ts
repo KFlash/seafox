@@ -12,7 +12,7 @@ fail('Expressions - Await (fail)', [
   ['async function f(){ async(await); }', Context.Empty],
   ['function f({a: b = await c}) {}', Context.Empty],
   ['function f(a = await b) {}', Context.Empty],
-  // ['async (b = (await) => {}) => 1', Context.Empty],
+  ['async (b = (await) => {}) => 1', Context.Empty],
   ['async function f({a = await b}) {}', Context.Empty],
   ['async function f({await}) {}', Context.Empty],
   ['async function f({a: b = await}) {}', Context.Empty],
@@ -282,8 +282,8 @@ fail('Expressions - Await (fail)', [
   ['async function a(){ async ([y] = delete ((((foo))[await x]))) => {}; }', Context.Empty],
   ['async function a(){ async ([y] = delete ((foo[await x]))) => {}; }', Context.Empty],
   ['async (await, b = async () => {}) => 1', Context.Empty],
-  ['async function f(){ (fail = class A {[await foo](){}; "x"(){}}) => {}    }', Context.Empty]
-  // ['async(a = (await) => {}) => {};', Context.Empty],
+  ['async function f(){ (fail = class A {[await foo](){}; "x"(){}}) => {}    }', Context.Empty],
+  ['async(a = (await) => {}) => {};', Context.Empty]
 ]);
 
 for (const arg of [

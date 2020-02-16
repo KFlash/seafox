@@ -3661,6 +3661,8 @@ export function parseObjectLiteralOrPattern(
       if ((token & 0b00000000001001110000000000000000) > 0) {
         nextToken(parser, context, /* allowRegExp */ 0);
 
+        if (token === Token.StaticKeyword) report(parser, Errors.InvalidStaticModifier);
+
         key = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
         if (isAssignRightBraceOrComma(parser.token)) {
@@ -3872,9 +3874,7 @@ export function parseObjectLiteralOrPattern(
 
           value = parseMethodDefinition(parser, context, state);
         } else if (parser.token === Token.Multiply) {
-          if (token === Token.GetKeyword || token === Token.SetKeyword) {
-            report(parser, Errors.InvalidGeneratorGetter);
-          }
+          if (token !== Token.AsyncKeyword) report(parser, Errors.InvalidGeneratorMethod);
 
           nextToken(parser, context, /* allowRegExp */ 0);
 
