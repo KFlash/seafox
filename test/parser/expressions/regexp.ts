@@ -92,26 +92,6 @@ pass('Expressions - Regular expression', [
       }
     }
   ],
-  // [`var a = b./aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-  // [`var a = /aaa/;`, Context.OptionsNext | Context.OptionsLoc, {}],
-
   [
     `var a = /aaa/;`,
     Context.OptionsNext | Context.OptionsLoc,

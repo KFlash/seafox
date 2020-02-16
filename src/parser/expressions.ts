@@ -2960,7 +2960,7 @@ export function parseFunctionBody(
   consume(parser, context, Token.RightBrace, isDecl === 1 ? 1 : 0);
 
   parser.flags =
-    0b00000000000000000000110100000000 ^
+    (parser.flags | 0b00000000000000000000110100000000) ^
     (inGroup === 1 && parser.flags & Flags.SeenAwait
       ? 0b00000000000000000000010100000000
       : 0b00000000000000000000110100000000);
