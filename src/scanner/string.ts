@@ -124,12 +124,14 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
     case Chars.Five:
     case Chars.Six:
     case Chars.Seven: {
+      const code = first - Chars.Zero;
+
       if (context & (Context.OptionsDisableWebCompat | Context.Strict)) {
         // Verify that it's `\0` if we're in strict mode.
-        return first === Chars.Zero && (ch < Chars.Zero || ch > Chars.Nine) ? first - Chars.Zero : Escape.StrictOctal;
-      }
+        if (first === Chars.Zero && (ch < Chars.Zero || ch > Chars.Nine)) return code;
 
-      const code = first - Chars.Zero;
+        return Escape.StrictOctal;
+      }
 
       parser.flags |= Flags.Octals;
 

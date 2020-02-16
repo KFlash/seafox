@@ -239,7 +239,7 @@ export function addLabel(parser: ParserState, label: any, labels: any, nestedLab
 }
 
 export function checkBreakStatement(parser: ParserState, labels: any, value: string): 0 | 1 {
-  if (labels === null) report(parser, Errors.Unexpected);
+  if (!labels) report(parser, Errors.Unexpected);
 
   if (labels['#' + value]) return 1;
 
