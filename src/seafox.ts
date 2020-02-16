@@ -13,7 +13,7 @@ import { createTopLevelScope } from './parser/scope';
 export interface Options {
   // Enable stage 3 support (ESNext)
   next?: boolean;
-  // Disable web compability
+  // Disable web compatibility
   disableWebCompat?: boolean;
   // Enable line/column location information start and end offsets to each node
   loc?: boolean;
