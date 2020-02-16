@@ -229,10 +229,10 @@ export function addLabel(parser: ParserState, label: any, labels: any, nestedLab
   labels = { parentLabels: labels, iterationLabels: null };
   labels['#' + label] = true;
 
-  if (nestedLabels === null) {
-    nestedLabels = [label];
-  } else {
+  if (nestedLabels) {
     nestedLabels.push(label);
+  } else {
+    nestedLabels = [label];
   }
 
   return labels;

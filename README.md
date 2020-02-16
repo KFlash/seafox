@@ -6,6 +6,8 @@
 
 <p align="center">
     <a href="https://www.npmjs.com/package/seafox"><img src="https://img.shields.io/npm/v/seafox.svg?style=flat-square" alt="Seafox NPM"/></a>
+    <a href="https://lgtm.com/projects/g/KFlash/seafox/context:javascript"><img src="https://img.shields.io/lgtm/grade/javascript/g/KFlash/seafox.svg?logo=lgtm&logoWidth=18" alt="GitHub license" /></a>
+    <a href="https://lgtm.com/projects/g/KFlash/seafox/alerts"><img src="https://img.shields.io/lgtm/alerts/g/KFlash/seafox.svg?logo=lgtm&logoWidth=18" alt="Total alerts" /></a>
     <a href="https://circleci.com/gh/KFlash/seafox"><img src="https://circleci.com/gh/KFlash/seafox.svg?style=svg" alt="Circle" /></a>
     <a href="https://github.com/KFlash/seafox/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/KFlash/seafox.svg" alt="License" /></a>
 </p>
@@ -62,7 +64,7 @@ This is the available options:
 
 ## What is Seafox?
 
-This is my private parser code made public. It strictly conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification, and can not be used as an drop-in replacement for other parsers, because they are using a `parse()` method as an common public API to parse javascript code. 
+This is my private parser code made public. It strictly conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification, and can not be used as an drop-in replacement for other parsers, because they are using a `parse()` method as an common public API to parse javascript code.
 
 Seafox uses either [`parseScript`](https://tc39.github.io/ecma262/#sec-parse-script) or [`parseModule`](https://tc39.github.io/ecma262/#sec-parsemodule).
 

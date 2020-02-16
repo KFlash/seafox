@@ -3,13 +3,6 @@ node_modules
 /coverage
 /.nyc_output
 /.rpt2_cache
-/packages/*/node_modules
-/packages/*/npm-debug.log
-/packages/*/build
-/packages/*/lib
-/packages/*/coverage
-/packages/*/.nyc_output
-/packages/*/.rpt2_cache
 yarn.lock
 *.log
 npm-debug.log*
