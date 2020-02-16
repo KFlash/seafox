@@ -31,16 +31,14 @@ export function scanTemplate(parser: ParserState, context: Context, source: stri
             parser.index--;
           } else if (code !== Escape.Empty && context & Context.TaggedTemplate) {
             ret = null;
-            char = scanBadTemplate(parser, context, source);
+            char = scanBadTemplate(parser, source);
             if (char < 0) {
-              char = -char;
               token = Token.TemplateCont;
             }
             break;
           } else {
             handleStringError(parser, code as Escape, /* isTemplate */ 1);
           }
-          char = source.charCodeAt(parser.index);
         }
       } else {
         if ((CharTypes[char] & CharFlags.LineTerminator) === CharFlags.LineTerminator) {
@@ -75,7 +73,7 @@ export function scanTemplate(parser: ParserState, context: Context, source: stri
   return token;
 }
 
-function scanBadTemplate(parser: ParserState, _context: Context, source: string): number {
+function scanBadTemplate(parser: ParserState, source: string): number {
   let char = source.charCodeAt(parser.index);
 
   while (char !== Chars.Backtick) {

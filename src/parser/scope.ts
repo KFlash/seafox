@@ -168,7 +168,7 @@ export function addBlockName(
 
   const value = scope.declared['#' + name];
   if (value) {
-    if (value && (value & 0b00000000000000000000000000001000) === 0) {
+    if ((value & 0b00000000000000000000000000001000) === 0) {
       if ((kind & 0b00000000000000000000000000000001) > 0) {
         scope.scopeError = {
           type: Errors.DuplicateBinding,

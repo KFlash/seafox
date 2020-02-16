@@ -198,15 +198,16 @@ export function reinterpretToPattern(state: ParserState, node: any): void {
     case 'SpreadElement':
       node.type = 'RestElement';
       reinterpretToPattern(state, node.argument);
+      return;
     default: // ignore
   }
 }
 
 export function parseStatementWithLabelSet(t: Token, label: any, labels: any, nestedLabels: any) {
-  if (nestedLabels === null) {
-    nestedLabels = [label];
-  } else {
+  if (nestedLabels) {
     nestedLabels.push(label);
+  } else {
+    nestedLabels = [label];
   }
   if (isIterationStatement(t)) {
     labels.iterationLabels = nestedLabels;

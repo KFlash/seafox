@@ -293,7 +293,7 @@ for (const arg of [
 
   it(`${arg}`, () => {
     t.throws(() => {
-      parseScript(`${arg}`), { OptionsDisableWebCompat: true };
+      parseScript(`${arg}`, { disableWebCompat: true });
     });
   });
 

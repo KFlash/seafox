@@ -3393,7 +3393,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
       report(parser, Errors.AccessorWrongArgs, 'Setter', 'one', '');
     }
 
-    if (scope && scope.scopeError !== void 0) reportScopeError(scope.scopeError);
+    if (scope.scopeError !== void 0) reportScopeError(scope.scopeError);
 
     parser.flags |= isSimpleParameterList === 1 ? Flags.SimpleParameterList : 0;
   } else if (kind & PropertyKind.Setter) {
@@ -3632,8 +3632,8 @@ export function parseObjectLiteralOrPattern(
   let prototypeCount = 0;
   let key = null;
   let value;
-  let state = PropertyKind.None;
-  let kind = 'init';
+  let state;
+  let kind;
 
   while (parser.token !== Token.RightBrace) {
     const { token, start, line, column, tokenValue } = parser;
