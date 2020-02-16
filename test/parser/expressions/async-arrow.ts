@@ -357,6 +357,11 @@ fail('Expressions - Async Arrow (fail)', [
   ['async => {} ++foo', Context.Empty],
   ['async => {}.foo', Context.Empty],
   [`async => {}.foo`, Context.Empty],
+  [`interface => {}`, Context.Strict | Context.Module],
+  [`(...await) => {}`, Context.Strict | Context.Module],
+  [`(a, ...await) => {}`, Context.Strict | Context.Module],
+  [`(a = (...await) => {}) => {}`, Context.Strict | Context.Module],
+  [`(a = (b, ...await) => {}) => {}`, Context.Strict | Context.Module],
   [
     `async => {}
   .foo`,

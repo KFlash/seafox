@@ -57,9 +57,15 @@ fail('Expression - Arrows (fail)', [
   ['new async => {}', Context.Empty],
   ['new async => ok', Context.Empty],
   ['new async => {}()', Context.Empty],
+  ['(function *g(z = ( x, y=(yield) ) => {}) { });', Context.Empty],
+  ['(function *g(z = ( x, y=f(yield) ) => {}) { });', Context.Empty],
+  ['(function *g(z = ( x=yield ) => {}) { });', Context.Empty],
   ['() => {}()', Context.Empty],
   ['new x => {}', Context.Empty],
   ['new x => ok', Context.Empty],
+  ['([{x: y.z}]) => b', Context.Empty],
+  ['([{x: y.z}] = a) => b', Context.Empty],
+  ['([{x: y.z} = a]) => b', Context.Empty],
   ['( await foo ) => {}', Context.Empty],
   ['({new x}) => x;', Context.Empty],
   ['const let => { let }', Context.Empty],
@@ -529,6 +535,614 @@ fail('Expression - Arrows (fail)', [
 ]);
 
 pass('Expressions - Arrow', [
+  [
+    `(interface, eval) => {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 21,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 21
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'interface',
+                start: 1,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'eval',
+                start: 12,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          },
+          start: 0,
+          end: 23,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 23
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 23,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 23
+        }
+      }
+    }
+  ],
+  [
+    `(eval, interface) => {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 21,
+              end: 23,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 21
+                },
+                end: {
+                  line: 1,
+                  column: 23
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'eval',
+                start: 1,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'interface',
+                start: 7,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          },
+          start: 0,
+          end: 23,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 23
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 23,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 23
+        }
+      }
+    }
+  ],
+  [
+    `(bar, eval) => {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 15,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 15
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'bar',
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'eval',
+                start: 6,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          start: 0,
+          end: 17,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 17
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 17,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 17
+        }
+      }
+    }
+  ],
+  [
+    `(bar, yield) => {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 16,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'bar',
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'yield',
+                start: 6,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          },
+          start: 0,
+          end: 18,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 18
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 18,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 18
+        }
+      }
+    }
+  ],
+  [
+    `(bar, interface) => {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 20,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 20
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'bar',
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'interface',
+                start: 6,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          start: 0,
+          end: 22,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 22
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 22,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 22
+        }
+      }
+    }
+  ],
+  [
+    `arguments => {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [],
+              start: 13,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 13
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'arguments',
+                start: 0,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
   [
     `eval => 42;`,
     Context.OptionsLoc,

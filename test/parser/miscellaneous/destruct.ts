@@ -492,13 +492,6 @@ for (const arg of [
         parseRoot(fn(`...{`), Context.Empty);
       });
     });
-    /*
-    it(fn(`...[p.q]`), () => {d
-      t.throws(() => {
-        parseSource(fn(`...[p.q]`), undefined, Context.OptionsWebCompat);
-      });
-    });
-    */
 
     it(fn(`...[0]`), () => {
       t.throws(() => {

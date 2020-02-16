@@ -785,7 +785,9 @@ export function parseForStatement(
 
   if (parser.token === Token.OfKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, isAwait === 1 ? 'await' : 'of');
+
     if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+
     reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);
@@ -818,7 +820,9 @@ export function parseForStatement(
 
   if (parser.token === Token.InKeyword) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignToInOfForLoop, 'in');
+
     if (isAwait === 1) report(parser, Errors.InvalidForAwait);
+
     reinterpretToPattern(parser, init);
 
     nextToken(parser, context, /* allowRegExp */ 1);

@@ -94,8 +94,14 @@ export function parseExpression(parser: ParserState, context: Context, inGroup: 
 
 export function parseExpressions(parser: ParserState, context: Context, inGroup: 0 | 1): Types.Expression {
   const { start, line, column } = parser;
-  const expr = parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup);
-  return parseSequenceExpression(parser, context, expr, start, line, column);
+  return parseSequenceExpression(
+    parser,
+    context,
+    parseExpression(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, inGroup),
+    start,
+    line,
+    column
+  );
 }
 
 export function parseSequenceExpression(

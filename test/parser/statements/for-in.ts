@@ -263,7 +263,6 @@ fail('Statements - For in (fail)', [
   ['for (let() of y);', Context.OptionsDisableWebCompat],
   ['for (/foo/ in {});', Context.OptionsDisableWebCompat],
   ['for ((a++) in c);', Context.OptionsDisableWebCompat],
-  // ['for (true ? 0 : 0 in {}; false; ) ;', Context.OptionsDisableWebCompat],
   ['for ({a: x.y} = z in obj);', Context.Empty],
   ['for (let [let] in obj);', Context.OptionsDisableWebCompat],
   ['for ("foo".bar = x in obj);', Context.Empty],

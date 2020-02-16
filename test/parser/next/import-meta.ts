@@ -28,6 +28,12 @@ describe('Next - Import Meta', () => {
         parseRoot(`${arg}`, Context.Strict | Context.Module | Context.OptionsNext);
       });
     });
+
+    it(`${arg}`, () => {
+      t.throws(() => {
+        parseRoot(`${arg}`, Context.Empty);
+      });
+    });
   }
 
   for (const [source, ctx, expected] of [

@@ -16,6 +16,7 @@ fail('Miscellaneous - Trailing comma (fail)', [
   ['(function* a(b,c,d,,) {});', Context.Empty],
   ['(function   (b,c,d,,) {});', Context.Empty],
   ['(function*  (b,c,d,,) {});', Context.Empty],
+  ['(function*  (b,c,d,,) {});', Context.OptionsDisableWebCompat],
   ['(b,,) => {};', Context.Empty],
   ['(b,c,d,,) => {};', Context.Empty],
   ['a(1,,);', Context.Empty],
@@ -26,6 +27,8 @@ fail('Miscellaneous - Trailing comma (fail)', [
   ['(function* a4(,) {});', Context.Empty],
   ['(function    (,) {});', Context.Empty],
   ['(function*   (,) {});', Context.Empty],
+  ['(function    (,) {});', Context.OptionsDisableWebCompat],
+  ['(function*   (,) {});', Context.OptionsDisableWebCompat],
   ['(,) => {};', Context.Empty],
   ['a1(,);', Context.Empty],
   [' function  a(...b,) {}', Context.Empty],
@@ -49,7 +52,7 @@ fail('Miscellaneous - Trailing comma (fail)', [
   [', () => 0', Context.Empty],
   ['async (,) => 0', Context.Empty],
   ['(function*  (b, c, ...d,) {});', Context.Empty],
-  ['class A {foo(,) {}}', Context.Empty],
+  ['class A {foo(,) {}}', Context.Strict | Context.Module],
   ['class A {static foo(,) {}}', Context.Empty],
   ['(class {static foo(,) {}})', Context.Empty],
   ['(...b,) => {};', Context.Empty],
@@ -78,7 +81,9 @@ fail('Miscellaneous - Trailing comma (fail)', [
   ['(function  a(...b,) {});', Context.Empty],
   ['(function* a(...b,) {});', Context.Empty],
   ['(function   (...b,) {});', Context.Empty],
-  ['(function*  (...b,) {});', Context.Empty]
+  ['(function*  (...b,) {});', Context.Empty],
+  ['(function   (...b,) {});', Context.Strict | Context.Module],
+  ['(function*  (...b,) {});', Context.Strict | Context.Module]
 ]);
 
 // Comma is not permitted after the rest element
@@ -140,8 +145,8 @@ for (const arg of [
   '[...[...a]]',
   '[, ...a]',
   '[, , ...a]',
-  ' function  a(b,) {}',
-  ' function* a(b,) {}',
+  'function  a(b,) {}',
+  'function* a(b,) {}',
   '(function  a(b,) {});',
   '(function* a(b,) {});',
   '(function   (b,) {});',
@@ -167,6 +172,12 @@ for (const arg of [
   it(`"use strict"; ${arg}`, () => {
     t.doesNotThrow(() => {
       parseRoot(`"use strict"; ${arg}`, Context.Empty);
+    });
+  });
+
+  it(`${arg}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`${arg}`, Context.Strict | Context.Module);
     });
   });
 }

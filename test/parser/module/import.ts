@@ -1,5 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
+import { parseRoot } from '../../../src/seafox';
+import * as t from 'assert';
 
 fail('Module - Import (fail)', [
   ['import', Context.Empty],
@@ -140,6 +142,100 @@ fail('Module - Import (fail)', [
   ["import a as b from 'a'", Context.Empty],
   ["import a, b from 'a'", Context.Empty]
 ]);
+
+for (const arg of [
+  "import 'foo';",
+  "import { a } from 'foo';",
+  `import  * as set from "a"`,
+  "import { a, b as d, c, } from 'baz';",
+  "import * as thing from 'baz';",
+  "import thing from 'foo';",
+  "import thing, * as rest from 'foo';",
+  "import thing, { a, b, c } from 'foo';",
+  "import { arguments as a } from 'baz';",
+  "import { for as f } from 'foo';",
+  "import { yield as y } from 'foo';",
+  "import { static as s } from 'foo';",
+  "import { let as l } from 'foo';",
+  "import { q as z } from 'foo';",
+  'import { null as nil } from "bar"',
+  'import {bar, baz} from "foo";',
+  'import {bar as baz, xyz} from "foo";',
+  'import foo, {bar} from "foo";',
+  'import C from "foo";',
+  'import a, { b, c as d } from "foo"',
+  'import * as async from "async";',
+  "import foo, * as bar from 'baz';",
+  'import $ from "foo"',
+  'import {} from "foo";',
+  "import n from 'n.js';",
+  'import a from "module";',
+  'import b, * as c from "module";',
+  'import * as d from "module";',
+  'import e, {f as g, h as i, j} from "module";',
+  'import {k as l, m} from "module";',
+  'import {n, o as p} from "module";',
+  "import 'q.js';",
+  "import a, {b,c,} from 'd'",
+  "import a, {b,} from 'foo'",
+  "import {as as as} from 'as'",
+  "import a, {as} from 'foo'",
+  "import a, {function as c} from 'baz'",
+  "import a, {b as c} from 'foo'",
+  "import a, * as b from 'a'",
+  "import a, {} from 'foo'",
+  "import a from 'foo'",
+  "import * as a from 'a'",
+  "import {m as mm} from 'foo';",
+  "import {aa} from 'foo';",
+  'import { as, get, set, from } from "baz"',
+  'import icefapper from "await"',
+  "import 'foo';",
+  "import get from './get.js';",
+  "import { a } from 'foo';",
+  "import { a, b as d, c, } from 'baz';",
+  "import * as foob from 'bar.js';",
+  'import { as, get, set, from } from "baz"',
+  "import {} from 'x'",
+  "import {a} from 'x'",
+  "import {a as b} from 'x'",
+  "import {a,b,} from 'x'",
+  "import foo, * as bar from 'baz';",
+  'import $ from "foo"',
+  'import {} from "foo";',
+  "import n from 'n.js';",
+  'import a from "module";',
+  'import b, * as c from "module";',
+  "import { yield as y } from 'm.js';",
+  "import { static as s } from 'm.js';",
+  "import { yield as y } from 'foo';",
+  'import async from "foo";',
+  'import defexp, {x,} from "foo";',
+  'import { Cocoa as async } from "foo"',
+  "import 'somemodule.js';",
+  "import { } from 'm.js';",
+  "import { a } from 'm.js';",
+  "import 'foo';",
+  "import { a } from 'foo';",
+  'import { a as of } from "k";',
+  // Runtime errors
+  'import foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) {}',
+  'import { foo } from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }',
+  'import * as foo from "foo.js"; try { (() => { foo = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }',
+  'import { foo as foo22 } from "foo.js"; try { (() => { foo22 = 12; })() } catch(e) { assert.areEqual("Assignment to const", e.message); }'
+]) {
+  it(`${arg}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`${arg}`, Context.Strict | Context.Module);
+    });
+  });
+
+  it(`${arg}`, () => {
+    t.throws(() => {
+      parseRoot(`${arg}`, Context.Empty);
+    });
+  });
+}
 
 pass('Module - Import (pass)', [
   [
