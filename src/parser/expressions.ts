@@ -860,7 +860,7 @@ export function parseIdentifierOrArrow(
 
     addBlockName(parser, context, scope, parser.tokenValue, BindingKind.ArgumentList, Origin.None);
 
-    expr = parseArrowFunction(parser, context, scope, [expr], 0, start, line, column);
+    expr = parseArrowFunction(parser, context, scope, [expr], 0, 0, start, line, column);
 
     parser.flags |= mutualFlag;
   }
@@ -1109,7 +1109,7 @@ export function parseAsyncArrow(
 
   addBlockName(parser, context, scope, value, BindingKind.ArgumentList, Origin.None);
 
-  return parseArrowFunction(parser, context, scope, [expr], isAsync, start, line, column);
+  return parseArrowFunction(parser, context, scope, [expr], 0, isAsync, start, line, column);
 }
 
 export function parseAsyncArrowOrCallExpression(
@@ -1140,6 +1140,7 @@ export function parseAsyncArrowOrCallExpression(
         parser,
         context,
         createArrowScope(),
+        0,
         Flags.Empty,
         [],
         canAssign,
@@ -1165,6 +1166,8 @@ export function parseAsyncArrowOrCallExpression(
           arguments: []
         };
   }
+
+  if (newLine === 1) report(parser, Errors.InvalidLineBreak);
 
   parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
 
@@ -1285,7 +1288,19 @@ export function parseAsyncArrowOrCallExpression(
 
   if (parser.token === Token.Arrow) {
     if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
-    return parseArrowFunctionAfterParen(parser, context, scope, mutualFlag, params, canAssign, 1, start, line, column);
+    return parseArrowFunctionAfterParen(
+      parser,
+      context,
+      scope,
+      0,
+      mutualFlag,
+      params,
+      canAssign,
+      1,
+      start,
+      line,
+      column
+    );
   }
 
   if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
@@ -1676,6 +1691,7 @@ export function parseArrowFunctionAfterParen(
   parser: ParserState,
   context: Context,
   scope: any,
+  inGroup: 0 | 1,
   mutualFlag: Flags,
   params: any,
   canAssign: 0 | 1,
@@ -1692,7 +1708,9 @@ export function parseArrowFunctionAfterParen(
   }
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000110000011110) ^ 0b00000000000000000000110000011110) | mutualFlag;
+    ((parser.flags | 0b00000000000000000000110000011110) ^ 0b00000000000000000000110000011110) |
+    (inGroup === 1 && parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty) |
+    mutualFlag;
 
   if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
@@ -1702,14 +1720,16 @@ export function parseArrowFunctionAfterParen(
   while (i--) {
     reinterpretToPattern(parser, params[i]);
   }
-  return parseArrowFunction(parser, context, scope, params, isAsync, start, line, column);
+
+  return parseArrowFunction(parser, context, scope, params, inGroup, isAsync, start, line, column);
 }
 
 export function parseArrowFunction(
   parser: ParserState,
   context: Context,
-  scope: any,
-  params: any,
+  scope: ScopeState,
+  params: any[],
+  inGroup: 0 | 1,
   isAsync: 0 | 1,
   start: number,
   line: number,
@@ -1726,7 +1746,7 @@ export function parseArrowFunction(
 
   const expression = parser.token !== Token.LeftBrace;
 
-  let body: any;
+  let body: Types.Expression;
 
   if (scope.scopeError !== void 0) reportScopeError(scope.scopeError);
 
@@ -1740,6 +1760,7 @@ export function parseArrowFunction(
       scope,
       void 0,
       1,
+      inGroup,
       void 0
     );
 
@@ -1769,7 +1790,9 @@ export function parseArrowFunction(
       }
     }
   }
+
   parser.assignable = 0;
+
   return context & Context.OptionsLoc
     ? {
         type: 'ArrowFunctionExpression',
@@ -1814,7 +1837,17 @@ export function parseParenthesizedExpression(
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
-    return parseArrowFunction(parser, context, createArrowScope(), expr, /* isAsync */ 0, curStart, curLine, curColumn);
+    return parseArrowFunction(
+      parser,
+      context,
+      createArrowScope(),
+      expr,
+      0,
+      /* isAsync */ 0,
+      curStart,
+      curLine,
+      curColumn
+    );
   }
 
   let expressions: any[] = [];
@@ -2015,6 +2048,7 @@ export function parseParenthesizedExpression(
       parser,
       context,
       scope,
+      inGroup,
       mutualFlag,
       inSequence ? expressions : [expr],
       canAssign,
@@ -2819,6 +2853,7 @@ export function parseFunctionLiteral(
     createParentScope(scope, ScopeKind.FunctionBody),
     firstRestricted,
     isDecl,
+    /* inGroup */ 0,
     scope.scopeError
   );
 
@@ -2852,6 +2887,7 @@ export function parseFunctionBody(
   scope: any,
   firstRestricted: Token | undefined,
   isDecl: 0 | 1,
+  inGroup: 0 | 1,
   scopeError: any
 ): any {
   const { start, line, column } = parser;
@@ -2918,7 +2954,9 @@ export function parseFunctionBody(
   }
   consume(parser, context, Token.RightBrace, isDecl === 1 ? 1 : 0);
 
-  parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
+  parser.flags =
+    ((parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000) |
+    (inGroup === 1 && parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty);
 
   return context & Context.OptionsLoc
     ? {
@@ -3362,7 +3400,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     ? {
         type: 'FunctionExpression',
         params,
-        body: parseFunctionBody(parser, context, scope, void 0, /* isDecl */ 0, void 0),
+        body: parseFunctionBody(parser, context, scope, void 0, /* isDecl */ 0, /* inGroup */ 0, void 0),
         async: (kind & PropertyKind.Async) === 1,
         generator: (kind & PropertyKind.Generator) === 1,
         id: null,
@@ -3373,7 +3411,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     : {
         type: 'FunctionExpression',
         params,
-        body: parseFunctionBody(parser, context, scope, void 0, /* isDecl */ 0, void 0),
+        body: parseFunctionBody(parser, context, scope, void 0, /* isDecl */ 0, /* inGroup */ 0, void 0),
         async: (kind & PropertyKind.Async) === 1,
         generator: (kind & PropertyKind.Generator) === 1,
         id: null

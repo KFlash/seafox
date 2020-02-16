@@ -28,6 +28,8 @@ fail('Expressions - Array (fail)', [
   [`([x + y]) => x;`, Context.Empty],
   [`[x + y] = x;`, Context.Empty],
   ['[{} = 2/=2]', Context.Empty],
+  ['[...(x), y] = z', Context.Empty],
+  ['([...x.y]) => z', Context.Empty],
   ['[ function(){} ] = x', Context.Empty],
   ['[ x + y ] = x', Context.Empty],
   ['[a,b^=[x,y]] = z', Context.Empty],
@@ -295,6 +297,659 @@ fail('Expressions - Array (fail)', [
 ]);
 
 pass('Expressions - Array (pass)', [
+  [
+    `[{a:1}.foo] = x`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'ArrayPattern',
+              elements: [
+                {
+                  type: 'MemberExpression',
+                  object: {
+                    type: 'ObjectExpression',
+                    properties: [
+                      {
+                        type: 'Property',
+                        key: {
+                          type: 'Identifier',
+                          name: 'a',
+                          start: 2,
+                          end: 3,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 3
+                            }
+                          }
+                        },
+                        value: {
+                          type: 'Literal',
+                          value: 1,
+                          start: 4,
+                          end: 5,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 4
+                            },
+                            end: {
+                              line: 1,
+                              column: 5
+                            }
+                          }
+                        },
+                        kind: 'init',
+                        computed: false,
+                        method: false,
+                        shorthand: false,
+                        start: 2,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      }
+                    ],
+                    start: 1,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  },
+                  computed: false,
+                  property: {
+                    type: 'Identifier',
+                    name: 'foo',
+                    start: 7,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 14,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    `[{}.foo] = x`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'ArrayPattern',
+              elements: [
+                {
+                  type: 'MemberExpression',
+                  object: {
+                    type: 'ObjectExpression',
+                    properties: [],
+                    start: 1,
+                    end: 3,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 3
+                      }
+                    }
+                  },
+                  computed: false,
+                  property: {
+                    type: 'Identifier',
+                    name: 'foo',
+                    start: 4,
+                    end: 7,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 7
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `[[foo].length] = x`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'ArrayPattern',
+              elements: [
+                {
+                  type: 'MemberExpression',
+                  object: {
+                    type: 'ArrayExpression',
+                    elements: [
+                      {
+                        type: 'Identifier',
+                        name: 'foo',
+                        start: 2,
+                        end: 5,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 2
+                          },
+                          end: {
+                            line: 1,
+                            column: 5
+                          }
+                        }
+                      }
+                    ],
+                    start: 1,
+                    end: 6,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 6
+                      }
+                    }
+                  },
+                  computed: false,
+                  property: {
+                    type: 'Identifier',
+                    name: 'length',
+                    start: 7,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 17,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          },
+          start: 0,
+          end: 18,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 18
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 18,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 18
+        }
+      }
+    }
+  ],
+  [
+    `[[foo].length = x] = x`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'ArrayPattern',
+              elements: [
+                {
+                  type: 'AssignmentPattern',
+                  left: {
+                    type: 'MemberExpression',
+                    object: {
+                      type: 'ArrayExpression',
+                      elements: [
+                        {
+                          type: 'Identifier',
+                          name: 'foo',
+                          start: 2,
+                          end: 5,
+                          loc: {
+                            start: {
+                              line: 1,
+                              column: 2
+                            },
+                            end: {
+                              line: 1,
+                              column: 5
+                            }
+                          }
+                        }
+                      ],
+                      start: 1,
+                      end: 6,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 1
+                        },
+                        end: {
+                          line: 1,
+                          column: 6
+                        }
+                      }
+                    },
+                    computed: false,
+                    property: {
+                      type: 'Identifier',
+                      name: 'length',
+                      start: 7,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 7
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 1,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 16,
+                    end: 17,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 16
+                      },
+                      end: {
+                        line: 1,
+                        column: 17
+                      }
+                    }
+                  },
+                  start: 1,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 21,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 21
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          start: 0,
+          end: 22,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 22
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 22,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 22
+        }
+      }
+    }
+  ],
   [
     `[].x+=y`,
     Context.OptionsLoc,

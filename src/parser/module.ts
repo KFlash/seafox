@@ -389,6 +389,7 @@ export function parseExportDefault(
                 context,
                 scope,
                 [parseIdentifier(parser, context)],
+                0,
                 1,
                 start,
                 line,
