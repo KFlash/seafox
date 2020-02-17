@@ -81,12 +81,6 @@ jobs:
       name: docker-circleci
       node: "12.9"
 
-test-13:
-    <<: *test
-    executor:
-      name: docker-circleci
-      node: "13.8"
-
 workflows:
   build_test:
     jobs:
@@ -101,6 +95,4 @@ workflows:
       - test-10:
           <<: *filter_ignore_dev
       - test-12:
-          <<: *filter_ignore_dev
-      - test-13:
           <<: *filter_ignore_dev
