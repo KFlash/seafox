@@ -62,6 +62,18 @@ This is the available options:
 }
 ```
 
+Example usage:
+
+```js
+
+import { parseScript, parseModule } from './seafox';
+
+parseScript('({x: [y] = 0} = 1)');
+
+parseModule('({x: [y] = 0} = 1)', { directives: true, raw: true });
+
+```
+
 ## What is Seafox?
 
 This is my private parser code made public. It strictly conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification, and can not be used as an drop-in replacement for other parsers, because they are using a `parse()` method as an common public API to parse javascript code.
