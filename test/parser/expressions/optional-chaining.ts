@@ -93,6 +93,7 @@ fail('Expressions - Optional chaining (fail)', [
   ['const o = { C: class {} }; new o?.["C"]();', Context.Empty],
   ['class C {} new C?.();', Context.Empty],
   ['function foo() { new?.target; }', Context.Empty],
+  ['class A { #foo = "hi"; constructor() { this?.#foo; } }', Context.Empty],
   ['function tag() {} tag?.``;', Context.Empty],
   ['const o = { tag() {} }; o?.tag``;', Context.Empty],
   ['a.?2.?n', Context.Empty],
@@ -168,6 +169,1697 @@ fail('Expressions - Optional chaining (fail)', [
 ]);
 
 pass('Expressions - Optional chaining (pass)', [
+  [
+    `['hi']?.[0]`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'ArrayExpression',
+              elements: [
+                {
+                  type: 'Literal',
+                  value: 'hi',
+                  start: 1,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: true,
+                property: {
+                  type: 'Literal',
+                  value: 0,
+                  start: 9,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                optional: false,
+                start: 0,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    `() => true?.()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'ChainingExpression',
+              base: {
+                type: 'Literal',
+                value: true,
+                start: 6,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              chain: [
+                {
+                  type: 'CallChain',
+                  arguments: [],
+                  optional: true,
+                  start: 6,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 6,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            params: [],
+            async: false,
+            expression: true,
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          },
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
+      }
+    }
+  ],
+  [
+    `({})?.['a']?.b`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'ObjectExpression',
+              properties: [],
+              start: 1,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: true,
+                property: {
+                  type: 'Literal',
+                  value: 'a',
+                  start: 7,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                optional: false,
+                start: 0,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              {
+                type: 'MemberChain',
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 13,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                optional: true,
+                start: 0,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          },
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
+      }
+    }
+  ],
+  [
+    `null?.()().a['b']`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'Literal',
+              value: null,
+              start: 0,
+              end: 4,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 4
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'CallChain',
+                arguments: [],
+                optional: true,
+                start: 0,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              {
+                type: 'CallChain',
+                arguments: [],
+                optional: true,
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              {
+                type: 'MemberChain',
+                computed: false,
+                optional: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 11,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              {
+                type: 'MemberChain',
+                computed: true,
+                property: {
+                  type: 'Literal',
+                  value: 'b',
+                  start: 13,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 13
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                optional: false,
+                start: 0,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          start: 0,
+          end: 17,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 17
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 17,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 17
+        }
+      }
+    }
+  ],
+  [
+    `null?.(1, ...a)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'Literal',
+              value: null,
+              start: 0,
+              end: 4,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 4
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'CallChain',
+                arguments: [
+                  {
+                    type: 'Literal',
+                    value: 1,
+                    start: 7,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  {
+                    type: 'SpreadElement',
+                    argument: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 13,
+                      end: 14,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 13
+                        },
+                        end: {
+                          line: 1,
+                          column: 14
+                        }
+                      }
+                    },
+                    start: 10,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 10
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  }
+                ],
+                optional: true,
+                start: 0,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    `({}).a?.(...a)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'MemberExpression',
+              object: {
+                type: 'ObjectExpression',
+                properties: [],
+                start: 1,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'a',
+                start: 5,
+                end: 6,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 5
+                  },
+                  end: {
+                    line: 1,
+                    column: 6
+                  }
+                }
+              },
+              start: 0,
+              end: 6,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 6
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'CallChain',
+                arguments: [
+                  {
+                    type: 'SpreadElement',
+                    argument: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 12,
+                      end: 13,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 12
+                        },
+                        end: {
+                          line: 1,
+                          column: 13
+                        }
+                      }
+                    },
+                    start: 9,
+                    end: 13,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 9
+                      },
+                      end: {
+                        line: 1,
+                        column: 13
+                      }
+                    }
+                  }
+                ],
+                optional: true,
+                start: 0,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          },
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
+      }
+    }
+  ],
+  [
+    `delete o1?.x`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: 'delete',
+            argument: {
+              type: 'ChainingExpression',
+              base: {
+                type: 'Identifier',
+                name: 'o1',
+                start: 7,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              chain: [
+                {
+                  type: 'MemberChain',
+                  computed: false,
+                  property: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  optional: true,
+                  start: 7,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `delete o1.z?.()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: 'delete',
+            argument: {
+              type: 'ChainingExpression',
+              base: {
+                type: 'MemberExpression',
+                object: {
+                  type: 'Identifier',
+                  name: 'o1',
+                  start: 7,
+                  end: 9,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 9
+                    }
+                  }
+                },
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'z',
+                  start: 10,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                start: 7,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              chain: [
+                {
+                  type: 'CallChain',
+                  arguments: [],
+                  optional: true,
+                  start: 7,
+                  end: 15,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 15
+                    }
+                  }
+                }
+              ],
+              start: 7,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 7
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    `({ x: 'hi' })?.['x']`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'Literal',
+                    value: 'hi',
+                    start: 6,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 3,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                }
+              ],
+              start: 1,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: true,
+                property: {
+                  type: 'Literal',
+                  value: 'x',
+                  start: 16,
+                  end: 19,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 16
+                    },
+                    end: {
+                      line: 1,
+                      column: 19
+                    }
+                  }
+                },
+                optional: false,
+                start: 0,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          },
+          start: 0,
+          end: 20,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 20
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 20,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 20
+        }
+      }
+    }
+  ],
+  [
+    `({})?.constructor`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'ObjectExpression',
+              properties: [],
+              start: 1,
+              end: 3,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 1
+                },
+                end: {
+                  line: 1,
+                  column: 3
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'constructor',
+                  start: 6,
+                  end: 17,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 17
+                    }
+                  }
+                },
+                optional: true,
+                start: 0,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          start: 0,
+          end: 17,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 17
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 17,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 17
+        }
+      }
+    }
+  ],
+  [
+    `0?.valueOf()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'Literal',
+              value: 0,
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'valueOf',
+                  start: 3,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                optional: true,
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              {
+                type: 'CallChain',
+                arguments: [],
+                optional: true,
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    `null?.valueOf()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'Literal',
+              value: null,
+              start: 0,
+              end: 4,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 4
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'valueOf',
+                  start: 6,
+                  end: 13,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 13
+                    }
+                  }
+                },
+                optional: true,
+                start: 0,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              {
+                type: 'CallChain',
+                arguments: [],
+                optional: true,
+                start: 0,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    `1?.valueOf()`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ChainingExpression',
+            base: {
+              type: 'Literal',
+              value: 1,
+              start: 0,
+              end: 1,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 1
+                }
+              }
+            },
+            chain: [
+              {
+                type: 'MemberChain',
+                computed: false,
+                property: {
+                  type: 'Identifier',
+                  name: 'valueOf',
+                  start: 3,
+                  end: 10,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 10
+                    }
+                  }
+                },
+                optional: true,
+                start: 0,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              {
+                type: 'CallChain',
+                arguments: [],
+                optional: true,
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
   [
     `a?.b(...args).c(...args);`,
     Context.OptionsLoc,

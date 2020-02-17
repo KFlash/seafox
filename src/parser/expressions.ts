@@ -43,7 +43,10 @@ export function parseAssignmentExpression(
   line: number,
   column: number
 ): Types.Expression {
-  if ((parser.token & Token.IsAssignOp) > 0) {
+  // Create a 'static' token variable to reduce memory access
+  const token = parser.token;
+
+  if ((token & Token.IsAssignOp) > 0) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
     return parseAssignmentOrPattern(
@@ -52,15 +55,15 @@ export function parseAssignmentExpression(
       reinterpret,
       inGroup,
       left,
-      KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+      KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
       start,
       line,
       column
     );
   }
 
-  if ((parser.token & Token.IsBinaryOp) > 0) {
-    left = parseBinaryExpression(parser, context, inGroup, 4, parser.token, start, line, column, left);
+  if ((token & Token.IsBinaryOp) > 0) {
+    left = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, left);
   }
 
   return parser.token === Token.QuestionMark
@@ -4595,14 +4598,17 @@ export function parseAndClassifyIdentifier(
   line: number,
   column: number
 ): Types.Identifier {
-  if (context & (Context.Module | Context.Strict) && (t & Token.FutureReserved) === Token.FutureReserved) {
-    report(parser, Errors.UnexpectedStrictReserved);
-  }
-  if (context & Context.Strict && (t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-    report(parser, Errors.UnexpectedStrictReserved);
+  if ((context & 0b00000000000000000000110000000000) > 0) {
+    if ((t & Token.FutureReserved) === Token.FutureReserved) {
+      report(parser, Errors.UnexpectedStrictReserved);
+    }
+
+    if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.StrictEvalArguments);
+    }
   }
 
-  if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {
+  if ((context & 0b00000000010000000000100000000000) > 0 && t === Token.AwaitKeyword) {
     report(parser, Errors.AwaitOutsideAsync);
   }
 
@@ -4610,11 +4616,12 @@ export function parseAndClassifyIdentifier(
     report(parser, Errors.KeywordNotId);
   }
 
-  if (context & (Context.Strict | Context.InYieldContext) && t === Token.YieldKeyword) {
+  if ((context & 0b00000000001000000000010000000000) > 0 && t === Token.YieldKeyword) {
     report(parser, Errors.YieldInParameter);
   }
-  if (t === Token.LetKeyword) {
-    if (kind & (BindingKind.Let | BindingKind.Const)) report(parser, Errors.InvalidLetConstBinding);
+
+  if (t === Token.LetKeyword && (kind & 0b00000000000000000000000000110000) > 0) {
+    report(parser, Errors.InvalidLetConstBinding);
   }
 
   nextToken(parser, context, allowRegExp);

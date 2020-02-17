@@ -21,6 +21,1002 @@ fail('Expressions - Nullish (fail)', [
 
 pass('Expressions - Nullish (pass)', [
   [
+    `(undefined ?? undefined ?? false) || false || true`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'LogicalExpression',
+                left: {
+                  type: 'LogicalExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'undefined',
+                    start: 1,
+                    end: 10,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 1
+                      },
+                      end: {
+                        line: 1,
+                        column: 10
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'undefined',
+                    start: 14,
+                    end: 23,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 14
+                      },
+                      end: {
+                        line: 1,
+                        column: 23
+                      }
+                    }
+                  },
+                  operator: '??',
+                  start: 1,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                right: {
+                  type: 'Literal',
+                  value: false,
+                  start: 27,
+                  end: 32,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 27
+                    },
+                    end: {
+                      line: 1,
+                      column: 32
+                    }
+                  }
+                },
+                operator: '??',
+                start: 1,
+                end: 32,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 32
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: false,
+                start: 37,
+                end: 42,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 37
+                  },
+                  end: {
+                    line: 1,
+                    column: 42
+                  }
+                }
+              },
+              operator: '||',
+              start: 0,
+              end: 42,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 42
+                }
+              }
+            },
+            right: {
+              type: 'Literal',
+              value: true,
+              start: 46,
+              end: 50,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 46
+                },
+                end: {
+                  line: 1,
+                  column: 50
+                }
+              }
+            },
+            operator: '||',
+            start: 0,
+            end: 50,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 50
+              }
+            }
+          },
+          start: 0,
+          end: 50,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 50
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 50,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 50
+        }
+      }
+    }
+  ],
+  [
+    `false || (null ?? true)`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'Literal',
+              value: false,
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Literal',
+                value: null,
+                start: 10,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: true,
+                start: 18,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 18
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              },
+              operator: '??',
+              start: 10,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            operator: '||',
+            start: 0,
+            end: 23,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 23
+              }
+            }
+          },
+          start: 0,
+          end: 23,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 23
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 23,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 23
+        }
+      }
+    }
+  ],
+  [
+    `null ?? null ?? true ? true : false`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ConditionalExpression',
+            test: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'LogicalExpression',
+                left: {
+                  type: 'Literal',
+                  value: null,
+                  start: 0,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                right: {
+                  type: 'Literal',
+                  value: null,
+                  start: 8,
+                  end: 12,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 12
+                    }
+                  }
+                },
+                operator: '??',
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: true,
+                start: 16,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              },
+              operator: '??',
+              start: 0,
+              end: 20,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 20
+                }
+              }
+            },
+            consequent: {
+              type: 'Literal',
+              value: true,
+              start: 23,
+              end: 27,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 23
+                },
+                end: {
+                  line: 1,
+                  column: 27
+                }
+              }
+            },
+            alternate: {
+              type: 'Literal',
+              value: false,
+              start: 30,
+              end: 35,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 30
+                },
+                end: {
+                  line: 1,
+                  column: 35
+                }
+              }
+            },
+            start: 0,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          },
+          start: 0,
+          end: 35,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 35
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 35,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 35
+        }
+      }
+    }
+  ],
+  [
+    `null ?? false ?? null`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Literal',
+                value: null,
+                start: 0,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: false,
+                start: 8,
+                end: 13,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 13
+                  }
+                }
+              },
+              operator: '??',
+              start: 0,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            right: {
+              type: 'Literal',
+              value: null,
+              start: 17,
+              end: 21,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 21
+                }
+              }
+            },
+            operator: '??',
+            start: 0,
+            end: 21,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 21
+              }
+            }
+          },
+          start: 0,
+          end: 21,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 21
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 21,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 21
+        }
+      }
+    }
+  ],
+  [
+    `[], [] ?? true`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'SequenceExpression',
+            expressions: [
+              {
+                type: 'ArrayExpression',
+                elements: [],
+                start: 0,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              {
+                type: 'LogicalExpression',
+                left: {
+                  type: 'ArrayExpression',
+                  elements: [],
+                  start: 4,
+                  end: 6,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 4
+                    },
+                    end: {
+                      line: 1,
+                      column: 6
+                    }
+                  }
+                },
+                right: {
+                  type: 'Literal',
+                  value: true,
+                  start: 10,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                },
+                operator: '??',
+                start: 4,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          },
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
+      }
+    }
+  ],
+  [
+    `null ?? null ?? 1 == 1`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'LogicalExpression',
+            left: {
+              type: 'LogicalExpression',
+              left: {
+                type: 'Literal',
+                value: null,
+                start: 0,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: null,
+                start: 8,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 8
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              operator: '??',
+              start: 0,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            right: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Literal',
+                value: 1,
+                start: 16,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              right: {
+                type: 'Literal',
+                value: 1,
+                start: 21,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 21
+                  },
+                  end: {
+                    line: 1,
+                    column: 22
+                  }
+                }
+              },
+              operator: '==',
+              start: 16,
+              end: 22,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 22
+                }
+              }
+            },
+            operator: '??',
+            start: 0,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          start: 0,
+          end: 22,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 22
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 22,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 22
+        }
+      }
+    }
+  ],
+  [
+    `1, null ?? 1 | 0`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'SequenceExpression',
+            expressions: [
+              {
+                type: 'Literal',
+                value: 1,
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              {
+                type: 'LogicalExpression',
+                left: {
+                  type: 'Literal',
+                  value: null,
+                  start: 3,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                right: {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'Literal',
+                    value: 1,
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Literal',
+                    value: 0,
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  operator: '|',
+                  start: 11,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 11
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                operator: '??',
+                start: 3,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 0,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          },
+          start: 0,
+          end: 16,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 16
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 16,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 16
+        }
+      }
+    }
+  ],
+  [
     `a ?? b ?? c`,
     Context.Empty,
     {
