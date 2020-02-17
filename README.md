@@ -42,7 +42,7 @@ This is the available options:
   // The flag to enable start and end offsets and line/column location information to each node
   loc: false;
 
-  // Disable web compability
+  // Disable web compatibility
   disableWebCompat: false;
 
   // The flag to attach raw property to each literal and identifier node
