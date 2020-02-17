@@ -296,24 +296,22 @@ export function validateFunctionName(parser: ParserState, context: Context, t: T
     }
   }
 
-  if ((t & Token.Keyword) > 0) {
-    report(parser, Errors.KeywordNotId);
-  }
+  if ((t & Token.Keyword) === Token.Keyword) report(parser, Errors.KeywordNotId);
 
-  if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {
+  if ((context & 0b00000000010000000000100000000000) > 0 && t === Token.AwaitKeyword) {
     report(parser, Errors.AwaitOutsideAsync);
   }
 
-  if (context & (Context.InYieldContext | Context.Strict) && t === Token.YieldKeyword) {
+  if ((context & 0b00000000001000000000010000000000) > 0 && t === Token.YieldKeyword) {
     report(parser, Errors.DisallowedInContext, 'yield');
   }
 }
 
 export function isValidIdentifier(context: Context, t: Token): boolean {
-  return context & (Context.Strict | Context.InYieldContext)
+  return context & Context.Strict
     ? context & Context.Module && t === Token.AwaitKeyword
       ? false
-      : context & (Context.Strict | Context.InYieldContext) && t === Token.YieldKeyword
+      : (context & 0b00000000001000000000010000000000) > 0 && t === Token.YieldKeyword
       ? false
       : t === Token.LetKeyword
       ? false
@@ -323,7 +321,7 @@ export function isValidIdentifier(context: Context, t: Token): boolean {
 
 export function isStrictReservedWord(parser: ParserState, context: Context, t: Token, inGroup: 0 | 1): boolean {
   if (t === Token.AwaitKeyword) {
-    if (context & (Context.InAwaitContext | Context.Module)) report(parser, Errors.AwaitOutsideAsync);
+    if ((context & 0b00000000010000000000100000000000) > 0) report(parser, Errors.AwaitOutsideAsync);
     parser.flags |= inGroup === 1 ? Flags.SeenAwait : 0;
   }
   if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
@@ -334,10 +332,8 @@ export function isStrictReservedWord(parser: ParserState, context: Context, t: T
 }
 
 export function validateIdentifier(parser: ParserState, context: Context, kind: BindingKind, t: Token): void {
-  if (context & Context.Strict) {
-    if ((t & Token.FutureReserved) > 0) {
-      report(parser, Errors.UnexpectedStrictReserved);
-    }
+  if (context & Context.Strict && (t & Token.FutureReserved) > 0) {
+    report(parser, Errors.UnexpectedStrictReserved);
   }
 
   if ((t & Token.Keyword) > 0) {
@@ -348,15 +344,15 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   // contain 'let'. (CatchParameter is the only lexical binding form
   // without this restriction.)
 
-  if (kind & (BindingKind.Let | BindingKind.Const) && t === Token.LetKeyword) {
+  if ((kind & 0b00000000000000000000000000110000) > 0 && t === Token.LetKeyword) {
     report(parser, Errors.InvalidLetConstBinding);
   }
 
-  if (context & (Context.InAwaitContext | Context.Module) && t === Token.AwaitKeyword) {
+  if ((context & 0b00000000010000000000100000000000) > 0 && t === Token.AwaitKeyword) {
     report(parser, Errors.AwaitOutsideAsync);
   }
 
-  if (context & (Context.InYieldContext | Context.Strict) && t === Token.YieldKeyword) {
+  if ((context & 0b00000000001000000000010000000000) > 0 && t === Token.YieldKeyword) {
     report(parser, Errors.DisallowedInContext, 'yield');
   }
 }
