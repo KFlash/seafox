@@ -938,13 +938,15 @@ export function parsePrimaryExpression(
 
     if (token === Token.LetKeyword) {
       if (context & Context.Strict) report(parser, Errors.StrictInvalidLetInExprPos);
-      if (kind & (BindingKind.Let | BindingKind.Const)) {
+      if ((kind & 0b00000000000000000000000000110000) > 0) {
         if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
         report(parser, Errors.InvalidLetConstBinding);
       }
     }
-    if ((token & Token.EscapedKeyword) === Token.EscapedKeyword && token & Token.Keyword)
+
+    if ((token & Token.EscapedKeyword) === Token.EscapedKeyword && (token & Token.Keyword) === Token.Keyword) {
       report(parser, Errors.EscapedKeyword);
+    }
 
     parser.assignable =
       context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? 0 : 1;
@@ -1041,7 +1043,7 @@ export function parseAsyncExpression(
     }
 
     // async Identifier => ...
-    if ((parser.token & (Token.FutureReserved | Token.IsIdentifier)) > 0) {
+    if ((parser.token & 0b00000000001001010000000000000000) > 0) {
       if (allowLHS === 0) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
@@ -1200,7 +1202,7 @@ export function parseAsyncArrowOrCallExpression(
       if ((parser.token as Token) === Token.RightParen || parser.token === Token.Comma) {
         mutualFlag |=
           (parser.assignable === 0 ? Flags.NotDestructible | Flags.SimpleParameterList : 0) |
-          ((token & (Token.FutureReserved | Token.IsEvalOrArguments)) > 0 ? Flags.SimpleParameterList : 0);
+          ((token & 0b00100000000101000000000000000000) > 0 ? Flags.SimpleParameterList : 0);
       } else if (parser.token === Token.Assign) {
         mutualFlag |= Flags.SimpleParameterList;
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
@@ -1294,7 +1296,8 @@ export function parseAsyncArrowOrCallExpression(
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
   mutualFlag |=
-    (parser.flags & Flags.SeenYield ? Flags.SeenYield : 0) | (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : 0);
+    (parser.flags & Flags.SeenYield ? Flags.SeenYield : Flags.Empty) |
+    (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty);
 
   if (parser.token === Token.Arrow) {
     if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
@@ -1364,6 +1367,7 @@ export function parseImportCallOrMetaExpression(
   }
   return parseImportMetaExpression(parser, context, expr, start, line, column);
 }
+
 export function parseNewExpression(
   parser: ParserState,
   context: Context,
@@ -1430,6 +1434,7 @@ export function parseNewTargetExpression(
   const meta = parseIdentifierFromValue(parser, context, 'new', start, line, column);
 
   const property = parseIdentifier(parser, context);
+
   return context & Context.OptionsLoc
     ? {
         type: 'MetaProperty',
@@ -1710,10 +1715,11 @@ export function parseArrowFunctionAfterParen(
   line: number,
   column: number
 ): Types.ArrowFunctionExpression {
-  if (mutualFlag & (Flags.AssignableDestruct | Flags.NotDestructible)) {
+  if (mutualFlag & 0b00000000000000000000000000001100) {
     report(parser, Errors.InvalidArrowDestructLHS);
   }
-  if (context & (Context.Strict | Context.InYieldContext) && mutualFlag & Flags.SeenYield) {
+
+  if ((context & 0b00000000001000000000010000000000) > 0 && mutualFlag & Flags.SeenYield) {
     report(parser, Errors.YieldInParameter);
   }
 
@@ -3203,11 +3209,8 @@ export function parseClassElementList(
           break;
 
         case Token.GetKeyword:
-          type |= PropertyKind.Getter;
-          break;
-
         case Token.SetKeyword:
-          type |= PropertyKind.Setter;
+          type |= token === Token.GetKeyword ? PropertyKind.Getter : PropertyKind.Setter;
           break;
 
         default: // ignore

@@ -20,7 +20,8 @@ import {
   scanHexDigits,
   scanBinaryDigits,
   scanOctalDigits,
-  scanNumberAfterDecimalPoint
+  scanNumberAfterDecimalPoint,
+  isExoticECMAScriptWhitespace
 } from './';
 
 export const firstCharKinds = [
@@ -318,7 +319,7 @@ export function scan(
         continue;
       }
 
-      if ((unicodeLookup[(char >>> 5) + 104448] >>> char) & 31 & 1) {
+      if (isExoticECMAScriptWhitespace(char)) {
         parser.index++;
         continue;
       }

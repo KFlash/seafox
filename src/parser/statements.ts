@@ -1432,13 +1432,32 @@ export function parseLetIdentOrVarDeclarationStatement(
   }
 
   if (parser.token === Token.Arrow) {
-    expr = parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
-  } else {
-    expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
-
-    expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+    return parseLetAsArrow(parser, context, tokenValue, token, expr, start, line, column);
   }
 
+  // 'le\\u0074 x = 5', 'l\\u0065t\na',
+  if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+
+  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
+
+  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+
+  expr = parseSequenceExpression(parser, context, expr, start, line, column);
+
+  return parseExpressionStatement(parser, context, expr, start, line, column);
+}
+
+export function parseLetAsArrow(
+  parser: ParserState,
+  context: Context,
+  value: string,
+  t: Token,
+  expr: any,
+  start: number,
+  line: number,
+  column: number
+) {
+  expr = parseAsyncArrow(parser, context, /* isAsync */ 0, value, t, expr, start, line, column);
   expr = parseSequenceExpression(parser, context, expr, start, line, column);
 
   return parseExpressionStatement(parser, context, expr, start, line, column);

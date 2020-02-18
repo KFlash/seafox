@@ -87,7 +87,7 @@ fail('Miscellaneous - Escaped keywords (fail)', [
   ['class C { async *gen() { void \\u0061wait; }}', Context.Empty],
   ['async() => { void \\u0061wait; };', Context.Empty],
   ['{for(o i\\u006E {}){}}', Context.Empty],
-  //'class X { se\\u0074 x(value) {} }', Context.Empty],
+  // ['class X { se\\u0074 x(value) {} }', Context.Empty],
   ['class X { st\\u0061tic y() {} }', Context.Empty],
   ['(function* () { y\\u0069eld 10 })', Context.Empty],
   ['({ \\u0061sync x() { await x } })', Context.Empty],
@@ -138,16 +138,69 @@ fail('Miscellaneous - Escaped keywords (fail)', [
   ['var i\\u0066', Context.Empty],
   ['function *a(){var yi\\u0065ld}', Context.Empty],
   ['function *a(){yi\\u0065ld 0}', Context.Empty],
-  //'le\\u0074 x = 5',
+  ['le\\u0074 x = 5', Context.Empty],
   ['class yi\\u0065ld {}', Context.Empty],
   ['class l\\u0065t {}', Context.Empty],
   ['class yi\\u0065ld {}', Context.Empty],
   ['class l\\u0065t {}', Context.Empty],
-  ['class yi\\u0065ld {}', Context.Empty]
-  //'l\\u0065t\na',  Context.Empty],
+  ['class yi\\u0065ld {}', Context.Empty],
+  ['l\\u0065t\na', Context.Empty]
 ]);
 
 pass('Miscellaneous - Escaped keywords  (pass)', [
+  [
+    `\\u0061sync`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Identifier',
+            name: 'async',
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
   [
     `var int\\u0065rface = 1;`,
     Context.OptionsLoc,
