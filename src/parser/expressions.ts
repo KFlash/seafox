@@ -204,16 +204,21 @@ export function parseBinaryExpression(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
+    // We are getting the loc values here, and use the "parseLeftHandSideExpressionOrHigher" to avoid an extra member acces
+    // inside 'parseLeftHandSideExpression'.
+
+    const { start, line, column } = parser;
+
     right = parseBinaryExpression(
       parser,
       context,
       inGroup,
       t & prec,
       t,
-      parser.start,
-      parser.line,
-      parser.column,
-      parseLeftHandSideExpression(parser, context, inGroup, /* allowLHS */ 1, 0)
+      start,
+      line,
+      column,
+      parseLeftHandSideExpressionOrHigher(parser, context, inGroup, /* allowLHS */ 1, 0, start, line, column)
     );
 
     parser.assignable = 0;
@@ -2096,7 +2101,30 @@ export function parseLeftHandSideExpression(
   // LeftHandSideExpression ::
   //   (PrimaryExpression | MemberExpression) ...
 
-  const { start, line, column } = parser;
+  return parseLeftHandSideExpressionOrHigher(
+    parser,
+    context,
+    inGroup,
+    allowLHS,
+    canAssign,
+    parser.start,
+    parser.line,
+    parser.column
+  );
+}
+
+export function parseLeftHandSideExpressionOrHigher(
+  parser: ParserState,
+  context: Context,
+  inGroup: 0 | 1,
+  allowLHS: 0 | 1,
+  canAssign: 0 | 1,
+  start: number,
+  line: number,
+  column: number
+): any {
+  // LeftHandSideExpression ::
+  //   (PrimaryExpression | MemberExpression) ...
 
   const expr = parsePrimaryExpression(
     parser,
@@ -2184,7 +2212,8 @@ export function parseNullOrTrueOrFalseLiteral(
   line: number,
   column: number
 ): Types.Literal {
-  const { index } = parser;
+  const index = parser.index;
+
   nextToken(parser, context, /* allowRegExp */ 0);
 
   parser.assignable = 0;
@@ -2689,7 +2718,7 @@ export function parseArrayExpressionOrPattern(
 
         mutualFlag |= parser.flags;
       } else {
-        left = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 1);
+        left = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
         if (!isRightBraketOrComma(parser.token)) {
           left = parseAssignmentExpression(parser, context, reinterpret, 0, left, start, line, column);
@@ -3801,7 +3830,7 @@ export function parseObjectLiteralOrPattern(
               }
             }
           } else {
-            value = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 1);
+            value = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
             const token = parser.token;
 
@@ -4027,7 +4056,7 @@ export function parseObjectLiteralOrPattern(
             // https://tc39.github.io/ecma262/#sec-__proto__-property-names-in-object-initializers
             if ((context & Context.OptionsDisableWebCompat) === 0 && tokenValue === '__proto__') prototypeCount++;
 
-            value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
+            value = parseLeftHandSideExpressionOrHigher(parser, context, 0, 1, 1, start, line, column);
 
             mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
 
@@ -4169,7 +4198,7 @@ export function parseObjectLiteralOrPattern(
               }
             }
           } else {
-            value = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 1);
+            value = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
             mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
 
@@ -4301,7 +4330,7 @@ export function parseObjectLiteralOrPattern(
               }
             }
           } else {
-            value = parseLeftHandSideExpression(parser, context, 0, 1, 1);
+            value = parseLeftHandSideExpressionOrHigher(parser, context, 0, 1, 1, start, line, column);
 
             mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
 
@@ -4485,7 +4514,7 @@ export function parseSpreadOrRestElement(
     } else {
       mutualFlag |= Flags.AssignableDestruct;
 
-      argument = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 1);
+      argument = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
       const token = parser.token;
 
