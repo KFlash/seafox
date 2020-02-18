@@ -857,12 +857,11 @@ export function parseIdentifierOrArrow(
   parser.assignable = 1;
 
   if (parser.token === Token.Arrow) {
-    const mutualFlag =
-      (parser.flags |=
-        (token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000
-          ? Flags.HasStrictReserved
-          : Flags.Empty) |
-      ((parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000);
+    const mutualFlag = (parser.flags |=
+      ((token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000
+        ? Flags.HasStrictReserved
+        : Flags.Empty) |
+      (0b00000000000000000000000100000000 ^ 0b00000000000000000000000100000000));
 
     const scope = createNestedBlockScope(ScopeKind.Block);
 
@@ -922,7 +921,9 @@ export function parsePrimaryExpression(
 
     const tokenValue = parser.tokenValue;
 
-    const expr = parseIdentifier(parser, context | Context.TaggedTemplate);
+    nextToken(parser, context | Context.TaggedTemplate, 0);
+
+    const expr = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 
     if (parser.token === Token.Arrow) {
       if (allowLHS === 0) {
