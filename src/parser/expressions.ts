@@ -204,7 +204,7 @@ export function parseBinaryExpression(
 
     nextToken(parser, context, /* allowRegExp */ 1);
 
-    // We are getting the loc values here, and use the "parseLeftHandSideExpressionOrHigher" to avoid an extra member acces
+    // We are getting the loc values here, and use the "parseLeftHandSideExpressionOrHigher" to avoid an extra member access
     // inside 'parseLeftHandSideExpression'.
 
     const { start, line, column } = parser;
@@ -252,19 +252,20 @@ export function parsePropertyOrPrivatePropertyName(parser: ParserState, context:
 export function parseMemberExpression(
   parser: ParserState,
   context: Context,
-  expr: any,
+  object: any,
   allowLHS: 0 | 1,
   inGroup: 0 | 1,
   start: number,
   line: number,
   column: number
-): any {
+): Types.MemberExpression | Types.UpdateExpression {
   switch (parser.token) {
     /* Update expression */
     case Token.Increment:
-    case Token.Decrement: {
-      return parser.newLine === 0 ? parseUpdateExpression(parser, context, allowLHS, expr, start, line, column) : expr;
-    }
+    case Token.Decrement:
+      return parser.newLine === 0
+        ? parseUpdateExpression(parser, context, allowLHS, object, start, line, column)
+        : object;
 
     /* Property */
     case Token.Period: {
@@ -280,7 +281,7 @@ export function parseMemberExpression(
         context & Context.OptionsLoc
           ? {
               type: 'MemberExpression',
-              object: expr,
+              object,
               computed: false,
               property,
               start,
@@ -289,7 +290,7 @@ export function parseMemberExpression(
             }
           : {
               type: 'MemberExpression',
-              object: expr,
+              object,
               computed: false,
               property
             },
@@ -316,7 +317,7 @@ export function parseMemberExpression(
         context & Context.OptionsLoc
           ? {
               type: 'MemberExpression',
-              object: expr,
+              object,
               computed: true,
               property,
               start,
@@ -325,7 +326,7 @@ export function parseMemberExpression(
             }
           : {
               type: 'MemberExpression',
-              object: expr,
+              object,
               computed: true,
               property
             },
@@ -349,7 +350,7 @@ export function parseMemberExpression(
         context & Context.OptionsLoc
           ? {
               type: 'CallExpression',
-              callee: expr,
+              callee: object,
               arguments: args,
               start,
               end: parser.endIndex,
@@ -357,7 +358,7 @@ export function parseMemberExpression(
             }
           : {
               type: 'CallExpression',
-              callee: expr,
+              callee: object,
               arguments: args
             },
         allowLHS,
@@ -372,7 +373,7 @@ export function parseMemberExpression(
       return parseMemberExpression(
         parser,
         context,
-        parseTemplateExpression(parser, context, expr, parseTemplateLiteral(parser, context), start, line, column),
+        parseTemplateExpression(parser, context, object, parseTemplateLiteral(parser, context), start, line, column),
         allowLHS,
         inGroup,
         start,
@@ -387,7 +388,7 @@ export function parseMemberExpression(
         parseTemplateExpression(
           parser,
           context,
-          expr,
+          object,
           parseTemplate(parser, context | Context.TaggedTemplate, start, line, column),
           start,
           line,
@@ -412,7 +413,7 @@ export function parseMemberExpression(
         context & Context.OptionsLoc
           ? {
               type: 'ChainingExpression',
-              base: expr,
+              base: object,
               chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column),
               start,
               end: parser.endIndex,
@@ -420,7 +421,7 @@ export function parseMemberExpression(
             }
           : {
               type: 'ChainingExpression',
-              base: expr,
+              base: object,
               chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column)
             },
         allowLHS,
@@ -431,7 +432,7 @@ export function parseMemberExpression(
       );
     }
   }
-  return expr;
+  return object;
 }
 
 export function parseMemberOrCallChain(
@@ -856,12 +857,12 @@ export function parseIdentifierOrArrow(
   parser.assignable = 1;
 
   if (parser.token === Token.Arrow) {
-    parser.flags |=
-      (token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000 ? Flags.HasStrictReserved : 0;
-
-    // TODO: Merge this into one with the one above?
-
-    const mutualFlag: Flags = (parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
+    const mutualFlag =
+      (parser.flags |=
+        (token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000
+          ? Flags.HasStrictReserved
+          : Flags.Empty) |
+      ((parser.flags | 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000);
 
     const scope = createNestedBlockScope(ScopeKind.Block);
 
@@ -908,13 +909,13 @@ export function parsePrimaryExpression(
    */
   const token = parser.token;
 
-  if (token === Token.YieldKeyword) {
-    return parseYieldExpression(parser, context, inGroup, canAssign, start, line, column);
-  }
-
-  if (token === Token.AwaitKeyword) return parseAwaitExpression(parser, context, inGroup, inNew, start, line, column);
-
   if ((token & 0b00010000001000010000000000000000) !== 0) {
+    if (token === Token.YieldKeyword) {
+      return parseYieldExpression(parser, context, inGroup, canAssign, start, line, column);
+    }
+
+    if (token === Token.AwaitKeyword) return parseAwaitExpression(parser, context, inGroup, inNew, start, line, column);
+
     if (token === Token.AsyncKeyword) {
       return parseAsyncExpression(parser, context, inNew, allowLHS, canAssign, start, line, column);
     }
@@ -1008,7 +1009,8 @@ export function parsePrimaryExpression(
     case Token.ImportKeyword:
       return parseImportCallOrMetaExpression(parser, context, inNew, start, line, column);
     default:
-      if (isValidIdentifier(context, parser.token)) return parseIdentifierOrArrow(parser, context);
+      if ((context & Context.Strict) !== Context.Strict && (token & Token.FutureReserved) > 0)
+        return parseIdentifierOrArrow(parser, context);
       report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
   }
 }
