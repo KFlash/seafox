@@ -21,7 +21,7 @@ import {
   scanBinaryDigits,
   scanOctalDigits,
   scanNumberAfterDecimalPoint,
-  isExoticECMAScriptWhitespace
+  isWhiteSpaceSlow
 } from './';
 
 export const firstCharKinds = [
@@ -319,7 +319,7 @@ export function scan(
         continue;
       }
 
-      if (isExoticECMAScriptWhitespace(char)) {
+      if (isWhiteSpaceSlow(char)) {
         parser.index++;
         continue;
       }

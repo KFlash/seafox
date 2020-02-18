@@ -6,7 +6,7 @@ export { scanRegularExpression } from './regexp';
 export { scanTemplate } from './template';
 export { report, Errors } from '../errors';
 export { unicodeLookup } from './unicode';
-export { fromCodePoint, toHex, readNext, isExoticECMAScriptWhitespace } from './common';
+export { fromCodePoint, toHex, readNext, isWhiteSpaceSlow } from './common';
 export { scanEscapeSequence, Escape, handleStringError } from './string';
 export { Chars } from './chars';
 export {
