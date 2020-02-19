@@ -46,8 +46,6 @@ export function isWhiteSpaceSlow(ch: number): boolean {
     ch === Chars.MathematicalSpace ||
     ch === Chars.IdeographicSpace ||
     ch === Chars.ThinSpace ||
-    ch === Chars.ByteOrderMark ||
-    (ch < 0x0d && (ch == 0x09 || ch == 0x0b || ch == 0x0c)) ||
-    ch == 0xfeff
+    ch === Chars.ByteOrderMark
   );
 }
