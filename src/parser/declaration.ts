@@ -27,7 +27,7 @@ import {
   parseFunctionLiteral,
   parseClassTail,
   parseIdentifierFromValue,
-  parseBindingPattern,
+  parseBindingPatternOrHigher,
   parseImportExpression,
   parseMemberExpression,
   parseAssignmentExpression,
@@ -232,7 +232,7 @@ export function parseVariableDeclarationListAndDeclarator(
   do {
     const { token, start, line, column } = parser;
 
-    id = parseBindingPattern(parser, context, scope, kind, origin);
+    id = parseBindingPatternOrHigher(parser, context, scope, kind, origin, token, start, line, column);
 
     // Note: Always set the 'initializer' to 'null' for each iteration
     init = null;
@@ -241,8 +241,15 @@ export function parseVariableDeclarationListAndDeclarator(
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context, /* inGroup */ 0);
       // ES6 'const' and binding patterns require initializers
-    } else if ((kind & BindingKind.Const) > 0 || (token & Token.IsPatternStart) === Token.IsPatternStart) {
-      report(parser, Errors.DeclarationMissingInitializer, kind & BindingKind.Const ? 'const' : 'destructuring');
+    } else if (
+      (kind & BindingKind.Const) === BindingKind.Const ||
+      (token & Token.IsPatternStart) === Token.IsPatternStart
+    ) {
+      report(
+        parser,
+        Errors.DeclarationMissingInitializer,
+        (kind & BindingKind.Const) === BindingKind.Const ? 'const' : 'destructuring'
+      );
     }
 
     list.push(
@@ -273,7 +280,8 @@ export function parseDynamicImportStatement(
   line: number,
   column: number
 ): Types.ExpressionStatement {
-  let expr: any = parseImportExpression(parser, context, start, line, column);
+  let expr: Types.Expression = parseImportExpression(parser, context, start, line, column);
+
   /** MemberExpression :
    *   1. PrimaryExpression
    *   2. MemberExpression [ AssignmentExpression ]
@@ -309,7 +317,14 @@ export function parseImportMetaDeclaration(
   line: number,
   column: number
 ): Types.ExpressionStatement {
-  let expr: any = parseIdentifierFromValue(parser, context, 'import', start, line, column);
+  let expr: Types.Identifier | Types.Expression = parseIdentifierFromValue(
+    parser,
+    context,
+    'import',
+    start,
+    line,
+    column
+  );
 
   expr = parseImportMetaExpression(parser, context, expr, start, line, column);
 

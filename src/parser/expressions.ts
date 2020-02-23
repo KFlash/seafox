@@ -3428,7 +3428,17 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
         isSimpleParameterList = 1;
       }
 
-      left = parseBindingPattern(parser, context, scope, BindingKind.ArgumentList, Origin.None);
+      left = parseBindingPatternOrHigher(
+        parser,
+        context,
+        scope,
+        BindingKind.ArgumentList,
+        Origin.None,
+        token,
+        start,
+        line,
+        column
+      );
 
       if (parser.token === Token.Assign) {
         isSimpleParameterList = 1;
@@ -4703,14 +4713,39 @@ export function parseBindingPattern(
   kind: BindingKind,
   origin: Origin
 ): any {
-  const { tokenValue, start, line, column, token } = parser;
+  const { token, start, line, column } = parser;
+  return parseBindingPatternOrHigher(parser, context, scope, kind, origin, token, start, line, column);
+}
 
-  if ((token & 0b00000000001001110000000000000000) > 0) {
-    return parseAndClassifyIdentifier(parser, context, scope, token, tokenValue, kind, origin, 1, start, line, column);
+export function parseBindingPatternOrHigher(
+  parser: ParserState,
+  context: Context,
+  scope: ScopeState,
+  kind: BindingKind,
+  origin: Origin,
+  t: Token,
+  start: number,
+  line: number,
+  column: number
+): any {
+  if ((t & 0b00000000001001110000000000000000) > 0) {
+    return parseAndClassifyIdentifier(
+      parser,
+      context,
+      scope,
+      t,
+      parser.tokenValue,
+      kind,
+      origin,
+      1,
+      start,
+      line,
+      column
+    );
   }
 
-  if ((token & Token.IsPatternStart) !== Token.IsPatternStart) {
-    report(parser, Errors.UnexpectedToken, KeywordDescTable[token & Token.Kind]);
+  if ((t & Token.IsPatternStart) !== Token.IsPatternStart) {
+    report(parser, Errors.UnexpectedToken, KeywordDescTable[t & Token.Kind]);
   }
 
   const left: any =

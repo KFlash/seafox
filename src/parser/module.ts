@@ -41,7 +41,9 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
   if (context & Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
       const { start, line, index, column } = parser;
+
       let expression = parseLiteral(parser, context);
+
       if ((parser.token as Token) !== Token.Semicolon) {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
       }
@@ -82,18 +84,21 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
   return statements;
 }
 
-export function parseModuleItem(parser: ParserState, context: Context, scope: ScopeState): any {
+export function parseModuleItem(parser: ParserState, context: Context, scope: ScopeState): Types.Statement {
   // ecma262/#prod-ModuleItem
   // ModuleItem :
   //    ImportDeclaration
   //    ExportDeclaration
   //    StatementListItem
+
   if (parser.token === Token.ExportKeyword) {
     return parseExportDeclaration(parser, context, scope);
   }
+
   if (parser.token === Token.ImportKeyword) {
     return parseImportDeclaration(parser, context, scope);
   }
+
   return parseStatementListItem(parser, context, scope, Origin.TopLevel, null, null);
 }
 
@@ -122,6 +127,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
   // 'import' ModuleSpecifier ';'
   if (parser.token === Token.StringLiteral) {
     source = parseLiteral(parser, context);
+
     expectSemicolon(parser, context);
 
     return context & Context.OptionsLoc
@@ -295,8 +301,11 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
       consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
       break;
+
+    // '('
     case Token.LeftParen:
       return parseDynamicImportStatement(parser, context, curStart, curLine, curColumn);
+    // '.'
     case Token.Period:
       return parseImportMetaDeclaration(parser, context, curStart, curLine, curColumn);
     default:
@@ -424,7 +433,9 @@ export function parseExportDefault(
       // export default {};
       // export default [];
       // export default (1 + 2);
+
       declaration = parseExpression(parser, context, 0);
+
       expectSemicolon(parser, context);
   }
 
@@ -439,10 +450,10 @@ export function parseExportDefault(
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
-    : ({
+    : {
         type: 'ExportDefaultDeclaration',
         declaration
-      } as any);
+      };
 }
 
 export function parseExportDeclaration(parser: ParserState, context: Context, scope: ScopeState): any {
@@ -459,7 +470,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
   nextToken(parser, context, /* allowRegExp */ 1);
 
   let specifiers: (Types.ExportAllDeclaration | Types.ExportNamedDeclaration | Types.ExportSpecifier)[] = [];
-  let declaration: any = null;
+  let declaration: Types.Statement | null = null;
   let source: Types.Literal | null = null;
 
   switch (parser.token) {
@@ -492,11 +503,11 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
                 end: parser.endIndex,
                 loc: setLoc(parser, line, column)
               }
-            : ({
+            : {
                 type: 'ExportAllDeclaration',
                 source,
                 exported
-              } as any)
+              }
         ];
 
         source = parseModuleSpecifier(parser, context);
@@ -558,7 +569,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       const exportedNames: string[] = []; // Temporary exported names
       const exportedBindings: string[] = []; // Temporary exported bindings
 
-      let local: any;
+      let local: Types.Identifier;
       let exported: Types.Identifier | null;
       let value: string | null;
 
@@ -573,9 +584,13 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
         if ((parser.token as Token) === Token.AsKeyword) {
           nextToken(parser, context, /* allowRegExp */ 0);
+
           if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+
           if ((parser.token & 0b00000000000010000000000000000000) > 0) report(parser, Errors.InvalidKeywordAsAlias);
+
           value = parser.tokenValue;
+
           exported = parseIdentifier(parser, context);
         } else {
           exported = local;
@@ -608,7 +623,9 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
       if ((parser.token as Token) === Token.FromKeyword) {
         nextToken(parser, context, /* allowRegExp */ 0); // skips: 'from'
+
         if ((parser.token as Token) !== Token.StringLiteral) report(parser, Errors.InvalidExportImportSource, 'Export');
+
         source = parseLiteral(parser, context);
       } else {
         let i = exportedNames.length;
