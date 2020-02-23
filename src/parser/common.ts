@@ -334,7 +334,9 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   if (context & Context.Strict && (t & Token.FutureReserved) > 0) {
     report(parser, Errors.UnexpectedStrictReserved);
   }
-
+  if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+    parser.flags |= Flags.NotDestructible;
+  }
   if ((t & Token.Keyword) > 0) {
     report(parser, Errors.KeywordNotId);
   }

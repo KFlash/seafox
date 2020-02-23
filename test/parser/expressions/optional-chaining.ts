@@ -68,6 +68,7 @@ fail('Expressions - Optional chaining (fail)', [
   ['a?.++', Context.Empty],
   ['--a?.b', Context.Empty],
   ['++a?.b', Context.Empty],
+  ['[x?.?.y]', Context.Empty],
   ['class x extends y { constructor() { super?.(foo) } }', Context.Empty],
   ['a?.bar`foo`', Context.Empty],
   ['a?.++', Context.Empty],

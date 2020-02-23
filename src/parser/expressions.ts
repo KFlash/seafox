@@ -404,6 +404,9 @@ export function parseMemberExpression(
     case Token.QuestionMarkPeriod: {
       nextToken(parser, context, /* allowRegExp */ 0); // skips: '?.'
 
+      // '[x?.?.y]'
+      if (parser.token === Token.QuestionMarkPeriod) report(parser, Errors.Unexpected);
+
       parser.assignable = 0;
 
       return parseMemberExpression(
@@ -413,7 +416,7 @@ export function parseMemberExpression(
           ? {
               type: 'ChainingExpression',
               base: object,
-              chain: parseMemberOrCallChain(parser, context, [], /* optional */ 1, inGroup, start, line, column),
+              chain: parseMemberOrCallChain(parser, context, [], inGroup, start, line, column),
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -421,7 +424,7 @@ export function parseMemberExpression(
           : {
               type: 'ChainingExpression',
               base: object,
-              chain: parseMemberOrCallChain(parser, context, [], /* optional */ 1, inGroup, start, line, column)
+              chain: parseMemberOrCallChain(parser, context, [], inGroup, start, line, column)
             },
         allowLHS,
         inGroup,
@@ -441,7 +444,6 @@ export function parseMemberOrCallChain(
   parser: ParserState,
   context: Context,
   chain: any[],
-  optional: 0 | 1,
   inGroup: 0 | 1,
   start: number,
   line: number,
@@ -474,7 +476,7 @@ export function parseMemberOrCallChain(
               property
             }
       );
-      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
+      return parseMemberOrCallChain(parser, context, chain, inGroup, start, line, column);
 
     /* Property */
     case Token.LeftBracket: {
@@ -505,7 +507,7 @@ export function parseMemberOrCallChain(
             }
       );
 
-      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
+      return parseMemberOrCallChain(parser, context, chain, inGroup, start, line, column);
     }
     /* Call */
     case Token.LeftParen:
@@ -530,7 +532,7 @@ export function parseMemberOrCallChain(
             }
       );
 
-      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
+      return parseMemberOrCallChain(parser, context, chain, inGroup, start, line, column);
 
     case Token.TemplateTail:
     case Token.TemplateCont:
@@ -539,9 +541,6 @@ export function parseMemberOrCallChain(
     /* Optional Property */
     case Token.QuestionMarkPeriod:
       nextToken(parser, context, /* allowRegExp */ 0);
-
-      // '[x?.?.y]'
-      if (optional === 1) report(parser, Errors.CantAssignTo);
 
     // falls through
 
@@ -568,7 +567,7 @@ export function parseMemberOrCallChain(
               }
         );
 
-        return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
+        return parseMemberOrCallChain(parser, context, chain, inGroup, start, line, column);
       }
   }
 
@@ -723,14 +722,14 @@ export function parseTemplate(
 
 export function parseTemplateElement(parser: ParserState, context: Context, isTail: 0 | 1): Types.TemplateElement {
   const { start, line, column } = parser;
-  const value = {
-    cooked: parser.tokenValue,
-    raw: parser.tokenRaw
-  };
+
   return context & Context.OptionsLoc
     ? {
         type: 'TemplateElement',
-        value,
+        value: {
+          cooked: parser.tokenValue,
+          raw: parser.tokenRaw
+        },
         tail: isTail === 1,
         start,
         end: parser.endIndex,
@@ -738,7 +737,10 @@ export function parseTemplateElement(parser: ParserState, context: Context, isTa
       }
     : {
         type: 'TemplateElement',
-        value,
+        value: {
+          cooked: parser.tokenValue,
+          raw: parser.tokenRaw
+        },
         tail: isTail === 1
       };
 }
@@ -866,7 +868,7 @@ export function parseIdentifierOrArrow(
   parser.assignable = 1;
 
   if (parser.token === Token.Arrow) {
-    const mutualFlag = (parser.flags |=
+    const destructible = (parser.flags |=
       ((token & 0b00000000000001000000000000000000) === 0b00000000000001000000000000000000
         ? Flags.HasStrictReserved
         : Flags.Empty) |
@@ -878,7 +880,7 @@ export function parseIdentifierOrArrow(
 
     expr = parseArrowFunction(parser, context, scope, [expr], 0, 0, start, line, column);
 
-    parser.flags |= mutualFlag;
+    parser.flags |= destructible;
   }
   return expr;
 }
@@ -1198,7 +1200,7 @@ export function parseAsyncArrowOrCallExpression(
 
   let expr: Types.Expression | null = null;
 
-  let mutualFlag: Flags = Flags.Empty;
+  let destructible: Flags = Flags.Empty;
 
   const params: Types.Expression[] = [];
 
@@ -1211,14 +1213,14 @@ export function parseAsyncArrowOrCallExpression(
       expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column) as Types.Expression;
 
       if (parser.token === Token.Assign) {
-        mutualFlag |= Flags.SimpleParameterList;
+        destructible |= Flags.SimpleParameterList;
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       } else if ((parser.token as Token) === Token.RightParen || parser.token === Token.Comma) {
-        mutualFlag |=
+        destructible |=
           (parser.assignable === 0 ? Flags.NotDestructible | Flags.SimpleParameterList : 0) |
           ((token & 0b00100000000101000000000000000000) > 0 ? Flags.SimpleParameterList : 0);
       } else {
-        mutualFlag |= Flags.NotDestructible;
+        destructible |= Flags.NotDestructible;
         expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       }
@@ -1228,14 +1230,14 @@ export function parseAsyncArrowOrCallExpression(
           ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column)
           : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column);
 
-      mutualFlag |= parser.flags | Flags.SimpleParameterList;
+      destructible |= parser.flags | Flags.SimpleParameterList;
 
       if ((parser.token as Token) !== Token.RightParen && parser.token !== Token.Comma) {
-        if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
+        if (destructible & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
 
         expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
-        mutualFlag |= Flags.NotDestructible;
+        destructible |= Flags.NotDestructible;
 
         if ((parser.token & Token.IsBinaryOp) === Token.IsBinaryOp) {
           expr = parseBinaryExpression(parser, context, 0, 4, token, start, line, column, expr);
@@ -1260,7 +1262,7 @@ export function parseAsyncArrowOrCallExpression(
         column
       );
 
-      mutualFlag |=
+      destructible |=
         ((parser.token as Token) === Token.RightParen ? 0 : Flags.NotDestructible) |
         (parser.flags | Flags.SimpleParameterList);
     } else {
@@ -1276,7 +1278,7 @@ export function parseAsyncArrowOrCallExpression(
 
       parser.flags =
         ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) |
-        mutualFlag |
+        destructible |
         Flags.NotDestructible;
 
       parser.assignable = 0;
@@ -1306,7 +1308,7 @@ export function parseAsyncArrowOrCallExpression(
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-  mutualFlag |=
+  destructible |=
     (parser.flags & Flags.SeenYield ? Flags.SeenYield : Flags.Empty) |
     (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty);
 
@@ -1318,7 +1320,7 @@ export function parseAsyncArrowOrCallExpression(
       context,
       scope,
       0,
-      mutualFlag,
+      destructible,
       params,
       canAssign,
       1,
@@ -1332,7 +1334,7 @@ export function parseAsyncArrowOrCallExpression(
 
   parser.flags = (parser.flags | 0b00000000000000000000110000000000) ^ 0b00000000000000000000110000000000;
 
-  if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
+  if (destructible & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
   parser.assignable = 0;
 
@@ -1726,7 +1728,7 @@ export function parseArrowFunctionAfterParen(
   context: Context,
   scope: any,
   inGroup: 0 | 1,
-  mutualFlag: Flags,
+  destructible: Flags,
   params: any,
   canAssign: 0 | 1,
   isAsync: 0 | 1,
@@ -1734,11 +1736,11 @@ export function parseArrowFunctionAfterParen(
   line: number,
   column: number
 ): Types.ArrowFunctionExpression {
-  if (mutualFlag & 0b00000000000000000000000000001100) {
+  if (destructible & 0b00000000000000000000000000001100) {
     report(parser, Errors.InvalidArrowDestructLHS);
   }
 
-  if ((context & 0b00000000001000000000010000000000) > 0 && mutualFlag & Flags.SeenYield) {
+  if ((context & 0b00000000001000000000010000000000) > 0 && destructible & Flags.SeenYield) {
     report(parser, Errors.YieldInParameter);
   }
 
@@ -1747,7 +1749,7 @@ export function parseArrowFunctionAfterParen(
       (inGroup === 1 && parser.flags & Flags.SeenAwait
         ? 0b00000000000000000000000000011110
         : 0b00000000000000000000110000011110)) |
-    mutualFlag;
+    destructible;
 
   if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
@@ -1889,7 +1891,7 @@ export function parseParenthesizedExpression(
 
   let expressions: Types.Expression[] = [];
   let inSequence: 0 | 1 = 0;
-  let mutualFlag: Flags = Flags.Empty;
+  let destructible: Flags = Flags.Empty;
 
   const { start: sStart, line: sLine, column: sColumn } = parser;
 
@@ -1906,12 +1908,12 @@ export function parseParenthesizedExpression(
       expr = parsePrimaryExpression(parser, context, kind, 0, /* allowLHS */ 1, 1, 1, start, line, column);
 
       if (parser.token === Token.Comma || (parser.token as Token) === Token.RightParen) {
-        mutualFlag |=
+        destructible |=
           (parser.assignable === 1 ? 0 : Flags.NotDestructible | Flags.SimpleParameterList) |
           ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments ? Flags.SimpleParameterList : 0) |
           ((token & Token.FutureReserved) === Token.FutureReserved ? Flags.SimpleParameterList : 0);
       } else {
-        mutualFlag |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
+        destructible |= parser.token === Token.Assign ? Flags.SimpleParameterList : Flags.NotDestructible;
 
         expr = parseMemberExpression(parser, context, expr, 1, inGroup, start, line, column);
 
@@ -1925,16 +1927,16 @@ export function parseParenthesizedExpression(
           ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column)
           : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column);
 
-      mutualFlag |= parser.flags | Flags.SimpleParameterList;
+      destructible |= parser.flags | Flags.SimpleParameterList;
 
       parser.assignable = 0;
 
       if (parser.token !== Token.Comma && (parser.token as Token) !== Token.RightParen) {
-        if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
+        if (destructible & Flags.MustDestruct) report(parser, Errors.InvalidPatternTail);
 
         expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
-        mutualFlag |= Flags.NotDestructible;
+        destructible |= Flags.NotDestructible;
 
         const token = parser.token;
 
@@ -1961,7 +1963,7 @@ export function parseParenthesizedExpression(
           if (token === Token.QuestionMark) {
             expr = parseConditionalExpression(parser, context, expr, start, line, column);
           } else {
-            mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+            destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
           }
         }
       }
@@ -1986,10 +1988,10 @@ export function parseParenthesizedExpression(
       if (inSequence === 1 && (parser.token as Token) === Token.RightParen) {
         expressions.push(expr);
       }
-      mutualFlag |= Flags.MustDestruct | Flags.SimpleParameterList;
+      destructible |= Flags.MustDestruct | Flags.SimpleParameterList;
       break;
     } else {
-      mutualFlag |= Flags.NotDestructible;
+      destructible |= Flags.NotDestructible;
 
       expr = parseExpression(parser, context, inGroup);
 
@@ -2026,7 +2028,7 @@ export function parseParenthesizedExpression(
       consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
       parser.flags =
-        ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+        ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
       return expr;
     }
@@ -2045,7 +2047,7 @@ export function parseParenthesizedExpression(
     }
 
     if ((parser.token as Token) === Token.RightParen) {
-      mutualFlag |= Flags.MustDestruct;
+      destructible |= Flags.MustDestruct;
       break;
     }
   }
@@ -2069,15 +2071,15 @@ export function parseParenthesizedExpression(
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-  if (mutualFlag & Flags.NotDestructible && mutualFlag & Flags.MustDestruct) {
+  if (destructible & Flags.NotDestructible && destructible & Flags.MustDestruct) {
     report(parser, Errors.CantAssignToValidRHS);
   }
 
-  mutualFlag |=
+  destructible |=
     (parser.flags & Flags.SeenYield ? Flags.SeenYield : 0) | (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : 0);
 
   if (parser.token === Token.Arrow) {
-    if (context & (Context.InAwaitContext | Context.Module) && mutualFlag & Flags.SeenAwait) {
+    if (context & (Context.InAwaitContext | Context.Module) && destructible & Flags.SeenAwait) {
       report(parser, Errors.AwaitInParameter);
     }
 
@@ -2086,7 +2088,7 @@ export function parseParenthesizedExpression(
       context,
       scope,
       inGroup,
-      mutualFlag,
+      destructible,
       inSequence ? expressions : [expr],
       canAssign,
       0,
@@ -2094,14 +2096,14 @@ export function parseParenthesizedExpression(
       curLine,
       curColumn
     );
-  } else if (mutualFlag & Flags.MustDestruct) {
+  } else if (destructible & Flags.MustDestruct) {
     report(parser, Errors.UncompleteArrow);
   }
 
   if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
   if ((context & Context.OptionsPreserveParens) === 0) return expr;
 
@@ -2596,7 +2598,7 @@ export function parseArrayExpressionOrPattern(
 
   const elements: (Types.Identifier | Types.AssignmentExpression | null)[] = [];
 
-  let mutualFlag: Flags = Flags.Empty;
+  let destructible: Flags = Flags.Empty;
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
@@ -2618,10 +2620,10 @@ export function parseArrayExpressionOrPattern(
           if (parser.assignable === 1) {
             addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
           } else {
-            mutualFlag |= Flags.NotDestructible;
+            destructible |= Flags.NotDestructible;
           }
         } else {
-          mutualFlag |=
+          destructible |=
             kind & BindingKind.ArgumentList
               ? Flags.AssignableDestruct
               : (kind & BindingKind.Tail) !== BindingKind.Tail
@@ -2647,7 +2649,7 @@ export function parseArrayExpressionOrPattern(
               column
             );
           } else if ((token & Token.IsBinaryOp) > 0) {
-            mutualFlag |= Flags.NotDestructible;
+            destructible |= Flags.NotDestructible;
 
             left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left as any);
 
@@ -2656,10 +2658,10 @@ export function parseArrayExpressionOrPattern(
             }
           } else {
             if (token === Token.QuestionMark) {
-              mutualFlag |= Flags.NotDestructible;
+              destructible |= Flags.NotDestructible;
               left = parseConditionalExpression(parser, context, left, start, line, column);
             } else {
-              mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+              destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
             }
           }
         }
@@ -2681,16 +2683,16 @@ export function parseArrayExpressionOrPattern(
                 column
               );
 
-        mutualFlag |= parser.flags;
+        destructible |= parser.flags;
 
-        parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
+        parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
 
         if (!isRightBraketOrComma(parser.token)) {
-          if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
+          if (destructible & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
 
           left = parseMemberExpression(parser, context, left, 1, 0, start, line, column);
 
-          mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
+          destructible = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
           const token = parser.token;
 
@@ -2718,11 +2720,11 @@ export function parseArrayExpressionOrPattern(
             if (token === Token.QuestionMark) {
               left = parseConditionalExpression(parser, context, left, start, line, column);
             } else {
-              mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+              destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
             }
           }
         } else {
-          mutualFlag |= mutualFlag & Flags.NotDestructible ? Flags.NotDestructible : 0;
+          destructible |= destructible & Flags.NotDestructible ? Flags.NotDestructible : 0;
         }
       } else if (token === Token.Ellipsis) {
         left = parseSpreadOrRestElement(
@@ -2744,18 +2746,18 @@ export function parseArrayExpressionOrPattern(
           report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
         }
 
-        mutualFlag |= parser.flags;
+        destructible |= parser.flags;
       } else {
         left = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
         if (!isRightBraketOrComma(parser.token)) {
           left = parseAssignmentExpression(parser, context, reinterpret, 0, left, start, line, column);
-          mutualFlag |=
+          destructible |=
             (kind & 0b00000000000000000000000000001001) === 0 && token === Token.LeftParen ? Flags.NotDestructible : 0;
         } else if (parser.assignable === 0) {
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
         } else if (token === Token.LeftParen) {
-          mutualFlag |=
+          destructible |=
             parser.assignable === 1 && (kind & 0b00000000000000000000000000001001) !== 0
               ? Flags.AssignableDestruct
               : Flags.NotDestructible;
@@ -2790,7 +2792,7 @@ export function parseArrayExpressionOrPattern(
     return parseArrayOrObjectAssignmentPattern(
       parser,
       context,
-      mutualFlag,
+      destructible,
       reinterpret,
       inGroup,
       curStart,
@@ -2801,7 +2803,7 @@ export function parseArrayExpressionOrPattern(
   }
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
   return node;
 }
@@ -2809,7 +2811,7 @@ export function parseArrayExpressionOrPattern(
 export function parseArrayOrObjectAssignmentPattern(
   parser: ParserState,
   context: Context,
-  mutualFlag: Flags | Flags,
+  destructible: Flags | Flags,
   reinterpret: 0 | 1,
   inGroup: 0 | 1,
   start: number,
@@ -2819,7 +2821,7 @@ export function parseArrayOrObjectAssignmentPattern(
 ): any {
   if (parser.token !== Token.Assign) report(parser, Errors.CantAssignTo);
 
-  if ((mutualFlag & Flags.NotDestructible) === Flags.NotDestructible) report(parser, Errors.CantAssignTo);
+  if ((destructible & Flags.NotDestructible) === Flags.NotDestructible) report(parser, Errors.CantAssignTo);
 
   if (reinterpret === 0) reinterpretToPattern(parser, left);
 
@@ -2827,7 +2829,7 @@ export function parseArrayOrObjectAssignmentPattern(
 
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) |
-    ((mutualFlag | 0b00000000000000000000001000010000) ^ 0b00000000000000000000001000010000);
+    ((destructible | 0b00000000000000000000001000010000) ^ 0b00000000000000000000001000010000);
 
   return node;
 }
@@ -3185,7 +3187,7 @@ export function parseClassElementList(
   parser: ParserState,
   context: Context,
   inheritedContext: Context,
-  mutualFlag: Flags,
+  destructible: Flags,
   key: Types.Expression | null,
   isComputed: 0 | 1,
   inGroup: 0 | 1,
@@ -3207,7 +3209,7 @@ export function parseClassElementList(
               parser,
               context,
               inheritedContext,
-              mutualFlag,
+              destructible,
               key,
               isComputed,
               inGroup,
@@ -3287,7 +3289,7 @@ export function parseClassElementList(
     }
   }
 
-  mutualFlag = parser.flags;
+  destructible = parser.flags;
 
   const value =
     (type & 0b00000000000000000000000110000000) > 0
@@ -3295,7 +3297,7 @@ export function parseClassElementList(
       : parseMethodDefinition(parser, context | Context.Strict, type);
 
   parser.flags =
-    (mutualFlag | Flags.StrictEvalArguments | Flags.HasStrictReserved) ^
+    (destructible | Flags.StrictEvalArguments | Flags.HasStrictReserved) ^
     (Flags.StrictEvalArguments | Flags.HasStrictReserved);
 
   const kind =
@@ -3418,6 +3420,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
     let left: any;
 
     let isSimpleParameterList: 0 | 1 = 0;
+
     while ((parser.token as Token) !== Token.RightParen) {
       const { start, line, column, token } = parser;
 
@@ -3525,7 +3528,7 @@ export function parseFormalParams(
   while (parser.token !== Token.RightParen) {
     let left: any;
 
-    const { start, line, column, token, tokenValue } = parser;
+    const { start, line, column, token } = parser;
 
     if ((token & 0b00000000001001110000000000000000) > 0) {
       if ((context & Context.Strict) !== Context.Strict) {
@@ -3539,7 +3542,7 @@ export function parseFormalParams(
         context,
         scope,
         token,
-        tokenValue,
+        parser.tokenValue,
         kind | BindingKind.ArgumentList,
         Origin.None,
         0,
@@ -3578,7 +3581,6 @@ export function parseFormalParams(
 
     if (parser.token === Token.Assign) {
       isSimpleParameterList = 1;
-
       left = parseAssignmentOrPattern(parser, context, /* reinterpret */ 1, 0, left, '=', start, line, column);
     }
 
@@ -3594,9 +3596,10 @@ export function parseFormalParams(
     }
   }
 
-  if (scope.scopeError !== void 0 && (isMethod === 1 || isSimpleParameterList === 1 || context & Context.Strict)) {
+  if (scope.scopeError && (isMethod === 1 || isSimpleParameterList === 1 || context & Context.Strict)) {
     reportScopeError(scope.scopeError);
   }
+
   parser.flags |= isSimpleParameterList === 1 ? Flags.SimpleParameterList : 0;
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
@@ -3653,7 +3656,7 @@ export function parseObjectLiteral(
     report(parser, Errors.InvalidShorthandPropInit);
   }
 
-  return expr as any;
+  return expr;
 }
 
 export function isAssignRightBraceOrComma(t: Token): boolean {
@@ -3694,7 +3697,7 @@ export function parseObjectLiteralOrPattern(
 
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
-  let mutualFlag = Flags.Empty;
+  let destructible = Flags.Empty;
   let prototypeCount = 0;
   let key = null;
   let value;
@@ -3735,7 +3738,7 @@ export function parseObjectLiteralOrPattern(
           state |= PropertyKind.Shorthand;
 
           if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-            mutualFlag |= Flags.NotDestructible;
+            destructible |= Flags.NotDestructible;
           } else {
             validateIdentifier(parser, context, type, token);
           }
@@ -3743,10 +3746,10 @@ export function parseObjectLiteralOrPattern(
           addVarOrBlock(parser, context, scope, tokenValue, type, origin);
 
           if (parser.token === Token.Assign) {
-            mutualFlag |= Flags.MustDestruct;
+            destructible |= Flags.MustDestruct;
             value = parseAssignmentOrPattern(parser, context, reinterpret, inGroup, key, '=', start, line, column);
           } else {
-            mutualFlag |= inGroup === 1 && token === Token.AwaitKeyword ? Flags.SeenAwait : 0;
+            destructible |= inGroup === 1 && token === Token.AwaitKeyword ? Flags.SeenAwait : 0;
             value = key;
           }
         } else if (parser.token === Token.Colon) {
@@ -3770,24 +3773,24 @@ export function parseObjectLiteralOrPattern(
             if (isRightBraceOrComma(t)) {
               if (isAssignRightBraceOrComma(token)) {
                 if (parser.assignable === 0) {
-                  mutualFlag |= Flags.NotDestructible;
+                  destructible |= Flags.NotDestructible;
                 } else if ((tokenAfterColon & 0b00000000001000010000000000000000) > 0) {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
               } else {
-                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+                destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
             } else if ((t & Token.IsAssignOp) === Token.IsAssignOp) {
               if (parser.assignable === 0) {
-                mutualFlag |= Flags.NotDestructible;
+                destructible |= Flags.NotDestructible;
               } else if ((token as Token) !== Token.Assign) {
-                mutualFlag |= Flags.AssignableDestruct;
+                destructible |= Flags.AssignableDestruct;
               } else {
                 addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
               }
               value = parseAssignmentExpression(parser, context, reinterpret, inGroup, value, start, line, column);
             } else {
-              mutualFlag |= Flags.NotDestructible;
+              destructible |= Flags.NotDestructible;
 
               if ((t & Token.IsBinaryOp) === Token.IsBinaryOp) {
                 value = parseBinaryExpression(parser, context, 0, 0, t, start, line, column, value);
@@ -3827,18 +3830,18 @@ export function parseObjectLiteralOrPattern(
                     column
                   );
 
-            mutualFlag = parser.flags;
+            destructible = parser.flags;
 
-            parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
+            parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
 
             if (isRightBraceOrComma(parser.token)) {
-              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+              if (parser.assignable === 0) destructible |= Flags.NotDestructible;
             } else if (parser.flags & Flags.MustDestruct) {
               report(parser, Errors.InvalidObjLitShorthand);
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
-              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
+              destructible = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
               const token = parser.token;
 
@@ -3861,7 +3864,7 @@ export function parseObjectLiteralOrPattern(
                 if ((token as Token) === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
-                mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+                destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
               }
             }
           } else {
@@ -3884,7 +3887,7 @@ export function parseObjectLiteralOrPattern(
                 column
               );
 
-              mutualFlag |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
+              destructible |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
             } else {
               if ((token & Token.IsBinaryOp) > 0) {
                 value = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, value);
@@ -3894,11 +3897,11 @@ export function parseObjectLiteralOrPattern(
                 (parser.token as Token) === Token.QuestionMark
                   ? parseConditionalExpression(parser, context, value, start, line, column)
                   : value;
-              mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+              destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
             }
           }
         } else if (parser.token === Token.LeftBracket) {
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
 
           state |= token === Token.AsyncKeyword ? PropertyKind.Async : 0;
 
@@ -3913,7 +3916,7 @@ export function parseObjectLiteralOrPattern(
 
           value = parseMethodDefinition(parser, context, state);
         } else if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
 
           if ((parser.token as Token) === Token.AsyncKeyword) {
             state |= PropertyKind.Async;
@@ -3934,7 +3937,7 @@ export function parseObjectLiteralOrPattern(
               ? parseGetterSetter(parser, context, state)
               : parseMethodDefinition(parser, context, state);
         } else if (parser.token === Token.LeftParen) {
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
 
           state |= PropertyKind.Method;
 
@@ -3961,7 +3964,7 @@ export function parseObjectLiteralOrPattern(
           }
 
           value = parseMethodDefinition(parser, context, state);
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
         } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
           if (token === Token.AsyncKeyword) state |= PropertyKind.Async;
 
@@ -3972,7 +3975,7 @@ export function parseObjectLiteralOrPattern(
               ? PropertyKind.Setter
               : PropertyKind.Method;
 
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
 
           key = parseLiteral(parser, context);
 
@@ -4004,18 +4007,18 @@ export function parseObjectLiteralOrPattern(
             if (isRightBraceOrComma(parser.token)) {
               if (isAssignRightBraceOrComma(token)) {
                 if (parser.assignable === 0) {
-                  mutualFlag |= Flags.NotDestructible;
+                  destructible |= Flags.NotDestructible;
                 } else {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
               } else {
-                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+                destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
             } else if ((parser.token as Token) === Token.Assign) {
-              mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
+              destructible |= parser.assignable === 0 ? Flags.NotDestructible : 0;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             } else {
-              mutualFlag |= Flags.NotDestructible;
+              destructible |= Flags.NotDestructible;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else if ((token & 0b00000010000000000000000000000000) > 0) {
@@ -4048,12 +4051,12 @@ export function parseObjectLiteralOrPattern(
                     column
                   );
 
-            mutualFlag = parser.flags;
+            destructible = parser.flags;
 
-            parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
+            parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
 
             if (isRightBraceOrComma(parser.token)) {
-              mutualFlag |= Flags.Destructible;
+              destructible |= Flags.Destructible;
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
@@ -4074,7 +4077,7 @@ export function parseObjectLiteralOrPattern(
                   column
                 );
 
-                mutualFlag |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
+                destructible |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
               } else {
                 if ((token & Token.IsBinaryOp) > 0) {
                   value = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, value);
@@ -4084,7 +4087,7 @@ export function parseObjectLiteralOrPattern(
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
 
-                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+                destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
             }
           } else {
@@ -4093,19 +4096,19 @@ export function parseObjectLiteralOrPattern(
 
             value = parseLeftHandSideExpressionOrHigher(parser, context, 0, 1, 1, start, line, column);
 
-            mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+            destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
 
             if (isRightBraceOrComma(parser.token)) {
-              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+              if (parser.assignable === 0) destructible |= Flags.NotDestructible;
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
-              mutualFlag = parser.assignable === 0 ? Flags.NotDestructible : 0;
+              destructible = parser.assignable === 0 ? Flags.NotDestructible : 0;
 
               const token = parser.token;
 
               if ((token as Token) !== Token.Comma && (token as Token) !== Token.RightBrace) {
-                if ((token as Token) !== Token.Assign) mutualFlag |= Flags.NotDestructible;
+                if ((token as Token) !== Token.Assign) destructible |= Flags.NotDestructible;
 
                 value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
               }
@@ -4114,7 +4117,7 @@ export function parseObjectLiteralOrPattern(
         } else if ((parser.token as Token) === Token.LeftParen) {
           state |= PropertyKind.Method;
           value = parseMethodDefinition(parser, context, state);
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
         } else {
           report(parser, Errors.InvalidKeyToken);
         }
@@ -4136,7 +4139,7 @@ export function parseObjectLiteralOrPattern(
             value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
             if ((parser.token & Token.IsAssignOp) > 0) {
-              mutualFlag |= token === Token.Assign ? 0 : Flags.AssignableDestruct;
+              destructible |= token === Token.Assign ? 0 : Flags.AssignableDestruct;
 
               value = parseAssignmentOrPattern(
                 parser,
@@ -4152,15 +4155,15 @@ export function parseObjectLiteralOrPattern(
             } else if (isRightBraceOrComma(parser.token)) {
               if (isAssignRightBraceOrComma(token)) {
                 if (parser.assignable === 0) {
-                  mutualFlag |= Flags.NotDestructible;
+                  destructible |= Flags.NotDestructible;
                 } else if ((tokenAfterColon & Token.IsIdentifier) === Token.IsIdentifier) {
                   addVarOrBlock(parser, context, scope, tokenValue, type, origin);
                 }
               } else {
-                mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+                destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
               }
             } else {
-              mutualFlag |= Flags.NotDestructible;
+              destructible |= Flags.NotDestructible;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else if (((parser.token as Token) & Token.IsPatternStart) === Token.IsPatternStart) {
@@ -4193,23 +4196,23 @@ export function parseObjectLiteralOrPattern(
                     column
                   );
 
-            mutualFlag = parser.flags;
+            destructible = parser.flags;
 
-            parser.assignable = mutualFlag & Flags.NotDestructible ? 0 : 1;
+            parser.assignable = destructible & Flags.NotDestructible ? 0 : 1;
 
             if (isRightBraceOrComma(parser.token)) {
-              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+              if (parser.assignable === 0) destructible |= Flags.NotDestructible;
             } else {
-              if (mutualFlag & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
+              if (destructible & Flags.MustDestruct) report(parser, Errors.InvalidShorthandPropInit);
 
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
-              mutualFlag = Flags.Empty;
+              destructible = Flags.Empty;
 
               const token = parser.token;
 
               if ((token & Token.IsAssignOp) === Token.IsAssignOp) {
-                if (token !== Token.Assign) mutualFlag |= Flags.NotDestructible;
+                if (token !== Token.Assign) destructible |= Flags.NotDestructible;
 
                 value = parseAssignmentOrPattern(
                   parser,
@@ -4229,16 +4232,16 @@ export function parseObjectLiteralOrPattern(
                 if (parser.token === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
-                mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+                destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
               }
             }
           } else {
             value = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
-            mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+            destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
 
             if (isRightBraceOrComma(parser.token)) {
-              if (parser.assignable === 0) mutualFlag |= Flags.NotDestructible;
+              if (parser.assignable === 0) destructible |= Flags.NotDestructible;
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
@@ -4249,7 +4252,7 @@ export function parseObjectLiteralOrPattern(
           }
         } else if (parser.token === Token.LeftParen) {
           state |= PropertyKind.Method;
-          mutualFlag |= (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty) | Flags.NotDestructible;
+          destructible |= (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty) | Flags.NotDestructible;
           value = parseMethodDefinition(parser, context, state);
         } else {
           report(parser, Errors.InvalidComputedPropName);
@@ -4274,7 +4277,7 @@ export function parseObjectLiteralOrPattern(
 
         value = parseMethodDefinition(parser, context, state);
 
-        mutualFlag |= Flags.NotDestructible;
+        destructible |= Flags.NotDestructible;
       } else if ((parser.token as Token) === Token.BigIntLiteral) {
         key = parseBigIntLiteral(parser, context);
 
@@ -4293,7 +4296,7 @@ export function parseObjectLiteralOrPattern(
             if (isRightBraceOrComma(parser.token)) {
               if (isAssignRightBraceOrComma(token)) {
                 if (parser.assignable === 0) {
-                  mutualFlag |= Flags.NotDestructible;
+                  destructible |= Flags.NotDestructible;
                 } else {
                   addVarOrBlock(parser, context, scope, valueAfterColon, type, origin);
                 }
@@ -4301,7 +4304,7 @@ export function parseObjectLiteralOrPattern(
             } else if ((parser.token as Token) === Token.Assign) {
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             } else {
-              mutualFlag |= Flags.NotDestructible;
+              destructible |= Flags.NotDestructible;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else if ((parser.token & 0b00000010000000000000000000000000) > 0) {
@@ -4334,7 +4337,7 @@ export function parseObjectLiteralOrPattern(
                     column
                   );
 
-            mutualFlag = parser.flags;
+            destructible = parser.flags;
 
             if (!isRightBraceOrComma(parser.token) && (parser.flags & Flags.MustDestruct) !== Flags.MustDestruct) {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
@@ -4361,22 +4364,22 @@ export function parseObjectLiteralOrPattern(
                 if ((parser.token as Token) === Token.QuestionMark) {
                   value = parseConditionalExpression(parser, context, value, start, line, column);
                 }
-                mutualFlag |= (parser.assignable as 0 | 1) === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+                destructible |= (parser.assignable as 0 | 1) === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
               }
             }
           } else {
             value = parseLeftHandSideExpressionOrHigher(parser, context, 0, 1, 1, start, line, column);
 
-            mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+            destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
 
             if (isRightBraceOrComma(parser.token)) {
               if (parser.assignable === 0) {
-                mutualFlag |= Flags.NotDestructible;
+                destructible |= Flags.NotDestructible;
               }
             } else {
               value = parseMemberExpression(parser, context, value, 1, 0, start, line, column);
 
-              mutualFlag = Flags.Empty;
+              destructible = Flags.Empty;
 
               if ((parser.token as Token) !== Token.Comma && (parser.token as Token) !== Token.RightBrace) {
                 value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
@@ -4386,7 +4389,7 @@ export function parseObjectLiteralOrPattern(
         } else if ((parser.token as Token) === Token.LeftParen) {
           state |= PropertyKind.Method;
           value = parseMethodDefinition(parser, context, state);
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
         } else {
           report(parser, Errors.InvalidKeyToken);
         }
@@ -4395,7 +4398,7 @@ export function parseObjectLiteralOrPattern(
       }
 
       parser.flags =
-        ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+        ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
       kind = (state & 0b00000000000000000000000110000000) === 0 ? 'init' : state & PropertyKind.Setter ? 'set' : 'get';
 
@@ -4425,7 +4428,7 @@ export function parseObjectLiteralOrPattern(
       );
     }
 
-    mutualFlag |= parser.flags;
+    destructible |= parser.flags;
 
     if (parser.token !== Token.Comma) break;
 
@@ -4452,7 +4455,7 @@ export function parseObjectLiteralOrPattern(
     return parseArrayOrObjectAssignmentPattern(
       parser,
       context,
-      mutualFlag,
+      destructible,
       reinterpret,
       inGroup,
       curStart,
@@ -4464,7 +4467,7 @@ export function parseObjectLiteralOrPattern(
 
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) |
-    (mutualFlag | (prototypeCount > 1 ? 0b00000000000000000000001000000000 : 0));
+    (destructible | (prototypeCount > 1 ? 0b00000000000000000000001000000000 : 0));
 
   return node;
 }
@@ -4486,7 +4489,7 @@ export function parseSpreadOrRestElement(
   nextToken(parser, context, /* allowRegExp */ 1); // skip '...'
 
   let argument: any;
-  let mutualFlag: Flags = Flags.Empty;
+  let destructible: Flags = Flags.Empty;
 
   const { start, line, column, token, tokenValue } = parser;
 
@@ -4501,16 +4504,16 @@ export function parseSpreadOrRestElement(
       if ((parser.assignable as 0 | 1) === 0 && parser.token === Token.Assign)
         report(parser, Errors.InvalidDestructuringTarget);
 
-      mutualFlag |= Flags.NotDestructible;
+      destructible |= Flags.NotDestructible;
 
       argument = parseAssignmentExpression(parser, context, reinterpret, 0, argument, start, line, column);
     }
     if ((parser.assignable as 0 | 1) === 0) {
-      mutualFlag |= Flags.NotDestructible;
+      destructible |= Flags.NotDestructible;
     } else if (isClosingTokenOrComma) {
       addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
     } else {
-      mutualFlag |= Flags.AssignableDestruct;
+      destructible |= Flags.AssignableDestruct;
     }
   } else {
     if (token === closingToken) {
@@ -4528,10 +4531,10 @@ export function parseSpreadOrRestElement(
       if (token !== Token.Assign && token !== closingToken && token !== Token.Comma) {
         if (parser.flags & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
         argument = parseMemberExpression(parser, context, argument, 1, 0, start, line, column);
-        mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : 0;
+        destructible |= parser.assignable === 0 ? Flags.NotDestructible : 0;
         const t = parser.token;
         if ((t & Token.IsAssignOp) === Token.IsAssignOp) {
-          if (t !== Token.Assign) mutualFlag |= Flags.NotDestructible;
+          if (t !== Token.Assign) destructible |= Flags.NotDestructible;
           argument = parseAssignmentExpression(parser, context, reinterpret, 0, argument, start, line, column);
         } else {
           if ((t & Token.IsBinaryOp) === Token.IsBinaryOp) {
@@ -4540,14 +4543,14 @@ export function parseSpreadOrRestElement(
           if (parser.token === Token.QuestionMark) {
             argument = parseConditionalExpression(parser, context, argument, start, line, column);
           }
-          mutualFlag |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
+          destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
         }
       } else {
-        mutualFlag |=
+        destructible |=
           closingToken === Token.RightBrace && token !== Token.Assign ? Flags.NotDestructible : parser.flags;
       }
     } else {
-      mutualFlag |= Flags.AssignableDestruct;
+      destructible |= Flags.AssignableDestruct;
 
       argument = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
 
@@ -4556,18 +4559,18 @@ export function parseSpreadOrRestElement(
       if (token === Token.Assign && token !== closingToken && (token as Token) !== Token.Comma) {
         if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
         argument = parseAssignmentExpression(parser, context, reinterpret, 0, argument, start, line, column);
-        mutualFlag |= Flags.NotDestructible;
+        destructible |= Flags.NotDestructible;
       } else {
         if (token === Token.Comma) {
-          mutualFlag |= Flags.NotDestructible;
+          destructible |= Flags.NotDestructible;
         } else if (token !== closingToken) {
           argument = parseAssignmentExpression(parser, context, 0, 0, argument, start, line, column);
         }
-        mutualFlag |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
+        destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
       }
 
       parser.flags =
-        ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+        ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
       if (parser.token !== closingToken && parser.token !== Token.Comma) report(parser, Errors.UnclosedSpreadElement);
 
@@ -4587,22 +4590,22 @@ export function parseSpreadOrRestElement(
   }
 
   if (parser.token !== closingToken) {
-    if (kind & BindingKind.ArgumentList) mutualFlag |= isAsync ? Flags.NotDestructible : Flags.AssignableDestruct;
+    if (kind & BindingKind.ArgumentList) destructible |= isAsync ? Flags.NotDestructible : Flags.AssignableDestruct;
 
     if (parser.token === Token.Assign) {
-      if (mutualFlag & Flags.NotDestructible) report(parser, Errors.CantAssignTo);
+      if (destructible & Flags.NotDestructible) report(parser, Errors.CantAssignTo);
 
       argument = parseAssignmentOrPattern(parser, context, reinterpret, 0, argument, '=', curStart, curLine, curColumn);
 
-      mutualFlag = Flags.NotDestructible;
+      destructible = Flags.NotDestructible;
     } else {
       // Note the difference between '|=' and '=' above
-      mutualFlag |= Flags.NotDestructible;
+      destructible |= Flags.NotDestructible;
     }
   }
 
   parser.flags =
-    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | mutualFlag;
+    ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
   return context & Context.OptionsLoc
     ? {
