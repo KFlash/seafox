@@ -104,7 +104,7 @@ export type Statement =
 export interface _Expression<T extends string> extends _Node<T> {}
 export interface T_Expression {
   Identifier: Identifier;
-  Literal: Literal | RegExpLiteral | BigIntLiteral;
+  Literal: Literal | RegExpLiteral;
   BigIntLiteral: Literal;
   ThisExpression: ThisExpression;
   ArrayExpression: ArrayExpression;
@@ -112,6 +112,7 @@ export interface T_Expression {
   FunctionExpression: FunctionExpression;
   UnaryExpression: UnaryExpression;
   UpdateExpression: UpdateExpression;
+  ImportExpression: ImportExpression;
   BinaryExpression: BinaryExpression;
   AssignmentExpression: AssignmentExpression;
   LogicalExpression: LogicalExpression;
@@ -144,6 +145,7 @@ export type Expression =
   | DoExpression
   | UnaryExpression
   | UpdateExpression
+  | ImportExpression
   | BinaryExpression
   | AssignmentExpression
   | LogicalExpression
@@ -484,8 +486,8 @@ export interface LabeledStatement extends _Statement<'LabeledStatement'> {
   label: Identifier;
   body: Statement;
 }
-export interface BigIntLiteral extends _Expression<'Literal'> {
-  value: number;
+export interface BigIntLiteral extends _Expression<'Expression'> {
+  value: number | null;
   bigint: string;
   raw?: string;
 }

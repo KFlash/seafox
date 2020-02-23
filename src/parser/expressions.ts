@@ -632,7 +632,9 @@ export function parseArguments(
 
 export function parseTemplateLiteral(parser: ParserState, context: Context): Types.TemplateLiteral {
   const { start, line, column, tokenValue, tokenRaw } = parser;
+
   parser.assignable = 0;
+
   consume(parser, context, Token.TemplateTail, /* allowRegExp */ 0);
 
   const quasis: Types.TemplateElement[] = [
@@ -693,7 +695,9 @@ export function parseTemplate(
 
   while ((parser.token = scanTemplateTail(parser, context)) === Token.TemplateCont) {
     quasis.push(parseTemplateElement(parser, context, /* isTail */ 0));
+
     consume(parser, context, Token.TemplateCont, /* allowRegExp */ 1);
+
     expressions.push(parseExpressions(parser, context, 0));
   }
 
@@ -1113,11 +1117,13 @@ export function parseAsyncArrow(
 
   if (token === Token.AwaitKeyword) report(parser, Errors.InvalidAwaitAsyncArg);
 
-  if (context & Context.Strict && (token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
-    report(parser, Errors.StrictEvalArguments);
-  }
-  if (context & Context.Module && (token & Token.FutureReserved) === Token.FutureReserved) {
-    report(parser, Errors.UnexpectedStrictReserved);
+  if (context & Context.Strict) {
+    if ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
+      report(parser, Errors.StrictEvalArguments);
+    }
+    if (context & Context.Module && (token & Token.FutureReserved) === Token.FutureReserved) {
+      report(parser, Errors.UnexpectedStrictReserved);
+    }
   }
 
   parser.flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
@@ -1190,7 +1196,7 @@ export function parseAsyncArrowOrCallExpression(
 
   const scope = createArrowScope();
 
-  let expr: any = null;
+  let expr: Types.Expression | null = null;
 
   let mutualFlag: Flags = Flags.Empty;
 
@@ -1202,15 +1208,15 @@ export function parseAsyncArrowOrCallExpression(
     if ((token & 0b00000000001001110000000000000000) > 0) {
       addBlockName(parser, context, scope, tokenValue, BindingKind.ArgumentList, Origin.None);
 
-      expr = parsePrimaryExpression(parser, context, kind, 0, /* allowLHS */ 1, 1, 1, start, line, column);
+      expr = parsePrimaryExpression(parser, context, kind, 0, 1, 1, 1, start, line, column) as Types.Expression;
 
-      if ((parser.token as Token) === Token.RightParen || parser.token === Token.Comma) {
+      if (parser.token === Token.Assign) {
+        mutualFlag |= Flags.SimpleParameterList;
+        expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
+      } else if ((parser.token as Token) === Token.RightParen || parser.token === Token.Comma) {
         mutualFlag |=
           (parser.assignable === 0 ? Flags.NotDestructible | Flags.SimpleParameterList : 0) |
           ((token & 0b00100000000101000000000000000000) > 0 ? Flags.SimpleParameterList : 0);
-      } else if (parser.token === Token.Assign) {
-        mutualFlag |= Flags.SimpleParameterList;
-        expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       } else {
         mutualFlag |= Flags.NotDestructible;
         expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
@@ -1306,6 +1312,7 @@ export function parseAsyncArrowOrCallExpression(
 
   if (parser.token === Token.Arrow) {
     if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
+
     return parseArrowFunctionAfterParen(
       parser,
       context,
@@ -1352,14 +1359,21 @@ export function parseImportCallOrMetaExpression(
   start: number,
   line: number,
   column: number
-): any {
+): Types.Expression {
   // ImportCall[Yield, Await]:
   //  import(AssignmentExpression[+In, ?Yield, ?Await])
   const tokenValue = parser.tokenValue;
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  let expr: any = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
+  let expr: Types.Identifier | Types.Expression = parseIdentifierFromValue(
+    parser,
+    context,
+    tokenValue,
+    start,
+    line,
+    column
+  );
 
   if (parser.token !== Token.Period) {
     if (inNew === 1) report(parser, Errors.InvalidImportNew);
@@ -1380,7 +1394,7 @@ export function parseNewExpression(
   curStart: number,
   curLine: number,
   curColumn: number
-): any {
+): Types.NewExpression | Types.MetaProperty {
   // NewExpression ::
   //   ('new')+ MemberExpression
   //
@@ -1575,8 +1589,8 @@ export function parseNewMemberExpression(
 export function parseTemplateExpression(
   parser: ParserState,
   context: Context,
-  tag: any,
-  quasi: any,
+  tag: Types.Expression,
+  quasi: Types.Expression,
   start: number,
   line: number,
   column: number
@@ -1873,7 +1887,7 @@ export function parseParenthesizedExpression(
     );
   }
 
-  let expressions: any[] = [];
+  let expressions: Types.Expression[] = [];
   let inSequence: 0 | 1 = 0;
   let mutualFlag: Flags = Flags.Empty;
 
@@ -2136,7 +2150,7 @@ export function parseLeftHandSideExpressionOrHigher(
   start: number,
   line: number,
   column: number
-): any {
+): Types.Expression {
   // LeftHandSideExpression ::
   //   (PrimaryExpression | MemberExpression) ...
 
@@ -2306,7 +2320,7 @@ export function parseUpdateExpression(
   parser: ParserState,
   context: Context,
   allowLHS: 0 | 1,
-  arg: any,
+  arg: Types.Expression,
   start: number,
   line: number,
   column: number
