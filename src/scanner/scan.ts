@@ -413,6 +413,7 @@ export function scan(
       // `.`, `...`, `.123` (numeric literal)
       case Token.Period:
         char = source.charCodeAt(++parser.index);
+        // Spec explicitly disallows a digit after `?.`
         if (char >= Chars.Zero && char <= Chars.Nine) return scanNumberAfterDecimalPoint(parser, source, char);
         if (char === Chars.Period && source.charCodeAt(parser.index + 1) === Chars.Period) {
           parser.index += 2;

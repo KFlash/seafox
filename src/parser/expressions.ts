@@ -26,7 +26,6 @@ import {
   consumeOpt,
   setLoc,
   reinterpretToPattern,
-  isValidIdentifier,
   validateIdentifier,
   isExactlyStrictDirective,
   isStrictReservedWord,
@@ -43,7 +42,7 @@ export function parseAssignmentExpression(
   line: number,
   column: number
 ): Types.Expression {
-  // Create a 'static' token variable to reduce memory access
+  // Create a 'static' token variable to reduce member access
   const token = parser.token;
 
   if ((token & Token.IsAssignOp) > 0) {
@@ -414,7 +413,7 @@ export function parseMemberExpression(
           ? {
               type: 'ChainingExpression',
               base: object,
-              chain: parseMemberOrCallChain(parser, context, [], 1, inGroup, start, line, column),
+              chain: parseMemberOrCallChain(parser, context, [], /* optional */ 1, inGroup, start, line, column),
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -422,7 +421,7 @@ export function parseMemberExpression(
           : {
               type: 'ChainingExpression',
               base: object,
-              chain: parseMemberOrCallChain(parser, context, [], 1, inGroup, start, line, column)
+              chain: parseMemberOrCallChain(parser, context, [], /* optional */ 1, inGroup, start, line, column)
             },
         allowLHS,
         inGroup,
@@ -448,13 +447,9 @@ export function parseMemberOrCallChain(
   line: number,
   column: number
 ): (Types.MemberChain | Types.CallChain)[] {
-  let chaining: 0 | 1 = 0;
-
   switch (parser.token) {
     /* Property */
     case Token.Period:
-      chaining = 1;
-
       nextToken(parser, context, /* allowRegExp */ 0);
 
       parser.assignable = 0;
@@ -479,12 +474,10 @@ export function parseMemberOrCallChain(
               property
             }
       );
-      break;
+      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
 
     /* Property */
     case Token.LeftBracket: {
-      chaining = 1;
-
       nextToken(parser, context, /* allowRegExp */ 1);
 
       const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
@@ -512,13 +505,11 @@ export function parseMemberOrCallChain(
             }
       );
 
-      break;
+      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
     }
     /* Call */
     case Token.LeftParen:
       const args = parseArguments(parser, context, inGroup);
-
-      chaining = 1;
 
       parser.assignable = 0;
 
@@ -539,7 +530,7 @@ export function parseMemberOrCallChain(
             }
       );
 
-      break;
+      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
 
     case Token.TemplateTail:
     case Token.TemplateCont:
@@ -547,18 +538,17 @@ export function parseMemberOrCallChain(
 
     /* Optional Property */
     case Token.QuestionMarkPeriod:
-      nextToken(parser, context, 0);
+      nextToken(parser, context, /* allowRegExp */ 0);
 
-      // '[x?.?.y = 1]'
-      if (optional === 1) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
+      // '[x?.?.y]'
+      if (optional === 1) report(parser, Errors.CantAssignTo);
 
-      parser.assignable = 0;
     // falls through
 
     default:
+      parser.assignable = 0;
+
       if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-        parser.assignable = 0;
-        chaining = 1;
         chain.push(
           context & Context.OptionsLoc
             ? {
@@ -577,12 +567,12 @@ export function parseMemberOrCallChain(
                 optional: true
               }
         );
+
+        return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column);
       }
   }
 
-  return chaining
-    ? parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column)
-    : chain;
+  return chain;
 }
 
 export function parseArguments(
