@@ -349,7 +349,8 @@ describe('Next - Top Level Await', () => {
     it(source as string, () => {
       const parser = parseModule(source as string, {
         disableWebCompat: ((ctx as any) & Context.OptionsDisableWebCompat) !== 0,
-        loc: ((ctx as any) & Context.OptionsLoc) !== 0
+        loc: ((ctx as any) & Context.OptionsLoc) !== 0,
+        next: true
       });
       t.deepStrictEqual(parser, expected);
     });
