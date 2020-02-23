@@ -292,7 +292,7 @@ export function parseAsyncStatement(
 
     // async Identifier => ...
 
-    if ((parser.token & (Token.FutureReserved | Token.IsIdentifier)) > 0) {
+    if ((parser.token & 0b00000000001001010000000000000000) > 0) {
       expr = parseAsyncArrow(
         parser,
         context,
@@ -305,9 +305,14 @@ export function parseAsyncStatement(
         column
       );
 
-      expr = parseSequenceExpression(parser, context, expr, start, line, column);
-
-      return parseExpressionStatement(parser, context, expr, start, line, column);
+      return parseExpressionStatement(
+        parser,
+        context,
+        parseSequenceExpression(parser, context, expr, start, line, column),
+        start,
+        line,
+        column
+      );
     }
   }
 
@@ -383,9 +388,12 @@ export function parseBlock(
         body
       };
 }
+
 export function parseEmptyStatement(parser: ParserState, context: Context): Types.EmptyStatement {
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 1);
+
   return context & Context.OptionsLoc
     ? {
         type: 'EmptyStatement',
@@ -401,9 +409,13 @@ export function parseEmptyStatement(parser: ParserState, context: Context): Type
 export function parseReturnStatement(parser: ParserState, context: Context): Types.ReturnStatement {
   // ReturnStatement ::
   //   'return' [no line terminator] Expression? ';'
+
   if (context & Context.InGlobal && (context & Context.OptionsGlobalReturn) === 0) report(parser, Errors.IllegalReturn);
+
   const { start, line, column } = parser;
+
   nextToken(parser, context, /* allowRegExp */ 1);
+
   const argument =
     parser.newLine !== 0 || parser.token & Token.IsAutoSemicolon ? null : parseExpressions(parser, context, 0);
 
@@ -466,21 +478,24 @@ export function parseForStatementWithVariableDeclarations(
     }
   } else {
     parser.assignable = 1;
+
     kind = token === Token.VarKeyword ? BindingKind.Variable : BindingKind.Const;
   }
 
   if ((kind & 0b00000000000000000000000000110010) > 0) {
     const declarations: Types.VariableDeclarator[] = [];
 
-    let bindingCount = 0;
+    let binding = 0;
     let type: BindingKind;
+    let id;
+
     while (parser.token !== Token.Comma) {
       const { tokenValue, start, line, column, token } = parser;
+
       type =
         kind |
         ((token & 0b00000010000000000000000000000000) === 0b00000010000000000000000000000000 ? BindingKind.Pattern : 0);
 
-      let id;
       let init: Types.Expression | null = null;
 
       if ((token & 0b00000000001001110000000000000000) !== 0) {
@@ -585,7 +600,7 @@ export function parseForStatementWithVariableDeclarations(
             }
       );
 
-      bindingCount++;
+      binding++;
 
       parser.assignable = 1;
 
@@ -594,10 +609,7 @@ export function parseForStatementWithVariableDeclarations(
       consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1);
     }
 
-    if (
-      bindingCount > 1 &&
-      (parser.token & 0b00000000010000000000000000000000) === 0b00000000010000000000000000000000
-    ) {
+    if (binding > 1 && (parser.token & 0b00000000010000000000000000000000) === 0b00000000010000000000000000000000) {
       report(parser, Errors.ForInOfLoopMultiBindings);
     }
 

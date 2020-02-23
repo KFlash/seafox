@@ -73,8 +73,7 @@ export const enum PropertyKind {
   Static = 1 << 5,
   Constructor = 1 << 6,
   Getter = 1 << 7,
-  Setter = 1 << 8,
-  GetSet = Getter | Setter
+  Setter = 1 << 8
 }
 
 /**
