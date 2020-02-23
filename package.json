@@ -1,6 +1,6 @@
 {
   "name": "seafox",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript",
   "main": "dist/seafox.umd.min.js",
   "module": "dist/seafox.esm.min.js",
@@ -66,8 +66,8 @@
   "devDependencies": {
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.16",
-    "@typescript-eslint/eslint-plugin": "^2.19.2",
-    "@typescript-eslint/parser": "^2.19.2",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
     "chalk": "^3.0.0",
     "coveralls": "^3.0.9",
     "cross-env": "^7.0.0",
@@ -88,7 +88,7 @@
     "source-map-support": "^0.5.13",
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.5",
+    "typescript": "^3.8.2",
     "unicode-12.0.0": "^0.8.0"
   },
   "husky": {
