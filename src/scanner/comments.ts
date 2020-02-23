@@ -22,6 +22,7 @@ export function skipSingleLineComment(parser: ParserState, source: string, i: nu
   while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0) {
     char = source.charCodeAt(++i);
   }
+
   return i;
 }
 

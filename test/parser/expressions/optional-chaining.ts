@@ -51,6 +51,39 @@ fail('Expressions - Optional chaining (fail)', [
   ['new obj?.foo()', Context.Empty],
   ['obj?.foo\n`template`', Context.Empty],
   ['async .?() => {}', Context.Empty],
+  ['foo?.bar *= x', Context.Empty],
+  ['[foo?.bar] = x', Context.Empty],
+  ['foo?.bar = x', Context.Empty],
+  ['a?.200', Context.Empty],
+  ['a?..200', Context.Empty],
+  ['log(import?.meta)', Context.Empty],
+  ['function f() { return import?.("foo").then(party); }', Context.Empty],
+  ['new foo?.bar', Context.Empty],
+  ['function f() { return new?.target}', Context.Empty],
+  ['new foo?.bar(foo)', Context.Empty],
+  ['new foo.bar?.(foo)', Context.Empty],
+  ['a?.b--', Context.Empty],
+  ['a?.b++', Context.Empty],
+  ['a?.--', Context.Empty],
+  ['a?.++', Context.Empty],
+  ['--a?.b', Context.Empty],
+  ['++a?.b', Context.Empty],
+  ['class x extends y { constructor() { super?.(foo) } }', Context.Empty],
+  ['a?.bar`foo`', Context.Empty],
+  ['a?.++', Context.Empty],
+  [
+    `a?.b
+  /c/`,
+    Context.Empty
+  ],
+  [
+    `a
+  ?
+  .
+  b`,
+    Context.Empty
+  ],
+  ['async function f() { (x = a?.(await z)) => y }', Context.Empty],
   ['a.?2.3', Context.Empty],
   ['a.? (?) [?]', Context.Empty],
   ['{a: 44}?.a', Context.Empty],

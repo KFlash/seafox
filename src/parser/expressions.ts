@@ -414,7 +414,7 @@ export function parseMemberExpression(
           ? {
               type: 'ChainingExpression',
               base: object,
-              chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column),
+              chain: parseMemberOrCallChain(parser, context, [], 1, inGroup, start, line, column),
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -422,7 +422,7 @@ export function parseMemberExpression(
           : {
               type: 'ChainingExpression',
               base: object,
-              chain: parseMemberOrCallChain(parser, context, [], 1, start, line, column)
+              chain: parseMemberOrCallChain(parser, context, [], 1, inGroup, start, line, column)
             },
         allowLHS,
         inGroup,
@@ -435,23 +435,31 @@ export function parseMemberExpression(
   return object;
 }
 
+// See https://github.com/estree/estree/pull/204
+// See https://gist.github.com/mysticatea/f3a87f3e02632797ec59d9b447fdf05e
+
 export function parseMemberOrCallChain(
   parser: ParserState,
   context: Context,
   chain: any[],
   optional: 0 | 1,
+  inGroup: 0 | 1,
   start: number,
   line: number,
   column: number
 ): (Types.MemberChain | Types.CallChain)[] {
+  let chaining: 0 | 1 = 0;
+
   switch (parser.token) {
     /* Property */
     case Token.Period:
+      chaining = 1;
+
       nextToken(parser, context, /* allowRegExp */ 0);
 
       parser.assignable = 0;
 
-      if ((parser.token & 0b00000000001001110000000000000000) === 0) report(parser, Errors.InvalidDotProperty);
+      const property = parsePropertyOrPrivatePropertyName(parser, context);
 
       chain.push(
         context & Context.OptionsLoc
@@ -459,7 +467,7 @@ export function parseMemberOrCallChain(
               type: 'MemberChain',
               computed: false,
               optional: false,
-              property: parseIdentifier(parser, context),
+              property,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
@@ -468,13 +476,15 @@ export function parseMemberOrCallChain(
               type: 'MemberChain',
               computed: false,
               optional: false,
-              property: parseIdentifier(parser, context)
+              property
             }
       );
-      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
+      break;
 
     /* Property */
     case Token.LeftBracket: {
+      chaining = 1;
+
       nextToken(parser, context, /* allowRegExp */ 1);
 
       const property = parseExpressions(parser, (context | Context.DisallowIn) ^ Context.DisallowIn, 0);
@@ -502,11 +512,13 @@ export function parseMemberOrCallChain(
             }
       );
 
-      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
+      break;
     }
     /* Call */
     case Token.LeftParen:
-      const args = parseArguments(parser, context, 0);
+      const args = parseArguments(parser, context, inGroup);
+
+      chaining = 1;
 
       parser.assignable = 0;
 
@@ -526,7 +538,8 @@ export function parseMemberOrCallChain(
               optional: true
             }
       );
-      return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
+
+      break;
 
     case Token.TemplateTail:
     case Token.TemplateCont:
@@ -545,6 +558,7 @@ export function parseMemberOrCallChain(
     default:
       if ((parser.token & 0b00000000001001110000000000000000) > 0) {
         parser.assignable = 0;
+        chaining = 1;
         chain.push(
           context & Context.OptionsLoc
             ? {
@@ -563,11 +577,12 @@ export function parseMemberOrCallChain(
                 optional: true
               }
         );
-        return parseMemberOrCallChain(parser, context, chain, /* optional */ 0, start, line, column);
       }
   }
 
-  return chain;
+  return chaining
+    ? parseMemberOrCallChain(parser, context, chain, /* optional */ 0, inGroup, start, line, column)
+    : chain;
 }
 
 export function parseArguments(
