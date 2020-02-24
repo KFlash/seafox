@@ -1454,13 +1454,22 @@ export function parseNewTargetExpression(
 
   const meta = parseIdentifierFromValue(parser, context, 'new', start, line, column);
 
-  const property = parseIdentifier(parser, context);
+  return parseMetaProperty(parser, context, meta, start, line, column);
+}
 
+export function parseMetaProperty(
+  parser: ParserState,
+  context: Context,
+  meta: any,
+  start: number,
+  line: number,
+  column: number
+): Types.MetaProperty {
   return context & Context.OptionsLoc
     ? {
         type: 'MetaProperty',
         meta,
-        property,
+        property: parseIdentifier(parser, context),
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
@@ -1468,7 +1477,7 @@ export function parseNewTargetExpression(
     : {
         type: 'MetaProperty',
         meta,
-        property
+        property: parseIdentifier(parser, context)
       };
 }
 
@@ -4730,7 +4739,7 @@ export function parseBindingPatternOrHigher(
   start: number,
   line: number,
   column: number
-): any {
+): Types.Pattern {
   if ((t & 0b00000000001001110000000000000000) > 0) {
     return parseAndClassifyIdentifier(
       parser,
@@ -4751,7 +4760,7 @@ export function parseBindingPatternOrHigher(
     report(parser, Errors.UnexpectedToken, KeywordDescTable[t & Token.Kind]);
   }
 
-  const left: any =
+  const left: Types.Pattern =
     parser.token === Token.LeftBracket
       ? parseArrayExpressionOrPattern(parser, context, scope, 1, 1, 0, kind, origin, start, line, column)
       : parseObjectLiteralOrPattern(parser, context, scope, 1, 1, 0, kind, origin, start, line, column);
@@ -4777,20 +4786,7 @@ export function parseImportMetaExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
-    ? {
-        type: 'MetaProperty',
-        property: parseIdentifier(parser, context),
-        meta,
-        start,
-        end: parser.endIndex,
-        loc: setLoc(parser, line, column)
-      }
-    : {
-        type: 'MetaProperty',
-        property: parseIdentifier(parser, context),
-        meta
-      };
+  return parseMetaProperty(parser, context, meta, start, line, column);
 }
 
 export function parseDirectives(
