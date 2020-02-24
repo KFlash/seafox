@@ -4739,7 +4739,7 @@ export function parseBindingPatternOrHigher(
   start: number,
   line: number,
   column: number
-): Types.Pattern {
+): any {
   if ((t & 0b00000000001001110000000000000000) > 0) {
     return parseAndClassifyIdentifier(
       parser,
