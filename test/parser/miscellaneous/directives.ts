@@ -85,6 +85,445 @@ describe('Miscellaneous - Directives', () => {
   }
   for (const [source, ctx, expected] of [
     [
+      `function f(){
+        foo();
+        "use strict"
+        (bar);
+        "\\5";
+      }`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'FunctionDeclaration',
+            params: [],
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'Identifier',
+                      name: 'foo',
+                      start: 22,
+                      end: 25,
+                      loc: {
+                        start: {
+                          line: 2,
+                          column: 8
+                        },
+                        end: {
+                          line: 2,
+                          column: 11
+                        }
+                      }
+                    },
+                    arguments: [],
+                    start: 22,
+                    end: 27,
+                    loc: {
+                      start: {
+                        line: 2,
+                        column: 8
+                      },
+                      end: {
+                        line: 2,
+                        column: 13
+                      }
+                    }
+                  },
+                  start: 22,
+                  end: 28,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 8
+                    },
+                    end: {
+                      line: 2,
+                      column: 14
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'Literal',
+                      value: 'use strict',
+                      raw: '"use strict"',
+                      start: 37,
+                      end: 49,
+                      loc: {
+                        start: {
+                          line: 3,
+                          column: 8
+                        },
+                        end: {
+                          line: 3,
+                          column: 20
+                        }
+                      }
+                    },
+                    arguments: [
+                      {
+                        type: 'Identifier',
+                        name: 'bar',
+                        start: 59,
+                        end: 62,
+                        loc: {
+                          start: {
+                            line: 4,
+                            column: 9
+                          },
+                          end: {
+                            line: 4,
+                            column: 12
+                          }
+                        }
+                      }
+                    ],
+                    start: 37,
+                    end: 63,
+                    loc: {
+                      start: {
+                        line: 3,
+                        column: 8
+                      },
+                      end: {
+                        line: 4,
+                        column: 13
+                      }
+                    }
+                  },
+                  start: 37,
+                  end: 64,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 8
+                    },
+                    end: {
+                      line: 4,
+                      column: 14
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'Literal',
+                    value: '\u0005',
+                    raw: '"\\5"',
+                    start: 73,
+                    end: 77,
+                    loc: {
+                      start: {
+                        line: 5,
+                        column: 8
+                      },
+                      end: {
+                        line: 5,
+                        column: 12
+                      }
+                    }
+                  },
+                  start: 73,
+                  end: 78,
+                  loc: {
+                    start: {
+                      line: 5,
+                      column: 8
+                    },
+                    end: {
+                      line: 5,
+                      column: 13
+                    }
+                  }
+                }
+              ],
+              start: 12,
+              end: 86,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 6,
+                  column: 7
+                }
+              }
+            },
+            async: false,
+            generator: false,
+            id: {
+              type: 'Identifier',
+              name: 'f',
+              start: 9,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 9
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            start: 0,
+            end: 86,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 6,
+                column: 7
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 86,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 6,
+            column: 7
+          }
+        }
+      }
+    ],
+    [
+      `"use strict".foo;
+          "use strict"[foo];
+          "use strict"(foo);`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Literal',
+                value: 'use strict',
+                raw: '"use strict"',
+                start: 0,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 13,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 13
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              },
+              start: 0,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 0,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Literal',
+                value: 'use strict',
+                raw: '"use strict"',
+                start: 28,
+                end: 40,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 10
+                  },
+                  end: {
+                    line: 2,
+                    column: 22
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 41,
+                end: 44,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 23
+                  },
+                  end: {
+                    line: 2,
+                    column: 26
+                  }
+                }
+              },
+              start: 28,
+              end: 45,
+              loc: {
+                start: {
+                  line: 2,
+                  column: 10
+                },
+                end: {
+                  line: 2,
+                  column: 27
+                }
+              }
+            },
+            start: 28,
+            end: 46,
+            loc: {
+              start: {
+                line: 2,
+                column: 10
+              },
+              end: {
+                line: 2,
+                column: 28
+              }
+            }
+          },
+          {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'CallExpression',
+              callee: {
+                type: 'Literal',
+                raw: '"use strict"',
+                value: 'use strict',
+                start: 57,
+                end: 69,
+                loc: {
+                  start: {
+                    line: 3,
+                    column: 10
+                  },
+                  end: {
+                    line: 3,
+                    column: 22
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'Identifier',
+                  name: 'foo',
+                  start: 70,
+                  end: 73,
+                  loc: {
+                    start: {
+                      line: 3,
+                      column: 23
+                    },
+                    end: {
+                      line: 3,
+                      column: 26
+                    }
+                  }
+                }
+              ],
+              start: 57,
+              end: 74,
+              loc: {
+                start: {
+                  line: 3,
+                  column: 10
+                },
+                end: {
+                  line: 3,
+                  column: 27
+                }
+              }
+            },
+            start: 57,
+            end: 75,
+            loc: {
+              start: {
+                line: 3,
+                column: 10
+              },
+              end: {
+                line: 3,
+                column: 28
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 75,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 3,
+            column: 28
+          }
+        }
+      }
+    ],
+    [
       `'use strict'; foo`,
       Context.OptionsNext | Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw | Context.Module,
       {
@@ -251,7 +690,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"\\u0075se strict"',
             expression: {
               type: 'Literal',
               value: 'use strict',
@@ -315,7 +753,6 @@ describe('Miscellaneous - Directives', () => {
               body: [
                 {
                   type: 'ExpressionStatement',
-                  directive: '"use strict"',
                   expression: {
                     type: 'MemberExpression',
                     object: {
@@ -512,7 +949,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"ignore me"',
             expression: {
               type: 'Literal',
               value: 'ignore me',
@@ -616,7 +1052,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: "'foo'",
             expression: {
               type: 'Literal',
               value: 'foo',
@@ -649,7 +1084,6 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
-            directive: '"bar"',
             expression: {
               type: 'Literal',
               value: 'bar',
@@ -705,7 +1139,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"foo"',
             expression: {
               type: 'Literal',
               value: 'foo',
@@ -738,7 +1171,6 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
-            directive: '"bar"',
             expression: {
               type: 'Literal',
               value: 'bar',
@@ -794,7 +1226,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"use asm"',
             expression: {
               type: 'Literal',
               raw: '"use asm"',
@@ -1253,7 +1684,6 @@ describe('Miscellaneous - Directives', () => {
                 }
               }
             },
-            directive: '"use strict"',
             start: 0,
             end: 30,
             loc: {
@@ -1412,7 +1842,6 @@ describe('Miscellaneous - Directives', () => {
                 }
               }
             },
-            directive: '"USE STRICT"',
             start: 0,
             end: 13,
             loc: {

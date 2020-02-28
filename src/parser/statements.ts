@@ -60,6 +60,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
   const statements: Types.Statement[] = [];
 
   let expression: Types.Literal | Types.Expression;
+  let isValidStrict: 0 | 1 = 0;
 
   while (parser.token === Token.StringLiteral) {
     const { index, start, line, column, tokenValue } = parser;
@@ -68,13 +69,15 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
 
     if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
       context |= Context.Strict;
+      isValidStrict = 1;
     } else {
       expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
+      isValidStrict = 0;
     }
 
     expectSemicolon(parser, context);
 
-    statements.push(parseDirectives(parser, context, index, expression, start, line, column));
+    statements.push(parseDirectives(parser, context, isValidStrict, index, expression, start, line, column));
   }
 
   while (parser.token !== Token.EOF) {

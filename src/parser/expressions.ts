@@ -2974,6 +2974,7 @@ export function parseFunctionBody(
   if (parser.token !== Token.RightBrace) {
     const isOctal = parser.flags & Flags.Octals ? 1 : 0;
     const isStrict = context & Context.Strict ? 1 : 0;
+    let isValidStrict: 0 | 1 = 0;
 
     while (parser.token === Token.StringLiteral) {
       const { index, start, line, column, tokenValue } = parser;
@@ -2982,7 +2983,7 @@ export function parseFunctionBody(
 
       if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
         context |= Context.Strict;
-
+        isValidStrict = 1;
         if (parser.flags & Flags.SimpleParameterList) {
           report(parser, Errors.IllegalUseStrict);
         }
@@ -2992,11 +2993,12 @@ export function parseFunctionBody(
         }
       } else {
         expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
+        isValidStrict = 0;
       }
 
       expectSemicolon(parser, context);
 
-      body.push(parseDirectives(parser, context, index, expression, start, line, column));
+      body.push(parseDirectives(parser, context, isValidStrict, index, expression, start, line, column));
     }
 
     if (context & Context.Strict) {
@@ -4792,13 +4794,14 @@ export function parseImportMetaExpression(
 export function parseDirectives(
   parser: ParserState,
   context: Context,
+  isValidStrict: 0 | 1,
   end: number,
   expression: any,
   start: number,
   line: number,
   column: number
 ): Types.ExpressionStatement {
-  return context & Context.OptionsDirectives
+  return isValidStrict && context & Context.OptionsDirectives
     ? context & Context.OptionsLoc
       ? {
           type: 'ExpressionStatement',
