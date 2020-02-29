@@ -27,7 +27,7 @@ import {
   setLoc,
   reinterpretToPattern,
   validateIdentifier,
-  isExactlyStrictDirective,
+  nextLiteralExactlyEquals,
   isStrictReservedWord,
   validateFunctionName
 } from './common';
@@ -2974,16 +2974,15 @@ export function parseFunctionBody(
   if (parser.token !== Token.RightBrace) {
     const isOctal = parser.flags & Flags.Octals ? 1 : 0;
     const isStrict = context & Context.Strict ? 1 : 0;
-    let isValidStrict: 0 | 1 = 0;
 
     while (parser.token === Token.StringLiteral) {
       const { index, start, line, column, tokenValue } = parser;
 
-      let expression = parseLiteral(parser, context);
+      let expr = parseLiteral(parser, context);
 
-      if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
+      if (nextLiteralExactlyEquals(parser, index, start, tokenValue)) {
         context |= Context.Strict;
-        isValidStrict = 1;
+
         if (parser.flags & Flags.SimpleParameterList) {
           report(parser, Errors.IllegalUseStrict);
         }
@@ -2991,14 +2990,13 @@ export function parseFunctionBody(
         if (isOctal === 1) {
           report(parser, Errors.StrictOctalLiteral);
         }
-      } else {
-        expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
-        isValidStrict = 0;
       }
+
+      expr = parseNonDirectiveExpression(parser, context, expr, start, line, column);
 
       expectSemicolon(parser, context);
 
-      body.push(parseDirectives(parser, context, isValidStrict, index, expression, start, line, column));
+      body.push(parseDirectives(parser, context, index, expr, start, line, column));
     }
 
     if (context & Context.Strict) {
@@ -4794,14 +4792,13 @@ export function parseImportMetaExpression(
 export function parseDirectives(
   parser: ParserState,
   context: Context,
-  isValidStrict: 0 | 1,
   end: number,
   expression: any,
   start: number,
   line: number,
   column: number
 ): Types.ExpressionStatement {
-  return isValidStrict && context & Context.OptionsDirectives
+  return context & Context.OptionsDirectives
     ? context & Context.OptionsLoc
       ? {
           type: 'ExpressionStatement',
@@ -4838,6 +4835,8 @@ export function parseNonDirectiveExpression(
   line: number,
   column: number
 ): Types.Expression {
+  if (context & Context.Strict) return expr;
+
   /** MemberExpression :
    *   1. PrimaryExpression
    *   2. MemberExpression [ AssignmentExpression ]
@@ -4856,7 +4855,9 @@ export function parseNonDirectiveExpression(
    *   ('++' | '--')? LeftHandSideExpression
    *
    */
+
   expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
+
   /** AssignmentExpression :
    *   1. ConditionalExpression
    *   2. LeftHandSideExpression = AssignmentExpression

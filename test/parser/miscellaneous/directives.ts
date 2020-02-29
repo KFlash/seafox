@@ -317,6 +317,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"use strict"',
             expression: {
               type: 'MemberExpression',
               object: {
@@ -381,6 +382,7 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
+            directive: '"use strict"',
             expression: {
               type: 'MemberExpression',
               object: {
@@ -445,6 +447,7 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
+            directive: '"use strict"',
             expression: {
               type: 'CallExpression',
               callee: {
@@ -690,6 +693,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"\\u0075se strict"',
             expression: {
               type: 'Literal',
               value: 'use strict',
@@ -753,6 +757,7 @@ describe('Miscellaneous - Directives', () => {
               body: [
                 {
                   type: 'ExpressionStatement',
+                  directive: '"use strict"',
                   expression: {
                     type: 'MemberExpression',
                     object: {
@@ -949,6 +954,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"ignore me"',
             expression: {
               type: 'Literal',
               value: 'ignore me',
@@ -1052,6 +1058,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: "'foo'",
             expression: {
               type: 'Literal',
               value: 'foo',
@@ -1084,6 +1091,7 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
+            directive: '"bar"',
             expression: {
               type: 'Literal',
               value: 'bar',
@@ -1139,6 +1147,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"foo"',
             expression: {
               type: 'Literal',
               value: 'foo',
@@ -1171,6 +1180,7 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
+            directive: '"bar"',
             expression: {
               type: 'Literal',
               value: 'bar',
@@ -1226,6 +1236,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"use asm"',
             expression: {
               type: 'Literal',
               raw: '"use asm"',
@@ -1633,6 +1644,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"use strict"',
             expression: {
               type: 'SequenceExpression',
               expressions: [
@@ -1825,6 +1837,7 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
+            directive: '"USE STRICT"',
             expression: {
               type: 'Literal',
               value: 'USE STRICT',

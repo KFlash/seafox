@@ -48,7 +48,7 @@ import {
   reinterpretToPattern,
   addLabel,
   parseStatementWithLabelSet,
-  isExactlyStrictDirective,
+  nextLiteralExactlyEquals,
   validateIdentifier,
   Label
 } from './common';
@@ -59,25 +59,22 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
 
   const statements: Types.Statement[] = [];
 
-  let expression: Types.Literal | Types.Expression;
-  let isValidStrict: 0 | 1 = 0;
+  let expr: Types.Literal | Types.Expression;
 
   while (parser.token === Token.StringLiteral) {
     const { index, start, line, column, tokenValue } = parser;
 
-    expression = parseLiteral(parser, context);
+    expr = parseLiteral(parser, context);
 
-    if (isExactlyStrictDirective(parser, index, start, tokenValue)) {
+    if (nextLiteralExactlyEquals(parser, index, start, tokenValue)) {
       context |= Context.Strict;
-      isValidStrict = 1;
-    } else {
-      expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
-      isValidStrict = 0;
     }
+
+    expr = parseNonDirectiveExpression(parser, context, expr, start, line, column);
 
     expectSemicolon(parser, context);
 
-    statements.push(parseDirectives(parser, context, isValidStrict, index, expression, start, line, column));
+    statements.push(parseDirectives(parser, context, index, expr, start, line, column));
   }
 
   while (parser.token !== Token.EOF) {
@@ -194,7 +191,7 @@ export function parseLabelledStatement(
   nestedLabels: Label[] | null,
   value: string,
   token: Token,
-  expr: any,
+  expr: Types.Identifier,
   allowFuncDecl: 0 | 1,
   start: number,
   line: number,
@@ -1533,7 +1530,18 @@ export function parseExpressionOrLabelledStatement(
 ): Types.LabeledStatement | Types.ExpressionStatement {
   const { tokenValue, token, start, line, column } = parser;
 
-  let expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, /* allowLHS */ 1, 1, 0, start, line, column);
+  let expr: any = parsePrimaryExpression(
+    parser,
+    context,
+    BindingKind.None,
+    0,
+    /* allowLHS */ 1,
+    1,
+    0,
+    start,
+    line,
+    column
+  );
 
   if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.RestricedLetProduction);
 
