@@ -109,11 +109,101 @@ fail('Statements - Block (fail)', [
   [`# { # }`, Context.Empty],
   [`{ # } #`, Context.Empty],
   [`try { } catch (e) { # # }`, Context.Empty],
-  [`{ class async {}; { var async; } }`, Context.Empty],
+  [`try { } catch (e) { # # }`, Context.Empty],
+  [`{ function let(){} }`, Context.Strict],
   [`{ async function *f(){} let f }`, Context.Empty]
 ]);
 
 pass('Statements - Block (pass)', [
+  [
+    `{ function let(){} }`,
+    Context.Empty,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'BlockStatement',
+          body: [
+            {
+              type: 'FunctionDeclaration',
+              params: [],
+              body: {
+                type: 'BlockStatement',
+                body: [],
+                start: 16,
+                end: 18,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 16
+                  },
+                  end: {
+                    line: 1,
+                    column: 18
+                  }
+                }
+              },
+              async: false,
+              generator: false,
+              id: {
+                type: 'Identifier',
+                name: 'let',
+                start: 11,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              start: 2,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 2
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            }
+          ],
+          start: 0,
+          end: 20,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 20
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 20,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 20
+        }
+      }
+    }
+  ],
   [
     `{ async *[await = 5]()
         {}

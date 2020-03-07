@@ -15,6 +15,12 @@ fail('Declarations - Let (fail)', [
   ['let ...a = 1;', Context.Empty],
   ['let a, ...b = 1;', Context.Empty],
   ['let [a];', Context.Empty],
+
+  ['let[x].foo in x;', Context.Empty],
+  ['(let)[x].foo in x;', Context.Strict],
+  ['for (let[x] in x);', Context.Strict],
+  ['let[x] in x;', Context.Empty],
+
   ['let x; var x;', Context.OptionsDisableWebCompat],
   ['let {a, let} = x;', Context.OptionsDisableWebCompat],
   ['let {let = y} = x;', Context.OptionsDisableWebCompat],
@@ -83,6 +89,7 @@ fail('Declarations - Let (fail)', [
   ['let\neval(foo)', Context.Empty],
   ['let eval(foo)', Context.Empty],
   ['let [((a)] = [];', Context.Empty],
+  ['for (let[x].foo in x);', Context.Empty],
   ['function foo() { return {}; }; let [foo().x] = [];', Context.Empty],
   ['function foo() { return {}; }; [foo()] = [];', Context.Empty],
   ['let {a:=c} = z;', Context.Empty],
@@ -418,6 +425,829 @@ for (const arg of [
 
 pass('Declarations - Let (pass)', [
   [
+    '(let);',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Identifier',
+            name: 'let',
+            start: 1,
+            end: 4,
+            loc: {
+              start: {
+                line: 1,
+                column: 1
+              },
+              end: {
+                line: 1,
+                column: 4
+              }
+            }
+          },
+          start: 0,
+          end: 6,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 6
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 6,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 6
+        }
+      }
+    }
+  ],
+  [
+    'let: (let);',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'LabeledStatement',
+          label: {
+            type: 'Identifier',
+            name: 'let',
+            start: 0,
+            end: 3,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 3
+              }
+            }
+          },
+          body: {
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'Identifier',
+              name: 'let',
+              start: 6,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            start: 5,
+            end: 11,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 11
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
+    '(let)[x] in x;',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: 'let',
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'x',
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              start: 0,
+              end: 8,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 8
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 12,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
+      }
+    }
+  ],
+  [
+    'let.dot in x',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: 'let',
+                start: 0,
+                end: 3,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 3
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'dot',
+                start: 4,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              start: 0,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 12,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 12
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 12
+        }
+      }
+    }
+  ],
+  [
+    '(let).foo in x;',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: 'let',
+                start: 1,
+                end: 4,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 4
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 6,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 13,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 13
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    'for (let in x);',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ForInStatement',
+          body: {
+            type: 'EmptyStatement',
+            start: 14,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          },
+          left: {
+            type: 'Identifier',
+            name: 'let',
+            start: 5,
+            end: 8,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 8
+              }
+            }
+          },
+          right: {
+            type: 'Identifier',
+            name: 'x',
+            start: 12,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 12
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 15,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 15
+        }
+      }
+    }
+  ],
+  [
+    'for ((let)[x].foo of x);',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ForOfStatement',
+          body: {
+            type: 'EmptyStatement',
+            start: 23,
+            end: 24,
+            loc: {
+              start: {
+                line: 1,
+                column: 23
+              },
+              end: {
+                line: 1,
+                column: 24
+              }
+            }
+          },
+          left: {
+            type: 'MemberExpression',
+            object: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: 'let',
+                start: 6,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'x',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              start: 5,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            computed: false,
+            property: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 14,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 5,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          right: {
+            type: 'Identifier',
+            name: 'x',
+            start: 21,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 21
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          await: false,
+          start: 0,
+          end: 24,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 24
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 24,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 24
+        }
+      }
+    }
+  ],
+  [
+    'for ((let)[x];;);',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ForStatement',
+          body: {
+            type: 'EmptyStatement',
+            start: 16,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 16
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          init: {
+            type: 'MemberExpression',
+            object: {
+              type: 'Identifier',
+              name: 'let',
+              start: 6,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            computed: true,
+            property: {
+              type: 'Identifier',
+              name: 'x',
+              start: 11,
+              end: 12,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 11
+                },
+                end: {
+                  line: 1,
+                  column: 12
+                }
+              }
+            },
+            start: 5,
+            end: 13,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 13
+              }
+            }
+          },
+          test: null,
+          update: null,
+          start: 0,
+          end: 17,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 17
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 17,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 17
+        }
+      }
+    }
+  ],
+  [
     'let package',
     Context.OptionsLoc,
     {
@@ -643,6 +1473,154 @@ pass('Declarations - Let (pass)', [
         end: {
           line: 1,
           column: 9
+        }
+      }
+    }
+  ],
+  [
+    'for ((let)[x].foo in x);', // let package
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ForInStatement',
+          body: {
+            type: 'EmptyStatement',
+            start: 23,
+            end: 24,
+            loc: {
+              start: {
+                line: 1,
+                column: 23
+              },
+              end: {
+                line: 1,
+                column: 24
+              }
+            }
+          },
+          left: {
+            type: 'MemberExpression',
+            object: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: 'let',
+                start: 6,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'Identifier',
+                name: 'x',
+                start: 11,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              start: 5,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            computed: false,
+            property: {
+              type: 'Identifier',
+              name: 'foo',
+              start: 14,
+              end: 17,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 17
+                }
+              }
+            },
+            start: 5,
+            end: 17,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 17
+              }
+            }
+          },
+          right: {
+            type: 'Identifier',
+            name: 'x',
+            start: 21,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 21
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          start: 0,
+          end: 24,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 24
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 24,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 24
         }
       }
     }

@@ -1487,6 +1487,158 @@ pass('Expressions - Group (pass)', [
     }
   ],
   [
+    `(6)[x => (y)] in 3;`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Literal',
+                value: 6,
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              computed: true,
+              property: {
+                type: 'ArrowFunctionExpression',
+                body: {
+                  type: 'Identifier',
+                  name: 'y',
+                  start: 10,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 10
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                params: [
+                  {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 4,
+                    end: 5,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 4
+                      },
+                      end: {
+                        line: 1,
+                        column: 5
+                      }
+                    }
+                  }
+                ],
+                async: false,
+                expression: true,
+                start: 4,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
+                }
+              },
+              start: 0,
+              end: 13,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 13
+                }
+              }
+            },
+            right: {
+              type: 'Literal',
+              value: 3,
+              start: 17,
+              end: 18,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 17
+                },
+                end: {
+                  line: 1,
+                  column: 18
+                }
+              }
+            },
+            operator: 'in',
+            start: 0,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          },
+          start: 0,
+          end: 19,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 19
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 19,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 19
+        }
+      }
+    }
+  ],
+  [
     `({ ...(a) } = {});`,
     Context.OptionsLoc,
     {
