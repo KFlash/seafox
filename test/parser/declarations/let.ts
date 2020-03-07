@@ -15,12 +15,9 @@ fail('Declarations - Let (fail)', [
   ['let ...a = 1;', Context.Empty],
   ['let a, ...b = 1;', Context.Empty],
   ['let [a];', Context.Empty],
-
   ['let[x].foo in x;', Context.Empty],
   ['(let)[x].foo in x;', Context.Strict],
-  ['for (let[x] in x);', Context.Strict],
   ['let[x] in x;', Context.Empty],
-
   ['let x; var x;', Context.OptionsDisableWebCompat],
   ['let {a, let} = x;', Context.OptionsDisableWebCompat],
   ['let {let = y} = x;', Context.OptionsDisableWebCompat],

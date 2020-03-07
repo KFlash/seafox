@@ -100,4 +100,4 @@ export function parseModule(source: string, options?: Options): Program {
   return parseRoot(source, Context.Strict | Context.Module | Context.InGlobal, options);
 }
 
-export const version = '1.0.2';
+export const version = '1.0.3';

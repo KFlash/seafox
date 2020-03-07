@@ -117,7 +117,7 @@ fail('Statements - Block (fail)', [
 pass('Statements - Block (pass)', [
   [
     `{ function let(){} }`,
-    Context.Empty,
+    Context.OptionsLoc,
     {
       type: 'Program',
       sourceType: 'script',
