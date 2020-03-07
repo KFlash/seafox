@@ -9,6 +9,7 @@ fail('Statements - For (fail)', [
   ['for (const x in y) { var x; }', Context.Module | Context.OptionsDisableWebCompat],
   ['for (let x of y) { var x; }', Context.OptionsDisableWebCompat],
   ['for(var [z] = function ([a]) { } in []) {}', Context.OptionsDisableWebCompat],
+  ['for(var a==b;;);', Context.OptionsDisableWebCompat],
   ['for (const x of y) { var x; }', Context.OptionsDisableWebCompat],
   ['for (let a, b, x, d;;) { var foo; var bar; { var doo, x, ee; } }', Context.OptionsDisableWebCompat],
   ['for (var a;;) { var b; let b; }', Context.OptionsDisableWebCompat],

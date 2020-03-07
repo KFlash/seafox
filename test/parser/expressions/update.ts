@@ -14,6 +14,231 @@ fail('Expressions - Update (fail)', [
 
 pass('Expressions - Update', [
   [
+    `delete.500`,
+    Context.OptionsNext | Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: 'delete',
+            argument: {
+              type: 'Literal',
+              value: 0.5,
+              start: 6,
+              end: 10,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 10
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 10,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 10
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 10,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 10
+        }
+      }
+    }
+  ],
+  [
+    `delete.500.foo`,
+    Context.OptionsNext | Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'UnaryExpression',
+            operator: 'delete',
+            argument: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Literal',
+                value: 0.5,
+                start: 6,
+                end: 10,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 10
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 11,
+                end: 14,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 11
+                  },
+                  end: {
+                    line: 1,
+                    column: 14
+                  }
+                }
+              },
+              start: 6,
+              end: 14,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 6
+                },
+                end: {
+                  line: 1,
+                  column: 14
+                }
+              }
+            },
+            prefix: true,
+            start: 0,
+            end: 14,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 14
+              }
+            }
+          },
+          start: 0,
+          end: 14,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 14
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 14,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 14
+        }
+      }
+    }
+  ],
+  [
+    `throw.500`,
+    Context.OptionsNext | Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ThrowStatement',
+          argument: {
+            type: 'Literal',
+            value: 0.5,
+            start: 5,
+            end: 9,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 9
+              }
+            }
+          },
+          start: 0,
+          end: 9,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 9
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 9,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 9
+        }
+      }
+    }
+  ],
+  [
     `foo\n++\nbar`,
     Context.OptionsNext | Context.OptionsLoc,
     {

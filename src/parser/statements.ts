@@ -458,6 +458,8 @@ export function parseForStatementWithVariableDeclarations(
   const origin = Origin.ForStatement;
   let kind: BindingKind = BindingKind.Tail;
   let isLet: 0 | 1 = 0;
+  let isLetAsIdent: 0 | 1 = 0;
+
   nextToken(parser, context, /* allowRegExp */ 0);
 
   if (token === Token.LetKeyword) {
@@ -477,8 +479,7 @@ export function parseForStatementWithVariableDeclarations(
       parser.assignable = 1;
 
       init = parseMemberExpression(parser, context, init, 1, 0, start, line, column);
-
-      isLet = 1;
+      isLetAsIdent = isLet = 1;
     }
   } else {
     parser.assignable = 1;
@@ -714,9 +715,16 @@ export function parseForStatementWithVariableDeclarations(
           right
         };
   }
-  init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
 
-  init = parseSequenceExpression(parser, context, init, parser.start, parser.line, parser.column);
+  // Note: Only valid in cases where 'let' is seen as an identifier
+  //
+  // Example:
+  //
+  //    for (let=10;;);
+  //
+  if (isLetAsIdent === 1) init = parseAssignmentExpression(parser, context, 0, 0, init, start, line, column);
+
+  init = parseSequenceExpression(parser, context, init as Types.Expression, parser.start, parser.line, parser.column);
 
   consume(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
