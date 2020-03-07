@@ -2615,7 +2615,7 @@ export function parseArrayExpressionOrPattern(
     if (consumeOpt(parser, context, Token.Comma, /* allowRegExp */ 1)) {
       elements.push(null);
     } else {
-      let left: any;
+      let left: Types.Expression | Types.PrimaryExpression | null = null;
 
       const { token, start, line, column, tokenValue } = parser;
 
@@ -2624,7 +2624,17 @@ export function parseArrayExpressionOrPattern(
 
         if (parser.token === Token.Assign) {
           if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
-          left = parseAssignmentOrPattern(parser, context, reinterpret, inGroup, left, '=', start, line, column);
+          left = parseAssignmentOrPattern(
+            parser,
+            context,
+            reinterpret,
+            inGroup,
+            left as Types.Expression,
+            '=',
+            start,
+            line,
+            column
+          );
         } else if (isRightBraketOrComma(parser.token)) {
           if (parser.assignable === 1) {
             addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
@@ -2663,11 +2673,12 @@ export function parseArrayExpressionOrPattern(
             left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left as any);
 
             if ((parser.token as Token) === Token.QuestionMark) {
-              left = parseConditionalExpression(parser, context, left, start, line, column);
+              left = parseConditionalExpression(parser, context, left as Types.Expression, start, line, column);
             }
           } else {
             if (token === Token.QuestionMark) {
               destructible |= Flags.NotDestructible;
+
               left = parseConditionalExpression(parser, context, left, start, line, column);
             } else {
               destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
@@ -2723,7 +2734,7 @@ export function parseArrayExpressionOrPattern(
             left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left);
 
             if ((parser.token as Token) === Token.QuestionMark) {
-              left = parseConditionalExpression(parser, context, left, start, line, column);
+              left = parseConditionalExpression(parser, context, left as Types.Expression, start, line, column);
             }
           } else {
             if (token === Token.QuestionMark) {
@@ -2773,7 +2784,7 @@ export function parseArrayExpressionOrPattern(
         }
       }
 
-      elements.push(left);
+      elements.push(left as any);
 
       if (parser.token !== Token.Comma) break;
 

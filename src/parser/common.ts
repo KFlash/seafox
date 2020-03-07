@@ -128,15 +128,15 @@ export interface ParserState {
 export function expectSemicolon(parser: ParserState, context: Context): void {
   // Check for automatic semicolon insertion according to
   // the rules given in ECMA-262, section 7.9, page 21.
-  if (parser.token === Token.Semicolon) {
-    nextToken(parser, context, /* allowRegExp */ 1);
-    return;
-  }
-  if (parser.newLine === 1 || (parser.token & 0b00000001000000000000000000000000) > 0) {
-    return;
+
+  if (
+    parser.newLine === 0 &&
+    (parser.token & 0b00000001000000000000000000000000) !== 0b00000001000000000000000000000000
+  ) {
+    report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
   }
 
-  report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & 0b00000000000000000000000011111111]);
+  if (parser.token === Token.Semicolon) nextToken(parser, context, /* allowRegExp */ 1);
 }
 
 export function consumeOpt(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): 0 | 1 {
@@ -202,7 +202,7 @@ export function reinterpretToPattern(state: ParserState, node: any): void {
   }
 }
 
-export function parseStatementWithLabelSet(t: Token, label: any, labels: any, nestedLabels: any) {
+export function parseStatementWithLabelSet(t: Token, label: string, labels: any, nestedLabels: any): any {
   if (nestedLabels) {
     nestedLabels.push(label);
   } else {
@@ -215,10 +215,16 @@ export function parseStatementWithLabelSet(t: Token, label: any, labels: any, ne
 }
 
 export function isIterationStatement(t: Token): boolean {
+  // If encounter 'for', 'while', or 'do', it's an valid iteration statement start
+  //
+  // Examples:
+  //      for(...) {}
+  //      while(...) {}
+  //      do { } while(...)
   return t === Token.ForKeyword || t === Token.WhileKeyword || t === Token.DoKeyword;
 }
 
-export function addLabel(parser: ParserState, label: any, labels: any, nestedLabels: any): any {
+export function addLabel(parser: ParserState, label: string, labels: any, nestedLabels: any): any {
   let set = labels;
 
   while (set) {
