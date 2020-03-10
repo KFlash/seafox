@@ -33,12 +33,16 @@ npm install seafox --save-dev
 
 Seafox generates `AST` according to [ESTree AST format](https://github.com/estree/estree), and can be used to perform [syntactic analysis](https://en.wikipedia.org/wiki/Parsing) (parsing) of a JavaScript program, and with `ES2015` and later a JavaScript program can be either [a script or a module](https://tc39.github.io/ecma262/index.html#sec-ecmascript-language-scripts-and-modules).
 
-Seafox stricly follows the ECMA specifications so you have to specify whether to parse in [`parseScript`](https://tc39.github.io/ecma262/#sec-parse-script) mode (the default) or in [`parseModule`](https://tc39.github.io/ecma262/#sec-parsemodule) mode.
+The `parse` method exposed by `Seafox` takes an optional `options` object which allows you to specify whether to parse in [`script`](https://tc39.github.io/ecma262/#sec-parse-script) mode (the default) or in [`module`](https://tc39.github.io/ecma262/#sec-parsemodule) mode.
+
 
 This is the available options:
 
 ```js
 {
+  // Allow parsing using Module as the goal symbol
+  module?: boolean;
+
   // The flag to enable start and end offsets and line/column location information to each node
   loc: false;
 

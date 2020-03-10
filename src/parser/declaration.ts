@@ -227,6 +227,7 @@ export function parseVariableDeclarationListAndDeclarator(
   let id: Types.BindingName;
   let init: Types.Expression | null = null;
 
+  const isConstDecl = (kind & BindingKind.Const) === BindingKind.Const;
   const list: Types.VariableDeclarator[] = [];
 
   do {
@@ -241,15 +242,8 @@ export function parseVariableDeclarationListAndDeclarator(
       nextToken(parser, context, /* allowRegExp */ 1);
       init = parseExpression(parser, context, /* inGroup */ 0);
       // ES6 'const' and binding patterns require initializers
-    } else if (
-      (kind & BindingKind.Const) === BindingKind.Const ||
-      (token & Token.IsPatternStart) === Token.IsPatternStart
-    ) {
-      report(
-        parser,
-        Errors.DeclarationMissingInitializer,
-        (kind & BindingKind.Const) === BindingKind.Const ? 'const' : 'destructuring'
-      );
+    } else if (isConstDecl || (token & Token.IsPatternStart) === Token.IsPatternStart) {
+      report(parser, Errors.DeclarationMissingInitializer, isConstDecl ? 'const' : 'destructuring');
     }
 
     list.push(

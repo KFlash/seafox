@@ -11,6 +11,8 @@ import { createTopLevelScope } from './parser/scope';
  * The parser options.
  */
 export interface Options {
+  // Allow parsing using Module as the goal symbol
+  module?: boolean;
   // Enable stage 3 support (ESNext)
   next?: boolean;
   // Disable web compatibility
@@ -33,6 +35,7 @@ export interface Options {
 
 export function parseRoot(source: string, context: Context, options?: Options): Program {
   if (options !== undefined) {
+    if (options.module) context |= Context.Module | Context.Strict;
     if (options.next) context |= Context.OptionsNext;
     if (options.loc) context |= Context.OptionsLoc;
     if (options.disableWebCompat) context |= Context.OptionsDisableWebCompat;
@@ -100,4 +103,11 @@ export function parseModule(source: string, options?: Options): Program {
   return parseRoot(source, Context.Strict | Context.Module | Context.InGlobal, options);
 }
 
-export const version = '1.0.4';
+/**
+ * Parse a module or a script, optionally with various options.
+ */
+export function parse(source: string, options?: Options): Program {
+  return parseRoot(source, Context.InGlobal, options);
+}
+
+export const version = '1.1.0';
