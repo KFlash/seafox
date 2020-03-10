@@ -4550,9 +4550,13 @@ export function parseSpreadOrRestElement(
 
       if (token !== Token.Assign && token !== closingToken && token !== Token.Comma) {
         if (parser.flags & Flags.MustDestruct) report(parser, Errors.InvalidDestructuringTarget);
+
         argument = parseMemberExpression(parser, context, argument, 1, 0, start, line, column);
+
         destructible |= parser.assignable === 0 ? Flags.NotDestructible : 0;
+
         const t = parser.token;
+
         if ((t & Token.IsAssignOp) === Token.IsAssignOp) {
           if (t !== Token.Assign) destructible |= Flags.NotDestructible;
           argument = parseAssignmentExpression(parser, context, reinterpret, 0, argument, start, line, column);
@@ -4578,7 +4582,9 @@ export function parseSpreadOrRestElement(
 
       if (token === Token.Assign && token !== closingToken && (token as Token) !== Token.Comma) {
         if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
+
         argument = parseAssignmentExpression(parser, context, reinterpret, 0, argument, start, line, column);
+
         destructible |= Flags.NotDestructible;
       } else {
         if (token === Token.Comma) {
@@ -4586,6 +4592,7 @@ export function parseSpreadOrRestElement(
         } else if (token !== closingToken) {
           argument = parseAssignmentExpression(parser, context, 0, 0, argument, start, line, column);
         }
+
         destructible |= parser.assignable === 1 ? Flags.AssignableDestruct : Flags.NotDestructible;
       }
 

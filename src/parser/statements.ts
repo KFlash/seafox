@@ -466,6 +466,7 @@ export function parseForStatementWithVariableDeclarations(
     if ((parser.token & 0b00000010001001110000000000000000) !== 0) {
       if (parser.token === Token.InKeyword) {
         if (context & Context.Strict) report(parser, Errors.DisallowedLetInStrict);
+
         init = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
       } else {
         kind = BindingKind.Let;
@@ -1538,20 +1539,18 @@ export function parseExpressionOrLabelledStatement(
 ): Types.LabeledStatement | Types.ExpressionStatement {
   const { tokenValue, token, start, line, column } = parser;
 
-  let expr: any = parsePrimaryExpression(
-    parser,
-    context,
-    BindingKind.None,
-    0,
-    /* allowLHS */ 1,
-    1,
-    0,
-    start,
-    line,
-    column
-  );
+  let expr: any;
 
-  if (token === Token.LetKeyword && parser.token === Token.LeftBracket) report(parser, Errors.RestricedLetProduction);
+  switch (token) {
+    case Token.LetKeyword:
+      nextToken(parser, context, /* allowReg*/ 0);
+      // 'let' followed by '[' means a lexical declaration, which should not appear here.
+      if (parser.token === Token.LeftBracket) report(parser, Errors.RestricedLetProduction);
+      expr = parseIdentifierFromValue(parser, context, 'let', start, line, column);
+      break;
+    default:
+      expr = parsePrimaryExpression(parser, context, BindingKind.None, 0, /* allowLHS */ 1, 1, 0, start, line, column);
+  }
 
   if ((token & 0b00000000001001010000000000000000) > 0 && parser.token === Token.Colon) {
     return parseLabelledStatement(

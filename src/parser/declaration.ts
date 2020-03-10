@@ -240,7 +240,9 @@ export function parseVariableDeclarationListAndDeclarator(
 
     if (parser.token === Token.Assign) {
       nextToken(parser, context, /* allowRegExp */ 1);
+
       init = parseExpression(parser, context, /* inGroup */ 0);
+
       // ES6 'const' and binding patterns require initializers
     } else if (isConstDecl || (token & Token.IsPatternStart) === Token.IsPatternStart) {
       report(parser, Errors.DeclarationMissingInitializer, isConstDecl ? 'const' : 'destructuring');
