@@ -2,6 +2,8 @@ import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 
 fail('Miscellaneous - Escaped keywords (fail)', [
+  ['im\\u0070ort.meta;', Context.Empty], // Acorn issue #934
+  ['im\\u0070ort("./empty_FIXTURE.js");', Context.Empty], // Acorn issue #934
   ['n\\u0075ll', Context.Empty],
   ['(x === n\\u0075ll);', Context.Empty],
   ['(x === n\\u0075ll);', Context.Empty],
