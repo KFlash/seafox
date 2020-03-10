@@ -74,9 +74,9 @@ import { parseScript, parseModule, parse } from './seafox';
 
 parseScript('({x: [y] = 0} = 1)');
 
-parseModule('({x: [y] = 0} = 1)', { directives: true, raw: true }); // Allow parsing using Module as the goal symbol
+parseModule('({x: [y] = 0} = 1)', { directives: true, raw: true });
 
-parse('({x: [y] = 0} = 1)', { module: true }); // Allow parsing using Module as the goal symbol
+parse('({x: [y] = 0} = 1)', { module: true });
 
 parse('({x: [y] = 0} = 1)');
 
