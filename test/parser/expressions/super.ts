@@ -1,5 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
+import { parseRoot } from '../../../src/seafox';
+import * as t from 'assert';
 
 fail('Expressions - Super (fail)', [
   [`super`, Context.Empty],
@@ -235,6 +237,183 @@ fail('Expressions - Super (fail)', [
   ['class f extends bar { x(){ class x { [super()](){} } }}', Context.Empty],
   ['class f extends bar { x(){ class x { [super() y](){} } }}', Context.Empty]
 ]);
+
+for (const arg of ['new super;', 'new super();', '() => new super;', '() => new super();']) {
+  it(`class C { method() { ${arg} } }`, () => {
+    t.throws(() => {
+      parseRoot(`class C { method() { ${arg} } }`, Context.Empty);
+    });
+  });
+
+  it(`class C { *method() { ${arg} } }`, () => {
+    t.throws(() => {
+      parseRoot(`class C { *method() { ${arg} } }`, Context.Empty);
+    });
+  });
+
+  it(`class C { get x() { ${arg} } }`, () => {
+    t.throws(() => {
+      parseRoot(`class C { get x() { ${arg} } }`, Context.Empty);
+    });
+  });
+
+  it(`class C { get x() { ${arg} } }`, () => {
+    t.throws(() => {
+      parseRoot(`class C { get x() { ${arg} } }`, Context.OptionsDisableWebCompat);
+    });
+  });
+
+  it(`class C { set x(_) { ${arg} } }`, () => {
+    t.throws(() => {
+      parseRoot(`class C { set x(_) { ${arg} } }`, Context.Empty);
+    });
+  });
+
+  it(`({ method() { ${arg} } })`, () => {
+    t.throws(() => {
+      parseRoot(`({ method() { ${arg} } })`, Context.Empty);
+    });
+  });
+
+  it(`(function() { ${arg} } )`, () => {
+    t.throws(() => {
+      parseRoot(`(function() { ${arg} } )`, Context.Empty);
+    });
+  });
+
+  it(`var f = function() { ${arg} }`, () => {
+    t.throws(() => {
+      parseRoot(`var f = function() { ${arg} }`, Context.Empty);
+    });
+  });
+
+  it(`({ f: function*() {${arg} } })`, () => {
+    t.throws(() => {
+      parseRoot(`({ f: function*() { ${arg} } })`, Context.Empty);
+    });
+  });
+
+  it(`(function*() { ${arg} })`, () => {
+    t.throws(() => {
+      parseRoot(`(function*() { ${arg} })`, Context.Empty);
+    });
+  });
+
+  it(`var f = function*() { ${arg} }`, () => {
+    t.throws(() => {
+      parseRoot(`var f = function*() { ${arg} }`, Context.Empty);
+    });
+  });
+}
+
+// Testing valid use of super property
+for (const arg of ['new super.x;', 'new super.x();', '() => new super.x;', '() => new super.x();']) {
+  it(`class C { constructor() {${arg}}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`class C { constructor() {${arg}}}`, Context.Empty);
+    });
+  });
+
+  it(`class C { *method() {${arg}}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`class C { *method() {${arg}}}`, Context.Empty);
+    });
+  });
+
+  it(`({ method() {${arg}}})`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`({ method() {${arg}}})`, Context.Empty);
+    });
+  });
+
+  it(`({ *method() {${arg}}})`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`({ *method() {${arg}}})`, Context.Empty);
+    });
+  });
+
+  it(`({ get x() {${arg}}})`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`({ get x() {${arg}}})`, Context.Empty);
+    });
+  });
+
+  it(`({ set x(_) {${arg}}})`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`({ set x(_) {${arg}}})`, Context.Empty);
+    });
+  });
+
+  it(`class C { set x(_) {${arg}}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`class C { set x(_) {${arg}}}`, Context.Empty);
+    });
+  });
+
+  it(`class C { get x() {${arg}}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`class C { get x() {${arg}}}`, Context.Empty);
+    });
+  });
+}
+
+for (const arg of [
+  'class a extends b { c() { [super.d] = e } }',
+  'class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => super.foo) { return y(); } }',
+  'class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => {return super.foo}) { return y(); } }',
+  'class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { x(y = () => {return () => super.foo}) { return y()(); } }',
+  'class C { constructor() { this._x = 45; } get foo() { return this._x;} } class D extends C { constructor(x = () => super.foo) { super(); this._x_f = x; } x() { return this._x_f(); } }',
+  'class a extends b { constructor(){   class x extends y { [super()](){} }    }}',
+  'class a extends b { constructor(){      class x extends super() {}    }}',
+  'class a extends b { constructor(){   class x { [super()](){} }    }}',
+  'class a extends b { foo(){      class x extends super.foo {}    }}',
+  'class a { foo(){      class x extends super.foo {}    }}',
+  'class a extends b { foo(){   class x extends y { [super.foo](){} }    }}',
+  'class a extends b { foo(){   class x { [super.foo](){} }    }}',
+  'class a { foo(){   class x extends y { [super.foo](){} }    }}',
+  'class f extends bar { constructor(){  class x { [super()](){} }  }}',
+  'class f extends bar { constructor(){  class x extends feh(super()) { }  }}',
+  'class f extends bar { constructor(){  class x extends super() { }  }}',
+  'class f extends bar { xxx(){  class x { [super.foo](){} }  }}',
+  'class f extends bar { xxx(){  class x { foo(x=new (super.foo)()){} }  }}',
+  'class f extends bar { xxx(){  class x { foo(x=super.foo){} }  }}',
+  'class f extends bar { xxx(){  class x extends feh(super.foo) { }  }}',
+  'class f extends bar { xxx(){  class x extends super.foo { }  }}',
+  'class f extends bar { constructor(){  class x { [super.foo](){} }  }}',
+  'class f extends bar { constructor(){  class x { foo(x=new (super.foo)()){} }  }}',
+  'class f extends bar { constructor(){  class x { foo(x=super.foo){} }  }}',
+  'class f extends bar { constructor(){  class x extends feh(super.foo) { }  }}',
+  'class f extends bar { constructor(){  class x extends super.foo { }  }}',
+  'class f { bar(){  class x { [super.foo](){} }  }}',
+  'class f { bar(){  class x { foo(x=new (super.foo)()){} }  }}',
+  'class f { bar(){  class x { foo(x=super.foo){} }  }}',
+  'class f { bar(){  class x extends feh(super.foo) { }  }}',
+  'class f { bar(){  class x extends super.foo { }  }}',
+  'class f { constructor(){  class x { [super.foo](){} }  }}',
+  'class f { constructor(){  class x { foo(x=new (super.foo)()){} }  }}',
+  'class f { constructor(){  class x { foo(x=super.foo){} }  }}',
+  'class f { constructor(){  class x extends feh(super.foo) { }  }}',
+  'class f { constructor(){  class x extends super.foo { }  }}',
+  'class x { foo(x=new (super.foo)()){} }',
+  'class x { foo(x=super.foo){} }',
+  'class f extends bar { xxx(){  class x { super(){} }  }}',
+  'class f extends bar { constructor(){  class x { super(){} }  }}',
+  'class f { bar(){  class x { super(){} }  }}',
+  'class f { constructor(){  class x { super(){} }  }}',
+  'class a { foo(){   class x { [super.foo](){} }    }}'
+]) {
+  it(`${arg}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`${arg}`, Context.Empty);
+    });
+  });
+
+  it(`${arg}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`${arg}`, Context.OptionsDisableWebCompat);
+    });
+  });
+}
 
 pass('Expressions - Super (pass)', [
   [

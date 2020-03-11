@@ -257,6 +257,311 @@ pass('Expressions - New (pass)', [
     }
   ],
   [
+    'new async / await("foo", async)',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'NewExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'async',
+                start: 4,
+                end: 9,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 9
+                  }
+                }
+              },
+              arguments: [],
+              start: 0,
+              end: 9,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 9
+                }
+              }
+            },
+            right: {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: 'await',
+                start: 12,
+                end: 17,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 12
+                  },
+                  end: {
+                    line: 1,
+                    column: 17
+                  }
+                }
+              },
+              arguments: [
+                {
+                  type: 'Literal',
+                  value: 'foo',
+                  start: 18,
+                  end: 23,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 23
+                    }
+                  }
+                },
+                {
+                  type: 'Identifier',
+                  name: 'async',
+                  start: 25,
+                  end: 30,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 25
+                    },
+                    end: {
+                      line: 1,
+                      column: 30
+                    }
+                  }
+                }
+              ],
+              start: 12,
+              end: 31,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 12
+                },
+                end: {
+                  line: 1,
+                  column: 31
+                }
+              }
+            },
+            operator: '/',
+            start: 0,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          },
+          start: 0,
+          end: 31,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 31
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 31,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 31
+        }
+      }
+    }
+  ],
+  [
+    'new 0();',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'NewExpression',
+            callee: {
+              type: 'Literal',
+              value: 0,
+              start: 4,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            arguments: [],
+            start: 0,
+            end: 7,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 7
+              }
+            }
+          },
+          start: 0,
+          end: 8,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 8
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 8,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 8
+        }
+      }
+    }
+  ],
+  [
+    'new (!0)();',
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'NewExpression',
+            callee: {
+              type: 'UnaryExpression',
+              operator: '!',
+              argument: {
+                type: 'Literal',
+                value: 0,
+                start: 6,
+                end: 7,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              prefix: true,
+              start: 5,
+              end: 7,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 5
+                },
+                end: {
+                  line: 1,
+                  column: 7
+                }
+              }
+            },
+            arguments: [],
+            start: 0,
+            end: 10,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 10
+              }
+            }
+          },
+          start: 0,
+          end: 11,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 11
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 11,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 11
+        }
+      }
+    }
+  ],
+  [
     'new new x()();',
     Context.OptionsLoc,
     {

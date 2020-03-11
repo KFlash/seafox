@@ -20,8 +20,8 @@
 * Emits an ESTree-compatible abstract syntax tree.
 * No backtracking
 * Low memory usage
-* Very well tested (~30 000 unit tests with full code coverage)
-* Lightweight - ~87 KB minified
+* Very well tested (~32 000 unit tests with full code coverage)
+* Lightweight - ~84 KB minified
 
 ## Installation
 

@@ -2,6 +2,7 @@ import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
+import { parseRoot } from '../../../src/seafox';
 
 fail('Expressions - Class (fail)', [
   ['class C {} class C {}', Context.Empty],
@@ -357,13 +358,13 @@ for (const arg of [
 ]) {
   it(`(${arg})`, () => {
     t.doesNotThrow(() => {
-      parseScript(`(${arg})`);
+      parseRoot(`(${arg})`, Context.Empty);
     });
   });
 
   it(`bar, ${arg};`, () => {
     t.doesNotThrow(() => {
-      parseScript(`bar, ${arg}`);
+      parseRoot(`bar, ${arg}`, Context.Empty);
     });
   });
 }
