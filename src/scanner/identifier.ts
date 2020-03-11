@@ -41,11 +41,10 @@ export function scanIdentifierSlowPath(
       start = parser.index;
     } else {
       if ((char & 0xfc00) === 0xd800) {
-        const lo = source.charCodeAt(parser.index + 1);
-        if ((lo & 0xfc00) === 0xdc00) {
-          char = 0x10000 + ((char & 0x3ff) << 10) + (lo & 0x3ff);
+        if ((source.charCodeAt(parser.index + 1) & 0xfc00) === 0xdc00) {
+          char = 0x10000 + ((char & 0x3ff) << 10) + (source.charCodeAt(parser.index + 1) & 0x3ff);
           if (((unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1) === 0) {
-            report(parser, Errors.Unexpected);
+            report(parser, Errors.IllegalCaracter, fromCodePoint(char));
           }
           parser.index++;
         }
@@ -117,15 +116,18 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
   }
 
   // \uNNNN
-  const ch1 = toHex(char);
-  const ch2 = toHex(source.charCodeAt(parser.index + 1));
-  const ch3 = toHex(source.charCodeAt(parser.index + 2));
+
+  const first =
+    (toHex(char) << 12) |
+    (toHex(source.charCodeAt(parser.index + 1)) << 8) |
+    (toHex(source.charCodeAt(parser.index + 2)) << 4);
+
   const ch4 = source.charCodeAt(parser.index + 3);
   if ((CharTypes[ch4] & CharFlags.Hex) === 0) report(parser, Errors.InvalidHexEscapeSequence);
 
   parser.index += 4;
 
-  return (ch1 << 12) | (ch2 << 8) | (ch3 << 4) | toHex(ch4);
+  return first | toHex(ch4);
 }
 
 export function scanUnicodeEscapeIdStart(parser: ParserState, source: string): Token {
