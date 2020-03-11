@@ -2,6 +2,7 @@ import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
+import { parseRoot } from '../../../src/seafox';
 
 fail('Expressions - Yield (fail)', [
   ['(a = yield 3) {}', Context.Empty],
@@ -559,6 +560,50 @@ for (const test of yieldInParameters) {
   it(`function* g() { ${test} }`, () => {
     t.throws(() => {
       parseScript(`function* g() { ${test} }`);
+    });
+  });
+}
+
+for (const arg of [
+  'var yield;',
+  'var foo, yield;',
+  'try { } catch (yield) { }',
+  'function yield() { }',
+  'function * yield() { }',
+  '(function * yield() { })',
+  'yield = 1;',
+  'var foo = yield = 1;',
+  '++yield;',
+  'yield *',
+  '(yield *)',
+  'yield++;',
+  'yield: 34;',
+  'yield 3 + yield 4;',
+  'yield: 34',
+  'yield ? 1 : 2',
+  'yield / yield',
+  '+ yield',
+  '+ yield 3',
+  'yield\n{yield: 42}',
+  'yield /* comment */\n {yield: 42}',
+  'yield //comment\n {yield: 42}',
+  'var [yield] = [42];',
+  'var {foo: yield} = {a: 42};',
+  '[yield] = [42];',
+  '({a: yield} = {a: 42});',
+  'var [yield 24] = [42];',
+  'var {foo: yield 24} = {a: 42};',
+  '[yield 24] = [42];',
+  '({a: yield 24} = {a: 42});',
+  "for (yield 'x' in {});",
+  "for (yield 'x' of {});",
+  "for (yield 'x' in {} in {});",
+  "for (yield 'x' in {} of {});",
+  'class C extends yield { }'
+]) {
+  it(`function *g() { ${arg}}`, () => {
+    t.throws(() => {
+      parseRoot(`function *g() { ${arg}}`, Context.Empty);
     });
   });
 }

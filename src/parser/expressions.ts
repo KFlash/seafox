@@ -761,46 +761,49 @@ export function parseYieldExpression(
 
   if (inGroup === 1) parser.flags |= Flags.SeenYield;
 
-  if (context & Context.InYieldContext) {
-    if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
-    if (context & Context.InArgumentList) report(parser, Errors.YieldInParameter);
-    if (canAssign === 0) report(parser, Errors.CantAssignTo);
+  if ((context & Context.InYieldContext) !== Context.InYieldContext) {
+    if (context & Context.Strict) report(parser, Errors.DisallowedInContext, 'yield');
 
-    nextToken(parser, context, /* allowRegExp */ 1);
-
-    if (parser.token === Token.QuestionMark) report(parser, Errors.InvalidTernaryYield);
-
-    let argument = null;
-    let isDelegate: 0 | 1 = 0; // yield*
-
-    if (parser.newLine === 0) {
-      isDelegate = consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 1);
-      if (isDelegate === 1 || (parser.token & Token.IsExpressionStart) === Token.IsExpressionStart) {
-        argument = parseExpression(parser, context, 0);
-      }
-    }
-
-    parser.assignable = 0;
-
-    return context & Context.OptionsLoc
-      ? {
-          type: 'YieldExpression',
-          argument,
-          delegate: isDelegate === 1,
-          start,
-          end: parser.endIndex,
-          loc: setLoc(parser, line, column)
-        }
-      : {
-          type: 'YieldExpression',
-          argument,
-          delegate: isDelegate === 1
-        };
+    return parseIdentifierOrArrow(parser, context);
   }
 
-  if (context & Context.Strict) report(parser, Errors.DisallowedInContext, 'yield');
+  if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
 
-  return parseIdentifierOrArrow(parser, context);
+  if (context & Context.InArgumentList) report(parser, Errors.YieldInParameter);
+
+  if (canAssign === 0) report(parser, Errors.CantAssignTo);
+
+  nextToken(parser, context, /* allowRegExp */ 1);
+
+  if (parser.token === Token.QuestionMark) report(parser, Errors.InvalidTernaryYield);
+
+  let argument = null;
+  let isDelegate: 0 | 1 = 0; // yield*
+
+  if (parser.newLine === 0) {
+    isDelegate = consumeOpt(parser, context, Token.Multiply, /* allowRegExp */ 1);
+
+    if (isDelegate === 1 || (parser.token & Token.IsExpressionStart) === Token.IsExpressionStart) {
+      argument = parseExpression(parser, context, 0);
+    }
+  }
+
+  parser.assignable = 0;
+
+  return context & Context.OptionsLoc
+    ? {
+        type: 'YieldExpression',
+        argument,
+        delegate: isDelegate === 1,
+        start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'YieldExpression',
+        argument,
+        delegate: isDelegate === 1
+      };
 }
 
 export function parseAwaitExpression(
@@ -814,38 +817,36 @@ export function parseAwaitExpression(
 ): Types.AwaitExpression | Types.Identifier | Types.ArrowFunctionExpression {
   if (inGroup === 1) parser.flags |= Flags.SeenAwait;
 
-  if (context & Context.InAwaitContext) {
-    if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
+  if ((context & Context.InAwaitContext) !== Context.InAwaitContext) {
+    if (context & Context.Module) report(parser, Errors.DisallowedInContext, 'Await');
 
-    if (inNew === 1) report(parser, Errors.Unexpected);
-
-    if (context & Context.InArgumentList) {
-      report(parser, Errors.AwaitInParameter);
-    }
-
-    nextToken(parser, context, /* allowRegExp */ 1);
-
-    const argument = parseLeftHandSideExpression(parser, context, inGroup, /* allowLHS */ 1, 0);
-
-    parser.assignable = 0;
-
-    return context & Context.OptionsLoc
-      ? {
-          type: 'AwaitExpression',
-          argument,
-          start,
-          end: parser.endIndex,
-          loc: setLoc(parser, line, column)
-        }
-      : {
-          type: 'AwaitExpression',
-          argument
-        };
+    return parseIdentifierOrArrow(parser, context);
   }
 
-  if (context & Context.Module) report(parser, Errors.DisallowedInContext, 'Await');
+  if (parser.containsEscapes === 1) report(parser, Errors.EscapedKeyword);
 
-  return parseIdentifierOrArrow(parser, context);
+  if (inNew === 1) report(parser, Errors.Unexpected);
+
+  if (context & Context.InArgumentList) report(parser, Errors.AwaitInParameter);
+
+  nextToken(parser, context, /* allowRegExp */ 1);
+
+  const argument = parseLeftHandSideExpression(parser, context, inGroup, /* allowLHS */ 1, 0);
+
+  parser.assignable = 0;
+
+  return context & Context.OptionsLoc
+    ? {
+        type: 'AwaitExpression',
+        argument,
+        start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'AwaitExpression',
+        argument
+      };
 }
 
 export function parseIdentifierOrArrow(
@@ -3750,7 +3751,8 @@ export function parseObjectLiteralOrPattern(
       if ((token & 0b00000000001001110000000000000000) > 0) {
         nextToken(parser, context, /* allowRegExp */ 0);
 
-        if (token === Token.StaticKeyword) report(parser, Errors.InvalidStaticModifier);
+        if (token === Token.StaticKeyword && parser.token !== Token.LeftParen)
+          report(parser, Errors.InvalidStaticModifier);
 
         key = parseIdentifierFromValue(parser, context, tokenValue, start, line, column);
 

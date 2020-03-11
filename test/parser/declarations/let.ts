@@ -370,6 +370,56 @@ fail('Declarations - Let (fail)', [
   ['{ var x; } let x', Context.OptionsDisableWebCompat]
 ]);
 
+// Invalid 'let' as identifier cases
+
+for (const arg of [
+  'let let = 1',
+  'for (let let = 1; let < 1; let++) {}',
+  'for (let let in {}) {}',
+  'for (let let of []) {}',
+  'const let = 1',
+  'for (const let = 1; let < 1; let++) {}',
+  'for (const let in {}) {}',
+  'for (const let of []) {}',
+  'let [let] = 1',
+  'for (let [let] = 1; let < 1; let++) {}',
+  'for (let [let] in {}) {}',
+  'for (let [let] of []) {}',
+  'const [let] = 1',
+  'for (const [let] = 1; let < 1; let++) {}',
+  'for (const [let] in {}) {}',
+  'for (const [let] of []) {}',
+  'let l\\u0065t = 1',
+  'const l\\u0065t = 1',
+  'let [l\\u0065t] = 1',
+  'const [l\\u0065t] = 1',
+  'for (let l\\u0065t in {}) {}'
+]) {
+  it(`${arg}`, () => {
+    t.throws(() => {
+      parseRoot(`${arg}`, Context.Empty);
+    });
+  });
+
+  it(`${arg}`, () => {
+    t.throws(() => {
+      parseRoot(`function f() { ${arg}}`, Context.Empty);
+    });
+  });
+
+  it(`(function() {${arg}})()`, () => {
+    t.throws(() => {
+      parseRoot(`(function() {${arg}})()`, Context.Empty);
+    });
+  });
+
+  it(`(function() {${arg}})()`, () => {
+    t.throws(() => {
+      parseRoot(`(function() {${arg}})()`, Context.Empty);
+    });
+  });
+}
+
 // Valid 'let' as identifier cases
 for (const arg of [
   'var let;',
@@ -416,6 +466,258 @@ for (const arg of [
   it(`function * gen() { function foo() { ${arg}}}`, () => {
     t.doesNotThrow(() => {
       parseRoot(`function * gen() { function foo() { ${arg}}}`, Context.Empty);
+    });
+  });
+
+  it(`(function foo() { ${arg}}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`(function foo() { ${arg}})`, Context.Empty);
+    });
+  });
+}
+
+// Valid cases
+for (const arg of [
+  'let [ , , ...x] = [1, 2, 3, 4, 5];',
+  'let test262id8;',
+  'let a1; [a1] = [1]',
+  'let [...rest2] = [1, 2, 3, 4, 5];',
+  'let [a4, b4, c4, ...rest4] = [1, 2, 3];',
+  'let a1; [[a1]] = [[1]];',
+  'let a1; [[a1, b1] = [1, 2]] = [];',
+  'let a1; [a1, b1, c1, d1, ...rest1] = "testing";',
+  'let arrow = () => {};',
+  `let x = class x {};
+  let y = class {};
+  let z = class { static name() {} };`,
+  'let [{ a }, { b }, { c = "" }] = [a, b, c];',
+  'let [{ x }] = [x];',
+  'let [[x]] = [null];',
+  'let [x = 23] = [undefined];',
+  'let [{ x, y, z } = { x: 44, y: 55, z: 66 }] = [];',
+  'let [,] = function* g() { first += 1;  second += 1; };',
+  'let [ , , ...x] = [1, 2, 3, 4, 5];',
+  'let { arrow = () => {} } = {};',
+  'let { w: { x, y, z } = { x: 4, y: 5, z: 6 } } = { w: { x: undefined, z: 7 } };',
+  'function foo() { var let = 1, test = 2; }',
+  'let [arrow = () => {}] = [];',
+  'let [{ x, y, z } = { x: 44, y: 55, z: 66 }] = [{ x: 11, y: 22, z: 33 }];',
+  'let [{ x }] = [];',
+  'let [...x] = [1, 2, 3];',
+  'let z = {...x}',
+  'z = {x, ...y}',
+  'let { x, } = { x: 23 };',
+  'let [a,] = 0;',
+  'let [...[x]] = y',
+  'let a; [[a]] = [[]];',
+  'let [[a]] = [[]];',
+  'let [a, [b]] = [1, []];',
+  'let a, b; [((((a)))), b] = [];',
+  'let [[[...a]]] = [[[]]];',
+  'let {} = 0',
+  'let x  ;\n',
+  'let _a = 5;\n',
+  'let {a:{}} = 0',
+  'let x = 5, y = 6;',
+  'let x = 5, y = fcall();',
+  'let x = 5, y = 6, z = 7;',
+  'let $ = 5;',
+  'let x = 5, a = 6, z = 7;',
+  'let x = 5, y = 6, a = 7;',
+  'let x = /* bef */5 + 3/* aft */;',
+  'let x = y + 5;',
+  'let x=y + 5;',
+  'let [[a]=[1]] = [[2]];',
+  'let/foo/g',
+  `{ let x = 5; let y = 6; }`,
+  'let {a,b=0,c:d,e:f=0,[g]:[h]}=0',
+  'let [...a] = 0;',
+  'let [a,,]=0',
+  'let [{a}] = 0',
+  'let { x: y = 33 } = { };',
+  'let { x: y } = { x: 23 };',
+  'let { x, y, } = obj;',
+  'let { w: { x, y, z } = { x: 4, y: 5, z: 6 } } = { w: null };',
+  'let {a, b, ...rest} = {x: 1, y: 2, a: 5, b: 3};',
+  `let a = "a";
+  let b = "b";
+  let { x, y, } = obj;
+  for (let x = "x", i = 0; i < 1; i++) { let y = "y"; }`,
+  '[1 <= 0]',
+  'let [1 <= 0] = "foo"',
+  'let a; [a] = [];',
+  'let a, b; [a, b] = [1];',
+  'let [a] = [1, 2];',
+  'let a; [a,] = [];',
+  'let a; [,,a] = [];',
+  'let [a] = [,,];',
+  'let a; [...a] = [];',
+  'let a; [a = 1] = [];',
+  'let [[a]] = [[]];',
+  'let a, b; [a, [b]] = [1, []];',
+  'let [[[...a]]] = [[[]]];',
+  'let b = async () => [];',
+  'let [[...a], ...b] = [[],];',
+  'let a = {}; [a.x] = [];',
+  'let a; [a, a] = [];',
+  'let [[...x] = [2, 1, 3]] = [];',
+  'let [[] = function() {}()] = [[23]];',
+  'let [[] = function() { return function*() {}(); }()] = [];',
+  'let [foo] = arr;',
+  'let [,] = x;',
+  'let [,,] = x;',
+  'letarguments',
+  'letarguments.length',
+  'let\nawait',
+  'let\nimplements',
+  'let\ninterface',
+  'letpackage',
+  'letprivate',
+  'letyield',
+  'let eval',
+  'let eval',
+  'let implements',
+  'let eval',
+  'let\nfoo',
+  'let\n[foo]\r=\n2\n;',
+  'let foo = bar, zoo = boo',
+  'let foo = bar',
+  'let foo = bar;',
+  'let foo, bar',
+  'let foo, bar;',
+  'let foo;',
+  'let {foo} = x, b = y;',
+  'let {foo} = x, {bar} = y;',
+  'let [foo,bar=b] = x;',
+  'let x = y, [foo] = z;',
+  'let [foo,bar] = x;',
+  'let [foo] = x;',
+  'let [foo] = arr, [bar] = arr2;',
+  'let [foo] = arr, bar;',
+  'let [foo] = arr, bar = arr2;',
+  'let foo, [bar] = arr2;',
+  'let foo = arr, [bar] = arr2;',
+  'let [foo=a] = arr;',
+  'let [foo=a, bar] = arr;',
+  'let [foo, bar=b] = arr;',
+  'let [foo=a, bar=b] = arr;',
+  'let [foo, ...bar] = obj;',
+  'let [...[foo, bar]] = obj;',
+  'let [x, ...[foo, bar]] = obj;',
+  'let [a=[...b], ...c] = obj;',
+  'let {} = obj;',
+  'let {x} = obj;',
+  'let {x, y} = obj;',
+  'let {x} = a, {y} = obj;',
+  'let {x} = a, y = obj;',
+  'let {x} = a, obj;',
+  'let x = a, {y} = obj;',
+  'let x, {y} = obj;',
+  'let {x = y, z} = obj;',
+  'let {x = y} = obj;',
+  'let {x, y = z} = obj;',
+  'let {x = y, z = a} = obj;',
+  'let {x : y} = obj;',
+  'let {x : y, z} = obj;',
+  'let {x, y : z} = obj;',
+  'let {x : y, z : a} = obj;',
+  'let {x : y = z} = obj;',
+  'let {x : y, z, a : b = c} = obj;',
+  'let {[x]: y} = z;',
+  'let {[x]: y} = z;',
+  'let {[x]: y = z} = a;',
+  'let {a, [x]: y} = a;',
+  'for (let foo;;);',
+  'for (let foo = bar;;);',
+  'for (let foo, bar;;);',
+  'let obj = { 1: 1, 2: 2, 3: 3, 4: 4 };',
+  'for (let foo = bar, zoo = boo;;);',
+  'for (let foo in x);',
+  'for (let\nfoo;;);',
+  'for (let\nfoo in x);',
+  'for (let foo of x);',
+  'for (let\nfoo of x);',
+  'for (let [] = x;;);',
+  'for (let [,] = x;;);',
+  'for (let [,,] = x;;);',
+  'for (let [foo] = arr;;);',
+  'for (let [foo,] = arr;;);',
+  'for (let [foo,,] = arr;;);',
+  'for (let [,foo] = arr;;);',
+  'for (let [,,foo] = arr;;);',
+  'for (let [foo,bar] = arr;;);',
+  'for (let [foo,,bar] = arr;;);',
+  'for (let [foo] = arr, [bar] = arr2;;);',
+  'for (let [foo] = arr, bar;;);',
+  'for (let [foo] = arr, bar = arr2;;);',
+  'for (let foo = arr, [bar] = arr2;;);',
+  'for (let [foo=a, bar] = arr;;);',
+  'for (let [foo, bar=b] = arr;;);',
+  'for (let [foo=a, bar=b] = arr;;);',
+  'for (let [...foo] = obj;;);',
+  'for (let [foo, ...bar] = obj;;);',
+  'for (let [...[foo, bar]] = obj;;);',
+  'for (let {} = obj;;);',
+  'for (let {x} = obj;;);',
+  'for (let {x,} = obj;;);',
+  'for (let {x, y} = obj;;);',
+  'for (let {[x]: y = z} = a;;);',
+  'for (let {a, [x]: y} = a;;);',
+  'for (let [foo,] in arr);',
+  'let x = {y=z} = d',
+  'let x = ({y=z}) => d',
+  'let x = ({y=z}=e) => d',
+  'for (let {[x]: y} in obj);',
+  'for (let {[x]: y = z} in obj);',
+  'for (let {x, y} of obj);',
+  'let { w = a(), x = b(), y = c(), z = d() } = { w: null, x: 0, y: false, z: "" };',
+  'let { fn = function () {}, xFn = function x() {} } = {};',
+  'switch (true) { case true: let x = 1; }',
+  `let a = [];
+  for (let i = 0; i < 5; a.push(function () { return i; }), ++i) { }
+  for (let k = 0; k < 5; ++k) {
+  }`,
+  'let { x, } = { x: 23 };',
+  'let { w: [x, y, z] = [4, 5, 6] } = {};',
+  'let { w: [x, y, z] = [4, 5, 6] } = { w: [7, undefined, ] };',
+  'let { x: y = 33 } = { };',
+  'let { x: y, } = { x: 23 };',
+  'let x',
+  'let x = 1',
+  'for (let x = 1; x < 1; x++) {}',
+  'for (let x in {}) {}',
+  'for (let x of []) {}',
+  'let xCls = class x {};',
+  'let cls = class {};',
+  'let\n{x} = x;',
+  `let x = {y=z} = d`,
+  `let x = ({y=z}) => d`,
+  'let {x}\n= x;',
+  'let xCls2 = class { static name() {} };',
+  'let { s: t = a(), u: v = b(), w: x = c(), y: z = d() } = { s: null, u: 0, w: false, y: "" };',
+  'let {} = obj;',
+  'let {} = undefined;',
+  'let {} = obj;',
+  'let {} = undefined;',
+  'let [, , ...x] = [1, 2];',
+  'let test262id8;',
+  'foo: let: y;',
+  'let {a, b, c} = {}, e, f;',
+  'let {a, b} = {}, c = 0;',
+  'let {a, b} = c, d;',
+  'let {a, b, c} = {}, e, f;',
+  'if (1) let\n{}',
+  'let {a, b} = {}, c = 0;'
+]) {
+  it(`${arg}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`${arg}`, Context.Empty);
+    });
+  });
+
+  it(`${arg}`, () => {
+    t.doesNotThrow(() => {
+      parseRoot(`${arg}`, Context.OptionsDisableWebCompat);
     });
   });
 }

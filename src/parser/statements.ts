@@ -30,8 +30,7 @@ import {
   parseBindingPattern,
   parseDirectives,
   parseNonDirectiveExpression,
-  parseAsyncArrow,
-  parseAwaitExpression
+  parseAsyncArrow
 } from './expressions';
 import {
   ParserState,
@@ -106,8 +105,6 @@ export function parseStatementListItem(
       return parseImportDeclaration(parser, context);
     case Token.ExportKeyword:
       report(parser, Errors.Unexpected, 'export');
-    case Token.AwaitKeyword:
-      if (context & Context.OptionsNext && context & Context.InGlobal) return parseTopLevelAwait(parser, context);
     // falls through
     default:
       return parseStatement(parser, context, scope, origin, labels, nestedLabels, 1);
@@ -1606,9 +1603,4 @@ export function parseExpressionStatement(
         type: 'ExpressionStatement',
         expression
       };
-}
-
-export function parseTopLevelAwait(parser: ParserState, context: Context) {
-  const { start, line, column } = parser;
-  return parseAwaitExpression(parser, context | Context.InAwaitContext, 0, 0, start, line, column) as any;
 }
