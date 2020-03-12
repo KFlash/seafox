@@ -4014,7 +4014,7 @@ export function parseObjectLiteralOrPattern(
         if (parser.token === Token.Colon) {
           nextToken(parser, context, /* allowRegExp */ 1);
 
-          let { start, line, column, token } = parser;
+          const { start, line, column, token } = parser;
 
           if ((token & 0b00000000001001110000000000000000) > 0) {
             // https://tc39.github.io/ecma262/#sec-__proto__-property-names-in-object-initializers

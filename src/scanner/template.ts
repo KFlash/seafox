@@ -1,4 +1,3 @@
-import { CharFlags, CharTypes } from './charClassifier';
 import { Token } from '../token';
 import { ParserState, Context } from '../parser/common';
 import { Chars, fromCodePoint, readNext, scanEscapeSequence, Escape, handleStringError } from './';

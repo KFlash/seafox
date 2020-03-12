@@ -1,7 +1,6 @@
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
-import { parseRoot } from '../../../src/seafox';
+import { parseScript, parseRoot } from '../../../src/seafox';
 
 describe('Miscellaneous - Comments', () => {
   for (const arg of [

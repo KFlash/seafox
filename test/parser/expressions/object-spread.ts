@@ -1,4 +1,3 @@
-import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 import { parseRoot } from '../../../src/seafox';
 import * as t from 'assert';

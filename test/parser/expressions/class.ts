@@ -1,8 +1,7 @@
 import { pass, fail } from '../core';
 import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
-import { parseScript } from '../../../src/seafox';
-import { parseRoot } from '../../../src/seafox';
+import { parseScript, parseRoot } from '../../../src/seafox';
 
 fail('Expressions - Class (fail)', [
   ['class C {} class C {}', Context.Empty],

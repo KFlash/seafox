@@ -1,15 +1,6 @@
 // Unicode v. 13 support
 // tslint:disable
 
-function isIDContinue(code: number) {
-  return ((unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1) !== 0;
-}
-function isIDStart(code: number) {
-  return ((unicodeLookup[(code >>> 5) + 34816] >>> code) & 31 & 1) !== 0;
-}
-function mustEscape(code: number) {
-  return ((unicodeLookup[(code >>> 5) + 69632] >>> code) & 31 & 1) !== 0;
-}
 export const unicodeLookup = ((compressed, lookup) => {
   const result = new Uint32Array(104448);
   let index = 0;
@@ -3779,4 +3770,3 @@ export const unicodeLookup = ((compressed, lookup) => {
     65532
   ]
 );
-export { isIDContinue, isIDStart, mustEscape };
