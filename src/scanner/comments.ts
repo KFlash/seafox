@@ -39,13 +39,13 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
       }
 
       if (char === Chars.CarriageReturn) {
-        parser.lineBase++;
+        parser.curLine++;
         parser.newLine = lastIsCR = 1;
         parser.offset = i;
       }
 
       if (char === Chars.LineFeed) {
-        if (lastIsCR === 0) parser.lineBase++;
+        if (lastIsCR === 0) parser.curLine++;
         lastIsCR = 0;
         parser.newLine = 1;
         parser.offset = i;
@@ -54,7 +54,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
     if ((char & ~1) === Chars.LineSeparator) {
       parser.offset = i;
       parser.newLine = 1;
-      parser.lineBase++;
+      parser.curLine++;
       lastIsCR = 0;
     }
     char = source.charCodeAt(i++);

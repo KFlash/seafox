@@ -33,7 +33,7 @@ describe('Scanner - Punctuator', () => {
               /* allowRegExp */ 0
             ),
             hasNext: parser.index < parser.source.length,
-            line: parser.lineBase,
+            line: parser.curLine,
             column: parser.index - parser.offset
           },
           {
@@ -127,7 +127,7 @@ describe('Scanner - Punctuator', () => {
           {
             token: found,
             hasNext: parser.index < parser.source.length,
-            line: parser.lineBase,
+            line: parser.curLine,
             column: parser.index - parser.offset
           },
           {
@@ -147,7 +147,7 @@ describe('Scanner - Punctuator', () => {
           {
             token: found,
             hasNext: parser.index < parser.source.length,
-            line: parser.lineBase,
+            line: parser.curLine,
             column: parser.index - parser.offset
           },
           {
@@ -168,7 +168,7 @@ describe('Scanner - Punctuator', () => {
         {
           token: found,
           hasNext: parser.index < parser.source.length,
-          line: parser.lineBase,
+          line: parser.curLine,
           column: parser.index - parser.offset
         },
         {

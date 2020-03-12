@@ -38,7 +38,7 @@ export function scanStringLiteral(parser: ParserState, context: Context, source:
       if ((char & ~1) === Chars.LineSeparator) {
         parser.index++;
         parser.offset = parser.index;
-        parser.lineBase++;
+        parser.curLine++;
       }
     }
   }
@@ -167,7 +167,7 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
 
     case Chars.LineFeed:
       parser.offset = parser.index;
-      parser.lineBase++;
+      parser.curLine++;
       return Escape.Empty;
     default:
       return first;

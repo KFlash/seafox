@@ -104,11 +104,11 @@ export interface ParserState {
   length: number;
   start: number;
   endIndex: number;
-  prevLinebase: number;
+  lastLine: number;
   lastColumn: number;
   column: number;
   line: number;
-  lineBase: number;
+  curLine: number;
   offset: number;
   token: Token;
   newLine: 0 | 1;
@@ -152,7 +152,7 @@ export function setLoc(parser: ParserState, line: number, column: number): any {
       column
     },
     end: {
-      line: parser.prevLinebase,
+      line: parser.lastLine,
       column: parser.lastColumn
     }
   };

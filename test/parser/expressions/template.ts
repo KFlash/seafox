@@ -1069,11 +1069,11 @@ pass('Expressions - Template (pass)', [
                       line: 1
                     },
                     start: {
-                      column: 1,
-                      line: 1
+                      column: 0,
+                      line: 2
                     }
                   },
-                  start: 1,
+                  start: 2,
                   tail: false,
                   type: 'TemplateElement',
                   value: {
@@ -4963,7 +4963,7 @@ pass('Expressions - Template (pass)', [
     }
   ],
   [
-    'tag`\\abc3242`;',
+    'y`${y,0}`',
     Context.OptionsLoc,
     {
       type: 'Program',
@@ -4975,9 +4975,9 @@ pass('Expressions - Template (pass)', [
             type: 'TaggedTemplateExpression',
             tag: {
               type: 'Identifier',
-              name: 'tag',
+              name: 'y',
               start: 0,
-              end: 3,
+              end: 1,
               loc: {
                 start: {
                   line: 1,
@@ -4985,50 +4985,120 @@ pass('Expressions - Template (pass)', [
                 },
                 end: {
                   line: 1,
-                  column: 3
+                  column: 1
                 }
               }
             },
             quasi: {
               type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
+              expressions: [
                 {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'abc3242',
-                    raw: '\\abc3242'
-                  },
-                  tail: true,
-                  start: 3,
-                  end: 13,
+                  type: 'SequenceExpression',
+                  expressions: [
+                    {
+                      type: 'Identifier',
+                      name: 'y',
+                      start: 4,
+                      end: 5,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 4
+                        },
+                        end: {
+                          line: 1,
+                          column: 5
+                        }
+                      }
+                    },
+                    {
+                      type: 'Literal',
+                      value: 0,
+                      start: 6,
+                      end: 7,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 6
+                        },
+                        end: {
+                          line: 1,
+                          column: 7
+                        }
+                      }
+                    }
+                  ],
+                  start: 4,
+                  end: 7,
                   loc: {
                     start: {
                       line: 1,
-                      column: 3
+                      column: 4
                     },
                     end: {
                       line: 1,
-                      column: 13
+                      column: 7
                     }
                   }
                 }
               ],
-              start: 3,
-              end: 13,
+              quasis: [
+                {
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: '',
+                    raw: ''
+                  },
+                  tail: false,
+                  start: 1,
+                  end: 1,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 1
+                    },
+                    end: {
+                      line: 1,
+                      column: 1
+                    }
+                  }
+                },
+                {
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: '',
+                    raw: ''
+                  },
+                  tail: true,
+                  start: 7,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 7
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                }
+              ],
+              start: 0,
+              end: 9,
               loc: {
                 start: {
                   line: 1,
-                  column: 3
+                  column: 0
                 },
                 end: {
                   line: 1,
-                  column: 13
+                  column: 9
                 }
               }
             },
             start: 0,
-            end: 13,
+            end: 9,
             loc: {
               start: {
                 line: 1,
@@ -5036,12 +5106,12 @@ pass('Expressions - Template (pass)', [
               },
               end: {
                 line: 1,
-                column: 13
+                column: 9
               }
             }
           },
           start: 0,
-          end: 14,
+          end: 9,
           loc: {
             start: {
               line: 1,
@@ -5049,13 +5119,13 @@ pass('Expressions - Template (pass)', [
             },
             end: {
               line: 1,
-              column: 14
+              column: 9
             }
           }
         }
       ],
       start: 0,
-      end: 14,
+      end: 9,
       loc: {
         start: {
           line: 1,
@@ -5063,89 +5133,175 @@ pass('Expressions - Template (pass)', [
         },
         end: {
           line: 1,
-          column: 14
+          column: 9
         }
       }
     }
   ],
   [
-    'tag`xy \\u{abc}} yz`;',
+    'for(t`${x in y}`;;);',
     Context.OptionsLoc,
     {
       type: 'Program',
       sourceType: 'script',
       body: [
         {
-          type: 'ExpressionStatement',
-          expression: {
+          type: 'ForStatement',
+          body: {
+            type: 'EmptyStatement',
+            start: 19,
+            end: 20,
+            loc: {
+              start: {
+                line: 1,
+                column: 19
+              },
+              end: {
+                line: 1,
+                column: 20
+              }
+            }
+          },
+          init: {
             type: 'TaggedTemplateExpression',
             tag: {
               type: 'Identifier',
-              name: 'tag',
-              start: 0,
-              end: 3,
+              name: 't',
+              start: 4,
+              end: 5,
               loc: {
                 start: {
                   line: 1,
-                  column: 0
+                  column: 4
                 },
                 end: {
                   line: 1,
-                  column: 3
+                  column: 5
                 }
               }
             },
             quasi: {
               type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
+              expressions: [
                 {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'xy ઼} yz',
-                    raw: 'xy \\u{abc}} yz'
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 8,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
                   },
-                  tail: true,
-                  start: 3,
-                  end: 19,
+                  right: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 13,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  operator: 'in',
+                  start: 8,
+                  end: 14,
                   loc: {
                     start: {
                       line: 1,
-                      column: 3
+                      column: 8
                     },
                     end: {
                       line: 1,
-                      column: 19
+                      column: 14
                     }
                   }
                 }
               ],
-              start: 3,
-              end: 19,
+              quasis: [
+                {
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: '',
+                    raw: ''
+                  },
+                  tail: false,
+                  start: 5,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                {
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: '',
+                    raw: ''
+                  },
+                  tail: true,
+                  start: 14,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 4,
+              end: 16,
               loc: {
                 start: {
                   line: 1,
-                  column: 3
+                  column: 4
                 },
                 end: {
                   line: 1,
-                  column: 19
+                  column: 16
                 }
               }
             },
-            start: 0,
-            end: 19,
+            start: 4,
+            end: 16,
             loc: {
               start: {
                 line: 1,
-                column: 0
+                column: 4
               },
               end: {
                 line: 1,
-                column: 19
+                column: 16
               }
             }
           },
+          test: null,
+          update: null,
           start: 0,
           end: 20,
           loc: {
@@ -5175,423 +5331,7 @@ pass('Expressions - Template (pass)', [
     }
   ],
   [
-    '`\r\n`',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 4,
-          expression: {
-            end: 4,
-            expressions: [],
-            loc: {
-              end: {
-                column: 2,
-                line: 3
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            quasis: [
-              {
-                end: 4,
-                loc: {
-                  end: {
-                    column: 2,
-                    line: 3
-                  },
-                  start: {
-                    column: 0,
-                    line: 1
-                  }
-                },
-                start: 0,
-                tail: true,
-                type: 'TemplateElement',
-                value: {
-                  cooked: '\r\n',
-                  raw: '\r\n'
-                }
-              }
-            ],
-            start: 0,
-            type: 'TemplateLiteral'
-          },
-          loc: {
-            end: {
-              column: 2,
-              line: 3
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 4,
-      loc: {
-        end: {
-          column: 2,
-          line: 3
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
-    }
-  ],
-  [
-    '`${"z"}${"z"}${z}`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'Literal',
-                value: 'z',
-                start: 3,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 3
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              {
-                type: 'Literal',
-                value: 'z',
-                start: 9,
-                end: 12,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 9
-                  },
-                  end: {
-                    line: 1,
-                    column: 12
-                  }
-                }
-              },
-              {
-                type: 'Identifier',
-                name: 'z',
-                start: 15,
-                end: 16,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 15
-                  },
-                  end: {
-                    line: 1,
-                    column: 16
-                  }
-                }
-              }
-            ],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
-                },
-                tail: false,
-                start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
-                },
-                tail: false,
-                start: 6,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 6
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
-                },
-                tail: false,
-                start: 12,
-                end: 12,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 12
-                  },
-                  end: {
-                    line: 1,
-                    column: 12
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
-                },
-                tail: true,
-                start: 16,
-                end: 16,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 16
-                  },
-                  end: {
-                    line: 1,
-                    column: 16
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 18,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 18
-              }
-            }
-          },
-          start: 0,
-          end: 18,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 18
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 18,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 18
-        }
-      }
-    }
-  ],
-  [
-    'let foo = f()`template with function call before`;',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'VariableDeclaration',
-          kind: 'let',
-          declarations: [
-            {
-              type: 'VariableDeclarator',
-              init: {
-                type: 'TaggedTemplateExpression',
-                tag: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'Identifier',
-                    name: 'f',
-                    start: 10,
-                    end: 11,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 10
-                      },
-                      end: {
-                        line: 1,
-                        column: 11
-                      }
-                    }
-                  },
-                  arguments: [],
-
-                  start: 10,
-                  end: 13,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 13
-                    }
-                  }
-                },
-                quasi: {
-                  type: 'TemplateLiteral',
-                  expressions: [],
-                  quasis: [
-                    {
-                      type: 'TemplateElement',
-                      value: {
-                        cooked: 'template with function call before',
-                        raw: 'template with function call before'
-                      },
-                      tail: true,
-                      start: 13,
-                      end: 49,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 13
-                        },
-                        end: {
-                          line: 1,
-                          column: 49
-                        }
-                      }
-                    }
-                  ],
-                  start: 13,
-                  end: 49,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 13
-                    },
-                    end: {
-                      line: 1,
-                      column: 49
-                    }
-                  }
-                },
-                start: 10,
-                end: 49,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 1,
-                    column: 49
-                  }
-                }
-              },
-              id: {
-                type: 'Identifier',
-                name: 'foo',
-                start: 4,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 4
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              start: 4,
-              end: 49,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 4
-                },
-                end: {
-                  line: 1,
-                  column: 49
-                }
-              }
-            }
-          ],
-          start: 0,
-          end: 50,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 50
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 50,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 50
-        }
-      }
-    }
-  ],
-  [
-    'a``',
+    'a.foo`bar`',
     Context.OptionsLoc,
     {
       type: 'Program',
@@ -5602,10 +5342,43 @@ pass('Expressions - Template (pass)', [
           expression: {
             type: 'TaggedTemplateExpression',
             tag: {
-              type: 'Identifier',
-              name: 'a',
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: 'a',
+                start: 0,
+                end: 1,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 1
+                  }
+                }
+              },
+              computed: false,
+              property: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 2,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 2
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+
               start: 0,
-              end: 1,
+              end: 5,
               loc: {
                 start: {
                   line: 1,
@@ -5613,7 +5386,7 @@ pass('Expressions - Template (pass)', [
                 },
                 end: {
                   line: 1,
-                  column: 1
+                  column: 5
                 }
               }
             },
@@ -5624,909 +5397,39 @@ pass('Expressions - Template (pass)', [
                 {
                   type: 'TemplateElement',
                   value: {
-                    cooked: '',
-                    raw: ''
+                    cooked: 'bar',
+                    raw: 'bar'
                   },
                   tail: true,
-                  start: 1,
-                  end: 3,
+                  start: 5,
+                  end: 10,
                   loc: {
                     start: {
                       line: 1,
-                      column: 1
+                      column: 5
                     },
                     end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                }
-              ],
-              start: 1,
-              end: 3,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 1
-                },
-                end: {
-                  line: 1,
-                  column: 3
-                }
-              }
-            },
-            start: 0,
-            end: 3,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 3
-              }
-            }
-          },
-          start: 0,
-          end: 3,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 3
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 3,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 3
-        }
-      }
-    }
-  ],
-  [
-    'var foo = `simple template`;',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'VariableDeclaration',
-          kind: 'var',
-          declarations: [
-            {
-              type: 'VariableDeclarator',
-              init: {
-                type: 'TemplateLiteral',
-                expressions: [],
-                quasis: [
-                  {
-                    type: 'TemplateElement',
-                    value: {
-                      cooked: 'simple template',
-                      raw: 'simple template'
-                    },
-                    tail: true,
-                    start: 10,
-                    end: 27,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 10
-                      },
-                      end: {
-                        line: 1,
-                        column: 27
-                      }
-                    }
-                  }
-                ],
-                start: 10,
-                end: 27,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 1,
-                    column: 27
-                  }
-                }
-              },
-              id: {
-                type: 'Identifier',
-                name: 'foo',
-                start: 4,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 4
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              start: 4,
-              end: 27,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 4
-                },
-                end: {
-                  line: 1,
-                  column: 27
-                }
-              }
-            }
-          ],
-          start: 0,
-          end: 28,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 28
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 28,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 28
-        }
-      }
-    }
-  ],
-  [
-    '`foo${/* comment */ a}`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'Identifier',
-                name: 'a',
-                start: 20,
-                end: 21,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 20
-                  },
-                  end: {
-                    line: 1,
-                    column: 21
-                  }
-                }
-              }
-            ],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'foo',
-                  raw: 'foo'
-                },
-                tail: false,
-                start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
-                },
-                tail: true,
-                start: 21,
-                end: 21,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 21
-                  },
-                  end: {
-                    line: 1,
-                    column: 21
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 23,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 23
-              }
-            }
-          },
-          start: 0,
-          end: 23,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 23
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 23,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 23
-        }
-      }
-    }
-  ],
-  [
-    '`foo${// comment\na}`',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 20,
-          expression: {
-            end: 20,
-            expressions: [
-              {
-                end: 18,
-                loc: {
-                  end: {
-                    column: 1,
-                    line: 2
-                  },
-                  start: {
-                    column: 0,
-                    line: 2
-                  }
-                },
-                name: 'a',
-                start: 17,
-                type: 'Identifier'
-              }
-            ],
-            loc: {
-              end: {
-                column: 3,
-                line: 2
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            quasis: [
-              {
-                end: 0,
-                loc: {
-                  end: {
-                    column: 0,
-                    line: 1
-                  },
-                  start: {
-                    column: 0,
-                    line: 1
-                  }
-                },
-                start: 0,
-                tail: false,
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'foo',
-                  raw: 'foo'
-                }
-              },
-              {
-                end: 18,
-                loc: {
-                  end: {
-                    column: 1,
-                    line: 2
-                  },
-                  start: {
-                    column: 1,
-                    line: 2
-                  }
-                },
-                start: 18,
-                tail: true,
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
-                }
-              }
-            ],
-            start: 0,
-            type: 'TemplateLiteral'
-          },
-          loc: {
-            end: {
-              column: 3,
-              line: 2
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 20,
-      loc: {
-        end: {
-          column: 3,
-          line: 2
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
-    }
-  ],
-  [
-    'f`\\xg ${x}`;',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'f',
-              start: 0,
-              end: 1,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 1
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [
-                {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                }
-              ],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: null,
-                    raw: '\\xg '
-                  },
-                  tail: false,
-                  start: 1,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: '',
-                    raw: ''
-                  },
-                  tail: true,
-                  start: 9,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 9
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                }
-              ],
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          },
-          start: 0,
-          end: 12,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 12
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 12,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 12
-        }
-      }
-    }
-  ],
-  [
-    'var str = x`y${(() => 42)()}`;',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'VariableDeclaration',
-          kind: 'var',
-          declarations: [
-            {
-              type: 'VariableDeclarator',
-              init: {
-                type: 'TaggedTemplateExpression',
-                tag: {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 10,
-                  end: 11,
-                  loc: {
-                    start: {
                       line: 1,
                       column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                quasi: {
-                  type: 'TemplateLiteral',
-                  expressions: [
-                    {
-                      type: 'CallExpression',
-                      callee: {
-                        type: 'ArrowFunctionExpression',
-                        body: {
-                          type: 'Literal',
-                          value: 42,
-                          start: 22,
-                          end: 24,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 22
-                            },
-                            end: {
-                              line: 1,
-                              column: 24
-                            }
-                          }
-                        },
-                        params: [],
-                        async: false,
-                        expression: true,
-                        start: 16,
-                        end: 24,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 16
-                          },
-                          end: {
-                            line: 1,
-                            column: 24
-                          }
-                        }
-                      },
-                      arguments: [],
-
-                      start: 15,
-                      end: 27,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 15
-                        },
-                        end: {
-                          line: 1,
-                          column: 27
-                        }
-                      }
-                    }
-                  ],
-                  quasis: [
-                    {
-                      type: 'TemplateElement',
-                      value: {
-                        cooked: 'y',
-                        raw: 'y'
-                      },
-                      tail: false,
-                      start: 11,
-                      end: 11,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 11
-                        },
-                        end: {
-                          line: 1,
-                          column: 11
-                        }
-                      }
-                    },
-                    {
-                      type: 'TemplateElement',
-                      value: {
-                        cooked: '',
-                        raw: ''
-                      },
-                      tail: true,
-                      start: 27,
-                      end: 27,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 27
-                        },
-                        end: {
-                          line: 1,
-                          column: 27
-                        }
-                      }
-                    }
-                  ],
-                  start: 10,
-                  end: 29,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 29
-                    }
-                  }
-                },
-                start: 10,
-                end: 29,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 1,
-                    column: 29
-                  }
-                }
-              },
-              id: {
-                type: 'Identifier',
-                name: 'str',
-                start: 4,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 4
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              start: 4,
-              end: 29,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 4
-                },
-                end: {
-                  line: 1,
-                  column: 29
-                }
-              }
-            }
-          ],
-          start: 0,
-          end: 30,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 30
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 30,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 30
-        }
-      }
-    }
-  ],
-
-  [
-    '`a\\u{000000062}c`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'abc',
-                  raw: 'a\\u{000000062}c'
-                },
-                tail: true,
-                start: 0,
-                end: 17,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 17
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 17,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 17
-              }
-            }
-          },
-          start: 0,
-          end: 17,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 17
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 17,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 17
-        }
-      }
-    }
-  ],
-  [
-    'test`\\xG`;',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'test',
-              start: 0,
-              end: 4,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 4
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: null,
-                    raw: '\\xG'
-                  },
-                  tail: true,
-                  start: 4,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
                     }
                   }
                 }
               ],
-              start: 4,
-              end: 9,
+              start: 5,
+              end: 10,
               loc: {
                 start: {
                   line: 1,
-                  column: 4
+                  column: 5
                 },
                 end: {
                   line: 1,
-                  column: 9
+                  column: 10
                 }
               }
             },
             start: 0,
-            end: 9,
+            end: 10,
             loc: {
               start: {
                 line: 1,
@@ -6534,7 +5437,7 @@ pass('Expressions - Template (pass)', [
               },
               end: {
                 line: 1,
-                column: 9
+                column: 10
               }
             }
           },
@@ -6567,7 +5470,7 @@ pass('Expressions - Template (pass)', [
     }
   ],
   [
-    'x`$ $ $ {} } { }} {{`',
+    'new foo`bar`',
     Context.OptionsLoc,
     {
       type: 'Program',
@@ -6576,244 +5479,79 @@ pass('Expressions - Template (pass)', [
         {
           type: 'ExpressionStatement',
           expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'x',
-              start: 0,
-              end: 1,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 1
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: '$ $ $ {} } { }} {{',
-                    raw: '$ $ $ {} } { }} {{'
-                  },
-                  tail: true,
-                  start: 1,
-                  end: 21,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 21
-                    }
-                  }
-                }
-              ],
-              start: 1,
-              end: 21,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 1
-                },
-                end: {
-                  line: 1,
-                  column: 21
-                }
-              }
-            },
-            start: 0,
-            end: 21,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 21
-              }
-            }
-          },
-          start: 0,
-          end: 21,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 21
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 21,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 21
-        }
-      }
-    }
-  ],
-  [
-    '(`\n`)',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 5,
-          expression: {
-            end: 4,
-            expressions: [],
-            loc: {
-              end: {
-                column: 2,
-                line: 2
-              },
-              start: {
-                column: 1,
-                line: 1
-              }
-            },
-            quasis: [
-              {
-                end: 4,
+            type: 'NewExpression',
+            callee: {
+              type: 'TaggedTemplateExpression',
+              tag: {
+                type: 'Identifier',
+                name: 'foo',
+                start: 4,
+                end: 7,
                 loc: {
-                  end: {
-                    column: 2,
-                    line: 2
-                  },
                   start: {
-                    column: 1,
-                    line: 1
-                  }
-                },
-                start: 1,
-                tail: true,
-                type: 'TemplateElement',
-                value: {
-                  cooked: '\n',
-                  raw: '\n'
-                }
-              }
-            ],
-            start: 1,
-            type: 'TemplateLiteral'
-          },
-          loc: {
-            end: {
-              column: 3,
-              line: 2
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 5,
-      loc: {
-        end: {
-          column: 3,
-          line: 2
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
-    }
-  ],
-  [
-    'x`bunch of escape chars \\v\\t\\n\\b\\a`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'x',
-              start: 0,
-              end: 1,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 1
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'bunch of escape chars \u000b\t\n\ba',
-                    raw: 'bunch of escape chars \\v\\t\\n\\b\\a'
+                    line: 1,
+                    column: 4
                   },
-                  tail: true,
-                  start: 1,
-                  end: 35,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
+                  end: {
+                    line: 1,
+                    column: 7
+                  }
+                }
+              },
+              quasi: {
+                type: 'TemplateLiteral',
+                expressions: [],
+                quasis: [
+                  {
+                    type: 'TemplateElement',
+                    value: {
+                      cooked: 'bar',
+                      raw: 'bar'
                     },
-                    end: {
-                      line: 1,
-                      column: 35
+                    tail: true,
+                    start: 7,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 7
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
                     }
                   }
+                ],
+                start: 7,
+                end: 12,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 12
+                  }
                 }
-              ],
-              start: 1,
-              end: 35,
+              },
+              start: 4,
+              end: 12,
               loc: {
                 start: {
                   line: 1,
-                  column: 1
+                  column: 4
                 },
                 end: {
                   line: 1,
-                  column: 35
+                  column: 12
                 }
               }
             },
+            arguments: [],
             start: 0,
-            end: 35,
+            end: 12,
             loc: {
               start: {
                 line: 1,
@@ -6821,12 +5559,12 @@ pass('Expressions - Template (pass)', [
               },
               end: {
                 line: 1,
-                column: 35
+                column: 12
               }
             }
           },
           start: 0,
-          end: 35,
+          end: 12,
           loc: {
             start: {
               line: 1,
@@ -6834,13 +5572,13 @@ pass('Expressions - Template (pass)', [
             },
             end: {
               line: 1,
-              column: 35
+              column: 12
             }
           }
         }
       ],
       start: 0,
-      end: 35,
+      end: 12,
       loc: {
         start: {
           line: 1,
@@ -6848,626 +5586,7 @@ pass('Expressions - Template (pass)', [
         },
         end: {
           line: 1,
-          column: 35
-        }
-      }
-    }
-  ],
-  [
-    'tag`left${0}\\u{0${1}right`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'tag',
-              start: 0,
-              end: 3,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 3
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [
-                {
-                  type: 'Literal',
-                  value: 0,
-                  start: 10,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                {
-                  type: 'Literal',
-                  value: 1,
-                  start: 18,
-                  end: 19,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 18
-                    },
-                    end: {
-                      line: 1,
-                      column: 19
-                    }
-                  }
-                }
-              ],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'left',
-                    raw: 'left'
-                  },
-                  tail: false,
-                  start: 3,
-                  end: 3,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: null,
-                    raw: '\\u{0'
-                  },
-                  tail: false,
-                  start: 11,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 11
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'right',
-                    raw: 'right'
-                  },
-                  tail: true,
-                  start: 19,
-                  end: 19,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 19
-                    },
-                    end: {
-                      line: 1,
-                      column: 19
-                    }
-                  }
-                }
-              ],
-              start: 0,
-              end: 26,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 26
-                }
-              }
-            },
-            start: 0,
-            end: 26,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 26
-              }
-            }
-          },
-          start: 0,
-          end: 26,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 26
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 26,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 26
-        }
-      }
-    }
-  ],
-  [
-    'tag`\\u{110000}`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'tag',
-              start: 0,
-              end: 3,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 3
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: null,
-                    raw: '\\u{110000}'
-                  },
-                  tail: true,
-                  start: 3,
-                  end: 15,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 15
-                    }
-                  }
-                }
-              ],
-              start: 3,
-              end: 15,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 3
-                },
-                end: {
-                  line: 1,
-                  column: 15
-                }
-              }
-            },
-            start: 0,
-            end: 15,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 15
-              }
-            }
-          },
-          start: 0,
-          end: 15,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 15
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 15,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 15
-        }
-      }
-    }
-  ],
-  [
-    'tag    `${a}a${b}b${c}c`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'tag',
-              start: 0,
-              end: 3,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 3
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [
-                {
-                  type: 'Identifier',
-                  name: 'a',
-                  start: 10,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                {
-                  type: 'Identifier',
-                  name: 'b',
-                  start: 15,
-                  end: 16,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 15
-                    },
-                    end: {
-                      line: 1,
-                      column: 16
-                    }
-                  }
-                },
-                {
-                  type: 'Identifier',
-                  name: 'c',
-                  start: 20,
-                  end: 21,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 20
-                    },
-                    end: {
-                      line: 1,
-                      column: 21
-                    }
-                  }
-                }
-              ],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: '',
-                    raw: ''
-                  },
-                  tail: false,
-                  start: 7,
-                  end: 3,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 7
-                    },
-                    end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'a',
-                    raw: 'a'
-                  },
-                  tail: false,
-                  start: 11,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 11
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'b',
-                    raw: 'b'
-                  },
-                  tail: false,
-                  start: 16,
-                  end: 16,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 16
-                    },
-                    end: {
-                      line: 1,
-                      column: 16
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'c',
-                    raw: 'c'
-                  },
-                  tail: true,
-                  start: 21,
-                  end: 21,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 21
-                    },
-                    end: {
-                      line: 1,
-                      column: 21
-                    }
-                  }
-                }
-              ],
-              start: 0,
-              end: 24,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 24
-                }
-              }
-            },
-            start: 0,
-            end: 24,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 24
-              }
-            }
-          },
-          start: 0,
-          end: 24,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 24
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 24,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 24
-        }
-      }
-    }
-  ],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  // ['foo`H\\x45Y`', Context.OptionsLoc, {}],
-  [
-    'foo`H\\x45Y`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'foo',
-              start: 0,
-              end: 3,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 3
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'HEY',
-                    raw: 'H\\x45Y'
-                  },
-                  tail: true,
-                  start: 3,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 3
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                }
-              ],
-              start: 3,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 3
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          },
-          start: 0,
-          end: 11,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 11
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 11,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 11
+          column: 12
         }
       }
     }
@@ -9822,349 +7941,98 @@ pass('Expressions - Template (pass)', [
     }
   ],
   [
-    '`${function(){}}`',
+    '`template\
+    `',
     Context.OptionsLoc,
     {
-      type: 'Program',
-      sourceType: 'script',
       body: [
         {
-          type: 'ExpressionStatement',
+          end: 14,
           expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'FunctionExpression',
-                params: [],
-                body: {
-                  type: 'BlockStatement',
-                  body: [],
-                  start: 13,
-                  end: 15,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 13
-                    },
-                    end: {
-                      line: 1,
-                      column: 15
-                    }
-                  }
-                },
-                async: false,
-                generator: false,
-                id: null,
-                start: 3,
-                end: 15,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 3
-                  },
-                  end: {
-                    line: 1,
-                    column: 15
-                  }
-                }
+            end: 14,
+            expressions: [],
+            loc: {
+              end: {
+                column: 14,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
               }
-            ],
+            },
             quasis: [
               {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '',
-                  raw: ''
+                end: 14,
+                loc: {
+                  end: {
+                    column: 14,
+                    line: 1
+                  },
+                  start: {
+                    column: 0,
+                    line: 1
+                  }
                 },
-                tail: false,
                 start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
+                tail: true,
                 type: 'TemplateElement',
                 value: {
-                  cooked: '',
-                  raw: ''
-                },
-                tail: true,
-                start: 15,
-                end: 15,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 15
-                  },
-                  end: {
-                    line: 1,
-                    column: 15
-                  }
+                  cooked: 'template    ',
+                  raw: 'template    '
                 }
               }
             ],
             start: 0,
-            end: 17,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 17
-              }
+            type: 'TemplateLiteral'
+          },
+          loc: {
+            end: {
+              column: 14,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
             }
           },
           start: 0,
-          end: 17,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 17
-            }
-          }
+          type: 'ExpressionStatement'
         }
       ],
-      start: 0,
-      end: 17,
+      end: 14,
       loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
         end: {
-          line: 1,
-          column: 17
+          column: 14,
+          line: 1
+        },
+        start: {
+          column: 0,
+          line: 1
         }
-      }
+      },
+      sourceType: 'script',
+      start: 0,
+      type: 'Program'
     }
   ],
-
   [
-    '`foo${{a,b} = x}baz`',
+    'for(t`${x in y}`;;);',
     Context.OptionsLoc,
     {
       type: 'Program',
       sourceType: 'script',
       body: [
         {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'AssignmentExpression',
-                left: {
-                  type: 'ObjectPattern',
-                  properties: [
-                    {
-                      type: 'Property',
-                      key: {
-                        type: 'Identifier',
-                        name: 'a',
-                        start: 7,
-                        end: 8,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 7
-                          },
-                          end: {
-                            line: 1,
-                            column: 8
-                          }
-                        }
-                      },
-                      value: {
-                        type: 'Identifier',
-                        name: 'a',
-                        start: 7,
-                        end: 8,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 7
-                          },
-                          end: {
-                            line: 1,
-                            column: 8
-                          }
-                        }
-                      },
-                      kind: 'init',
-                      computed: false,
-                      method: false,
-                      shorthand: true,
-                      start: 7,
-                      end: 8,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 7
-                        },
-                        end: {
-                          line: 1,
-                          column: 8
-                        }
-                      }
-                    },
-                    {
-                      type: 'Property',
-                      key: {
-                        type: 'Identifier',
-                        name: 'b',
-                        start: 9,
-                        end: 10,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 9
-                          },
-                          end: {
-                            line: 1,
-                            column: 10
-                          }
-                        }
-                      },
-                      value: {
-                        type: 'Identifier',
-                        name: 'b',
-                        start: 9,
-                        end: 10,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 9
-                          },
-                          end: {
-                            line: 1,
-                            column: 10
-                          }
-                        }
-                      },
-                      kind: 'init',
-                      computed: false,
-                      method: false,
-                      shorthand: true,
-                      start: 9,
-                      end: 10,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 9
-                        },
-                        end: {
-                          line: 1,
-                          column: 10
-                        }
-                      }
-                    }
-                  ],
-                  start: 6,
-                  end: 11,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 6
-                    },
-                    end: {
-                      line: 1,
-                      column: 11
-                    }
-                  }
-                },
-                operator: '=',
-                right: {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 14,
-                  end: 15,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 14
-                    },
-                    end: {
-                      line: 1,
-                      column: 15
-                    }
-                  }
-                },
-                start: 6,
-                end: 15,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 6
-                  },
-                  end: {
-                    line: 1,
-                    column: 15
-                  }
-                }
-              }
-            ],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'foo',
-                  raw: 'foo'
-                },
-                tail: false,
-                start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'baz',
-                  raw: 'baz'
-                },
-                tail: true,
-                start: 15,
-                end: 15,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 15
-                  },
-                  end: {
-                    line: 1,
-                    column: 15
-                  }
-                }
-              }
-            ],
-            start: 0,
+          type: 'ForStatement',
+          body: {
+            type: 'EmptyStatement',
+            start: 19,
             end: 20,
             loc: {
               start: {
                 line: 1,
-                column: 0
+                column: 19
               },
               end: {
                 line: 1,
@@ -10172,6 +8040,146 @@ pass('Expressions - Template (pass)', [
               }
             }
           },
+          init: {
+            type: 'TaggedTemplateExpression',
+            tag: {
+              type: 'Identifier',
+              name: 't',
+              start: 4,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            quasi: {
+              type: 'TemplateLiteral',
+              expressions: [
+                {
+                  type: 'BinaryExpression',
+                  left: {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 8,
+                    end: 9,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 8
+                      },
+                      end: {
+                        line: 1,
+                        column: 9
+                      }
+                    }
+                  },
+                  right: {
+                    type: 'Identifier',
+                    name: 'y',
+                    start: 13,
+                    end: 14,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 13
+                      },
+                      end: {
+                        line: 1,
+                        column: 14
+                      }
+                    }
+                  },
+                  operator: 'in',
+                  start: 8,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 8
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              quasis: [
+                {
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: '',
+                    raw: ''
+                  },
+                  tail: false,
+                  start: 5,
+                  end: 5,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 5
+                    },
+                    end: {
+                      line: 1,
+                      column: 5
+                    }
+                  }
+                },
+                {
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: '',
+                    raw: ''
+                  },
+                  tail: true,
+                  start: 14,
+                  end: 14,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 14
+                    },
+                    end: {
+                      line: 1,
+                      column: 14
+                    }
+                  }
+                }
+              ],
+              start: 4,
+              end: 16,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 4
+                },
+                end: {
+                  line: 1,
+                  column: 16
+                }
+              }
+            },
+            start: 4,
+            end: 16,
+            loc: {
+              start: {
+                line: 1,
+                column: 4
+              },
+              end: {
+                line: 1,
+                column: 16
+              }
+            }
+          },
+          test: null,
+          update: null,
           start: 0,
           end: 20,
           loc: {
@@ -10200,314 +8208,87 @@ pass('Expressions - Template (pass)', [
       }
     }
   ],
+  //['a.foo`bar`', Context.OptionsLoc, {}],
   [
-    '`{`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: '{',
-                  raw: '{'
-                },
-                tail: true,
-                start: 0,
-                end: 3,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 3
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 3,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 3
-              }
-            }
-          },
-          start: 0,
-          end: 3,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 3
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 3,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 3
-        }
-      }
-    }
-  ],
-  [
-    '`foo ${a} and ${b} and ${c} baz`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'Identifier',
-                name: 'a',
-                start: 7,
-                end: 8,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 7
-                  },
-                  end: {
-                    line: 1,
-                    column: 8
-                  }
-                }
-              },
-              {
-                type: 'Identifier',
-                name: 'b',
-                start: 16,
-                end: 17,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 16
-                  },
-                  end: {
-                    line: 1,
-                    column: 17
-                  }
-                }
-              },
-              {
-                type: 'Identifier',
-                name: 'c',
-                start: 25,
-                end: 26,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 25
-                  },
-                  end: {
-                    line: 1,
-                    column: 26
-                  }
-                }
-              }
-            ],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'foo ',
-                  raw: 'foo '
-                },
-                tail: false,
-                start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: ' and ',
-                  raw: ' and '
-                },
-                tail: false,
-                start: 8,
-                end: 8,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 8
-                  },
-                  end: {
-                    line: 1,
-                    column: 8
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: ' and ',
-                  raw: ' and '
-                },
-                tail: false,
-                start: 17,
-                end: 17,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 17
-                  },
-                  end: {
-                    line: 1,
-                    column: 17
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: ' baz',
-                  raw: ' baz'
-                },
-                tail: true,
-                start: 26,
-                end: 26,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 26
-                  },
-                  end: {
-                    line: 1,
-                    column: 26
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 32,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 32
-              }
-            }
-          },
-          start: 0,
-          end: 32,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 32
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 32,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 32
-        }
-      }
-    }
-  ],
-  [
-    '`\n`',
+    'tag`okay \\u{110001}`',
     Context.OptionsLoc,
     {
       body: [
         {
-          end: 3,
+          end: 20,
           expression: {
-            end: 3,
-            expressions: [],
+            end: 20,
             loc: {
               end: {
-                column: 2,
-                line: 2
+                column: 20,
+                line: 1
               },
               start: {
                 column: 0,
                 line: 1
               }
             },
-            quasis: [
-              {
-                end: 3,
-                loc: {
-                  end: {
-                    column: 2,
-                    line: 2
-                  },
-                  start: {
-                    column: 0,
-                    line: 1
-                  }
+            quasi: {
+              end: 20,
+              expressions: [],
+              loc: {
+                end: {
+                  column: 20,
+                  line: 1
                 },
-                start: 0,
-                tail: true,
-                type: 'TemplateElement',
-                value: {
-                  cooked: '\n',
-                  raw: '\n'
+                start: {
+                  column: 3,
+                  line: 1
                 }
-              }
-            ],
+              },
+              quasis: [
+                {
+                  end: 20,
+                  loc: {
+                    end: {
+                      column: 20,
+                      line: 1
+                    },
+                    start: {
+                      column: 3,
+                      line: 1
+                    }
+                  },
+                  start: 3,
+                  tail: true,
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: null,
+                    raw: 'okay \\u{110001}'
+                  }
+                }
+              ],
+              start: 3,
+              type: 'TemplateLiteral'
+            },
             start: 0,
-            type: 'TemplateLiteral'
+            tag: {
+              end: 3,
+              loc: {
+                end: {
+                  column: 3,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'tag',
+              start: 0,
+              type: 'Identifier'
+            },
+            type: 'TaggedTemplateExpression'
           },
           loc: {
             end: {
-              column: 2,
-              line: 2
+              column: 20,
+              line: 1
             },
             start: {
               column: 0,
@@ -10518,11 +8299,11 @@ pass('Expressions - Template (pass)', [
           type: 'ExpressionStatement'
         }
       ],
-      end: 3,
+      end: 20,
       loc: {
         end: {
-          column: 2,
-          line: 2
+          column: 20,
+          line: 1
         },
         start: {
           column: 0,
@@ -10535,7 +8316,113 @@ pass('Expressions - Template (pass)', [
     }
   ],
   [
-    '`a ${()=>{}} b`',
+    'tag`\\00`',
+    Context.OptionsLoc,
+    {
+      body: [
+        {
+          end: 8,
+          expression: {
+            end: 8,
+            loc: {
+              end: {
+                column: 8,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            quasi: {
+              end: 8,
+              expressions: [],
+              loc: {
+                end: {
+                  column: 8,
+                  line: 1
+                },
+                start: {
+                  column: 3,
+                  line: 1
+                }
+              },
+              quasis: [
+                {
+                  end: 8,
+                  loc: {
+                    end: {
+                      column: 8,
+                      line: 1
+                    },
+                    start: {
+                      column: 3,
+                      line: 1
+                    }
+                  },
+                  start: 3,
+                  tail: true,
+                  type: 'TemplateElement',
+                  value: {
+                    cooked: null,
+                    raw: '\\00'
+                  }
+                }
+              ],
+              start: 3,
+              type: 'TemplateLiteral'
+            },
+            start: 0,
+            tag: {
+              end: 3,
+              loc: {
+                end: {
+                  column: 3,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'tag',
+              start: 0,
+              type: 'Identifier'
+            },
+            type: 'TaggedTemplateExpression'
+          },
+          loc: {
+            end: {
+              column: 8,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
+            }
+          },
+          start: 0,
+          type: 'ExpressionStatement'
+        }
+      ],
+      end: 8,
+      loc: {
+        end: {
+          column: 8,
+          line: 1
+        },
+        start: {
+          column: 0,
+          line: 1
+        }
+      },
+      sourceType: 'script',
+      start: 0,
+      type: 'Program'
+    }
+  ],
+  [
+    '`${x => {}}`',
     Context.OptionsLoc,
     {
       type: 'Program',
@@ -10551,32 +8438,49 @@ pass('Expressions - Template (pass)', [
                 body: {
                   type: 'BlockStatement',
                   body: [],
-                  start: 9,
-                  end: 11,
+                  start: 8,
+                  end: 10,
                   loc: {
                     start: {
                       line: 1,
-                      column: 9
+                      column: 8
                     },
                     end: {
                       line: 1,
-                      column: 11
+                      column: 10
                     }
                   }
                 },
-                params: [],
+                params: [
+                  {
+                    type: 'Identifier',
+                    name: 'x',
+                    start: 3,
+                    end: 4,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 3
+                      },
+                      end: {
+                        line: 1,
+                        column: 4
+                      }
+                    }
+                  }
+                ],
                 async: false,
                 expression: false,
-                start: 5,
-                end: 11,
+                start: 3,
+                end: 10,
                 loc: {
                   start: {
                     line: 1,
-                    column: 5
+                    column: 3
                   },
                   end: {
                     line: 1,
-                    column: 11
+                    column: 10
                   }
                 }
               }
@@ -10585,8 +8489,8 @@ pass('Expressions - Template (pass)', [
               {
                 type: 'TemplateElement',
                 value: {
-                  cooked: 'a ',
-                  raw: 'a '
+                  cooked: '',
+                  raw: ''
                 },
                 tail: false,
                 start: 0,
@@ -10605,26 +8509,26 @@ pass('Expressions - Template (pass)', [
               {
                 type: 'TemplateElement',
                 value: {
-                  cooked: ' b',
-                  raw: ' b'
+                  cooked: '',
+                  raw: ''
                 },
                 tail: true,
-                start: 11,
-                end: 11,
+                start: 10,
+                end: 10,
                 loc: {
                   start: {
                     line: 1,
-                    column: 11
+                    column: 10
                   },
                   end: {
                     line: 1,
-                    column: 11
+                    column: 10
                   }
                 }
               }
             ],
             start: 0,
-            end: 15,
+            end: 12,
             loc: {
               start: {
                 line: 1,
@@ -10632,910 +8536,7 @@ pass('Expressions - Template (pass)', [
               },
               end: {
                 line: 1,
-                column: 15
-              }
-            }
-          },
-          start: 0,
-          end: 15,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 15
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 15,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 15
-        }
-      }
-    }
-  ],
-  [
-    'function *f(){   x = `1 ${ yield x } 2`   }',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'FunctionDeclaration',
-          params: [],
-          body: {
-            type: 'BlockStatement',
-            body: [
-              {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'AssignmentExpression',
-                  left: {
-                    type: 'Identifier',
-                    name: 'x',
-                    start: 17,
-                    end: 18,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 17
-                      },
-                      end: {
-                        line: 1,
-                        column: 18
-                      }
-                    }
-                  },
-                  operator: '=',
-                  right: {
-                    type: 'TemplateLiteral',
-                    expressions: [
-                      {
-                        type: 'YieldExpression',
-                        argument: {
-                          type: 'Identifier',
-                          name: 'x',
-                          start: 33,
-                          end: 34,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 33
-                            },
-                            end: {
-                              line: 1,
-                              column: 34
-                            }
-                          }
-                        },
-                        delegate: false,
-                        start: 27,
-                        end: 34,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 27
-                          },
-                          end: {
-                            line: 1,
-                            column: 34
-                          }
-                        }
-                      }
-                    ],
-                    quasis: [
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: '1 ',
-                          raw: '1 '
-                        },
-                        tail: false,
-                        start: 21,
-                        end: 20,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 21
-                          },
-                          end: {
-                            line: 1,
-                            column: 20
-                          }
-                        }
-                      },
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: ' 2',
-                          raw: ' 2'
-                        },
-                        tail: true,
-                        start: 35,
-                        end: 34,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 35
-                          },
-                          end: {
-                            line: 1,
-                            column: 34
-                          }
-                        }
-                      }
-                    ],
-                    start: 21,
-                    end: 39,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 21
-                      },
-                      end: {
-                        line: 1,
-                        column: 39
-                      }
-                    }
-                  },
-                  start: 17,
-                  end: 39,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 17
-                    },
-                    end: {
-                      line: 1,
-                      column: 39
-                    }
-                  }
-                },
-                start: 17,
-                end: 39,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 17
-                  },
-                  end: {
-                    line: 1,
-                    column: 39
-                  }
-                }
-              }
-            ],
-            start: 13,
-            end: 43,
-            loc: {
-              start: {
-                line: 1,
-                column: 13
-              },
-              end: {
-                line: 1,
-                column: 43
-              }
-            }
-          },
-          async: false,
-          generator: true,
-          id: {
-            type: 'Identifier',
-            name: 'f',
-            start: 10,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 10
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          },
-          start: 0,
-          end: 43,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 43
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 43,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 43
-        }
-      }
-    }
-  ],
-  [
-    'function *f(){   x = `1 ${ yield } 2`   }',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'FunctionDeclaration',
-          params: [],
-          body: {
-            type: 'BlockStatement',
-            body: [
-              {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'AssignmentExpression',
-                  left: {
-                    type: 'Identifier',
-                    name: 'x',
-                    start: 17,
-                    end: 18,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 17
-                      },
-                      end: {
-                        line: 1,
-                        column: 18
-                      }
-                    }
-                  },
-                  operator: '=',
-                  right: {
-                    type: 'TemplateLiteral',
-                    expressions: [
-                      {
-                        type: 'YieldExpression',
-                        argument: null,
-                        delegate: false,
-                        start: 27,
-                        end: 32,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 27
-                          },
-                          end: {
-                            line: 1,
-                            column: 32
-                          }
-                        }
-                      }
-                    ],
-                    quasis: [
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: '1 ',
-                          raw: '1 '
-                        },
-                        tail: false,
-                        start: 21,
-                        end: 20,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 21
-                          },
-                          end: {
-                            line: 1,
-                            column: 20
-                          }
-                        }
-                      },
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: ' 2',
-                          raw: ' 2'
-                        },
-                        tail: true,
-                        start: 33,
-                        end: 32,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 33
-                          },
-                          end: {
-                            line: 1,
-                            column: 32
-                          }
-                        }
-                      }
-                    ],
-                    start: 21,
-                    end: 37,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 21
-                      },
-                      end: {
-                        line: 1,
-                        column: 37
-                      }
-                    }
-                  },
-                  start: 17,
-                  end: 37,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 17
-                    },
-                    end: {
-                      line: 1,
-                      column: 37
-                    }
-                  }
-                },
-                start: 17,
-                end: 37,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 17
-                  },
-                  end: {
-                    line: 1,
-                    column: 37
-                  }
-                }
-              }
-            ],
-            start: 13,
-            end: 41,
-            loc: {
-              start: {
-                line: 1,
-                column: 13
-              },
-              end: {
-                line: 1,
-                column: 41
-              }
-            }
-          },
-          async: false,
-          generator: true,
-          id: {
-            type: 'Identifier',
-            name: 'f',
-            start: 10,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 10
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          },
-          start: 0,
-          end: 41,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 41
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 41,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 41
-        }
-      }
-    }
-  ],
-  [
-    'function *f(){   x = `1 ${ yield x } 2 ${ 3 } 4`   }',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'FunctionDeclaration',
-          params: [],
-          body: {
-            type: 'BlockStatement',
-            body: [
-              {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'AssignmentExpression',
-                  left: {
-                    type: 'Identifier',
-                    name: 'x',
-                    start: 17,
-                    end: 18,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 17
-                      },
-                      end: {
-                        line: 1,
-                        column: 18
-                      }
-                    }
-                  },
-                  operator: '=',
-                  right: {
-                    type: 'TemplateLiteral',
-                    expressions: [
-                      {
-                        type: 'YieldExpression',
-                        argument: {
-                          type: 'Identifier',
-                          name: 'x',
-                          start: 33,
-                          end: 34,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 33
-                            },
-                            end: {
-                              line: 1,
-                              column: 34
-                            }
-                          }
-                        },
-                        delegate: false,
-                        start: 27,
-                        end: 34,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 27
-                          },
-                          end: {
-                            line: 1,
-                            column: 34
-                          }
-                        }
-                      },
-                      {
-                        type: 'Literal',
-                        value: 3,
-                        start: 42,
-                        end: 43,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 42
-                          },
-                          end: {
-                            line: 1,
-                            column: 43
-                          }
-                        }
-                      }
-                    ],
-                    quasis: [
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: '1 ',
-                          raw: '1 '
-                        },
-                        tail: false,
-                        start: 21,
-                        end: 20,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 21
-                          },
-                          end: {
-                            line: 1,
-                            column: 20
-                          }
-                        }
-                      },
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: ' 2 ',
-                          raw: ' 2 '
-                        },
-                        tail: false,
-                        start: 35,
-                        end: 34,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 35
-                          },
-                          end: {
-                            line: 1,
-                            column: 34
-                          }
-                        }
-                      },
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: ' 4',
-                          raw: ' 4'
-                        },
-                        tail: true,
-                        start: 44,
-                        end: 43,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 44
-                          },
-                          end: {
-                            line: 1,
-                            column: 43
-                          }
-                        }
-                      }
-                    ],
-                    start: 21,
-                    end: 48,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 21
-                      },
-                      end: {
-                        line: 1,
-                        column: 48
-                      }
-                    }
-                  },
-                  start: 17,
-                  end: 48,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 17
-                    },
-                    end: {
-                      line: 1,
-                      column: 48
-                    }
-                  }
-                },
-                start: 17,
-                end: 48,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 17
-                  },
-                  end: {
-                    line: 1,
-                    column: 48
-                  }
-                }
-              }
-            ],
-            start: 13,
-            end: 52,
-            loc: {
-              start: {
-                line: 1,
-                column: 13
-              },
-              end: {
-                line: 1,
-                column: 52
-              }
-            }
-          },
-          async: false,
-          generator: true,
-          id: {
-            type: 'Identifier',
-            name: 'f',
-            start: 10,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 10
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          },
-          start: 0,
-          end: 52,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 52
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 52,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 52
-        }
-      }
-    }
-  ],
-  [
-    'f`\\xg`;',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 7,
-          expression: {
-            end: 6,
-            loc: {
-              end: {
-                column: 6,
-                line: 1
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            quasi: {
-              end: 6,
-              expressions: [],
-              loc: {
-                end: {
-                  column: 6,
-                  line: 1
-                },
-                start: {
-                  column: 1,
-                  line: 1
-                }
-              },
-              quasis: [
-                {
-                  end: 6,
-                  loc: {
-                    end: {
-                      column: 6,
-                      line: 1
-                    },
-                    start: {
-                      column: 1,
-                      line: 1
-                    }
-                  },
-                  start: 1,
-                  tail: true,
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: null,
-                    raw: '\\xg'
-                  }
-                }
-              ],
-              start: 1,
-              type: 'TemplateLiteral'
-            },
-            start: 0,
-            tag: {
-              end: 1,
-              loc: {
-                end: {
-                  column: 1,
-                  line: 1
-                },
-                start: {
-                  column: 0,
-                  line: 1
-                }
-              },
-              name: 'f',
-              start: 0,
-              type: 'Identifier'
-            },
-            type: 'TaggedTemplateExpression'
-          },
-          loc: {
-            end: {
-              column: 7,
-              line: 1
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 7,
-      loc: {
-        end: {
-          column: 7,
-          line: 1
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
-    }
-  ],
-  [
-    'f`\\xg ${x}`;',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TaggedTemplateExpression',
-            tag: {
-              type: 'Identifier',
-              name: 'f',
-              start: 0,
-              end: 1,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 1
-                }
-              }
-            },
-            quasi: {
-              type: 'TemplateLiteral',
-              expressions: [
-                {
-                  type: 'Identifier',
-                  name: 'x',
-                  start: 8,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 8
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                }
-              ],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: null,
-                    raw: '\\xg '
-                  },
-                  tail: false,
-                  start: 1,
-                  end: 1,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 1
-                    },
-                    end: {
-                      line: 1,
-                      column: 1
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: '',
-                    raw: ''
-                  },
-                  tail: true,
-                  start: 9,
-                  end: 9,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 9
-                    },
-                    end: {
-                      line: 1,
-                      column: 9
-                    }
-                  }
-                }
-              ],
-              start: 0,
-              end: 11,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 11
-                }
-              }
-            },
-            start: 0,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 11
+                column: 12
               }
             }
           },
@@ -11565,1455 +8566,6 @@ pass('Expressions - Template (pass)', [
           column: 12
         }
       }
-    }
-  ],
-  // ['for(t`${x in y}`;;);', Context.OptionsLoc, {}],
-
-  [
-    'let o, {x} = of = 2e308.break',
-    Context.OptionsLoc | Context.Strict,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'VariableDeclaration',
-          kind: 'let',
-          declarations: [
-            {
-              type: 'VariableDeclarator',
-              init: null,
-              id: {
-                type: 'Identifier',
-                name: 'o',
-                start: 4,
-                end: 5,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 4
-                  },
-                  end: {
-                    line: 1,
-                    column: 5
-                  }
-                }
-              },
-              start: 4,
-              end: 5,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 4
-                },
-                end: {
-                  line: 1,
-                  column: 5
-                }
-              }
-            },
-            {
-              type: 'VariableDeclarator',
-              init: {
-                type: 'AssignmentExpression',
-                left: {
-                  type: 'Identifier',
-                  name: 'of',
-                  start: 13,
-                  end: 15,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 13
-                    },
-                    end: {
-                      line: 1,
-                      column: 15
-                    }
-                  }
-                },
-                operator: '=',
-                right: {
-                  type: 'MemberExpression',
-
-                  object: {
-                    type: 'Literal',
-                    value: Infinity,
-                    start: 18,
-                    end: 23,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 18
-                      },
-                      end: {
-                        line: 1,
-                        column: 23
-                      }
-                    }
-                  },
-                  computed: false,
-                  property: {
-                    type: 'Identifier',
-                    name: 'break',
-                    start: 24,
-                    end: 29,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 24
-                      },
-                      end: {
-                        line: 1,
-                        column: 29
-                      }
-                    }
-                  },
-                  start: 18,
-                  end: 29,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 18
-                    },
-                    end: {
-                      line: 1,
-                      column: 29
-                    }
-                  }
-                },
-                start: 13,
-                end: 29,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 13
-                  },
-                  end: {
-                    line: 1,
-                    column: 29
-                  }
-                }
-              },
-              id: {
-                type: 'ObjectPattern',
-                properties: [
-                  {
-                    type: 'Property',
-                    key: {
-                      type: 'Identifier',
-                      name: 'x',
-                      start: 8,
-                      end: 9,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 8
-                        },
-                        end: {
-                          line: 1,
-                          column: 9
-                        }
-                      }
-                    },
-                    value: {
-                      type: 'Identifier',
-                      name: 'x',
-                      start: 8,
-                      end: 9,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 8
-                        },
-                        end: {
-                          line: 1,
-                          column: 9
-                        }
-                      }
-                    },
-                    kind: 'init',
-                    computed: false,
-                    method: false,
-                    shorthand: true,
-                    start: 8,
-                    end: 9,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 8
-                      },
-                      end: {
-                        line: 1,
-                        column: 9
-                      }
-                    }
-                  }
-                ],
-                start: 7,
-                end: 10,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 7
-                  },
-                  end: {
-                    line: 1,
-                    column: 10
-                  }
-                }
-              },
-              start: 7,
-              end: 29,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 7
-                },
-                end: {
-                  line: 1,
-                  column: 29
-                }
-              }
-            }
-          ],
-          start: 0,
-          end: 29,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 29
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 29,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 29
-        }
-      }
-    }
-  ],
-  [
-    '`a ${(k)=>{x}} b`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'ArrowFunctionExpression',
-                body: {
-                  type: 'BlockStatement',
-                  body: [
-                    {
-                      type: 'ExpressionStatement',
-                      expression: {
-                        type: 'Identifier',
-                        name: 'x',
-                        start: 11,
-                        end: 12,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 11
-                          },
-                          end: {
-                            line: 1,
-                            column: 12
-                          }
-                        }
-                      },
-                      start: 11,
-                      end: 12,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 11
-                        },
-                        end: {
-                          line: 1,
-                          column: 12
-                        }
-                      }
-                    }
-                  ],
-                  start: 10,
-                  end: 13,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 13
-                    }
-                  }
-                },
-                params: [
-                  {
-                    type: 'Identifier',
-                    name: 'k',
-                    start: 6,
-                    end: 7,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 6
-                      },
-                      end: {
-                        line: 1,
-                        column: 7
-                      }
-                    }
-                  }
-                ],
-                async: false,
-                expression: false,
-                start: 5,
-                end: 13,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 5
-                  },
-                  end: {
-                    line: 1,
-                    column: 13
-                  }
-                }
-              }
-            ],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'a ',
-                  raw: 'a '
-                },
-                tail: false,
-                start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: ' b',
-                  raw: ' b'
-                },
-                tail: true,
-                start: 13,
-                end: 13,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 13
-                  },
-                  end: {
-                    line: 1,
-                    column: 13
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 17,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 17
-              }
-            }
-          },
-          start: 0,
-          end: 17,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 17
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 17,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 17
-        }
-      }
-    }
-  ],
-  [
-    'x = `1 ${ yield } 2 ${ 3 } 4`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'AssignmentExpression',
-            left: {
-              type: 'Identifier',
-              name: 'x',
-              start: 0,
-              end: 1,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
-                end: {
-                  line: 1,
-                  column: 1
-                }
-              }
-            },
-            operator: '=',
-            right: {
-              type: 'TemplateLiteral',
-              expressions: [
-                {
-                  type: 'Identifier',
-                  name: 'yield',
-                  start: 10,
-                  end: 15,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 1,
-                      column: 15
-                    }
-                  }
-                },
-                {
-                  type: 'Literal',
-                  value: 3,
-                  start: 23,
-                  end: 24,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 23
-                    },
-                    end: {
-                      line: 1,
-                      column: 24
-                    }
-                  }
-                }
-              ],
-              quasis: [
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: '1 ',
-                    raw: '1 '
-                  },
-                  tail: false,
-                  start: 4,
-                  end: 3,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 4
-                    },
-                    end: {
-                      line: 1,
-                      column: 3
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: ' 2 ',
-                    raw: ' 2 '
-                  },
-                  tail: false,
-                  start: 16,
-                  end: 15,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 16
-                    },
-                    end: {
-                      line: 1,
-                      column: 15
-                    }
-                  }
-                },
-                {
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: ' 4',
-                    raw: ' 4'
-                  },
-                  tail: true,
-                  start: 25,
-                  end: 24,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 25
-                    },
-                    end: {
-                      line: 1,
-                      column: 24
-                    }
-                  }
-                }
-              ],
-              start: 4,
-              end: 29,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 4
-                },
-                end: {
-                  line: 1,
-                  column: 29
-                }
-              }
-            },
-            start: 0,
-            end: 29,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 29
-              }
-            }
-          },
-          start: 0,
-          end: 29,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 29
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 29,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 29
-        }
-      }
-    }
-  ],
-  [
-    '`foo${bar}baz`',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'ExpressionStatement',
-          expression: {
-            type: 'TemplateLiteral',
-            expressions: [
-              {
-                type: 'Identifier',
-                name: 'bar',
-                start: 6,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 6
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              }
-            ],
-            quasis: [
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'foo',
-                  raw: 'foo'
-                },
-                tail: false,
-                start: 0,
-                end: 0,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 0
-                  },
-                  end: {
-                    line: 1,
-                    column: 0
-                  }
-                }
-              },
-              {
-                type: 'TemplateElement',
-                value: {
-                  cooked: 'baz',
-                  raw: 'baz'
-                },
-                tail: true,
-                start: 9,
-                end: 9,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 9
-                  },
-                  end: {
-                    line: 1,
-                    column: 9
-                  }
-                }
-              }
-            ],
-            start: 0,
-            end: 14,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 1,
-                column: 14
-              }
-            }
-          },
-          start: 0,
-          end: 14,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 14
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 14,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 14
-        }
-      }
-    }
-  ],
-  [
-    'function *f(){   x = `1 ${ yield x } 2 ${ 3 } 4`   }',
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'FunctionDeclaration',
-          params: [],
-          body: {
-            type: 'BlockStatement',
-            body: [
-              {
-                type: 'ExpressionStatement',
-                expression: {
-                  type: 'AssignmentExpression',
-                  left: {
-                    type: 'Identifier',
-                    name: 'x',
-                    start: 17,
-                    end: 18,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 17
-                      },
-                      end: {
-                        line: 1,
-                        column: 18
-                      }
-                    }
-                  },
-                  operator: '=',
-                  right: {
-                    type: 'TemplateLiteral',
-                    expressions: [
-                      {
-                        type: 'YieldExpression',
-                        argument: {
-                          type: 'Identifier',
-                          name: 'x',
-                          start: 33,
-                          end: 34,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 33
-                            },
-                            end: {
-                              line: 1,
-                              column: 34
-                            }
-                          }
-                        },
-                        delegate: false,
-                        start: 27,
-                        end: 34,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 27
-                          },
-                          end: {
-                            line: 1,
-                            column: 34
-                          }
-                        }
-                      },
-                      {
-                        type: 'Literal',
-                        value: 3,
-                        start: 42,
-                        end: 43,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 42
-                          },
-                          end: {
-                            line: 1,
-                            column: 43
-                          }
-                        }
-                      }
-                    ],
-                    quasis: [
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: '1 ',
-                          raw: '1 '
-                        },
-                        tail: false,
-                        start: 21,
-                        end: 20,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 21
-                          },
-                          end: {
-                            line: 1,
-                            column: 20
-                          }
-                        }
-                      },
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: ' 2 ',
-                          raw: ' 2 '
-                        },
-                        tail: false,
-                        start: 35,
-                        end: 34,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 35
-                          },
-                          end: {
-                            line: 1,
-                            column: 34
-                          }
-                        }
-                      },
-                      {
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: ' 4',
-                          raw: ' 4'
-                        },
-                        tail: true,
-                        start: 44,
-                        end: 43,
-                        loc: {
-                          start: {
-                            line: 1,
-                            column: 44
-                          },
-                          end: {
-                            line: 1,
-                            column: 43
-                          }
-                        }
-                      }
-                    ],
-                    start: 21,
-                    end: 48,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 21
-                      },
-                      end: {
-                        line: 1,
-                        column: 48
-                      }
-                    }
-                  },
-                  start: 17,
-                  end: 48,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 17
-                    },
-                    end: {
-                      line: 1,
-                      column: 48
-                    }
-                  }
-                },
-                start: 17,
-                end: 48,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 17
-                  },
-                  end: {
-                    line: 1,
-                    column: 48
-                  }
-                }
-              }
-            ],
-            start: 13,
-            end: 52,
-            loc: {
-              start: {
-                line: 1,
-                column: 13
-              },
-              end: {
-                line: 1,
-                column: 52
-              }
-            }
-          },
-          async: false,
-          generator: true,
-          id: {
-            type: 'Identifier',
-            name: 'f',
-            start: 10,
-            end: 11,
-            loc: {
-              start: {
-                line: 1,
-                column: 10
-              },
-              end: {
-                line: 1,
-                column: 11
-              }
-            }
-          },
-          start: 0,
-          end: 52,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 1,
-              column: 52
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 52,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 1,
-          column: 52
-        }
-      }
-    }
-  ],
-  [
-    'new x`array`',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 12,
-          expression: {
-            arguments: [],
-            callee: {
-              end: 12,
-              loc: {
-                end: {
-                  column: 12,
-                  line: 1
-                },
-                start: {
-                  column: 4,
-                  line: 1
-                }
-              },
-              quasi: {
-                end: 12,
-                expressions: [],
-                loc: {
-                  end: {
-                    column: 12,
-                    line: 1
-                  },
-                  start: {
-                    column: 5,
-                    line: 1
-                  }
-                },
-                quasis: [
-                  {
-                    end: 12,
-                    loc: {
-                      end: {
-                        column: 12,
-                        line: 1
-                      },
-                      start: {
-                        column: 5,
-                        line: 1
-                      }
-                    },
-                    start: 5,
-                    tail: true,
-                    type: 'TemplateElement',
-                    value: {
-                      cooked: 'array',
-                      raw: 'array'
-                    }
-                  }
-                ],
-                start: 5,
-                type: 'TemplateLiteral'
-              },
-              start: 4,
-              tag: {
-                end: 5,
-                loc: {
-                  end: {
-                    column: 5,
-                    line: 1
-                  },
-                  start: {
-                    column: 4,
-                    line: 1
-                  }
-                },
-                name: 'x',
-                start: 4,
-                type: 'Identifier'
-              },
-              type: 'TaggedTemplateExpression'
-            },
-            end: 12,
-            loc: {
-              end: {
-                column: 12,
-                line: 1
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            start: 0,
-            type: 'NewExpression'
-          },
-          loc: {
-            end: {
-              column: 12,
-              line: 1
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 12,
-      loc: {
-        end: {
-          column: 12,
-          line: 1
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
-    }
-  ],
-  [
-    'x`1``2``3``array`',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 17,
-          expression: {
-            end: 17,
-            loc: {
-              end: {
-                column: 17,
-                line: 1
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            quasi: {
-              end: 17,
-              expressions: [],
-              loc: {
-                end: {
-                  column: 17,
-                  line: 1
-                },
-                start: {
-                  column: 10,
-                  line: 1
-                }
-              },
-              quasis: [
-                {
-                  end: 17,
-                  loc: {
-                    end: {
-                      column: 17,
-                      line: 1
-                    },
-                    start: {
-                      column: 10,
-                      line: 1
-                    }
-                  },
-                  start: 10,
-                  tail: true,
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: 'array',
-                    raw: 'array'
-                  }
-                }
-              ],
-              start: 10,
-              type: 'TemplateLiteral'
-            },
-            start: 0,
-            tag: {
-              end: 10,
-              loc: {
-                end: {
-                  column: 10,
-                  line: 1
-                },
-                start: {
-                  column: 0,
-                  line: 1
-                }
-              },
-              quasi: {
-                end: 10,
-                expressions: [],
-                loc: {
-                  end: {
-                    column: 10,
-                    line: 1
-                  },
-                  start: {
-                    column: 7,
-                    line: 1
-                  }
-                },
-                quasis: [
-                  {
-                    end: 10,
-                    loc: {
-                      end: {
-                        column: 10,
-                        line: 1
-                      },
-                      start: {
-                        column: 7,
-                        line: 1
-                      }
-                    },
-                    start: 7,
-                    tail: true,
-                    type: 'TemplateElement',
-                    value: {
-                      cooked: '3',
-                      raw: '3'
-                    }
-                  }
-                ],
-                start: 7,
-                type: 'TemplateLiteral'
-              },
-              start: 0,
-              tag: {
-                end: 7,
-                loc: {
-                  end: {
-                    column: 7,
-                    line: 1
-                  },
-                  start: {
-                    column: 0,
-                    line: 1
-                  }
-                },
-                quasi: {
-                  end: 7,
-                  expressions: [],
-                  loc: {
-                    end: {
-                      column: 7,
-                      line: 1
-                    },
-                    start: {
-                      column: 4,
-                      line: 1
-                    }
-                  },
-                  quasis: [
-                    {
-                      end: 7,
-                      loc: {
-                        end: {
-                          column: 7,
-                          line: 1
-                        },
-                        start: {
-                          column: 4,
-                          line: 1
-                        }
-                      },
-                      start: 4,
-                      tail: true,
-                      type: 'TemplateElement',
-                      value: {
-                        cooked: '2',
-                        raw: '2'
-                      }
-                    }
-                  ],
-                  start: 4,
-                  type: 'TemplateLiteral'
-                },
-                start: 0,
-                tag: {
-                  end: 4,
-                  loc: {
-                    end: {
-                      column: 4,
-                      line: 1
-                    },
-                    start: {
-                      column: 0,
-                      line: 1
-                    }
-                  },
-                  quasi: {
-                    end: 4,
-                    expressions: [],
-                    loc: {
-                      end: {
-                        column: 4,
-                        line: 1
-                      },
-                      start: {
-                        column: 1,
-                        line: 1
-                      }
-                    },
-                    quasis: [
-                      {
-                        end: 4,
-                        loc: {
-                          end: {
-                            column: 4,
-                            line: 1
-                          },
-                          start: {
-                            column: 1,
-                            line: 1
-                          }
-                        },
-                        start: 1,
-                        tail: true,
-                        type: 'TemplateElement',
-                        value: {
-                          cooked: '1',
-                          raw: '1'
-                        }
-                      }
-                    ],
-                    start: 1,
-                    type: 'TemplateLiteral'
-                  },
-                  start: 0,
-                  tag: {
-                    end: 1,
-                    loc: {
-                      end: {
-                        column: 1,
-                        line: 1
-                      },
-                      start: {
-                        column: 0,
-                        line: 1
-                      }
-                    },
-                    name: 'x',
-                    start: 0,
-                    type: 'Identifier'
-                  },
-                  type: 'TaggedTemplateExpression'
-                },
-                type: 'TaggedTemplateExpression'
-              },
-              type: 'TaggedTemplateExpression'
-            },
-            type: 'TaggedTemplateExpression'
-          },
-          loc: {
-            end: {
-              column: 17,
-              line: 1
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 17,
-      loc: {
-        end: {
-          column: 17,
-          line: 1
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
-    }
-  ],
-  [
-    'x`\\0`',
-    Context.OptionsLoc,
-    {
-      body: [
-        {
-          end: 5,
-          expression: {
-            end: 5,
-            loc: {
-              end: {
-                column: 5,
-                line: 1
-              },
-              start: {
-                column: 0,
-                line: 1
-              }
-            },
-            quasi: {
-              end: 5,
-              expressions: [],
-              loc: {
-                end: {
-                  column: 5,
-                  line: 1
-                },
-                start: {
-                  column: 1,
-                  line: 1
-                }
-              },
-              quasis: [
-                {
-                  end: 5,
-                  loc: {
-                    end: {
-                      column: 5,
-                      line: 1
-                    },
-                    start: {
-                      column: 1,
-                      line: 1
-                    }
-                  },
-                  start: 1,
-                  tail: true,
-                  type: 'TemplateElement',
-                  value: {
-                    cooked: '\u0000',
-                    raw: '\\0'
-                  }
-                }
-              ],
-              start: 1,
-              type: 'TemplateLiteral'
-            },
-            start: 0,
-            tag: {
-              end: 1,
-              loc: {
-                end: {
-                  column: 1,
-                  line: 1
-                },
-                start: {
-                  column: 0,
-                  line: 1
-                }
-              },
-              name: 'x',
-              start: 0,
-              type: 'Identifier'
-            },
-            type: 'TaggedTemplateExpression'
-          },
-          loc: {
-            end: {
-              column: 5,
-              line: 1
-            },
-            start: {
-              column: 0,
-              line: 1
-            }
-          },
-          start: 0,
-          type: 'ExpressionStatement'
-        }
-      ],
-      end: 5,
-      loc: {
-        end: {
-          column: 5,
-          line: 1
-        },
-        start: {
-          column: 0,
-          line: 1
-        }
-      },
-      sourceType: 'script',
-      start: 0,
-      type: 'Program'
     }
   ]
 ]);

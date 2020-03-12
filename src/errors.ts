@@ -272,7 +272,7 @@ export class ParseError extends SyntaxError {
 }
 
 export function report(parser: ParserState, type: Errors, ...params: string[]): never {
-  throw new ParseError(parser.index, parser.lineBase, parser.index - parser.offset, type, ...params);
+  throw new ParseError(parser.index, parser.curLine, parser.index - parser.offset, type, ...params);
 }
 
 export function reportScopeError(scope: any): never {

@@ -20,7 +20,7 @@ describe('Scanner - Regular expression', () => {
         {
           token: found,
           hasNext: parser.index < parser.length,
-          line: parser.lineBase,
+          line: parser.curLine,
           value: parser.tokenValue,
           raw: parser.tokenRaw,
           column: parser.index - parser.offset
@@ -45,7 +45,7 @@ describe('Scanner - Regular expression', () => {
           token: found,
           hasNext: parser.index < parser.source.length,
           raw: parser.tokenRaw,
-          line: parser.lineBase,
+          line: parser.curLine,
           column: parser.index - parser.offset
         },
         {

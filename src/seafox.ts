@@ -77,7 +77,7 @@ export function parseRoot(source: string, context: Context, options?: Options): 
             column: 0
           },
           end: {
-            line: parser.lineBase,
+            line: parser.curLine,
             column: parser.index - parser.offset
           }
         }
@@ -110,4 +110,4 @@ export function parse(source: string, options?: Options): Program {
   return parseRoot(source, Context.InGlobal, options);
 }
 
-export const version = '1.2.0';
+export const version = '1.3.0';

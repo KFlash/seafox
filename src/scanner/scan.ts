@@ -307,14 +307,13 @@ export function scan(
   while (parser.index < length) {
     char = source.charCodeAt(parser.index);
 
-    parser.line = parser.lineBase;
-    parser.column = (parser.start = parser.index) - parser.offset;
+    parser.start = parser.index;
 
     if (char > 0x7e) {
       if ((char & ~1) === Chars.LineSeparator) {
         parser.offset = ++parser.index;
         parser.newLine = 1;
-        parser.lineBase++;
+        parser.curLine++;
         lastIsCR = 0;
         continue;
       }
@@ -399,14 +398,14 @@ export function scan(
       // line terminators
       case Token.CarriageReturn:
         parser.offset = ++parser.index;
-        parser.lineBase++;
+        parser.curLine++;
         parser.newLine = lastIsCR = 1;
         break;
 
       case Token.LineFeed:
         parser.offset = ++parser.index;
         parser.newLine = 1;
-        if (lastIsCR === 0) parser.lineBase++;
+        if (lastIsCR === 0) parser.curLine++;
         lastIsCR = 0;
         break;
 
@@ -646,6 +645,8 @@ export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 
   const { source, length, index, offset } = parser;
   parser.flags = (parser.flags | Flags.Octals) ^ Flags.Octals;
   parser.lastColumn = (parser.endIndex = index) - offset;
-  parser.prevLinebase = parser.lineBase;
+  parser.lastLine = parser.curLine;
   parser.token = scan(parser, context, source, index, length, Token.EOF, /* lastIsCR */ 0, index === 0, allowRegExp);
+  parser.column = parser.start - parser.offset;
+  parser.line = parser.curLine;
 }

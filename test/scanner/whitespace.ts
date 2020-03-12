@@ -11,7 +11,7 @@ describe('Scanner - Whitespace', () => {
       t.deepEqual(
         {
           hasNext: parser.index < parser.source.length,
-          line: parser.lineBase,
+          line: parser.curLine,
           column: parser.index - parser.offset
         },
         {

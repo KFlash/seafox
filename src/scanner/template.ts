@@ -41,24 +41,25 @@ export function scanTemplate(parser: ParserState, context: Context, source: stri
           }
         }
       } else {
-        if ((CharTypes[char] & CharFlags.LineTerminator) === CharFlags.LineTerminator) {
-          if (char === Chars.CarriageReturn) {
-            if (parser.index < parser.length && source.charCodeAt(parser.index) === Chars.LineFeed) {
-              ret += fromCodePoint(char);
-              char = source.charCodeAt(parser.index);
-              parser.index++;
-              parser.lineBase++;
-            }
+        if (char === Chars.CarriageReturn) {
+          if (parser.index < parser.length && source.charCodeAt(parser.index + 1) === Chars.LineFeed) {
+            ret += fromCodePoint(char);
+            char = source.charCodeAt(parser.index);
+            parser.curLine++;
           }
-          parser.offset = parser.index;
-          parser.lineBase++;
+          parser.offset = parser.start = parser.index;
+          parser.curLine++;
+        } else if (char === Chars.LineFeed) {
+          parser.offset = parser.start = parser.index;
+          parser.curLine++;
         }
+
         ret += fromCodePoint(char);
       }
     } else {
       if ((char ^ Chars.LineSeparator) <= 1) {
-        parser.offset = parser.index;
-        parser.lineBase++;
+        parser.offset = parser.start = parser.index;
+        parser.curLine++;
       }
       ret += fromCodePoint(char);
     }

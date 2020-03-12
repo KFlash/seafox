@@ -208,7 +208,7 @@ describe('scanner - identifiers', () => {
         {
           token: found,
           hasNext: parser.index < parser.length,
-          line: parser.lineBase,
+          line: parser.curLine,
           value: parser.tokenValue,
           column: parser.index - parser.offset
         },
@@ -231,7 +231,7 @@ describe('scanner - identifiers', () => {
           token: found,
           hasNext: parser.index < parser.length,
           value: parser.tokenValue,
-          line: parser.lineBase,
+          line: parser.curLine,
           column: parser.index - parser.offset
         },
         {

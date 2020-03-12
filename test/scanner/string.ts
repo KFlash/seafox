@@ -144,7 +144,7 @@ describe('Scanner - String literal', () => {
         {
           token: found,
           hasNext: parser.index < parser.length,
-          line: parser.lineBase,
+          line: parser.curLine,
           value: parser.tokenValue,
           raw: parser.source.slice(parser.start, parser.index),
           column: parser.index - parser.offset
@@ -169,7 +169,7 @@ describe('Scanner - String literal', () => {
           token: found,
           hasNext: parser.index < parser.source.length,
           raw: parser.source.slice(parser.start, parser.index),
-          line: parser.lineBase,
+          line: parser.curLine,
           column: parser.index - parser.offset
         },
         {
