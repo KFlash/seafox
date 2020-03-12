@@ -1,6 +1,6 @@
 import { ParserState, Context } from '../parser/common';
 import { report, Errors } from '../errors';
-import { unicodeLookup, Chars } from './';
+import { isLineTerminator, Chars } from './';
 
 export function skipHashBang(parser: ParserState, source: string): void {
   if (source.charCodeAt(parser.index) === Chars.Hash && source.charCodeAt(parser.index + 1) === Chars.Exclamation) {
@@ -19,7 +19,7 @@ export function skipSingleLineComment(parser: ParserState, source: string, i: nu
   // separately by the lexical grammar and becomes part of the
   // stream of input elements for the syntactic grammar
   let char = source.charCodeAt(i);
-  while (i < parser.length && ((unicodeLookup[(char >>> 5) + 69632] >>> char) & 31 & 1) === 0) {
+  while (i < parser.length && !isLineTerminator(char)) {
     char = source.charCodeAt(++i);
   }
 

@@ -7,7 +7,9 @@ export function readNext(parser: ParserState): number {
   if (parser.index >= parser.length) report(parser, Errors.UnterminatedString);
   return parser.source.charCodeAt(parser.index);
 }
-
+export function isLineTerminator(char: number): boolean {
+  return char === Chars.CarriageReturn || char === Chars.LineFeed || (char & ~1) === Chars.LineSeparator;
+}
 /**
  * Converts an ASCII alphanumeric digit [0-9a-zA-Z] to number as if in base-36.
  *
