@@ -19,8 +19,6 @@ export function scanNumber(parser: ParserState, context: Context, source: string
   let state = NumberKind.Decimal;
 
   if (isFloat === 1) {
-    char = source.charCodeAt(parser.index);
-
     // we know we have at least one digit
 
     value = '.' + scanDecimalDigits(parser, source, char);
@@ -82,7 +80,9 @@ export function scanNumber(parser: ParserState, context: Context, source: string
         }
       } else if ((char | 32) === Chars.LowerO) {
         state = NumberKind.Octal;
+
         char = source.charCodeAt(++parser.index); // skips 'X', 'x'
+
         while ((char >= Chars.Zero && char <= Chars.Seven) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
             if (allowSeparator === 0) {
@@ -103,7 +103,9 @@ export function scanNumber(parser: ParserState, context: Context, source: string
       } else if (char >= Chars.Zero && char <= Chars.Eight) {
         // Octal integer literals are not permitted in strict mode code
         if (context & Context.Strict) report(parser, Errors.StrictOctalEscape);
+
         state = NumberKind.ImplicitOctal;
+
         while (char >= Chars.Zero && char <= Chars.Nine) {
           if (char >= Chars.Eight && char <= Chars.Nine) {
             state = NumberKind.DecimalWithLeadingZero;
@@ -191,9 +193,9 @@ export function scanNumber(parser: ParserState, context: Context, source: string
     if (char === Chars.Underscore) report(parser, Errors.TrailingNumericSeparator);
 
     // Exponential notation must contain at least one digit
-    if ((state & 0b00000000000000000000000000110000) === 0) report(parser, Errors.MissingExponent);
-
-    if ((CharTypes[char] & CharFlags.Decimal) < 1) report(parser, Errors.MissingExponent);
+    if ((state & 0b00000000000000000000000000110000) === 0 || (CharTypes[char] & CharFlags.Decimal) < 1) {
+      report(parser, Errors.MissingExponent);
+    }
 
     // Consume exponential digits
     value += parser.source.substring(end, parser.index) + scanDecimalDigits(parser, source, char);
