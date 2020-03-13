@@ -16,11 +16,6 @@ import {
   unicodeLookup,
   fromCodePoint,
   scanNumber,
-  scanImplicitOctalDigits,
-  scanHexDigits,
-  scanBinaryDigits,
-  scanOctalDigits,
-  scanNumberAfterDecimalPoint,
   isWhiteSpaceSlow
 } from './';
 
@@ -73,7 +68,7 @@ export const firstCharKinds = [
   /*  45 - -                  */ Token.Subtract,
   /*  46 - .                  */ Token.Period,
   /*  47 - /                  */ Token.Divide,
-  /*  48 - 0                  */ Token.LeadingZero,
+  /*  48 - 0                  */ Token.NumericLiteral,
   /*  49 - 1                  */ Token.NumericLiteral,
   /*  50 - 2                  */ Token.NumericLiteral,
   /*  51 - 3                  */ Token.NumericLiteral,
@@ -155,137 +150,6 @@ export const firstCharKinds = [
   /* 127 - Delete             */ Token.Error
 ];
 
-export const CharKinds = [
-  /*   0 - Null               */ Token.Error,
-  /*   1 - Start of Heading   */ Token.Error,
-  /*   2 - Start of Text      */ Token.Error,
-  /*   3 - End of Text        */ Token.Error,
-  /*   4 - End of Transm.     */ Token.Error,
-  /*   5 - Enquiry            */ Token.Error,
-  /*   6 - Acknowledgment     */ Token.Error,
-  /*   7 - Bell               */ Token.Error,
-  /*   8 - Backspace          */ Token.Error,
-  /*   9 - Horizontal Tab     */ Token.Error,
-  /*  10 - Line Feed          */ Token.Error,
-  /*  11 - Vertical Tab       */ Token.Error,
-  /*  12 - Form Feed          */ Token.Error,
-  /*  13 - Carriage Return    */ Token.Error,
-  /*  14 - Shift Out          */ Token.Error,
-  /*  15 - Shift In           */ Token.Error,
-  /*  16 - Data Line Escape   */ Token.Error,
-  /*  17 - Device Control 1   */ Token.Error,
-  /*  18 - Device Control 2   */ Token.Error,
-  /*  19 - Device Control 3   */ Token.Error,
-  /*  20 - Device Control 4   */ Token.Error,
-  /*  21 - Negative Ack.      */ Token.Error,
-  /*  22 - Synchronous Idle   */ Token.Error,
-  /*  23 - End of Transmit    */ Token.Error,
-  /*  24 - Cancel             */ Token.Error,
-  /*  25 - End of Medium      */ Token.Error,
-  /*  26 - Substitute         */ Token.Error,
-  /*  27 - Escape             */ Token.Error,
-  /*  28 - File Separator     */ Token.Error,
-  /*  29 - Group Separator    */ Token.Error,
-  /*  30 - Record Separator   */ Token.Error,
-  /*  31 - Unit Separator     */ Token.Error,
-  /*  32 - Space              */ Token.Error,
-  /*  33 - !                  */ Token.Error,
-  /*  34 - "                  */ Token.Error,
-  /*  35 - #                  */ Token.Error,
-  /*  36 - $                  */ Token.Error,
-  /*  37 - %                  */ Token.Error,
-  /*  38 - &                  */ Token.Error,
-  /*  39 - '                  */ Token.Error,
-  /*  40 - (                  */ Token.Error,
-  /*  41 - )                  */ Token.Error,
-  /*  42 - *                  */ Token.Error,
-  /*  43 - +                  */ Token.Error,
-  /*  44 - ,                  */ Token.Error,
-  /*  45 - -                  */ Token.Error,
-  /*  46 - .                  */ Token.Error,
-  /*  47 - /                  */ Token.Error,
-  /*  48 - 0                  */ Token.NumericLiteral,
-  /*  49 - 1                  */ Token.NumericLiteral,
-  /*  50 - 2                  */ Token.NumericLiteral,
-  /*  51 - 3                  */ Token.NumericLiteral,
-  /*  52 - 4                  */ Token.NumericLiteral,
-  /*  53 - 5                  */ Token.NumericLiteral,
-  /*  54 - 6                  */ Token.NumericLiteral,
-  /*  55 - 7                  */ Token.NumericLiteral,
-  /*  56 - 8                  */ Token.NumericLiteral,
-  /*  57 - 9                  */ Token.NumericLiteral,
-  /*  58 - :                  */ Token.Error,
-  /*  59 - ;                  */ Token.Error,
-  /*  60 - <                  */ Token.Error,
-  /*  61 - =                  */ Token.Error,
-  /*  62 - >                  */ Token.Error,
-  /*  63 - ?                  */ Token.Error,
-  /*  64 - @                  */ Token.Error,
-  /*  65 - A                  */ Token.Error,
-  /*  66 - B                  */ Token.BinaryDigits,
-  /*  67 - C                  */ Token.Error,
-  /*  68 - D                  */ Token.Error,
-  /*  69 - E                  */ Token.Error,
-  /*  70 - F                  */ Token.Error,
-  /*  71 - G                  */ Token.Error,
-  /*  72 - H                  */ Token.Error,
-  /*  73 - I                  */ Token.Error,
-  /*  74 - J                  */ Token.Error,
-  /*  75 - K                  */ Token.Error,
-  /*  76 - L                  */ Token.Error,
-  /*  77 - M                  */ Token.Error,
-  /*  78 - N                  */ Token.Error,
-  /*  79 - O                  */ Token.OctalDigits,
-  /*  80 - P                  */ Token.Error,
-  /*  81 - Q                  */ Token.Error,
-  /*  82 - R                  */ Token.Error,
-  /*  83 - S                  */ Token.Error,
-  /*  84 - T                  */ Token.Error,
-  /*  85 - U                  */ Token.Error,
-  /*  86 - V                  */ Token.Error,
-  /*  87 - W                  */ Token.Error,
-  /*  88 - X                  */ Token.HexDigits,
-  /*  89 - Y                  */ Token.Error,
-  /*  90 - Z                  */ Token.Error,
-  /*  91 - [                  */ Token.Error,
-  /*  92 - \                  */ Token.Error,
-  /*  93 - ]                  */ Token.Error,
-  /*  94 - ^                  */ Token.Error,
-  /*  95 - _                  */ Token.Underscore,
-  /*  96 - `                  */ Token.Error,
-  /*  97 - a                  */ Token.Error,
-  /*  98 - b                  */ Token.BinaryDigits,
-  /*  99 - c                  */ Token.Error,
-  /* 100 - d                  */ Token.Error,
-  /* 101 - e                  */ Token.Error,
-  /* 102 - f                  */ Token.Error,
-  /* 103 - g                  */ Token.Error,
-  /* 104 - h                  */ Token.Error,
-  /* 105 - i                  */ Token.Error,
-  /* 106 - j                  */ Token.Error,
-  /* 107 - k                  */ Token.Error,
-  /* 108 - l                  */ Token.Error,
-  /* 109 - m                  */ Token.Error,
-  /* 110 - n                  */ Token.Error,
-  /* 111 - o                  */ Token.OctalDigits,
-  /* 112 - p                  */ Token.Error,
-  /* 113 - q                  */ Token.Error,
-  /* 114 - r                  */ Token.Error,
-  /* 115 - s                  */ Token.Error,
-  /* 116 - t                  */ Token.Error,
-  /* 117 - u                  */ Token.Error,
-  /* 118 - v                  */ Token.Error,
-  /* 119 - w                  */ Token.Error,
-  /* 120 - x                  */ Token.HexDigits,
-  /* 121 - y                  */ Token.Error,
-  /* 122 - z                  */ Token.Error,
-  /* 123 - {                  */ Token.Error,
-  /* 124 - |                  */ Token.Error,
-  /* 125 - }                  */ Token.Error,
-  /* 126 - ~                  */ Token.Error,
-  /* 127 - Delete             */ Token.Error
-];
-
 // Note: This is a hot path, and the trick here is to assign all "static" vars outside the loop, and avoid
 // to set any vars inside the loop. Example: 'parser.source.charCodeAt' can be shortened to
 // 'source.charCodeAt' where 'parser' is the static part. 'char' is assigned outside the loop
@@ -361,7 +225,7 @@ export function scan(
 
       // `1`...`9`
       case Token.NumericLiteral:
-        return scanNumber(parser, source, char, 0);
+        return scanNumber(parser, context, source, char, /* isFloat */ 0);
 
       // `string`
       case Token.StringLiteral:
@@ -374,26 +238,6 @@ export function scan(
       // `\\u{N}var`
       case Token.EscapedIdentifier:
         return scanUnicodeEscapeIdStart(parser, source);
-
-      // `0`, `0exxx`, `0Exxx`, `0.xxx`, `0X`, `0x`, `0B`, `0b`, `oO`, `0o`
-      case Token.LeadingZero:
-        if (parser.index + 1 < length) {
-          char = source.charCodeAt(++parser.index);
-          switch (CharKinds[char]) {
-            case Token.HexDigits:
-              return scanHexDigits(parser, source);
-            case Token.BinaryDigits:
-              return scanBinaryDigits(parser, source);
-            case Token.OctalDigits:
-              return scanOctalDigits(parser, source);
-            case Token.NumericLiteral:
-            case Token.Underscore:
-              return scanImplicitOctalDigits(parser, context, source, char);
-            default: // ignore
-          }
-        }
-
-        return scanNumber(parser, source, char, 0);
 
       // line terminators
       case Token.CarriageReturn:
@@ -413,7 +257,7 @@ export function scan(
       case Token.Period:
         char = source.charCodeAt(++parser.index);
         // Spec explicitly disallows a digit after `?.`
-        if (char >= Chars.Zero && char <= Chars.Nine) return scanNumberAfterDecimalPoint(parser, source, char);
+        if (char >= Chars.Zero && char <= Chars.Nine) return scanNumber(parser, context, source, char, /* isFloat */ 1);
         if (char === Chars.Period && source.charCodeAt(parser.index + 1) === Chars.Period) {
           parser.index += 2;
           return Token.Ellipsis;
@@ -478,7 +322,7 @@ export function scan(
         }
 
         if (allowRegExp === 1) {
-          return scanRegularExpression(parser, context, source, index);
+          return scanRegularExpression(parser, source, index);
         }
 
         if (char === Chars.EqualSign) {
@@ -539,7 +383,6 @@ export function scan(
         }
         if (char === Chars.Exclamation) {
           if (
-            parser.index < length &&
             source.charCodeAt(parser.index + 2) === Chars.Hyphen &&
             source.charCodeAt(parser.index + 1) === Chars.Hyphen
           ) {
@@ -554,12 +397,12 @@ export function scan(
       // `!`, `!=`, `!==`
       case Token.Negate:
         if (source.charCodeAt(parser.index + 1) === Chars.EqualSign) {
-          index = parser.index + 1;
-          if (source.charCodeAt(index + 1) === Chars.EqualSign) {
-            parser.index += 3;
+          parser.index++;
+          if (source.charCodeAt(parser.index + 1) === Chars.EqualSign) {
+            parser.index += 2;
             return Token.StrictNotEqual;
           }
-          parser.index += 2;
+          parser.index++;
           return Token.LooseNotEqual;
         }
         parser.index++;
@@ -605,7 +448,6 @@ export function scan(
       // `|`, `||`, `|=`
       case Token.BitwiseOr:
         char = source.charCodeAt(++parser.index);
-
         if (char === Chars.VerticalBar) {
           parser.index++;
           return Token.LogicalOr;

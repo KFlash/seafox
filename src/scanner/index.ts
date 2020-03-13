@@ -9,11 +9,4 @@ export { unicodeLookup } from './unicode';
 export { fromCodePoint, toHex, readNext, isWhiteSpaceSlow, isLineTerminator } from './common';
 export { scanEscapeSequence, Escape, handleStringError } from './string';
 export { Chars } from './chars';
-export {
-  scanNumber,
-  scanImplicitOctalDigits,
-  scanHexDigits,
-  scanBinaryDigits,
-  scanOctalDigits,
-  scanNumberAfterDecimalPoint
-} from './numeric';
+export { scanNumber } from './numeric';

@@ -10,7 +10,7 @@ import { report, Errors } from '../errors';
  * @param context Context masks
  */
 
-export function scanRegularExpression(parser: ParserState, context: Context, source: string, i: number): Token {
+export function scanRegularExpression(parser: ParserState, source: string, i: number): Token {
   const enum RegexState {
     Empty = 0,
     Escape = 0x1,
@@ -113,23 +113,6 @@ export function scanRegularExpression(parser: ParserState, context: Context, sou
 
   parser.index = i;
 
-  if (context & Context.OptionsRaw) parser.tokenRaw = source.slice(parser.start, i);
-
-  parser.tokenValue = validate(parser, pattern, flags);
-
-  return Token.RegularExpression;
-}
-
-/**
- * Validates regular expressions
- *
- *
- * @param state Parser instance
- * @param context Context masks
- * @param pattern Regexp body
- * @param flags Regexp flags
- */
-function validate(parser: ParserState, pattern: string, flags: string): RegExp | null | Token {
   try {
     RegExp(pattern);
   } catch (e) {
@@ -137,8 +120,10 @@ function validate(parser: ParserState, pattern: string, flags: string): RegExp |
   }
 
   try {
-    return new RegExp(pattern, flags);
+    parser.tokenValue = new RegExp(pattern, flags);
   } catch (e) {
-    return null;
+    parser.tokenValue = null;
   }
+
+  return Token.RegularExpression;
 }

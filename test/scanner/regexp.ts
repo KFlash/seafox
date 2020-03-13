@@ -22,14 +22,12 @@ describe('Scanner - Regular expression', () => {
           hasNext: parser.index < parser.length,
           line: parser.curLine,
           value: parser.tokenValue,
-          raw: parser.tokenRaw,
           column: parser.index - parser.offset
         },
         {
           token: token,
           hasNext: false,
           value: value,
-          raw: op,
           line: 1,
           column: op.length
         }
@@ -44,14 +42,12 @@ describe('Scanner - Regular expression', () => {
         {
           token: found,
           hasNext: parser.index < parser.source.length,
-          raw: parser.tokenRaw,
           line: parser.curLine,
           column: parser.index - parser.offset
         },
         {
           token,
           hasNext: true,
-          raw: op,
           line: 1,
           column: op.length
         }
