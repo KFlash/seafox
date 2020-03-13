@@ -136,7 +136,6 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
         parser.flags |= Flags.Octals;
       } else if (char >= Chars.Eight && char <= Chars.Nine) {
-        if (char === Chars.Underscore) report(parser, Errors.TrailingNumericSeparator);
         parser.flags |= Flags.Octals;
         state = NumberKind.DecimalWithLeadingZero;
       } else if (char === Chars.Underscore) {
@@ -230,7 +229,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
       ? value
       : parseFloat(isFloat === 1 ? (value as string) : (+value as any));
 
-  return isBigInt === 1 ? Token.BigIntLiteral : Token.NumericLiteral;
+  return Token.NumericLiteral;
 }
 
 export function scanDecimalDigits(parser: ParserState, source: string, char: number) {
