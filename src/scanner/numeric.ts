@@ -3,7 +3,7 @@ import { toHex, Chars, CharTypes, CharFlags } from './';
 import { Token } from '../token';
 import { report, Errors } from '../errors';
 
-export function scanNumber(parser: ParserState, context: Context, source: string, char: number, isFloat: 0 | 1): any {
+export function scanNumber(parser: ParserState, context: Context, source: string, char: number, isFloat: 0 | 1): Token {
   const enum NumberKind {
     Empty = 0,
     ImplicitOctal = 1 << 0,
@@ -15,10 +15,8 @@ export function scanNumber(parser: ParserState, context: Context, source: string
   }
 
   let value: string | number = 0;
-  let atStart = isFloat === 0;
+  let atStart = isFloat === 0 ? 1 : 0;
   let state = NumberKind.Decimal;
-  let allowSeparator: 0 | 1 = 0;
-  let digits = 0;
 
   if (isFloat === 1) {
     char = source.charCodeAt(parser.index);
@@ -29,6 +27,9 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
     char = source.charCodeAt(parser.index);
   } else {
+    let allowSeparator: 0 | 1 = 0;
+    let digits = 0;
+
     if (char === Chars.Zero) {
       parser.index++;
 
@@ -37,9 +38,8 @@ export function scanNumber(parser: ParserState, context: Context, source: string
       // Hex
       if ((char | 32) === Chars.LowerX) {
         state = NumberKind.Hex;
-        parser.index++;
 
-        char = source.charCodeAt(parser.index); // skips 'X', 'x'
+        char = source.charCodeAt(++parser.index); // skips 'X', 'x'
 
         if (char === Chars.Underscore) report(parser, Errors.Unexpected);
 
@@ -47,69 +47,55 @@ export function scanNumber(parser: ParserState, context: Context, source: string
           if (char === Chars.Underscore) {
             if (allowSeparator === 0) report(parser, Errors.ContinuousNumericSeparator);
             allowSeparator = 0;
-            parser.index++;
-
-            char = source.charCodeAt(parser.index);
+            char = source.charCodeAt(++parser.index);
             continue;
           }
           allowSeparator = 1;
           value = value * 0x10 + toHex(char);
           digits++;
-          parser.index++;
-
-          char = source.charCodeAt(parser.index);
+          char = source.charCodeAt(++parser.index);
         }
         if (digits < 1 || allowSeparator === 0) {
           report(parser, digits < 1 ? Errors.MissingDigits : Errors.TrailingNumericSeparator);
         }
       } else if ((char | 32) === Chars.LowerB) {
         state = NumberKind.Binary;
-        parser.index++;
 
-        char = source.charCodeAt(parser.index); // skips 'B', 'b'
+        char = source.charCodeAt(++parser.index); // skips 'B', 'b'
+
         while ((char >= Chars.Zero && char <= Chars.One) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
             if (allowSeparator === 0) {
               report(parser, Errors.ContinuousNumericSeparator);
             }
             allowSeparator = 0;
-            parser.index++;
-
-            char = source.charCodeAt(parser.index);
+            char = source.charCodeAt(++parser.index);
             continue;
           }
           allowSeparator = 1;
           value = value * 2 + (char - Chars.Zero);
           digits++;
-          parser.index++;
-
-          char = source.charCodeAt(parser.index);
+          char = source.charCodeAt(++parser.index);
         }
         if (digits < 1 || allowSeparator === 0) {
           report(parser, digits < 1 ? Errors.Unexpected : Errors.TrailingNumericSeparator);
         }
       } else if ((char | 32) === Chars.LowerO) {
         state = NumberKind.Octal;
-        parser.index++;
-
-        char = source.charCodeAt(parser.index); // skips 'X', 'x'
+        char = source.charCodeAt(++parser.index); // skips 'X', 'x'
         while ((char >= Chars.Zero && char <= Chars.Seven) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
             if (allowSeparator === 0) {
               report(parser, Errors.ContinuousNumericSeparator);
             }
             allowSeparator = 0;
-            parser.index++;
-
-            char = source.charCodeAt(parser.index);
+            char = source.charCodeAt(++parser.index);
             continue;
           }
           allowSeparator = 1;
           value = value * 8 + (char - Chars.Zero);
           digits++;
-          parser.index++;
-
-          char = source.charCodeAt(parser.index);
+          char = source.charCodeAt(++parser.index);
         }
         if (digits < 1 || allowSeparator === 0) {
           report(parser, digits < 1 ? Errors.Unexpected : Errors.TrailingNumericSeparator);
@@ -121,13 +107,11 @@ export function scanNumber(parser: ParserState, context: Context, source: string
         while (char >= Chars.Zero && char <= Chars.Nine) {
           if (char >= Chars.Eight && char <= Chars.Nine) {
             state = NumberKind.DecimalWithLeadingZero;
-            atStart = false;
+            atStart = 0;
             break;
           }
           value = value * 8 + (char - Chars.Zero);
-          parser.index++;
-
-          char = source.charCodeAt(parser.index);
+          char = source.charCodeAt(++parser.index);
         }
 
         if (char === Chars.Underscore) report(parser, Errors.InvalidBigIntLiteral);
@@ -147,14 +131,12 @@ export function scanNumber(parser: ParserState, context: Context, source: string
     if ((state & 0b00000000000000000000000000110000) > 0) {
       // This is an optimization for parsing Decimal numbers as Smi's.
 
-      if (atStart) {
+      if (atStart === 1) {
         let digit = 9;
 
         while ((char <= Chars.Nine && char >= Chars.Zero && digit >= 0) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
-            parser.index++;
-
-            char = source.charCodeAt(parser.index);
+            char = source.charCodeAt(++parser.index);
             if (char === Chars.Underscore || state & NumberKind.DecimalWithLeadingZero) {
               report(parser, Errors.Unexpected);
             }
@@ -192,24 +174,22 @@ export function scanNumber(parser: ParserState, context: Context, source: string
     }
   }
 
-  let isBigInt = 0;
-
-  const end = parser.index;
-
   if (char === Chars.LowerN && isFloat === 0 && (state & 0b00000000000000000000000000011110) > 0) {
-    isBigInt = 1;
-    parser.index++;
-    char = source.charCodeAt(parser.index);
+    char = source.charCodeAt(++parser.index);
     return Token.BigIntLiteral;
   }
 
   if ((char | 32) === Chars.LowerE) {
+    const end = parser.index;
+
     char = source.charCodeAt(++parser.index);
     // '-', '+'
     if (char === Chars.Hyphen || char === Chars.Plus) {
       char = source.charCodeAt(++parser.index);
     }
-    if (char === Chars.Underscore) report(parser, Errors.Unexpected);
+
+    if (char === Chars.Underscore) report(parser, Errors.TrailingNumericSeparator);
+
     // Exponential notation must contain at least one digit
     if ((state & 0b00000000000000000000000000110000) === 0) report(parser, Errors.MissingExponent);
 
@@ -217,6 +197,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
     // Consume exponential digits
     value += parser.source.substring(end, parser.index) + scanDecimalDigits(parser, source, char);
+
     char = source.charCodeAt(parser.index);
   }
 
