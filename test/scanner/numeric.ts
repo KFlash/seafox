@@ -20,10 +20,17 @@ describe('Scanner - numeric literals', () => {
     fail('fails on 00_122', '00_122', Context.Empty);
     fail('fails on 07_7_7', '07_7_7', Context.Empty);
     fail('fails on 1e+_1', '1e+_1', Context.Empty);
+    fail('fails on 0b', '0b', Context.Empty);
+    fail('fails on 0b9', '0b9', Context.Empty);
+    fail('fails on 0o', '0b', Context.Empty);
+    fail('fails on 0o9', '0b9', Context.Empty);
     // fail('fails on 08_0;', '08_0;', Context.Empty);
     fail('fails on 0o9n', '0o9n', Context.Empty);
     fail('fails on 0b2n', '0b2n', Context.Empty);
     fail('fails on 008.3n', '008.3n', Context.Empty);
+    fail('fails on 0x_', '0x_', Context.Empty);
+    fail('fails on 0xb_', '0xb_', Context.Empty);
+    fail('fails on 0xb3__33', '0xb3__33', Context.Empty);
     fail('fails on 00', '00', Context.Strict);
     fail('fails on 000', '000', Context.Strict);
     fail('fails on 005', '005', Context.Strict);
@@ -103,7 +110,6 @@ describe('Scanner - numeric literals', () => {
     fail('fails on 0b001013', '0b001013', Context.Empty);
 
     const tokens: Array<[Context, Token, string, number | void]> = [
-      /* Punctuators */
       [Context.OptionsRaw, Token.NumericLiteral, '57', 57],
       [Context.OptionsRaw, Token.NumericLiteral, '1.1_1', 1.11],
       [Context.OptionsRaw, Token.NumericLiteral, '1.0e-10_0', 1e-100],
