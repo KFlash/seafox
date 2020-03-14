@@ -123,9 +123,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
       if (skipSMI === 0) {
         let digit = 9;
-
         // Optimization: most decimal values fit into 4 bytes.
-
         while ((char <= Chars.Nine && char >= Chars.Zero && digit >= 0) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
             char = source.charCodeAt(++parser.index);
@@ -205,28 +203,24 @@ export function scanNumber(parser: ParserState, context: Context, source: string
   return Token.NumericLiteral;
 }
 
-export function scanDecimalDigits(parser: ParserState, source: string, char: number): string {
+export function scanDecimalDigits(parser: ParserState, source: string, char: number) {
   let allowSeparator: 0 | 1 = 0;
   let value = '';
   let start = parser.index;
-  let i = parser.index;
-
   while ((char <= Chars.Nine && char >= Chars.Zero) || char === Chars.Underscore) {
     if (char === Chars.Underscore) {
-      if (source.charCodeAt(i + 1) === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
-      value += source.substring(start);
-      char = source.charCodeAt(++i);
+      if (source.charCodeAt(parser.index + 1) === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
+      value += source.substring(start, parser.index);
+      char = source.charCodeAt(++parser.index);
       allowSeparator = 1;
-      start = i;
+      start = parser.index;
       continue;
     }
     allowSeparator = 0;
-    char = source.charCodeAt(++i);
+    char = source.charCodeAt(++parser.index);
   }
 
   if (allowSeparator === 1) report(parser, Errors.TrailingNumericSeparator);
-
-  parser.index = i;
 
   return value + source.substring(start, parser.index);
 }

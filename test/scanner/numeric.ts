@@ -127,6 +127,8 @@ describe('Scanner - numeric literals', () => {
       [Context.OptionsRaw, Token.NumericLiteral, '1', 1],
       [Context.OptionsRaw, Token.NumericLiteral, '.1', 0.1],
       [Context.OptionsRaw, Token.NumericLiteral, '0', 0],
+      [Context.OptionsRaw, Token.NumericLiteral, '.13e-3_3', 1.3e-34],
+
       [Context.OptionsRaw, Token.NumericLiteral, '233333456789.e-2', 2333334567.89],
       [Context.OptionsRaw, Token.NumericLiteral, '2333334567843959725489874578243854239.e-2', 2.33333456784396e34],
       [
