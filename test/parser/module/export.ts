@@ -631,6 +631,156 @@ for (const arg of [
 
 pass('Module - Export (pass)', [
   [
+    'function x() {  "a" ? ((this)) : ((true));  }',
+    Context.OptionsLoc | Context.Module | Context.Strict,
+    {
+      body: [
+        {
+          async: false,
+          body: {
+            body: [
+              {
+                end: 42,
+                expression: {
+                  alternate: {
+                    end: 39,
+                    loc: {
+                      end: {
+                        column: 39,
+                        line: 1
+                      },
+                      start: {
+                        column: 35,
+                        line: 1
+                      }
+                    },
+                    start: 35,
+                    type: 'Literal',
+                    value: true
+                  },
+                  consequent: {
+                    end: 28,
+                    loc: {
+                      end: {
+                        column: 28,
+                        line: 1
+                      },
+                      start: {
+                        column: 24,
+                        line: 1
+                      }
+                    },
+                    start: 24,
+                    type: 'ThisExpression'
+                  },
+                  end: 41,
+                  loc: {
+                    end: {
+                      column: 41,
+                      line: 1
+                    },
+                    start: {
+                      column: 16,
+                      line: 1
+                    }
+                  },
+                  start: 16,
+                  test: {
+                    end: 19,
+                    loc: {
+                      end: {
+                        column: 19,
+                        line: 1
+                      },
+                      start: {
+                        column: 16,
+                        line: 1
+                      }
+                    },
+                    start: 16,
+                    type: 'Literal',
+                    value: 'a'
+                  },
+                  type: 'ConditionalExpression'
+                },
+                loc: {
+                  end: {
+                    column: 42,
+                    line: 1
+                  },
+                  start: {
+                    column: 16,
+                    line: 1
+                  }
+                },
+                start: 16,
+                type: 'ExpressionStatement'
+              }
+            ],
+            end: 45,
+            loc: {
+              end: {
+                column: 45,
+                line: 1
+              },
+              start: {
+                column: 13,
+                line: 1
+              }
+            },
+            start: 13,
+            type: 'BlockStatement'
+          },
+          end: 45,
+          generator: false,
+          id: {
+            end: 10,
+            loc: {
+              end: {
+                column: 10,
+                line: 1
+              },
+              start: {
+                column: 9,
+                line: 1
+              }
+            },
+            name: 'x',
+            start: 9,
+            type: 'Identifier'
+          },
+          loc: {
+            end: {
+              column: 45,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
+            }
+          },
+          params: [],
+          start: 0,
+          type: 'FunctionDeclaration'
+        }
+      ],
+      end: 45,
+      loc: {
+        end: {
+          column: 45,
+          line: 1
+        },
+        start: {
+          column: 0,
+          line: 1
+        }
+      },
+      sourceType: 'module',
+      start: 0,
+      type: 'Program'
+    }
+  ],
+  [
     `export default async function f() {}`,
     Context.OptionsLoc | Context.Module | Context.Strict,
     {

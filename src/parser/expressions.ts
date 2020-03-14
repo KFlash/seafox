@@ -4855,8 +4855,6 @@ export function parseNonDirectiveExpression(
   line: number,
   column: number
 ): Types.Expression {
-  if (context & Context.Strict) return expr;
-
   /** MemberExpression :
    *   1. PrimaryExpression
    *   2. MemberExpression [ AssignmentExpression ]

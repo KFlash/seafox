@@ -312,9 +312,7 @@ fail('Statements - For in (fail)', [
   ['for(({a: 0}) in 0);', Context.Empty],
   ['for(0 in 0);', Context.Empty],
   ['for (new x in x) ;', Context.Empty],
-  ['for ({p: x = 0} = 0 in {});', Context.Empty],
-  ['for ({p: x = 0} = 0 in {});', Context.Empty],
-  ['for ({p: x = 0} = 0 in {});', Context.Empty]
+  ['for ({a: [..."b"]} in d)  {}', Context.Empty]
 ]);
 
 pass('Statements - For in (pass)', [
