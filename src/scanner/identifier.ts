@@ -4,19 +4,19 @@ import { report, Errors } from '../errors';
 import { Chars, isIdentifierPart, CharTypes, CharFlags, fromCodePoint, toHex, unicodeLookup } from './';
 
 export function scanIdentifierOrKeyword(parser: ParserState, source: string, char: number, maybeKeyword: 0 | 1): Token {
-  // run to the next non-idPart
-  while (
-    (CharTypes[char] & 0b00000000000000000000000000000101) > 0 ||
-    // Note: "while((unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1)" would be enough to
-    // make this work. This is just a performance tweak
-    (char > 0x7f && (unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1)
-  ) {
+  while ((CharTypes[char] & 0b00000000000000000000000000000101) > 0) {
     char = source.charCodeAt(++parser.index);
   }
+
   const value = source.slice(parser.start, parser.index);
+
   if (char > Chars.UpperZ) return scanIdentifierSlowPath(parser, source, value, maybeKeyword, 0);
+
   parser.tokenValue = value;
-  return descKeywordTable[value] || Token.Identifier;
+
+  const token: Token | undefined = descKeywordTable[value];
+
+  return token === void 0 ? Token.Identifier : token;
 }
 
 export function scanIdentifierSlowPath(
@@ -88,7 +88,9 @@ export function scanUnicodeEscape(parser: ParserState, source: string): number {
   }
 
   let code = 0;
+
   let char = source.charCodeAt((parser.index += 2));
+
   if (char === Chars.LeftBrace) {
     // '\\u{'
     if (parser.index === source.length) report(parser, Errors.InvalidHexEscapeSequence);
