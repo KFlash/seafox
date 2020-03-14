@@ -15,7 +15,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
   }
 
   let value: string | number = 0;
-  let atStart = isFloat === 0 ? 1 : 0;
+  let skipSMI = isFloat === 0 ? 0 : 1;
   let state = NumberKind.Decimal;
 
   if (isFloat === 1) {
@@ -98,7 +98,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
         while (char >= Chars.Zero && char <= Chars.Nine) {
           if (char >= Chars.Eight && char <= Chars.Nine) {
             state = NumberKind.DecimalWithLeadingZero;
-            atStart = 0;
+            skipSMI = 1;
             break;
           }
           value = value * 8 + (char - Chars.Zero);
@@ -111,7 +111,6 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
         parser.flags |= Flags.Octals;
       } else if (char >= Chars.Eight && char <= Chars.Nine) {
-        parser.flags |= Flags.Octals;
         state = NumberKind.DecimalWithLeadingZero;
       } else if (char === Chars.Underscore) {
         report(parser, Errors.TrailingNumericSeparator);
@@ -122,8 +121,10 @@ export function scanNumber(parser: ParserState, context: Context, source: string
     if ((state & 0b00000000000000000000000000110000) > 0) {
       // This is an optimization for parsing Decimal numbers as Smi's.
 
-      if (atStart === 1) {
+      if (skipSMI === 0) {
         let digit = 9;
+
+        // Optimization: most decimal values fit into 4 bytes.
 
         while ((char <= Chars.Nine && char >= Chars.Zero && digit >= 0) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
@@ -169,7 +170,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
   }
 
   if (char === Chars.LowerN && isFloat === 0 && (state & 0b00000000000000000000000000011110) > 0) {
-    char = source.charCodeAt(++parser.index);
+    parser.index++;
     return Token.BigIntLiteral;
   }
 
@@ -177,10 +178,9 @@ export function scanNumber(parser: ParserState, context: Context, source: string
     const end = parser.index;
 
     char = source.charCodeAt(++parser.index);
+
     // '-', '+'
-    if (char === Chars.Hyphen || char === Chars.Plus) {
-      char = source.charCodeAt(++parser.index);
-    }
+    if (char === Chars.Hyphen || char === Chars.Plus) char = source.charCodeAt(++parser.index);
 
     if (char === Chars.Underscore) report(parser, Errors.TrailingNumericSeparator);
 
@@ -197,36 +197,36 @@ export function scanNumber(parser: ParserState, context: Context, source: string
     char = source.charCodeAt(parser.index);
   }
 
-  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) {
-    report(parser, Errors.IDStartAfterNumber);
-  }
+  if ((CharTypes[char] & 0b00000000000000000000000000000011) > 0) report(parser, Errors.IDStartAfterNumber);
 
   parser.tokenValue =
-    (state & 0b00000000000000000000000000001111) > 0
-      ? value
-      : parseFloat(isFloat === 1 ? (value as string) : (+value as any));
+    (state & 0b00000000000000000000000000001111) > 0 ? value : isFloat === 1 ? parseFloat(value as string) : +value;
 
   return Token.NumericLiteral;
 }
 
-export function scanDecimalDigits(parser: ParserState, source: string, char: number) {
+export function scanDecimalDigits(parser: ParserState, source: string, char: number): string {
   let allowSeparator: 0 | 1 = 0;
   let value = '';
   let start = parser.index;
+  let i = parser.index;
+
   while ((char <= Chars.Nine && char >= Chars.Zero) || char === Chars.Underscore) {
     if (char === Chars.Underscore) {
-      if (source.charCodeAt(parser.index + 1) === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
-      value += source.substring(start, parser.index);
-      char = source.charCodeAt(++parser.index);
+      if (source.charCodeAt(i + 1) === Chars.Underscore) report(parser, Errors.ContinuousNumericSeparator);
+      value += source.substring(start);
+      char = source.charCodeAt(++i);
       allowSeparator = 1;
-      start = parser.index;
+      start = i;
       continue;
     }
     allowSeparator = 0;
-    char = source.charCodeAt(++parser.index);
+    char = source.charCodeAt(++i);
   }
 
   if (allowSeparator === 1) report(parser, Errors.TrailingNumericSeparator);
+
+  parser.index = i;
 
   return value + source.substring(start, parser.index);
 }
