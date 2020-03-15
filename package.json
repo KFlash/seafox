@@ -1,6 +1,6 @@
 {
   "name": "seafox",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript",
   "main": "dist/seafox.umd.min.js",
   "module": "dist/seafox.esm.min.js",
@@ -49,7 +49,6 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "fuzz": "eslump ./test/fuzz/grumpy.js .fuzz-output/",
     "lint": "eslint \"{src,test,scripts}/**/*.{ts,js}\" --fix",
     "prettier": "node ./scripts/prettier.js write-changed",
     "prettier-all": "node ./scripts/prettier.js write",
@@ -65,10 +64,10 @@
     "post_coverage": "cross-env cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.12.16",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.9.1",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
     "chalk": "^3.0.0",
     "coveralls": "^3.0.9",
     "cross-env": "^7.0.0",
@@ -82,7 +81,7 @@
     "path": "^0.12.7",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.0.2",
+    "rollup": "^2.0.6",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.2.0",
     "rollup-plugin-typescript2": "^0.26.0",
@@ -99,9 +98,5 @@
   },
   "engines": {
     "node": ">=6.0.0"
-  },
-  "dependencies": {
-    "eslump": "^2.0.0",
-    "unexpected": "^11.13.0"
   }
 }
