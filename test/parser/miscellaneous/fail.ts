@@ -34,6 +34,80 @@ fail('Miscellaneous - Fail', [
     /foo/;;);`,
     Context.Empty
   ],
+  [
+    `function protected(){
+    for(;;)
+      switch(x){
+        default:
+      }
+  }
+  const protected = x, function arguments(){}`,
+    Context.Empty
+  ],
+  ['async function foo(a = () => { "use strict"; return eval =>("x"); }) {}', Context.Empty],
+  ['[...{a = 0}.x] = [];', Context.Empty],
+  ['let [o.x=1]=[]', Context.Empty],
+  ['[[(x, y)]] = x;', Context.Empty],
+  ['[[(x, y)]] = x;', Context.Empty],
+  ['let {x:o.f=1}={x:1}', Context.Empty],
+  ['[...(a,b)] = [],', Context.Empty],
+  ['for (+i in {});', Context.Empty],
+  [
+    `/x
+  y/`,
+    Context.Empty
+  ],
+  ['for(let.a of 0);', Context.Empty],
+  ['for([] = 0 of {});', Context.Empty],
+  ['for({p: x} = 0 of {});', Context.Empty],
+  ['for({x} = 0 of {});', Context.Empty],
+  ['async function f() { for await ({0: a = 1} = 1 of []) ; }', Context.Empty],
+  ['async function f() { for await ([a] = 1 of []) ; }', Context.Empty],
+  ['const [(x)] = []', Context.Empty],
+
+  ['[(++[])', Context.Empty],
+  ['((x,x)) = 5', Context.Empty],
+  ['({a: {b = 0}.x} = {});', Context.Empty],
+  ['for([...a] = 0 of {});', Context.Empty],
+  ['for({} = 0 of {});', Context.Empty],
+  ['for({x = 0} = 0 of {});', Context.Empty],
+  ['for(let.a of 0);', Context.Empty],
+  ['for ((a?b:c) in y)z;', Context.Empty],
+  ['for ((a,b) in c);', Context.Empty],
+  ['function arguments(){}v:switch(x){default:}let arguments=l', Context.Empty],
+  ['function protected(){for(;;)switch(x){default:}}const protected=x', Context.Empty],
+  ['#', Context.Empty],
+  ['@', Context.Empty],
+  [
+    `function f(x=b
+        ++c){}`,
+    Context.Empty
+  ],
+  [
+    `for (b
+    ++c;;);`,
+    Context.Empty
+  ],
+  [
+    `for (b
+      ++c;;);`,
+    Context.Empty
+  ],
+  [
+    `for (b
+        ++c;;);`,
+    Context.Empty
+  ],
+  [
+    `for (;b
+    ++c;);`,
+    Context.Empty
+  ],
+  [
+    `if (b
+    ++c);`,
+    Context.Empty
+  ],
   ['({ __proto__: 1, __proto__: 2 })', Context.Empty],
   ['({ __proto__: null, "__proto__": null })', Context.Empty],
   ['({ __proto__: null, "__proto__": null })', Context.Empty],
@@ -45,6 +119,9 @@ fail('Miscellaneous - Fail', [
   ['({__proto__: a, __proto__: b});', Context.OptionsRaw],
   ['async ({__proto__: a, __proto__: b});', Context.Empty],
   ['(break) => {"use strict";}', Context.Empty],
+  ['for (;;) {}}dsadsa', Context.Empty],
+  ['for ({[a]: ""[b] = c} of d) {}}', Context.Empty],
+  ['for ({[a]: ""[b] = c} of d) {}})', Context.Empty],
   ['(break) => {}', Context.Empty],
   [
     ` for await (a of b) let

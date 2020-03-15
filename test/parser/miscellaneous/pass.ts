@@ -20,6 +20,11 @@ describe('Miscellaneous - Pass', () => {
     '#!---IGNORED---\\xE2\\x80\\xA9',
     'for(`${x in y}`;;);',
     '("\\4"); "use strict";',
+    'eval.foo',
+    'log(eval)',
+    'eval[foo]',
+    'eval[foo] = bar',
+    'for(y`${x in y}`;;)for(;;y=>{(x in n)})x',
     '-134.44e44',
     `async
     / x`,
@@ -616,11 +621,19 @@ describe('Miscellaneous - Pass', () => {
     `do throw function(){}
     while(y)
     for(;;)x`,
+    '({...{eval}.x} = {});',
+
+    '({...{b: 0}.x} = {});',
+    'a[foo].c = () => { throw Error(); };',
+    '({...[0].x} = {});',
+    'async (a = b => await (0)) => {}',
     `function runNearStackLimit(f) { function t() { try { t(); } catch(e) { f(); } }; try { t(); } catch(e) {} }
      function quit() {}
      function nop() {}
     try { gc; } catch(e) { gc = nop; }`,
     `a = let\n{}`,
+    'for(l[x in t]of y)x',
+    'arguments; log(arguments); arguments.foo; arguments[foo]; arguments.foo = bar; arguments[foo] = bar;',
     `throw(protected(x=>{"use strict"}))`,
     `for ({da = 2e308} of ([, , , (arguments[((f))]).break = (null)] = (/(?=\\B\\b)/gmuy === njbcpwhomopc.switch))) continue`,
     `for (var c, f; (/[+-\\l-]/u); ((class {}).with)) var i;`,
@@ -630,6 +643,10 @@ describe('Miscellaneous - Pass', () => {
     'A = class extends A {}',
     '(x)=>{/x/}',
     'if ( A ) A.__proto__ = A;',
+    'for ((2935) instanceof ((2e308));;) debugger',
+    'for ({x = y} = z;;) {}',
+    'for ({x = y} = (z);;) {}',
+    'for ({[a]: ""[b] = c} of d) {}',
     'for (const [target, weights] of Array.from(weightsPerTarget)) {}',
     'function epsilon(value) { return Math.abs(value) < 0.000001 ? 0 : value; }',
     'switch (((("Mr" || (`foo`).rlv ? ("^") : ((([`a` / (() => 0)])))())))) {}',
@@ -638,8 +655,17 @@ describe('Miscellaneous - Pass', () => {
     "function f() { new (f + 5)(6, (g)() - 'l'() - true(false)) }",
     'function f() { function f() {} }',
     'function f(a,b) {}',
+    `async function f(){ await b
+    ++c; }`,
+    `{b
+      ++c};`,
+    `while (true) {b
+          ++c};`,
     `class x{ constructor(){} x(){} }`,
     '[ { x: y = 3 } ]',
+    `a,b
+  ++c`,
+    `function f(){ call(yield); }`,
     `class x extends {} {}`,
     'x= { async prototype(){} }',
     'x= { *prototype(){} }',
