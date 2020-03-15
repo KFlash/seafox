@@ -299,6 +299,8 @@ fail('Statements - For in (fail)', [
   ['for ({x} = 0 in {});', Context.Empty],
   ['for ({p: x = 0} = 0 in {});', Context.Empty],
   ['for ([] = 0 of {});', Context.Empty],
+  ['for ({b: {arguments} } in c) {}', Context.Strict],
+  ['for ({b: {arguments} } in c) {}', Context.Strict | Context.Module],
   ['for ({x} = 0 of {});', Context.Empty],
   ['for([0] in 0);', Context.Empty],
   ['for({a: 0} in 0);', Context.Empty],
@@ -316,6 +318,195 @@ fail('Statements - For in (fail)', [
 ]);
 
 pass('Statements - For in (pass)', [
+  [
+    `for ({b: {arguments} } in c) {}`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ForInStatement',
+          body: {
+            type: 'BlockStatement',
+            body: [],
+            start: 29,
+            end: 31,
+            loc: {
+              start: {
+                line: 1,
+                column: 29
+              },
+              end: {
+                line: 1,
+                column: 31
+              }
+            }
+          },
+          left: {
+            type: 'ObjectPattern',
+            properties: [
+              {
+                type: 'Property',
+                key: {
+                  type: 'Identifier',
+                  name: 'b',
+                  start: 6,
+                  end: 7,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 7
+                    }
+                  }
+                },
+                value: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    {
+                      type: 'Property',
+                      key: {
+                        type: 'Identifier',
+                        name: 'arguments',
+                        start: 10,
+                        end: 19,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 19
+                          }
+                        }
+                      },
+                      value: {
+                        type: 'Identifier',
+                        name: 'arguments',
+                        start: 10,
+                        end: 19,
+                        loc: {
+                          start: {
+                            line: 1,
+                            column: 10
+                          },
+                          end: {
+                            line: 1,
+                            column: 19
+                          }
+                        }
+                      },
+                      kind: 'init',
+                      computed: false,
+                      method: false,
+                      shorthand: true,
+                      start: 10,
+                      end: 19,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 10
+                        },
+                        end: {
+                          line: 1,
+                          column: 19
+                        }
+                      }
+                    }
+                  ],
+                  start: 9,
+                  end: 20,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 9
+                    },
+                    end: {
+                      line: 1,
+                      column: 20
+                    }
+                  }
+                },
+                kind: 'init',
+                computed: false,
+                method: false,
+                shorthand: false,
+                start: 6,
+                end: 20,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 6
+                  },
+                  end: {
+                    line: 1,
+                    column: 20
+                  }
+                }
+              }
+            ],
+            start: 5,
+            end: 22,
+            loc: {
+              start: {
+                line: 1,
+                column: 5
+              },
+              end: {
+                line: 1,
+                column: 22
+              }
+            }
+          },
+          right: {
+            type: 'Identifier',
+            name: 'c',
+            start: 26,
+            end: 27,
+            loc: {
+              start: {
+                line: 1,
+                column: 26
+              },
+              end: {
+                line: 1,
+                column: 27
+              }
+            }
+          },
+          start: 0,
+          end: 31,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 31
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 31,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 31
+        }
+      }
+    }
+  ],
   [
     `for (let [a=[...b], ...c] in obj);`,
     Context.OptionsLoc,

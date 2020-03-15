@@ -1128,10 +1128,12 @@ export function parseAsyncArrow(
     }
   }
 
-  parser.flags |=
-    ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments
-      ? 0b00000000000000000000000100100000
-      : 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
+  parser.flags =
+    (parser.flags |
+      ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments
+        ? 0b00000000000000000000000100100000
+        : 0b00000000000000000000000100000000)) ^
+    0b00000000000000000000000100000000;
 
   const scope = createArrowScope();
 
