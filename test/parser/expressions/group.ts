@@ -1639,6 +1639,123 @@ pass('Expressions - Group (pass)', [
     }
   ],
   [
+    `((("") / (x)));
+    "";`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'BinaryExpression',
+            left: {
+              type: 'Literal',
+              value: '',
+              start: 3,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 3
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            right: {
+              type: 'Identifier',
+              name: 'x',
+              start: 10,
+              end: 11,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 10
+                },
+                end: {
+                  line: 1,
+                  column: 11
+                }
+              }
+            },
+            operator: '/',
+            start: 2,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 2
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 15,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 15
+            }
+          }
+        },
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Literal',
+            value: '',
+            start: 20,
+            end: 22,
+            loc: {
+              start: {
+                line: 2,
+                column: 4
+              },
+              end: {
+                line: 2,
+                column: 6
+              }
+            }
+          },
+          start: 20,
+          end: 23,
+          loc: {
+            start: {
+              line: 2,
+              column: 4
+            },
+            end: {
+              line: 2,
+              column: 7
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 23,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 2,
+          column: 7
+        }
+      }
+    }
+  ],
+  [
     `({ ...(a) } = {});`,
     Context.OptionsLoc,
     {

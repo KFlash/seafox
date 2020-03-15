@@ -30,6 +30,7 @@ describe('Miscellaneous - Directives', () => {
     }`,
     '"\\1;" "use strict";',
     '"use strict"; function f(){"\\1";}',
+    '"ignore me"++',
     '"\\1;" "use strict"; null',
     '"use strict"; with (a) b = c;',
     '"use strict"; "\\1;"',
@@ -44,6 +45,24 @@ describe('Miscellaneous - Directives', () => {
     "'random\\u0 foo'",
     "'random\\u00 foo'",
     "'random\\u0a foo'",
+    '(arguments) => { "use strict"; }',
+
+    '(arguments) => { "use strict"; }',
+    'function f(eval) { "use strict"; }',
+    'eval => { "use strict"; }',
+    `function f(){
+      "x\\3"
+      "use strict"
+    }`,
+    `function f(){
+      "x\\6"
+      "use strict"
+    }`,
+    `function f(){
+      "x\\01"
+      "use strict"
+    }`,
+    '"foo" "bar"',
     `"use strict"; (finally = x);`,
     `"use strict"; (false = x);`,
     `"use strict"; (if = x);`,
@@ -84,6 +103,924 @@ describe('Miscellaneous - Directives', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `"\\0";"use strict"`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            directive: '"\\0"',
+            end: 5,
+            expression: {
+              end: 4,
+              loc: {
+                end: {
+                  column: 4,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              raw: '"\\0"',
+              start: 0,
+              type: 'Literal',
+              value: '\u0000'
+            },
+            loc: {
+              end: {
+                column: 5,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          },
+          {
+            directive: '"use strict"',
+            end: 17,
+            expression: {
+              end: 17,
+              loc: {
+                end: {
+                  column: 17,
+                  line: 1
+                },
+                start: {
+                  column: 5,
+                  line: 1
+                }
+              },
+              raw: '"use strict"',
+              start: 5,
+              type: 'Literal',
+              value: 'use strict'
+            },
+            loc: {
+              end: {
+                column: 17,
+                line: 1
+              },
+              start: {
+                column: 5,
+                line: 1
+              }
+            },
+            start: 5,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 17,
+        loc: {
+          end: {
+            column: 17,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `"ignore me" + x`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"ignore me"',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'Literal',
+                value: 'ignore me',
+                raw: '"ignore me"',
+                start: 0,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'x',
+                start: 14,
+                end: 15,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 14
+                  },
+                  end: {
+                    line: 1,
+                    column: 15
+                  }
+                }
+              },
+              operator: '+',
+              start: 0,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            start: 0,
+            end: 15,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 15
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 15,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 15
+          }
+        }
+      }
+    ],
+    [
+      `"ignore me"
+        /x/g`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"ignore me"',
+            expression: {
+              type: 'BinaryExpression',
+              left: {
+                type: 'BinaryExpression',
+                left: {
+                  type: 'Literal',
+                  raw: '"ignore me"',
+                  value: 'ignore me',
+                  start: 0,
+                  end: 11,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 0
+                    },
+                    end: {
+                      line: 1,
+                      column: 11
+                    }
+                  }
+                },
+                right: {
+                  type: 'Identifier',
+                  name: 'x',
+                  start: 21,
+                  end: 22,
+                  loc: {
+                    start: {
+                      line: 2,
+                      column: 9
+                    },
+                    end: {
+                      line: 2,
+                      column: 10
+                    }
+                  }
+                },
+                operator: '/',
+                start: 0,
+                end: 22,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 0
+                  },
+                  end: {
+                    line: 2,
+                    column: 10
+                  }
+                }
+              },
+              right: {
+                type: 'Identifier',
+                name: 'g',
+                start: 23,
+                end: 24,
+                loc: {
+                  start: {
+                    line: 2,
+                    column: 11
+                  },
+                  end: {
+                    line: 2,
+                    column: 12
+                  }
+                }
+              },
+              operator: '/',
+              start: 0,
+              end: 24,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 2,
+                  column: 12
+                }
+              }
+            },
+            start: 0,
+            end: 24,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 2,
+                column: 12
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 24,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 2,
+            column: 12
+          }
+        }
+      }
+    ],
+    [
+      `"foo"`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        type: 'Program',
+        sourceType: 'script',
+        body: [
+          {
+            type: 'ExpressionStatement',
+            directive: '"foo"',
+            expression: {
+              type: 'Literal',
+              raw: '"foo"',
+              value: 'foo',
+              start: 0,
+              end: 5,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 0
+                },
+                end: {
+                  line: 1,
+                  column: 5
+                }
+              }
+            },
+            start: 0,
+            end: 5,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 5
+              }
+            }
+          }
+        ],
+        start: 0,
+        end: 5,
+        loc: {
+          start: {
+            line: 1,
+            column: 0
+          },
+          end: {
+            line: 1,
+            column: 5
+          }
+        }
+      }
+    ],
+    [
+      `function f(){
+            "foo";"bar";
+            }`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            async: false,
+            body: {
+              body: [
+                {
+                  directive: '"foo"',
+                  end: 32,
+                  expression: {
+                    end: 31,
+                    loc: {
+                      end: {
+                        column: 17,
+                        line: 2
+                      },
+                      start: {
+                        column: 12,
+                        line: 2
+                      }
+                    },
+                    raw: '"foo"',
+                    start: 26,
+                    type: 'Literal',
+                    value: 'foo'
+                  },
+                  loc: {
+                    end: {
+                      column: 18,
+                      line: 2
+                    },
+                    start: {
+                      column: 12,
+                      line: 2
+                    }
+                  },
+                  start: 26,
+                  type: 'ExpressionStatement'
+                },
+                {
+                  directive: '"bar"',
+                  end: 38,
+                  expression: {
+                    end: 37,
+                    loc: {
+                      end: {
+                        column: 23,
+                        line: 2
+                      },
+                      start: {
+                        column: 18,
+                        line: 2
+                      }
+                    },
+                    raw: '"bar"',
+                    start: 32,
+                    type: 'Literal',
+                    value: 'bar'
+                  },
+                  loc: {
+                    end: {
+                      column: 24,
+                      line: 2
+                    },
+                    start: {
+                      column: 18,
+                      line: 2
+                    }
+                  },
+                  start: 32,
+                  type: 'ExpressionStatement'
+                }
+              ],
+              end: 52,
+              loc: {
+                end: {
+                  column: 13,
+                  line: 3
+                },
+                start: {
+                  column: 12,
+                  line: 1
+                }
+              },
+              start: 12,
+              type: 'BlockStatement'
+            },
+            end: 52,
+            generator: false,
+            id: {
+              end: 10,
+              loc: {
+                end: {
+                  column: 10,
+                  line: 1
+                },
+                start: {
+                  column: 9,
+                  line: 1
+                }
+              },
+              name: 'f',
+              start: 9,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 13,
+                line: 3
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            params: [],
+            start: 0,
+            type: 'FunctionDeclaration'
+          }
+        ],
+        end: 52,
+        loc: {
+          end: {
+            column: 13,
+            line: 3
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `function f(){
+              "foo"/*abc
+              xyz*/"bar";
+              }`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            async: false,
+            body: {
+              body: [
+                {
+                  directive: '"foo"',
+                  end: 33,
+                  expression: {
+                    end: 33,
+                    loc: {
+                      end: {
+                        column: 19,
+                        line: 2
+                      },
+                      start: {
+                        column: 14,
+                        line: 2
+                      }
+                    },
+                    raw: '"foo"',
+                    start: 28,
+                    type: 'Literal',
+                    value: 'foo'
+                  },
+                  loc: {
+                    end: {
+                      column: 19,
+                      line: 2
+                    },
+                    start: {
+                      column: 14,
+                      line: 2
+                    }
+                  },
+                  start: 28,
+                  type: 'ExpressionStatement'
+                },
+                {
+                  directive: '"bar"',
+                  end: 64,
+                  expression: {
+                    end: 63,
+                    loc: {
+                      end: {
+                        column: 24,
+                        line: 3
+                      },
+                      start: {
+                        column: 19,
+                        line: 3
+                      }
+                    },
+                    raw: '"bar"',
+                    start: 58,
+                    type: 'Literal',
+                    value: 'bar'
+                  },
+                  loc: {
+                    end: {
+                      column: 25,
+                      line: 3
+                    },
+                    start: {
+                      column: 19,
+                      line: 3
+                    }
+                  },
+                  start: 58,
+                  type: 'ExpressionStatement'
+                }
+              ],
+              end: 80,
+              loc: {
+                end: {
+                  column: 15,
+                  line: 4
+                },
+                start: {
+                  column: 12,
+                  line: 1
+                }
+              },
+              start: 12,
+              type: 'BlockStatement'
+            },
+            end: 80,
+            generator: false,
+            id: {
+              end: 10,
+              loc: {
+                end: {
+                  column: 10,
+                  line: 1
+                },
+                start: {
+                  column: 9,
+                  line: 1
+                }
+              },
+              name: 'f',
+              start: 9,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 15,
+                line: 4
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            params: [],
+            start: 0,
+            type: 'FunctionDeclaration'
+          }
+        ],
+        end: 80,
+        loc: {
+          end: {
+            column: 15,
+            line: 4
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `function f(){
+                "foo";/*abc
+                xyz*/"bar";
+                }`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            async: false,
+            body: {
+              body: [
+                {
+                  directive: '"foo"',
+                  end: 36,
+                  expression: {
+                    end: 35,
+                    loc: {
+                      end: {
+                        column: 21,
+                        line: 2
+                      },
+                      start: {
+                        column: 16,
+                        line: 2
+                      }
+                    },
+                    raw: '"foo"',
+                    start: 30,
+                    type: 'Literal',
+                    value: 'foo'
+                  },
+                  loc: {
+                    end: {
+                      column: 22,
+                      line: 2
+                    },
+                    start: {
+                      column: 16,
+                      line: 2
+                    }
+                  },
+                  start: 30,
+                  type: 'ExpressionStatement'
+                },
+                {
+                  directive: '"bar"',
+                  end: 69,
+                  expression: {
+                    end: 68,
+                    loc: {
+                      end: {
+                        column: 26,
+                        line: 3
+                      },
+                      start: {
+                        column: 21,
+                        line: 3
+                      }
+                    },
+                    raw: '"bar"',
+                    start: 63,
+                    type: 'Literal',
+                    value: 'bar'
+                  },
+                  loc: {
+                    end: {
+                      column: 27,
+                      line: 3
+                    },
+                    start: {
+                      column: 21,
+                      line: 3
+                    }
+                  },
+                  start: 63,
+                  type: 'ExpressionStatement'
+                }
+              ],
+              end: 87,
+              loc: {
+                end: {
+                  column: 17,
+                  line: 4
+                },
+                start: {
+                  column: 12,
+                  line: 1
+                }
+              },
+              start: 12,
+              type: 'BlockStatement'
+            },
+            end: 87,
+            generator: false,
+            id: {
+              end: 10,
+              loc: {
+                end: {
+                  column: 10,
+                  line: 1
+                },
+                start: {
+                  column: 9,
+                  line: 1
+                }
+              },
+              name: 'f',
+              start: 9,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 17,
+                line: 4
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            params: [],
+            start: 0,
+            type: 'FunctionDeclaration'
+          }
+        ],
+        end: 87,
+        loc: {
+          end: {
+            column: 17,
+            line: 4
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `function f(){
+                  "foo"
+                  // stuff here
+                  "bar";
+                  }`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            async: false,
+            body: {
+              body: [
+                {
+                  directive: '"foo"',
+                  end: 37,
+                  expression: {
+                    end: 37,
+                    loc: {
+                      end: {
+                        column: 23,
+                        line: 2
+                      },
+                      start: {
+                        column: 18,
+                        line: 2
+                      }
+                    },
+                    raw: '"foo"',
+                    start: 32,
+                    type: 'Literal',
+                    value: 'foo'
+                  },
+                  loc: {
+                    end: {
+                      column: 23,
+                      line: 2
+                    },
+                    start: {
+                      column: 18,
+                      line: 2
+                    }
+                  },
+                  start: 32,
+                  type: 'ExpressionStatement'
+                },
+                {
+                  directive: '"bar"',
+                  end: 94,
+                  expression: {
+                    end: 93,
+                    loc: {
+                      end: {
+                        column: 23,
+                        line: 4
+                      },
+                      start: {
+                        column: 18,
+                        line: 4
+                      }
+                    },
+                    raw: '"bar"',
+                    start: 88,
+                    type: 'Literal',
+                    value: 'bar'
+                  },
+                  loc: {
+                    end: {
+                      column: 24,
+                      line: 4
+                    },
+                    start: {
+                      column: 18,
+                      line: 4
+                    }
+                  },
+                  start: 88,
+                  type: 'ExpressionStatement'
+                }
+              ],
+              end: 114,
+              loc: {
+                end: {
+                  column: 19,
+                  line: 5
+                },
+                start: {
+                  column: 12,
+                  line: 1
+                }
+              },
+              start: 12,
+              type: 'BlockStatement'
+            },
+            end: 114,
+            generator: false,
+            id: {
+              end: 10,
+              loc: {
+                end: {
+                  column: 10,
+                  line: 1
+                },
+                start: {
+                  column: 9,
+                  line: 1
+                }
+              },
+              name: 'f',
+              start: 9,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 19,
+                line: 5
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            params: [],
+            start: 0,
+            type: 'FunctionDeclaration'
+          }
+        ],
+        end: 114,
+        loc: {
+          end: {
+            column: 19,
+            line: 5
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
     [
       `function f(){
         foo();

@@ -1248,6 +1248,45 @@ pass('Expressions - Async arrow (pass)', [
     }
   ],
   [
+    `async
+    (a, b) * c`,
+    Context.Empty,
+    {
+      body: [
+        {
+          expression: {
+            left: {
+              arguments: [
+                {
+                  name: 'a',
+                  type: 'Identifier'
+                },
+                {
+                  name: 'b',
+                  type: 'Identifier'
+                }
+              ],
+              callee: {
+                name: 'async',
+                type: 'Identifier'
+              },
+              type: 'CallExpression'
+            },
+            operator: '*',
+            right: {
+              name: 'c',
+              type: 'Identifier'
+            },
+            type: 'BinaryExpression'
+          },
+          type: 'ExpressionStatement'
+        }
+      ],
+      sourceType: 'script',
+      type: 'Program'
+    }
+  ],
+  [
     `([async (x, y) => (ok),].x);`,
     Context.OptionsLoc,
     {

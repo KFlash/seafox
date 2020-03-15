@@ -21,6 +21,21 @@ describe('Miscellaneous - Pass', () => {
     'for(`${x in y}`;;);',
     '("\\4"); "use strict";',
     '-134.44e44',
+    `async
+    / x`,
+    `async
+    / x`,
+    `async/x`,
+    `x / async`,
+    `async(), x`,
+    `async()`,
+    'async(x, y)',
+    'async(a, b) * c',
+    'async() * b',
+    'f(a, b) * c',
+    'async',
+    `async
+    (a, b) * c`,
     '11_33',
     '11_33.333_444',
     `a

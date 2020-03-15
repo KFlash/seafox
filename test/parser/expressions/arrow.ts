@@ -640,6 +640,290 @@ pass('Expressions - Arrow', [
     }
   ],
   [
+    `(w, o, e, m) => { "use strict"; "use strict" }`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ArrowFunctionExpression',
+            body: {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'Literal',
+                    value: 'use strict',
+                    start: 18,
+                    end: 30,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 18
+                      },
+                      end: {
+                        line: 1,
+                        column: 30
+                      }
+                    }
+                  },
+                  start: 18,
+                  end: 31,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 18
+                    },
+                    end: {
+                      line: 1,
+                      column: 31
+                    }
+                  }
+                },
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'Literal',
+                    value: 'use strict',
+                    start: 32,
+                    end: 44,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 32
+                      },
+                      end: {
+                        line: 1,
+                        column: 44
+                      }
+                    }
+                  },
+                  start: 32,
+                  end: 44,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 32
+                    },
+                    end: {
+                      line: 1,
+                      column: 44
+                    }
+                  }
+                }
+              ],
+              start: 16,
+              end: 46,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 16
+                },
+                end: {
+                  line: 1,
+                  column: 46
+                }
+              }
+            },
+            params: [
+              {
+                type: 'Identifier',
+                name: 'w',
+                start: 1,
+                end: 2,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 1
+                  },
+                  end: {
+                    line: 1,
+                    column: 2
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'o',
+                start: 4,
+                end: 5,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 4
+                  },
+                  end: {
+                    line: 1,
+                    column: 5
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'e',
+                start: 7,
+                end: 8,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 7
+                  },
+                  end: {
+                    line: 1,
+                    column: 8
+                  }
+                }
+              },
+              {
+                type: 'Identifier',
+                name: 'm',
+                start: 10,
+                end: 11,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 10
+                  },
+                  end: {
+                    line: 1,
+                    column: 11
+                  }
+                }
+              }
+            ],
+            async: false,
+            expression: false,
+            start: 0,
+            end: 46,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 46
+              }
+            }
+          },
+          start: 0,
+          end: 46,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 46
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 46,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 46
+        }
+      }
+    }
+  ],
+  [
+    `"a"
+    "/b"`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Literal',
+            value: 'a',
+            start: 0,
+            end: 3,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 3
+              }
+            }
+          },
+          start: 0,
+          end: 3,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 3
+            }
+          }
+        },
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Literal',
+            value: '/b',
+            start: 8,
+            end: 12,
+            loc: {
+              start: {
+                line: 2,
+                column: 4
+              },
+              end: {
+                line: 2,
+                column: 8
+              }
+            }
+          },
+          start: 8,
+          end: 12,
+          loc: {
+            start: {
+              line: 2,
+              column: 4
+            },
+            end: {
+              line: 2,
+              column: 8
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 12,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 2,
+          column: 8
+        }
+      }
+    }
+  ],
+  [
     `(eval, interface) => {}`,
     Context.OptionsLoc,
     {

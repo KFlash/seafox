@@ -941,9 +941,8 @@ export function parsePrimaryExpression(
       if (allowLHS === 0) {
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
-      if (canAssign === 0) {
-        report(parser, Errors.InvalidAssignmentTarget);
-      }
+
+      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
       return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
@@ -1129,7 +1128,10 @@ export function parseAsyncArrow(
     }
   }
 
-  parser.flags = (parser.flags | Flags.SimpleParameterList) ^ Flags.SimpleParameterList;
+  parser.flags |=
+    ((token & Token.IsEvalOrArguments) === Token.IsEvalOrArguments
+      ? 0b00000000000000000000000100100000
+      : 0b00000000000000000000000100000000) ^ 0b00000000000000000000000100000000;
 
   const scope = createArrowScope();
 
@@ -1192,8 +1194,6 @@ export function parseAsyncArrowOrCallExpression(
           arguments: []
         };
   }
-
-  if (newLine === 1) report(parser, Errors.InvalidLineBreak);
 
   parser.flags = (parser.flags | 0b00000000000000000000110100000000) ^ 0b00000000000000000000110100000000;
 
@@ -1314,7 +1314,9 @@ export function parseAsyncArrowOrCallExpression(
     (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : Flags.Empty);
 
   if (parser.token === Token.Arrow) {
-    if (parser.flags & Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
+    if ((parser.flags & Flags.SeenAwait) === Flags.SeenAwait) report(parser, Errors.AwaitInParameter);
+
+    if (newLine === 1) report(parser, Errors.InvalidLineBreak);
 
     return parseArrowFunctionAfterParen(
       parser,
