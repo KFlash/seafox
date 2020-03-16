@@ -1157,6 +1157,373 @@ pass('Expressions - object', [
     }
   ],
   [
+    `({ a: [] ? a : b })`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'ObjectExpression',
+            properties: [
+              {
+                type: 'Property',
+                key: {
+                  type: 'Identifier',
+                  name: 'a',
+                  start: 3,
+                  end: 4,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 3
+                    },
+                    end: {
+                      line: 1,
+                      column: 4
+                    }
+                  }
+                },
+                value: {
+                  type: 'ConditionalExpression',
+                  test: {
+                    type: 'ArrayExpression',
+                    elements: [],
+                    start: 6,
+                    end: 8,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 6
+                      },
+                      end: {
+                        line: 1,
+                        column: 8
+                      }
+                    }
+                  },
+                  consequent: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 11,
+                    end: 12,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 11
+                      },
+                      end: {
+                        line: 1,
+                        column: 12
+                      }
+                    }
+                  },
+                  alternate: {
+                    type: 'Identifier',
+                    name: 'b',
+                    start: 15,
+                    end: 16,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 15
+                      },
+                      end: {
+                        line: 1,
+                        column: 16
+                      }
+                    }
+                  },
+                  start: 6,
+                  end: 16,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 6
+                    },
+                    end: {
+                      line: 1,
+                      column: 16
+                    }
+                  }
+                },
+                kind: 'init',
+                computed: false,
+                method: false,
+                shorthand: false,
+                start: 3,
+                end: 16,
+                loc: {
+                  start: {
+                    line: 1,
+                    column: 3
+                  },
+                  end: {
+                    line: 1,
+                    column: 16
+                  }
+                }
+              }
+            ],
+            start: 1,
+            end: 18,
+            loc: {
+              start: {
+                line: 1,
+                column: 1
+              },
+              end: {
+                line: 1,
+                column: 18
+              }
+            }
+          },
+          start: 0,
+          end: 19,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 19
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 19,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 19
+        }
+      }
+    }
+  ],
+  [
+    `'use strict'; x = { a: [] ? a : b }`,
+    Context.OptionsLoc,
+    {
+      type: 'Program',
+      sourceType: 'script',
+      body: [
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'Literal',
+            value: 'use strict',
+            start: 0,
+            end: 12,
+            loc: {
+              start: {
+                line: 1,
+                column: 0
+              },
+              end: {
+                line: 1,
+                column: 12
+              }
+            }
+          },
+          start: 0,
+          end: 13,
+          loc: {
+            start: {
+              line: 1,
+              column: 0
+            },
+            end: {
+              line: 1,
+              column: 13
+            }
+          }
+        },
+        {
+          type: 'ExpressionStatement',
+          expression: {
+            type: 'AssignmentExpression',
+            left: {
+              type: 'Identifier',
+              name: 'x',
+              start: 14,
+              end: 15,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 14
+                },
+                end: {
+                  line: 1,
+                  column: 15
+                }
+              }
+            },
+            operator: '=',
+            right: {
+              type: 'ObjectExpression',
+              properties: [
+                {
+                  type: 'Property',
+                  key: {
+                    type: 'Identifier',
+                    name: 'a',
+                    start: 20,
+                    end: 21,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 20
+                      },
+                      end: {
+                        line: 1,
+                        column: 21
+                      }
+                    }
+                  },
+                  value: {
+                    type: 'ConditionalExpression',
+                    test: {
+                      type: 'ArrayExpression',
+                      elements: [],
+                      start: 23,
+                      end: 25,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 23
+                        },
+                        end: {
+                          line: 1,
+                          column: 25
+                        }
+                      }
+                    },
+                    consequent: {
+                      type: 'Identifier',
+                      name: 'a',
+                      start: 28,
+                      end: 29,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 28
+                        },
+                        end: {
+                          line: 1,
+                          column: 29
+                        }
+                      }
+                    },
+                    alternate: {
+                      type: 'Identifier',
+                      name: 'b',
+                      start: 32,
+                      end: 33,
+                      loc: {
+                        start: {
+                          line: 1,
+                          column: 32
+                        },
+                        end: {
+                          line: 1,
+                          column: 33
+                        }
+                      }
+                    },
+                    start: 23,
+                    end: 33,
+                    loc: {
+                      start: {
+                        line: 1,
+                        column: 23
+                      },
+                      end: {
+                        line: 1,
+                        column: 33
+                      }
+                    }
+                  },
+                  kind: 'init',
+                  computed: false,
+                  method: false,
+                  shorthand: false,
+                  start: 20,
+                  end: 33,
+                  loc: {
+                    start: {
+                      line: 1,
+                      column: 20
+                    },
+                    end: {
+                      line: 1,
+                      column: 33
+                    }
+                  }
+                }
+              ],
+              start: 18,
+              end: 35,
+              loc: {
+                start: {
+                  line: 1,
+                  column: 18
+                },
+                end: {
+                  line: 1,
+                  column: 35
+                }
+              }
+            },
+            start: 14,
+            end: 35,
+            loc: {
+              start: {
+                line: 1,
+                column: 14
+              },
+              end: {
+                line: 1,
+                column: 35
+              }
+            }
+          },
+          start: 14,
+          end: 35,
+          loc: {
+            start: {
+              line: 1,
+              column: 14
+            },
+            end: {
+              line: 1,
+              column: 35
+            }
+          }
+        }
+      ],
+      start: 0,
+      end: 35,
+      loc: {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: 35
+        }
+      }
+    }
+  ],
+  [
     `({ident: [] = x,})`,
     Context.OptionsLoc,
     {

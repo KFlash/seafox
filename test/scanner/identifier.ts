@@ -114,13 +114,17 @@ describe('scanner - identifiers', () => {
 
   const tokens: Array<[Context, Token, string, string]> = [
     [Context.OptionsRaw, Token.Identifier, '𐨪', '𐨪'],
+    [Context.OptionsRaw, Token.Identifier, '𞸊𞸋', '𞸊𞸋'],
     [Context.OptionsRaw, Token.Identifier, '𐅫', '𐅫'],
     [Context.OptionsRaw, Token.Identifier, '𓁬', '𓁬'],
     [Context.OptionsRaw, Token.Identifier, '𒅹', '𒅹'],
+    [Context.OptionsRaw, Token.Identifier, '𒅹𒅹', '𒅹𒅹'],
     [Context.OptionsRaw, Token.Identifier, '𑄥', '𑄥'],
     [Context.OptionsRaw, Token.Identifier, 'a𑁪', 'a𑁪'],
+    [Context.OptionsRaw, Token.Identifier, '𑁪a', '𑁪a'],
     [Context.OptionsRaw, Token.Identifier, 'a𑄁', 'a𑄁'],
     [Context.OptionsRaw, Token.Identifier, 'a𐒤', 'a𐒤'],
+    [Context.OptionsRaw, Token.Identifier, '𐒤a', '𐒤a'],
     [Context.OptionsRaw, Token.Identifier, 'abc', 'abc'],
     [Context.OptionsRaw, Token.Identifier, 'ab_c', 'ab_c'],
     [Context.OptionsRaw, Token.Identifier, '$_abc', '$_abc'],
@@ -197,6 +201,8 @@ describe('scanner - identifiers', () => {
     [Context.OptionsRaw, Token.Identifier, 'Ȁ', 'Ȁ'],
     [Context.OptionsRaw, Token.Identifier, '\\u{4fff}', '俿'],
     [Context.OptionsRaw, Token.Identifier, '\\u{1EE00}', '{Ȁ'],
+    [Context.OptionsRaw, Token.Identifier, '_\\u{1EE03}', '_{ȃ'],
+    [Context.OptionsRaw, Token.Identifier, '_\\u{1EE03}', '_{ȃ'],
     [Context.OptionsRaw, Token.Identifier, '_\\u{1EE03}', '_{ȃ']
   ];
 

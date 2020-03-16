@@ -188,6 +188,7 @@ export function scan(
 
       if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
         if ((char & 0xfc00) === 0xdc00) {
+          // low surrogate
           char = ((char & 0x3ff) << 10) | (char & 0x3ff) | 0x10000;
           if (((unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1) === 0) {
             report(parser, Errors.IllegalCaracter, fromCodePoint(char));

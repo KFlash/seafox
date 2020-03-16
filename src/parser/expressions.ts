@@ -3891,7 +3891,7 @@ export function parseObjectLiteralOrPattern(
                 column
               );
 
-              destructible |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
+              if ((token as Token) === Token.Assign) destructible |= Flags.AssignableDestruct;
             } else {
               if ((token & Token.IsBinaryOp) > 0) {
                 value = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, value);
@@ -4053,8 +4053,6 @@ export function parseObjectLiteralOrPattern(
               const token = parser.token;
 
               if ((token & Token.IsAssignOp) > 0) {
-                if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
-
                 value = parseAssignmentOrPattern(
                   parser,
                   context,
@@ -4067,7 +4065,7 @@ export function parseObjectLiteralOrPattern(
                   column
                 );
 
-                destructible |= (token as Token) === Token.Assign ? Flags.AssignableDestruct : Flags.NotDestructible;
+                if ((token as Token) === Token.Assign) destructible |= Flags.AssignableDestruct;
               } else {
                 if ((token & Token.IsBinaryOp) > 0) {
                   value = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, value);
