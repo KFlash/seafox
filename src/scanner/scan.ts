@@ -15,8 +15,7 @@ import {
   Errors,
   unicodeLookup,
   fromCodePoint,
-  scanNumber,
-  isWhiteSpaceSlow
+  scanNumber
 } from './';
 
 export const firstCharKinds = [
@@ -182,7 +181,7 @@ export function scan(
         continue;
       }
 
-      if (isWhiteSpaceSlow(char)) {
+      if (((unicodeLookup[(char >>> 5) + 104448] >>> char) & 31 & 1) !== 0) {
         parser.index++;
         continue;
       }
