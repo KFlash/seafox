@@ -2,12 +2,6 @@ import { ParserState, Context } from '../parser/common';
 import { report, Errors } from '../errors';
 import { unicodeLookup, Chars } from './';
 
-export function skipHashBang(parser: ParserState, source: string): void {
-  if (source.charCodeAt(parser.index) === Chars.Hash && source.charCodeAt(parser.index + 1) === Chars.Exclamation) {
-    parser.index = skipSingleLineComment(parser, source, parser.index);
-  }
-}
-
 export function skipSingleHTMLComment(parser: ParserState, context: Context, source: string, i: number): number {
   if ((context & 0b00000000000000000000100000010000) > 0) report(parser, Errors.HtmlCommentInModule);
   return skipSingleLineComment(parser, source, i++);

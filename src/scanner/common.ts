@@ -1,6 +1,25 @@
-import { Chars } from './';
+import { Chars, skipSingleLineComment } from './';
 import { ParserState } from '../parser/common';
 import { report, Errors } from '../errors';
+
+export function skipMeta(parser: ParserState, source: string): void {
+  let index = parser.index;
+  if (index === parser.length) return;
+  // Absorb any byte order mark at the start
+  if (source.charCodeAt(index) === Chars.ByteOrderMark) {
+    index++;
+    parser.index = index;
+  }
+
+  if (index < source.length && source.charCodeAt(index) === Chars.Hash) {
+    index++;
+    if (index < source.length && source.charCodeAt(index) === Chars.Exclamation) {
+      parser.index = skipSingleLineComment(parser, source, index + 1);
+    } else {
+      report(parser, Errors.Unexpected);
+    }
+  }
+}
 
 export function readNext(parser: ParserState): number {
   parser.index++;

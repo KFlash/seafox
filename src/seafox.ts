@@ -1,7 +1,7 @@
 import { Context } from './parser/common';
 import * as Types from './parser/types';
 import { nextToken } from './scanner/scan';
-import { skipHashBang } from './scanner/comments';
+import { skipMeta } from './scanner/';
 import { parseModuleItemList } from './parser/module';
 import { parseStatementList } from './parser/statements';
 import { create } from './parser/core';
@@ -50,7 +50,7 @@ export function parseRoot(source: string, context: Context, options?: Options): 
   const parser = create(source);
 
   // See: https://github.com/tc39/proposal-hashbang
-  skipHashBang(parser, source);
+  skipMeta(parser, source);
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
