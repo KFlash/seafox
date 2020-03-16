@@ -172,8 +172,8 @@ export function scan(
 
     parser.start = parser.index;
 
-    if (char > 0x7e) {
-      if ((char & ~1) === Chars.LineSeparator) {
+    if (char > 0b00000000000000000000000001111110) {
+      if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
         parser.offset = ++parser.index;
         parser.newLine = 1;
         parser.curLine++;

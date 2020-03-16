@@ -24,7 +24,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
   let lastIsCR: 0 | 1 = 0;
   let char = source.charCodeAt(i++);
   while (i < length) {
-    if (char < 0x2b) {
+    if (char < 0b00000000000000000000000000101011) {
       if (char === Chars.Asterisk) {
         while (char === Chars.Asterisk) {
           char = source.charCodeAt(i++);
@@ -45,7 +45,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
         parser.offset = i;
       }
     }
-    if ((char & ~1) === Chars.LineSeparator) {
+    if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
       parser.offset = i;
       parser.newLine = 1;
       parser.curLine++;
