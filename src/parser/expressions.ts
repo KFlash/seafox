@@ -1228,10 +1228,7 @@ export function parseAsyncArrowOrCallExpression(
         expr = parseAssignmentExpression(parser, context, 0, 1, expr, start, line, column);
       }
     } else if (token & Token.IsPatternStart) {
-      expr =
-        parser.token === Token.LeftBrace
-          ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column)
-          : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column);
+      expr = parsePatternStart(parser, context, scope, 0, 0, 1, parser.token, kind, origin, start, line, column);
 
       destructible |= parser.flags | Flags.SimpleParameterList;
 
@@ -1936,10 +1933,7 @@ export function parseParenthesizedExpression(
         }
       }
     } else if (token & Token.IsPatternStart) {
-      expr =
-        parser.token === Token.LeftBrace
-          ? parseObjectLiteralOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column)
-          : parseArrayExpressionOrPattern(parser, context, scope, 0, 0, 1, kind, origin, start, line, column);
+      expr = parsePatternStart(parser, context, scope, 0, 0, 1, parser.token, kind, origin, start, line, column);
 
       destructible |= parser.flags | Flags.SimpleParameterList;
 
@@ -2691,22 +2685,20 @@ export function parseArrayExpressionOrPattern(
           }
         }
       } else if (token & Token.IsPatternStart) {
-        left =
-          parser.token === Token.LeftBrace
-            ? parseObjectLiteralOrPattern(parser, context, scope, 0, reinterpret, 0, kind, origin, start, line, column)
-            : parseArrayExpressionOrPattern(
-                parser,
-                context,
-                scope,
-                0,
-                reinterpret,
-                0,
-                kind,
-                origin,
-                start,
-                line,
-                column
-              );
+        left = parsePatternStart(
+          parser,
+          context,
+          scope,
+          0,
+          reinterpret,
+          0,
+          parser.token,
+          kind,
+          origin,
+          start,
+          line,
+          column
+        );
 
         destructible |= parser.flags;
 
@@ -3827,34 +3819,20 @@ export function parseObjectLiteralOrPattern(
               }
             }
           } else if (((parser.token as Token) & Token.IsPatternStart) === Token.IsPatternStart) {
-            value =
-              (parser.token as Token) === Token.LeftBrace
-                ? parseObjectLiteralOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    0,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  )
-                : parseArrayExpressionOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    0,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  );
+            value = parsePatternStart(
+              parser,
+              context,
+              scope,
+              0,
+              reinterpret,
+              0,
+              parser.token,
+              type,
+              origin,
+              start,
+              line,
+              column
+            );
 
             destructible = parser.flags;
 
@@ -4048,34 +4026,20 @@ export function parseObjectLiteralOrPattern(
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else if ((token & 0b00000010000000000000000000000000) > 0) {
-            value =
-              (token as Token) === Token.LeftBrace
-                ? parseObjectLiteralOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    0,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  )
-                : parseArrayExpressionOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    inGroup,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  );
+            value = parsePatternStart(
+              parser,
+              context,
+              scope,
+              0,
+              reinterpret,
+              inGroup,
+              parser.token,
+              type,
+              origin,
+              start,
+              line,
+              column
+            );
 
             destructible = parser.flags;
 
@@ -4193,34 +4157,20 @@ export function parseObjectLiteralOrPattern(
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else if (((parser.token as Token) & Token.IsPatternStart) === Token.IsPatternStart) {
-            value =
-              (parser.token as Token) === Token.LeftBrace
-                ? parseObjectLiteralOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    0,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  )
-                : parseArrayExpressionOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    0,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  );
+            value = parsePatternStart(
+              parser,
+              context,
+              scope,
+              0,
+              reinterpret,
+              0,
+              parser.token,
+              type,
+              origin,
+              start,
+              line,
+              column
+            );
 
             destructible = parser.flags;
 
@@ -4334,34 +4284,20 @@ export function parseObjectLiteralOrPattern(
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else if ((parser.token & 0b00000010000000000000000000000000) > 0) {
-            value =
-              (parser.token as Token) === Token.LeftBrace
-                ? parseObjectLiteralOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    0,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  )
-                : parseArrayExpressionOrPattern(
-                    parser,
-                    context,
-                    scope,
-                    0,
-                    reinterpret,
-                    inGroup,
-                    type,
-                    origin,
-                    start,
-                    line,
-                    column
-                  );
+            value = parsePatternStart(
+              parser,
+              context,
+              scope,
+              0,
+              reinterpret,
+              0,
+              parser.token,
+              type,
+              origin,
+              start,
+              line,
+              column
+            );
 
             destructible = parser.flags;
 
@@ -4547,10 +4483,20 @@ export function parseSpreadOrRestElement(
     }
 
     if (token & Token.IsPatternStart) {
-      argument =
-        parser.token === Token.LeftBrace
-          ? parseObjectLiteralOrPattern(parser, context, scope, 1, reinterpret, 0, kind, origin, start, line, column)
-          : parseArrayExpressionOrPattern(parser, context, scope, 1, reinterpret, 0, kind, origin, start, line, column);
+      argument = parsePatternStart(
+        parser,
+        context,
+        scope,
+        1,
+        reinterpret,
+        0,
+        parser.token,
+        kind,
+        origin,
+        start,
+        line,
+        column
+      );
 
       const token = parser.token;
 
@@ -4887,4 +4833,47 @@ export function parseNonDirectiveExpression(
   expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
 
   return parseSequenceExpression(parser, context, expr, start, line, column);
+}
+
+export function parsePatternStart(
+  parser: ParserState,
+  context: Context,
+  scope: ScopeState,
+  isPattern: 0 | 1,
+  reinterpret: 0 | 1,
+  inGroup: 0 | 1,
+  t: Token,
+  kind: BindingKind,
+  origin: Origin,
+  start: number,
+  line: number,
+  column: number
+) {
+  return t === Token.LeftBrace
+    ? parseObjectLiteralOrPattern(
+        parser,
+        context,
+        scope,
+        isPattern,
+        reinterpret,
+        inGroup,
+        kind,
+        origin,
+        start,
+        line,
+        column
+      )
+    : parseArrayExpressionOrPattern(
+        parser,
+        context,
+        scope,
+        isPattern,
+        reinterpret,
+        inGroup,
+        kind,
+        origin,
+        start,
+        line,
+        column
+      );
 }

@@ -446,6 +446,7 @@ for (const arg of [
   'export default 42;',
   'export default { foo: 1 };',
   'export * from "foo";',
+  'export * as A from "test";',
   'export {default} from "foo";',
   'export {foo as bar} from "foo";',
   'export function *foo () {}',

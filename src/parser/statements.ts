@@ -29,6 +29,7 @@ import {
   parseAndClassifyIdentifier,
   parseBindingPattern,
   parseDirectives,
+  parsePatternStart,
   parseNonDirectiveExpression,
   parseAsyncArrow
 } from './expressions';
@@ -764,6 +765,10 @@ export function parseForStatementWithVariableDeclarations(
       };
 }
 
+export function isVarDecl(t: Token): Boolean {
+  return t === Token.VarKeyword || t === Token.LetKeyword || t === Token.ConstKeyword;
+}
+
 export function parseForStatement(
   parser: ParserState,
   context: Context,
@@ -773,13 +778,14 @@ export function parseForStatement(
   const { start: curStart, line: curLine, column: curColumn } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
-  // Create a lexical scope node around the whole ForStatement
+
   const isAwait =
     (context & Context.InAwaitContext) === Context.InAwaitContext &&
     consumeOpt(parser, context, Token.AwaitKeyword, /* allowRegExp */ 0);
 
   consume(parser, context, Token.LeftParen, /* allowRegExp */ 1);
 
+  // Create a lexical scope node around the whole ForStatement
   scope = createParentScope(scope, ScopeKind.Block);
 
   let test: Types.Expression | null = null;
@@ -794,7 +800,7 @@ export function parseForStatement(
 
   const { token, start, line, column } = parser;
 
-  if (token === Token.VarKeyword || token === Token.LetKeyword || token === Token.ConstKeyword) {
+  if (isVarDecl(token)) {
     return parseForStatementWithVariableDeclarations(
       parser,
       context,
@@ -808,10 +814,7 @@ export function parseForStatement(
   }
 
   if ((token & Token.IsPatternStart) === Token.IsPatternStart) {
-    init =
-      token === Token.LeftBrace
-        ? parseObjectLiteralOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column)
-        : parseArrayExpressionOrPattern(parser, context, scope, 1, 0, 0, kind, origin, start, line, column);
+    init = parsePatternStart(parser, context, scope, 1, 0, 0, token, kind, origin, start, line, column);
 
     if (parser.token & Token.IsAssignOp) {
       if (parser.token !== Token.Assign) report(parser, Errors.InvalidCompoundAssign);

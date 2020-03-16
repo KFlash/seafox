@@ -1,5 +1,5 @@
 import { Context } from './parser/common';
-import { Program } from './parser/types';
+import * as Types from './parser/types';
 import { nextToken } from './scanner/scan';
 import { skipHashBang } from './scanner/comments';
 import { parseModuleItemList } from './parser/module';
@@ -33,7 +33,7 @@ export interface Options {
   preserveParens?: boolean;
 }
 
-export function parseRoot(source: string, context: Context, options?: Options): Program {
+export function parseRoot(source: string, context: Context, options?: Options): Types.Program {
   if (options !== undefined) {
     if (options.module) context |= Context.Module | Context.Strict;
     if (options.next) context |= Context.OptionsNext;
@@ -92,22 +92,24 @@ export function parseRoot(source: string, context: Context, options?: Options): 
 /**
  * Parse a script, optionally with various options.
  */
-export function parseScript(source: string, options?: Options): Program {
+export function parseScript(source: string, options?: Options): Types.Program {
   return parseRoot(source, Context.InGlobal, options);
 }
 
 /**
  * Parse a module, optionally with various options.
  */
-export function parseModule(source: string, options?: Options): Program {
+export function parseModule(source: string, options?: Options): Types.Program {
   return parseRoot(source, Context.Strict | Context.Module | Context.InGlobal, options);
 }
 
 /**
  * Parse a module or a script, optionally with various options.
  */
-export function parse(source: string, options?: Options): Program {
+export function parse(source: string, options?: Options): Types.Program {
   return parseRoot(source, Context.InGlobal, options);
 }
 
-export const version = '1.3.5';
+export { Types };
+
+export const version = '1.4.0';
