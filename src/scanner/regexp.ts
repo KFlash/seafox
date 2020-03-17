@@ -105,6 +105,7 @@ export function scanRegularExpression(parser: ParserState, source: string, i: nu
     i++;
     char = source.charCodeAt(i);
   }
+
   const flags = source.slice(flagStart, i);
 
   const pattern = source.slice(bodyStart, bodyEnd);

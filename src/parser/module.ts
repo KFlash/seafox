@@ -130,7 +130,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
     expectSemicolon(parser, context);
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ImportDeclaration',
           specifiers,
@@ -179,7 +179,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
       expectSemicolon(parser, context);
 
-      return context & Context.OptionsLoc
+      return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'ImportDeclaration',
             specifiers,
@@ -316,7 +316,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
 
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ImportDeclaration',
         specifiers,
@@ -442,7 +442,7 @@ export function parseExportDefault(
   // See: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-exports-static-semantics-exportednames
   declareUnboundVariable(parser, 'default');
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ExportDefaultDeclaration',
         declaration,
@@ -514,7 +514,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
         expectSemicolon(parser, context);
 
-        return context & Context.OptionsLoc
+        return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'ExportNamedDeclaration',
               source,
@@ -536,7 +536,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
 
       expectSemicolon(parser, context);
 
-      return context & Context.OptionsLoc
+      return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'ExportAllDeclaration',
             source,
@@ -683,7 +683,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
       report(parser, Errors.Unexpected, KeywordDescTable[parser.token & Token.Kind]);
   }
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ExportNamedDeclaration',
         source,

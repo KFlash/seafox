@@ -64,7 +64,7 @@ export function parseRoot(source: string, context: Context, options?: Options): 
   const body =
     sourceType === 'module' ? parseModuleItemList(parser, context, scope) : parseStatementList(parser, context, scope);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Program',
         sourceType,

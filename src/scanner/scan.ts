@@ -446,6 +446,7 @@ export function scan(
           parser.index++;
           return Token.LogicalShiftRightAssign;
         }
+
         if (char === Chars.EqualSign) {
           parser.index++;
           return Token.ShiftRightAssign;
@@ -456,10 +457,12 @@ export function scan(
       // `|`, `||`, `|=`
       case Token.BitwiseOr:
         char = source.charCodeAt(++parser.index);
+
         if (char === Chars.VerticalBar) {
           parser.index++;
           return Token.LogicalOr;
         }
+
         if (char === Chars.EqualSign) {
           parser.index++;
           return Token.BitwiseOrAssign;

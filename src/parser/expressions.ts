@@ -123,7 +123,7 @@ export function parseSequenceExpression(
     expressions.push(parseExpression(parser, context, 0));
   } while ((parser.token as Token) === Token.Comma);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'SequenceExpression',
         expressions,
@@ -157,7 +157,7 @@ export function parseConditionalExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ConditionalExpression',
         test,
@@ -659,7 +659,7 @@ export function parseTemplateLiteral(parser: ParserState, context: Context): Typ
         }
   ];
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'TemplateLiteral',
         expressions: [],
@@ -704,7 +704,7 @@ export function parseTemplate(
 
   consume(parser, context, Token.TemplateTail, /* allowRegExp */ 0);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'TemplateLiteral',
         expressions,
@@ -723,7 +723,7 @@ export function parseTemplate(
 export function parseTemplateElement(parser: ParserState, context: Context, isTail: 0 | 1): Types.TemplateElement {
   const { start, line, column } = parser;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'TemplateElement',
         value: {
@@ -790,7 +790,7 @@ export function parseYieldExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'YieldExpression',
         argument,
@@ -835,7 +835,7 @@ export function parseAwaitExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'AwaitExpression',
         argument,
@@ -1181,7 +1181,7 @@ export function parseAsyncArrowOrCallExpression(
       );
     }
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'CallExpression',
           callee,
@@ -1283,7 +1283,7 @@ export function parseAsyncArrowOrCallExpression(
 
       parser.assignable = 0;
 
-      return context & Context.OptionsLoc
+      return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'CallExpression',
             callee,
@@ -1340,7 +1340,7 @@ export function parseAsyncArrowOrCallExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'CallExpression',
         callee,
@@ -1423,7 +1423,7 @@ export function parseNewExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'NewExpression',
         callee,
@@ -1467,7 +1467,7 @@ export function parseMetaProperty(
   line: number,
   column: number
 ): Types.MetaProperty {
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'MetaProperty',
         meta,
@@ -1610,7 +1610,7 @@ export function parseTemplateExpression(
 ): any {
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'TaggedTemplateExpression',
         tag,
@@ -1650,7 +1650,7 @@ export function parseSuperExpression(
     report(parser, Errors.UnexpectedToken, 'super');
   }
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Super',
         start,
@@ -1676,7 +1676,7 @@ export function parseRegExpLiteral(
   if (context & Context.OptionsRaw) {
     const raw = parser.source.slice(parser.start, parser.index);
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'Literal',
           value: tokenValue,
@@ -1694,7 +1694,7 @@ export function parseRegExpLiteral(
         };
   }
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Literal',
         value: tokenValue,
@@ -1718,7 +1718,7 @@ export function parseBigIntLiteral(parser: ParserState, context: Context): any {
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'BigIntLiteral',
         value: null,
@@ -1843,7 +1843,7 @@ export function parseArrowFunction(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ArrowFunctionExpression',
         body,
@@ -2115,7 +2115,7 @@ export function parseParenthesizedExpression(
 
   if ((context & Context.OptionsPreserveParens) === 0) return expr;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ParenthesizedExpression',
         expression: expr,
@@ -2184,7 +2184,7 @@ export function parseIdentifier(parser: ParserState, context: Context): Types.Id
   const { tokenValue: name, start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Identifier',
         name,
@@ -2207,7 +2207,7 @@ export function parseThisExpression(
 ): Types.ThisExpression {
   nextToken(parser, context, /* allowRegExp */ 0);
   parser.assignable = 0;
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ThisExpression',
         start,
@@ -2228,7 +2228,7 @@ export function parseNullLiteral(
 ): Types.Literal {
   nextToken(parser, context, /* allowRegExp */ 0);
   parser.assignable = 0;
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Literal',
         value: null,
@@ -2257,7 +2257,7 @@ export function parseNullOrTrueOrFalseLiteral(
   parser.assignable = 0;
 
   if (context & Context.OptionsRaw) {
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'Literal',
           value: token === Token.NullKeyword ? null : KeywordDescTable[token & Token.Kind] === 'true',
@@ -2272,7 +2272,7 @@ export function parseNullOrTrueOrFalseLiteral(
           raw: parser.source.slice(start, index)
         };
   }
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Literal',
         value: token === Token.NullKeyword ? null : KeywordDescTable[token & Token.Kind] === 'true',
@@ -2296,7 +2296,7 @@ export function parseLiteral(parser: ParserState, context: Context): any {
   if (context & Context.OptionsRaw) {
     const raw = parser.source.slice(start, index);
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'Literal',
           value: tokenValue,
@@ -2312,7 +2312,7 @@ export function parseLiteral(parser: ParserState, context: Context): any {
         };
   }
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Literal',
         value: tokenValue,
@@ -2352,7 +2352,7 @@ export function parseUpdateExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'UpdateExpression',
         argument: arg,
@@ -2398,7 +2398,7 @@ export function parseUpdateExpressionPrefix(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'UpdateExpression',
         argument: arg,
@@ -2463,7 +2463,7 @@ export function parseUnaryExpression(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'UnaryExpression',
         operator: KeywordDescTable[operator & Token.Kind] as Types.UnaryOperator,
@@ -2546,7 +2546,7 @@ export function parseAssignmentOrPattern(
   parser.assignable = 0;
 
   if (reinterpret === 0) {
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'AssignmentExpression',
           left,
@@ -2564,7 +2564,7 @@ export function parseAssignmentOrPattern(
         };
   }
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'AssignmentPattern',
         left,
@@ -2942,7 +2942,7 @@ export function parseFunctionLiteral(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type,
         params,
@@ -3043,7 +3043,7 @@ export function parseFunctionBody(
       ? 0b00000000000000000000010100000000
       : 0b00000000000000000000110100000000);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'BlockStatement',
         body,
@@ -3125,7 +3125,7 @@ export function parseClassTail(
 
   parser.assignable = 0;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type,
         id,
@@ -3186,7 +3186,7 @@ export function parseClassBody(
 
   consume(parser, context, Token.RightBrace, /* allowRegExp */ isDecl ? 1 : 0);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ClassBody',
         body,
@@ -3326,7 +3326,7 @@ export function parseClassElementList(
       ? 'set'
       : 'method';
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'MethodDefinition',
         kind,
@@ -3356,7 +3356,7 @@ export function parseIdentifierFromValue(
   line: number,
   column: number
 ): Types.Identifier {
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Identifier',
         name,
@@ -3489,7 +3489,7 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
   context = (context | Context.DisallowIn) ^ Context.DisallowIn;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'FunctionExpression',
         params,
@@ -4551,7 +4551,7 @@ export function parseSpreadOrRestElement(
 
       if (parser.token !== closingToken && parser.token !== Token.Comma) report(parser, Errors.UnclosedSpreadElement);
 
-      return context & Context.OptionsLoc
+      return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'SpreadElement',
             argument,
@@ -4584,7 +4584,7 @@ export function parseSpreadOrRestElement(
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: reinterpret ? 'RestElement' : 'SpreadElement',
         argument,
@@ -4615,7 +4615,7 @@ export function parseImportExpression(
 
   consume(parser, context, Token.RightParen, /* allowRegExp */ 0);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ImportExpression',
         source,
@@ -4672,7 +4672,7 @@ export function parseAndClassifyIdentifier(
 
   addVarOrBlock(parser, context, scope, name, kind, origin);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'Identifier',
         name,

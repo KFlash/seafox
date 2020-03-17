@@ -220,7 +220,7 @@ export function parseLabelledStatement(
       ? parseStatement(parser, context, scope, origin, labels, nestedLabels, allowFuncDecl)
       : parseFunctionDeclaration(parser, context, scope, 0, 0, origin | Origin.Statement);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'LabeledStatement',
         label: expr,
@@ -377,7 +377,7 @@ export function parseBlock(
 
   consume(parser, context, Token.RightBrace, /* allowRegExp */ 1);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'BlockStatement',
         body,
@@ -396,7 +396,7 @@ export function parseEmptyStatement(parser: ParserState, context: Context): Type
 
   nextToken(parser, context, /* allowRegExp */ 1);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'EmptyStatement',
         start,
@@ -423,7 +423,7 @@ export function parseReturnStatement(parser: ParserState, context: Context): Typ
 
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ReturnStatement',
         argument,
@@ -656,7 +656,7 @@ export function parseForStatementWithVariableDeclarations(
       /* allowFuncDecl */ 0
     );
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ForOfStatement',
           body,
@@ -697,7 +697,7 @@ export function parseForStatementWithVariableDeclarations(
       /* allowFuncDecl */ 0
     );
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ForInStatement',
           body,
@@ -745,7 +745,7 @@ export function parseForStatementWithVariableDeclarations(
     /* allowFuncDecl */ 0
   );
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ForStatement',
         body,
@@ -852,7 +852,7 @@ export function parseForStatement(
 
     const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ForOfStatement',
           body,
@@ -887,7 +887,7 @@ export function parseForStatement(
 
     const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ForInStatement',
           body,
@@ -931,7 +931,7 @@ export function parseForStatement(
 
   const body = parseStatement(parser, context | Context.InIteration, scope, origin, labels, null, 0);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ForStatement',
         body,
@@ -981,7 +981,7 @@ export function parseDoWhileStatement(
   // expectSemicolon() functionality here.
   consumeOpt(parser, context, Token.Semicolon, /* allowRegExp */ 1);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'DoWhileStatement',
         body,
@@ -1018,7 +1018,7 @@ export function parseWhileStatement(
 
   const body = parseStatement(parser, context | Context.InIteration, scope, Origin.None, labels, nestedLabels, 0);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'WhileStatement',
         test,
@@ -1107,7 +1107,7 @@ export function parseSwitchStatement(
 
   consume(parser, context, Token.RightBrace, /* allowRegExp */ 1);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'SwitchStatement',
         discriminant,
@@ -1147,7 +1147,7 @@ export function parseIfStatement(
   const alternate = consumeOpt(parser, context, Token.ElseKeyword, /* allowRegExp */ 1)
     ? parseConsequentOrAlternative(parser, context, scope, labels)
     : null;
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'IfStatement',
         test,
@@ -1190,7 +1190,7 @@ export function parseThrowStatement(parser: ParserState, context: Context): Type
 
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ThrowStatement',
         argument,
@@ -1224,7 +1224,7 @@ export function parseBreakStatement(parser: ParserState, context: Context, label
 
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'BreakStatement',
         label,
@@ -1261,7 +1261,7 @@ export function parseContinueStatement(
   }
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ContinueStatement',
         label,
@@ -1353,7 +1353,7 @@ export function parseTryStatement(
     report(parser, Errors.NoCatchOrFinally);
   }
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'TryStatement',
         block,
@@ -1393,7 +1393,7 @@ export function parseWithStatement(
 
   const body = parseStatement(parser, context, scope, Origin.None, labels, nestedLabels, 0);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'WithStatement',
         object,
@@ -1416,7 +1416,7 @@ export function parseDebuggerStatement(parser: ParserState, context: Context): T
   nextToken(parser, context, /* allowRegExp */ 1);
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'DebuggerStatement',
         start,
@@ -1455,7 +1455,7 @@ export function parseLetIdentOrVarDeclarationStatement(
 
     expectSemicolon(parser, context);
 
-    return context & Context.OptionsLoc
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'VariableDeclaration',
           kind: 'let',
@@ -1594,7 +1594,7 @@ export function parseExpressionStatement(
 ): Types.ExpressionStatement {
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ExpressionStatement',
         expression,

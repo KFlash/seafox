@@ -198,7 +198,7 @@ export function parseVariableStatementOrLexicalDeclaration(
 
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsLoc
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'VariableDeclaration',
         kind: kind & BindingKind.Const ? 'const' : kind & BindingKind.Let ? 'let' : 'var',
