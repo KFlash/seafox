@@ -172,7 +172,7 @@ export function parseStatement(
     case Token.WithKeyword:
       return parseWithStatement(parser, context, scope, labels, nestedLabels);
     case Token.FunctionKeyword:
-      report(parser, (context & Context.Strict) > 0 ? Errors.StrictFunction : Errors.SloppyFunction);
+      report(parser, (context & Context.Strict) === Context.Strict ? Errors.StrictFunction : Errors.SloppyFunction);
     case Token.ClassKeyword:
       report(parser, Errors.ClassForbiddenAsStatement);
     default:
@@ -590,7 +590,7 @@ export function parseForStatementWithVariableDeclarations(
       }
 
       declarations.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'VariableDeclarator',
               init,
@@ -620,7 +620,7 @@ export function parseForStatementWithVariableDeclarations(
     }
 
     init =
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'VariableDeclaration',
             kind: kind & BindingKind.Let ? 'let' : kind & BindingKind.Const ? 'const' : 'var',
@@ -1088,7 +1088,7 @@ export function parseSwitchStatement(
     }
 
     cases.push(
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'SwitchCase',
             test,
@@ -1329,7 +1329,7 @@ export function parseTryStatement(
     const body = parseBlock(parser, context, catchScope, /* isCatchClause */ 1, labels, null);
 
     handler =
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'CatchClause',
             param,

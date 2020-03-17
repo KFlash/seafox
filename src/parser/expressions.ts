@@ -223,7 +223,7 @@ export function parseBinaryExpression(
     parser.assignable = 0;
 
     left =
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: t & 0b01000000100000000000000000000000 ? 'LogicalExpression' : 'BinaryExpression',
             left,
@@ -277,7 +277,7 @@ export function parseMemberExpression(
       return parseMemberExpression(
         parser,
         context,
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'MemberExpression',
               object,
@@ -313,7 +313,7 @@ export function parseMemberExpression(
       return parseMemberExpression(
         parser,
         context,
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'MemberExpression',
               object,
@@ -346,7 +346,7 @@ export function parseMemberExpression(
       return parseMemberExpression(
         parser,
         context,
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'CallExpression',
               callee: object,
@@ -412,7 +412,7 @@ export function parseMemberExpression(
       return parseMemberExpression(
         parser,
         context,
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'ChainingExpression',
               base: object,
@@ -459,7 +459,7 @@ export function parseMemberOrCallChain(
       const property = parsePropertyOrPrivatePropertyName(parser, context);
 
       chain.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'MemberChain',
               computed: false,
@@ -489,7 +489,7 @@ export function parseMemberOrCallChain(
       parser.assignable = 0;
 
       chain.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'MemberChain',
               computed: true,
@@ -516,7 +516,7 @@ export function parseMemberOrCallChain(
       parser.assignable = 0;
 
       chain.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'CallChain',
               arguments: args,
@@ -549,7 +549,7 @@ export function parseMemberOrCallChain(
 
       if ((parser.token & 0b00000000001001110000000000000000) > 0) {
         chain.push(
-          context & Context.OptionsLoc
+          (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
             ? {
                 type: 'MemberChain',
                 computed: false,
@@ -602,7 +602,7 @@ export function parseArguments(
       nextToken(parser, context, /* allowRegExp */ 1);
 
       args.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'SpreadElement',
               argument: parseExpression(parser, context, inGroup),
@@ -637,7 +637,7 @@ export function parseTemplateLiteral(parser: ParserState, context: Context): Typ
   consume(parser, context, Token.TemplateTail, /* allowRegExp */ 0);
 
   const quasis: Types.TemplateElement[] = [
-    context & Context.OptionsLoc
+    (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'TemplateElement',
           value: {
@@ -1505,7 +1505,7 @@ export function parseNewMemberExpression(
         parser,
         context,
         inGroup,
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'MemberExpression',
               object: expr,
@@ -1537,7 +1537,7 @@ export function parseNewMemberExpression(
         parser,
         context,
         inGroup,
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'MemberExpression',
               object: expr,
@@ -1641,10 +1641,10 @@ export function parseSuperExpression(
   nextToken(parser, context, /* allowRegExp */ 0);
 
   if (parser.token === Token.LeftParen) {
-    if ((context & Context.SuperCall) === 0) report(parser, Errors.SuperNoConstructor);
+    if ((context & Context.SuperCall) !== Context.SuperCall) report(parser, Errors.SuperNoConstructor);
     parser.assignable = 0;
   } else if (parser.token === Token.LeftBracket || parser.token === Token.Period) {
-    if ((context & Context.SuperProperty) === 0) report(parser, Errors.InvalidSuperProperty);
+    if ((context & Context.SuperProperty) !== Context.SuperProperty) report(parser, Errors.InvalidSuperProperty);
     parser.assignable = 1;
   } else {
     report(parser, Errors.UnexpectedToken, 'super');
@@ -1673,15 +1673,12 @@ export function parseRegExpLiteral(
   nextToken(parser, context, /* allowRegExp */ 0);
   parser.assignable = 0;
 
-  if (context & Context.OptionsRaw) {
-    const raw = parser.source.slice(parser.start, parser.index);
-
+  if ((context & 0b00000000000000000000000000001000) !== 0b00000000000000000000000000001000) {
     return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'Literal',
           value: tokenValue,
           regex: tokenRegExp,
-          raw,
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
@@ -1689,7 +1686,6 @@ export function parseRegExpLiteral(
       : {
           type: 'Literal',
           value: tokenValue,
-          raw,
           regex: tokenRegExp
         };
   }
@@ -1699,6 +1695,7 @@ export function parseRegExpLiteral(
         type: 'Literal',
         value: tokenValue,
         regex: tokenRegExp,
+        raw: parser.source.slice(parser.start, parser.index),
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
@@ -1706,6 +1703,7 @@ export function parseRegExpLiteral(
     : {
         type: 'Literal',
         value: tokenValue,
+        raw: parser.source.slice(parser.start, parser.index),
         regex: tokenRegExp
       };
 }
@@ -2018,7 +2016,7 @@ export function parseParenthesizedExpression(
           parser.assignable = 0;
 
           expr =
-            context & Context.OptionsLoc
+            (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
               ? {
                   type: 'SequenceExpression',
                   expressions,
@@ -2063,7 +2061,7 @@ export function parseParenthesizedExpression(
   if (inSequence === 1) {
     parser.assignable = 0;
     expr =
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'SequenceExpression',
             expressions,
@@ -2087,7 +2085,7 @@ export function parseParenthesizedExpression(
     (parser.flags & Flags.SeenYield ? Flags.SeenYield : 0) | (parser.flags & Flags.SeenAwait ? Flags.SeenAwait : 0);
 
   if (parser.token === Token.Arrow) {
-    if (context & (Context.InAwaitContext | Context.Module) && destructible & Flags.SeenAwait) {
+    if ((context & 0b00000000010000000000100000000000) > 0 && destructible & Flags.SeenAwait) {
       report(parser, Errors.AwaitInParameter);
     }
 
@@ -2113,7 +2111,7 @@ export function parseParenthesizedExpression(
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
-  if ((context & Context.OptionsPreserveParens) === 0) return expr;
+  if ((context & Context.OptionsPreserveParens) !== Context.OptionsPreserveParens) return expr;
 
   return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
@@ -2256,7 +2254,7 @@ export function parseNullOrTrueOrFalseLiteral(
 
   parser.assignable = 0;
 
-  if (context & Context.OptionsRaw) {
+  if ((context & Context.OptionsRaw) === Context.OptionsRaw) {
     return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'Literal',
@@ -2293,22 +2291,18 @@ export function parseLiteral(parser: ParserState, context: Context): any {
 
   nextToken(parser, context, /* allowRegExp */ 0);
 
-  if (context & Context.OptionsRaw) {
-    const raw = parser.source.slice(start, index);
-
+  if ((context & Context.OptionsRaw) !== Context.OptionsRaw) {
     return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'Literal',
           value: tokenValue,
-          raw,
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
         }
       : {
           type: 'Literal',
-          value: tokenValue,
-          raw
+          value: tokenValue
         };
   }
 
@@ -2316,13 +2310,15 @@ export function parseLiteral(parser: ParserState, context: Context): any {
     ? {
         type: 'Literal',
         value: tokenValue,
+        raw: parser.source.slice(start, index),
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
     : {
         type: 'Literal',
-        value: tokenValue
+        value: tokenValue,
+        raw: parser.source.slice(start, index)
       };
 }
 
@@ -2453,7 +2449,7 @@ export function parseUnaryExpression(
 
   if (parser.token === Token.Exponentiate) report(parser, Errors.InvalidExponentationLHS);
 
-  if (context & Context.Strict) {
+  if ((context & Context.Strict) === Context.Strict) {
     if (operator === Token.DeleteKeyword && arg.type === 'Identifier') {
       // When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
       // UnaryExpression is a direct reference to a variable, function argument, or function name
@@ -2792,7 +2788,7 @@ export function parseArrayExpressionOrPattern(
   consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
   const node =
-    context & Context.OptionsLoc
+    (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
           elements,
@@ -2947,8 +2943,8 @@ export function parseFunctionLiteral(
         type,
         params,
         body,
-        async: (context & Context.InAwaitContext) > 0,
-        generator: (context & Context.InYieldContext) > 0,
+        async: (context & Context.InAwaitContext) === Context.InAwaitContext,
+        generator: (context & Context.InYieldContext) === Context.InYieldContext,
         id,
         start,
         end: parser.endIndex,
@@ -2958,8 +2954,8 @@ export function parseFunctionLiteral(
         type,
         params,
         body,
-        async: (context & Context.InAwaitContext) > 0,
-        generator: (context & Context.InYieldContext) > 0,
+        async: (context & Context.InAwaitContext) === Context.InAwaitContext,
+        generator: (context & Context.InYieldContext) === Context.InYieldContext,
         id
       };
 }
@@ -3007,8 +3003,8 @@ export function parseFunctionBody(
       body.push(parseDirectives(parser, context, index, expr, start, line, column));
     }
 
-    if (context & Context.Strict) {
-      if (isStrict === 0 && scopeError && (context & Context.InGlobal) === 0) {
+    if ((context & Context.Strict) === Context.Strict) {
+      if (isStrict === 0 && scopeError && (context & Context.InGlobal) !== Context.InGlobal) {
         reportScopeError(scopeError);
       }
 
@@ -4363,7 +4359,7 @@ export function parseObjectLiteralOrPattern(
       kind = (state & 0b00000000000000000000000110000000) === 0 ? 'init' : state & PropertyKind.Setter ? 'set' : 'get';
 
       properties.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'Property',
               key,
@@ -4398,7 +4394,7 @@ export function parseObjectLiteralOrPattern(
   consume(parser, context, Token.RightBrace, /* allowRegExp */ 0);
 
   const node =
-    context & Context.OptionsLoc
+    (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: reinterpret ? 'ObjectPattern' : 'ObjectExpression',
           properties,
@@ -4767,7 +4763,7 @@ export function parseDirectives(
   column: number
 ): Types.ExpressionStatement {
   return context & Context.OptionsDirectives
-    ? context & Context.OptionsLoc
+    ? (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ExpressionStatement',
           expression,
@@ -4781,7 +4777,7 @@ export function parseDirectives(
           expression,
           directive: parser.source.slice(start, end)
         }
-    : context & Context.OptionsLoc
+    : (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ExpressionStatement',
         expression,

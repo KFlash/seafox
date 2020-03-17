@@ -249,7 +249,7 @@ export function parseVariableDeclarationListAndDeclarator(
     }
 
     list.push(
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'VariableDeclarator',
             init,

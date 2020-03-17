@@ -38,7 +38,7 @@ import {
 export function parseModuleItemList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
   const statements: Types.Statement[] = [];
 
-  if (context & Context.OptionsDirectives) {
+  if ((context & Context.OptionsDirectives) === Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
       const { start, line, index, column } = parser;
 
@@ -53,7 +53,7 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
       expectSemicolon(parser, context);
 
       statements.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'ExpressionStatement',
               expression,
@@ -160,7 +160,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
     nextToken(parser, context, /* allowRegExp */ 0);
 
     specifiers = [
-      context & Context.OptionsLoc
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
         ? {
             type: 'ImportDefaultSpecifier',
             local: parseIdentifierFromValue(parser, context, tokenValue, start, line, column),
@@ -211,7 +211,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
       addBlockName(parser, context, scope, parser.tokenValue, BindingKind.Const, Origin.None);
 
       specifiers.push(
-        context & Context.OptionsLoc
+        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'ImportNamespaceSpecifier',
               local: parseIdentifier(parser, context),
@@ -280,7 +280,7 @@ export function parseImportDeclaration(parser: ParserState, context: Context, sc
         addBlockName(parser, context, scope, tokenValue, BindingKind.Let, Origin.None);
 
         specifiers.push(
-          context & Context.OptionsLoc
+          (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
             ? {
                 type: 'ImportSpecifier',
                 local,
@@ -494,7 +494,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         const exported = parseIdentifier(parser, context);
 
         specifiers = [
-          context & Context.OptionsLoc
+          (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
             ? {
                 type: 'ExportAllDeclaration',
                 source,
@@ -600,7 +600,7 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         exportedBindings.push(tokenValue);
 
         specifiers.push(
-          context & Context.OptionsLoc
+          (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
             ? {
                 type: 'ExportSpecifier',
                 local,
