@@ -495,8 +495,10 @@ export function scan(
 
 export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1): void {
   parser.newLine = 0;
+
   const { source, length, index, offset } = parser;
-  parser.flags = (parser.flags | Flags.Octals) ^ Flags.Octals;
+
+  parser.flags = (parser.flags | 4224) ^ 4224;
   parser.lastColumn = (parser.endIndex = index) - offset;
   parser.lastLine = parser.curLine;
   parser.token = scan(parser, context, source, index, length, Token.EOF, /* lastIsCR */ 0, index === 0, allowRegExp);

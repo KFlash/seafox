@@ -1,4 +1,4 @@
-import { ParserState, Context } from '../parser/common';
+import { ParserState, Context, Flags } from '../parser/common';
 import { report, Errors } from '../errors';
 import { unicodeLookup, Chars } from './';
 
@@ -22,20 +22,26 @@ export function skipSingleLineComment(parser: ParserState, source: string, i: nu
 
 export function skipMultiLineComment(parser: ParserState, source: string, length: number, i: number): number | void {
   let lastIsCR: 0 | 1 = 0;
+  let isNewLine: 0 | 1 = 0;
   let char = source.charCodeAt(i++);
+
   while (i < length) {
     if (char < 0b00000000000000000000000000101011) {
       if (char === Chars.Asterisk) {
         while (char === Chars.Asterisk) {
           char = source.charCodeAt(i++);
         }
-        if (char === Chars.Slash) return i;
+        if (char === Chars.Slash) {
+          if (isNewLine === 0) parser.flags |= Flags.CommentStart;
+          return i;
+        }
       }
 
       if (char === Chars.CarriageReturn) {
         parser.curLine++;
         parser.newLine = lastIsCR = 1;
         parser.offset = i;
+        isNewLine = 1;
       }
 
       if (char === Chars.LineFeed) {
@@ -43,6 +49,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
         lastIsCR = 0;
         parser.newLine = 1;
         parser.offset = i;
+        isNewLine = 1;
       }
     }
     if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
@@ -50,6 +57,7 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
       parser.newLine = 1;
       parser.curLine++;
       lastIsCR = 0;
+      isNewLine = 0;
     }
     char = source.charCodeAt(i++);
   }

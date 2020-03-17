@@ -2996,7 +2996,7 @@ export function parseFunctionBody(
         }
       }
 
-      body.push(parseNonDirectiveExpression(parser, context, expr, index, start, line, column));
+      body.push(parseDirectiveExpression(parser, context, expr, index, start, line, column));
     }
 
     if ((context & Context.Strict) === Context.Strict) {
@@ -4749,7 +4749,7 @@ export function parseImportMetaExpression(
   return parseMetaProperty(parser, context, meta, start, line, column);
 }
 
-export function parseNonDirectiveExpression(
+export function parseDirectiveExpression(
   parser: ParserState,
   context: Context,
   expr: any,
@@ -4780,7 +4780,8 @@ export function parseNonDirectiveExpression(
   if (
     (parser.newLine === 0 &&
       (parser.token & 0b00000001000000000000000000000000) !== 0b00000001000000000000000000000000) ||
-    (parser.newLine === 1 && parser.token === Token.Divide)
+    (parser.newLine === 1 && parser.token === Token.Divide) ||
+    (parser.flags & Flags.CommentStart) === Flags.CommentStart
   ) {
     expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 

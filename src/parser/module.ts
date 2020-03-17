@@ -30,7 +30,7 @@ import {
   parseMemberExpression,
   parseAssignmentExpression,
   parseIdentifierFromValue,
-  parseNonDirectiveExpression,
+  parseDirectiveExpression,
   parseArrowFunction,
   parseAsyncArrowOrCallExpression
 } from './expressions';
@@ -44,7 +44,7 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
 
       let expr = parseLiteral(parser, context);
 
-      statements.push(parseNonDirectiveExpression(parser, context, expr, index, start, line, column));
+      statements.push(parseDirectiveExpression(parser, context, expr, index, start, line, column));
     }
   }
 
