@@ -70,7 +70,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
       context |= Context.Strict;
     }
 
-    statements.push(parseDirectiveExpression(parser, context, expr, index, start, line, column));
+    statements.push(parseDirectiveExpression(parser, context, index, start, line, column, expr));
   }
 
   while (parser.token !== Token.EOF) {

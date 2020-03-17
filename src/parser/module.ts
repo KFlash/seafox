@@ -40,11 +40,17 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
 
   if ((context & Context.OptionsDirectives) === Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
-      const { start, line, index, column } = parser;
-
-      let expr = parseLiteral(parser, context);
-
-      statements.push(parseDirectiveExpression(parser, context, expr, index, start, line, column));
+      statements.push(
+        parseDirectiveExpression(
+          parser,
+          context,
+          parser.index,
+          parser.start,
+          parser.line,
+          parser.column,
+          parseLiteral(parser, context)
+        )
+      );
     }
   }
 

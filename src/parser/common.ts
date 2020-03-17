@@ -283,8 +283,7 @@ export function nextLiteralExactlyEquals(parser: ParserState, index: number, sta
   if (parser.flags & Flags.Octals && parser.newLine === 1) return true;
   if (index - start !== 12) return false;
   if (value !== 'use strict') return false;
-  if ((parser.token & Token.IsAutoSemicolon) !== Token.IsAutoSemicolon) return false;
-  return true;
+  return (parser.token & Token.IsAutoSemicolon) === Token.IsAutoSemicolon;
 }
 
 export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {

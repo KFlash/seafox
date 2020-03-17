@@ -3000,7 +3000,7 @@ export function parseFunctionBody(
         }
       }
 
-      body.push(parseDirectiveExpression(parser, context, expr, index, start, line, column));
+      body.push(parseDirectiveExpression(parser, context, index, start, line, column, expr));
     }
 
     if ((context & Context.Strict) === Context.Strict) {
@@ -4756,11 +4756,11 @@ export function parseImportMetaExpression(
 export function parseDirectiveExpression(
   parser: ParserState,
   context: Context,
-  expr: any,
   index: number,
   start: number,
   line: number,
-  column: number
+  column: number,
+  expr: any
 ): any {
   /** MemberExpression :
    *   1. PrimaryExpression
