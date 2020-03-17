@@ -2996,11 +2996,7 @@ export function parseFunctionBody(
         }
       }
 
-      expr = parseNonDirectiveExpression(parser, context, expr, start, line, column);
-
-      expectSemicolon(parser, context);
-
-      body.push(parseDirectives(parser, context, index, expr, start, line, column));
+      body.push(parseNonDirectiveExpression(parser, context, expr, index, start, line, column));
     }
 
     if ((context & Context.Strict) === Context.Strict) {
@@ -4753,52 +4749,15 @@ export function parseImportMetaExpression(
   return parseMetaProperty(parser, context, meta, start, line, column);
 }
 
-export function parseDirectives(
-  parser: ParserState,
-  context: Context,
-  end: number,
-  expression: any,
-  start: number,
-  line: number,
-  column: number
-): Types.ExpressionStatement {
-  return context & Context.OptionsDirectives
-    ? (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
-      ? {
-          type: 'ExpressionStatement',
-          expression,
-          directive: parser.source.slice(start, end),
-          start,
-          end: parser.endIndex,
-          loc: setLoc(parser, line, column)
-        }
-      : {
-          type: 'ExpressionStatement',
-          expression,
-          directive: parser.source.slice(start, end)
-        }
-    : (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
-    ? {
-        type: 'ExpressionStatement',
-        expression,
-        start,
-        end: parser.endIndex,
-        loc: setLoc(parser, line, column)
-      }
-    : {
-        type: 'ExpressionStatement',
-        expression
-      };
-}
-
 export function parseNonDirectiveExpression(
   parser: ParserState,
   context: Context,
   expr: any,
+  index: number,
   start: number,
   line: number,
   column: number
-): Types.Expression {
+): any {
   /** MemberExpression :
    *   1. PrimaryExpression
    *   2. MemberExpression [ AssignmentExpression ]
@@ -4818,15 +4777,66 @@ export function parseNonDirectiveExpression(
    *
    */
 
-  expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
+  if (
+    (parser.newLine === 0 &&
+      (parser.token & 0b00000001000000000000000000000000) !== 0b00000001000000000000000000000000) ||
+    (parser.newLine === 1 && parser.token === Token.Divide)
+  ) {
+    expr = parseMemberExpression(parser, context, expr, 1, 0, start, line, column);
 
-  /** AssignmentExpression :
-   *   1. ConditionalExpression
-   *   2. LeftHandSideExpression = AssignmentExpression
-   */
-  expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+    /** AssignmentExpression :
+     *   1. ConditionalExpression
+     *   2. LeftHandSideExpression = AssignmentExpression
+     */
 
-  return parseSequenceExpression(parser, context, expr, start, line, column);
+    expr = parseAssignmentExpression(parser, context, 0, 0, expr, start, line, column);
+
+    expr = parseSequenceExpression(parser, context, expr, start, line, column);
+
+    expectSemicolon(parser, context);
+
+    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+      ? {
+          type: 'ExpressionStatement',
+          expression: expr,
+          start,
+          end: parser.endIndex,
+          loc: setLoc(parser, line, column)
+        }
+      : {
+          type: 'ExpressionStatement',
+          expression: expr
+        };
+  }
+  expectSemicolon(parser, context);
+
+  return context & Context.OptionsDirectives
+    ? (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+      ? {
+          type: 'ExpressionStatement',
+          expression: expr,
+          directive: parser.source.slice(start, index),
+          start,
+          end: parser.endIndex,
+          loc: setLoc(parser, line, column)
+        }
+      : {
+          type: 'ExpressionStatement',
+          expression: expr,
+          directive: parser.source.slice(start, index)
+        }
+    : (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+    ? {
+        type: 'ExpressionStatement',
+        expression: expr,
+        start,
+        end: parser.endIndex,
+        loc: setLoc(parser, line, column)
+      }
+    : {
+        type: 'ExpressionStatement',
+        expression: expr
+      };
 }
 
 export function parsePatternStart(

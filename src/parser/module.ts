@@ -42,32 +42,9 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
     while (parser.token === Token.StringLiteral) {
       const { start, line, index, column } = parser;
 
-      let expression = parseLiteral(parser, context);
+      let expr = parseLiteral(parser, context);
 
-      if ((parser.token as Token) !== Token.Semicolon) {
-        expression = parseNonDirectiveExpression(parser, context, expression, start, line, column);
-      }
-
-      const directive = parser.source.slice(start, index);
-
-      expectSemicolon(parser, context);
-
-      statements.push(
-        (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
-          ? {
-              type: 'ExpressionStatement',
-              expression,
-              directive,
-              start,
-              end: parser.endIndex,
-              loc: setLoc(parser, line, column)
-            }
-          : {
-              type: 'ExpressionStatement',
-              expression,
-              directive
-            }
-      );
+      statements.push(parseNonDirectiveExpression(parser, context, expr, index, start, line, column));
     }
   }
 

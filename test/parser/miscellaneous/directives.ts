@@ -193,6 +193,92 @@ describe('Miscellaneous - Directives', () => {
     ],
     [
       `"ignore me" + x`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw | Context.Strict | Context.Module,
+      {
+        body: [
+          {
+            end: 15,
+            expression: {
+              end: 15,
+              left: {
+                end: 11,
+                loc: {
+                  end: {
+                    column: 11,
+                    line: 1
+                  },
+                  start: {
+                    column: 0,
+                    line: 1
+                  }
+                },
+                raw: '"ignore me"',
+                start: 0,
+                type: 'Literal',
+                value: 'ignore me'
+              },
+              loc: {
+                end: {
+                  column: 15,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              operator: '+',
+              right: {
+                end: 15,
+                loc: {
+                  end: {
+                    column: 15,
+                    line: 1
+                  },
+                  start: {
+                    column: 14,
+                    line: 1
+                  }
+                },
+                name: 'x',
+                start: 14,
+                type: 'Identifier'
+              },
+              start: 0,
+              type: 'BinaryExpression'
+            },
+            loc: {
+              end: {
+                column: 15,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 15,
+        loc: {
+          end: {
+            column: 15,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
+    [
+      `"ignore me" + x`,
       Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
       {
         type: 'Program',
@@ -200,7 +286,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"ignore me"',
             expression: {
               type: 'BinaryExpression',
               left: {
@@ -288,7 +373,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"ignore me"',
             expression: {
               type: 'BinaryExpression',
               left: {
@@ -607,7 +691,6 @@ describe('Miscellaneous - Directives', () => {
             body: {
               body: [
                 {
-                  directive: '"foo"',
                   end: 33,
                   expression: {
                     end: 33,
@@ -636,6 +719,7 @@ describe('Miscellaneous - Directives', () => {
                       line: 2
                     }
                   },
+                  directive: '"foo"',
                   start: 28,
                   type: 'ExpressionStatement'
                 },
@@ -892,7 +976,6 @@ describe('Miscellaneous - Directives', () => {
             body: {
               body: [
                 {
-                  directive: '"foo"',
                   end: 37,
                   expression: {
                     end: 37,
@@ -922,6 +1005,7 @@ describe('Miscellaneous - Directives', () => {
                     }
                   },
                   start: 32,
+                  directive: '"foo"',
                   type: 'ExpressionStatement'
                 },
                 {
@@ -1254,7 +1338,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"use strict"',
             expression: {
               type: 'MemberExpression',
               object: {
@@ -1319,7 +1402,6 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
-            directive: '"use strict"',
             expression: {
               type: 'MemberExpression',
               object: {
@@ -1384,7 +1466,6 @@ describe('Miscellaneous - Directives', () => {
           },
           {
             type: 'ExpressionStatement',
-            directive: '"use strict"',
             expression: {
               type: 'CallExpression',
               callee: {
@@ -1694,7 +1775,6 @@ describe('Miscellaneous - Directives', () => {
               body: [
                 {
                   type: 'ExpressionStatement',
-                  directive: '"use strict"',
                   expression: {
                     type: 'MemberExpression',
                     object: {
@@ -2581,7 +2661,6 @@ describe('Miscellaneous - Directives', () => {
         body: [
           {
             type: 'ExpressionStatement',
-            directive: '"use strict"',
             expression: {
               type: 'SequenceExpression',
               expressions: [

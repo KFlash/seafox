@@ -28,7 +28,6 @@ import {
   parseLeftHandSideExpression,
   parseAndClassifyIdentifier,
   parseBindingPattern,
-  parseDirectives,
   parsePatternStart,
   parseNonDirectiveExpression,
   parseAsyncArrow
@@ -71,11 +70,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
       context |= Context.Strict;
     }
 
-    expr = parseNonDirectiveExpression(parser, context, expr, start, line, column);
-
-    expectSemicolon(parser, context);
-
-    statements.push(parseDirectives(parser, context, index, expr, start, line, column));
+    statements.push(parseNonDirectiveExpression(parser, context, expr, index, start, line, column));
   }
 
   while (parser.token !== Token.EOF) {
