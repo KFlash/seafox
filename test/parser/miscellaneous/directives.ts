@@ -8,6 +8,8 @@ describe('Miscellaneous - Directives', () => {
       "x\\01"
       "use strict";
     }`,
+    `"use strict"
+"\\05"`,
     `function f(){
       "x\\1"
       "use strict";

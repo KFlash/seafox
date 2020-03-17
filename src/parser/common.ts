@@ -280,9 +280,9 @@ export function nextLiteralExactlyEquals(parser: ParserState, index: number, sta
   // The length of the token is used to make sure the literal equals without
   // taking escape sequences (e.g., "use \x73trict") or line continuations
   // (e.g., "use \(newline) strict") into account.
+  if (parser.flags & Flags.Octals && parser.newLine === 1) return true;
   if (index - start !== 12) return false;
   if (value !== 'use strict') return false;
-  // if (parser.newLine === 0) return false;
   if ((parser.token & Token.IsAutoSemicolon) !== Token.IsAutoSemicolon) return false;
   return true;
 }

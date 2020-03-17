@@ -2287,6 +2287,9 @@ export function parseNullOrTrueOrFalseLiteral(
 export function parseLiteral(parser: ParserState, context: Context): any {
   const { tokenValue, start, line, column, index } = parser;
 
+  if (context & Context.Strict && (parser.flags & Flags.Octals) === Flags.Octals)
+    report(parser, Errors.StrictOctalLiteral);
+
   parser.assignable = 0;
 
   nextToken(parser, context, /* allowRegExp */ 0);
@@ -4811,7 +4814,7 @@ export function parseDirectiveExpression(
   }
   expectSemicolon(parser, context);
 
-  return context & Context.OptionsDirectives
+  return (context & Context.OptionsDirectives) === Context.OptionsDirectives
     ? (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ExpressionStatement',
