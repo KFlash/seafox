@@ -32,6 +32,8 @@ export function skipMultiLineComment(parser: ParserState, source: string, length
           char = source.charCodeAt(i++);
         }
         if (char === Chars.Slash) {
+          // Fixes a edge case whith directive parsing when a multiline commented is
+          // on two or more lines.
           if (isNewLine === 0) parser.flags |= Flags.CommentStart;
           return i;
         }

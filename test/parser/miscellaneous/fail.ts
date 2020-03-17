@@ -73,6 +73,7 @@ fail('Miscellaneous - Fail', [
   ['for(let.a of 0);', Context.Empty],
   ['for ((a?b:c) in y)z;', Context.Empty],
   ['for ((a,b) in c);', Context.Empty],
+  ['({static a(){}})', Context.Empty],
   ['class x { t() { a, class o {;set get * get set(){};;;} } }', Context.Empty],
   ['function Y(){ a, class W extends super() {set "x"(X){}set "x"(Q){}async constructor(){};} }', Context.Empty],
   ['let x = class {async *1(){}get set async($){};}', Context.Empty],
