@@ -50,7 +50,8 @@ import {
   parseStatementWithLabelSet,
   nextLiteralExactlyEquals,
   validateIdentifier,
-  Label
+  Label,
+  isVarDecl
 } from './common';
 
 export function parseStatementList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
@@ -763,10 +764,6 @@ export function parseForStatementWithVariableDeclarations(
         test,
         update
       };
-}
-
-export function isVarDecl(t: Token): Boolean {
-  return t === Token.VarKeyword || t === Token.LetKeyword || t === Token.ConstKeyword;
 }
 
 export function parseForStatement(

@@ -35,15 +35,16 @@ export interface Options {
 
 export function parseRoot(source: string, context: Context, options?: Options): Types.Program {
   if (options !== undefined) {
-    if (options.module) context |= Context.Module | Context.Strict;
-    if (options.next) context |= Context.OptionsNext;
-    if (options.loc) context |= Context.OptionsLoc;
-    if (options.disableWebCompat) context |= Context.OptionsDisableWebCompat;
-    if (options.directives) context |= Context.OptionsDirectives | Context.OptionsRaw;
-    if (options.raw) context |= Context.OptionsRaw;
-    if (options.globalReturn) context |= Context.OptionsGlobalReturn;
-    if (options.preserveParens) context |= Context.OptionsPreserveParens;
-    if (options.impliedStrict) context |= Context.Strict;
+    context |=
+      (options.module ? Context.Module | Context.Strict : Context.Empty) |
+      (options.next ? Context.OptionsNext : Context.Empty) |
+      (options.loc ? Context.OptionsLoc : Context.Empty) |
+      (options.disableWebCompat ? Context.OptionsDisableWebCompat : Context.Empty) |
+      (options.directives ? Context.OptionsDirectives | Context.OptionsRaw : Context.Empty) |
+      (options.raw ? Context.OptionsRaw : Context.Empty) |
+      (options.globalReturn ? Context.OptionsGlobalReturn : Context.Empty) |
+      (options.preserveParens ? Context.OptionsPreserveParens : Context.Empty) |
+      (options.impliedStrict ? Context.Strict : Context.Empty);
   }
 
   // Initialize parser state

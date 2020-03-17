@@ -327,7 +327,8 @@ export function isValidIdentifier(context: Context, t: Token): boolean {
 export function isStrictReservedWord(parser: ParserState, context: Context, t: Token, inGroup: 0 | 1): boolean {
   if (t === Token.AwaitKeyword) {
     if ((context & 0b00000000010000000000100000000000) > 0) report(parser, Errors.AwaitOutsideAsync);
-    parser.flags |= inGroup === 1 ? Flags.SeenAwait : 0;
+
+    if (inGroup === 1) parser.flags |= Flags.SeenAwait;
   }
   if ((t & Token.IsEvalOrArguments) === Token.IsEvalOrArguments) {
     report(parser, Errors.StrictEvalArguments);
@@ -360,4 +361,13 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   if ((context & 0b00000000001000000000010000000000) > 0 && t === Token.YieldKeyword) {
     report(parser, Errors.DisallowedInContext, 'yield');
   }
+}
+
+export function isVarDecl(t: Token): Boolean {
+  // If encounter "var", "let" or "const", this is start of an variable declaration
+  // except for "let" which in some cases can be an identifier.
+  // Examples:
+  //      for(let in x) {}
+  //      for(let[foo] in x) {}
+  return t === Token.VarKeyword || t === Token.LetKeyword || t === Token.ConstKeyword;
 }
