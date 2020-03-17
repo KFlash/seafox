@@ -47,7 +47,7 @@ import {
   reinterpretToPattern,
   addLabel,
   parseStatementWithLabelSet,
-  nextLiteralExactlyEquals,
+  isValidStrictDirective,
   validateIdentifier,
   Label,
   isVarDecl
@@ -66,9 +66,7 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
 
     expr = parseLiteral(parser, context);
 
-    if (nextLiteralExactlyEquals(parser, index, start, tokenValue)) {
-      context |= Context.Strict;
-    }
+    if (isValidStrictDirective(parser, index, start, tokenValue)) context |= Context.Strict;
 
     statements.push(parseDirectiveExpression(parser, context, index, start, line, column, expr));
   }

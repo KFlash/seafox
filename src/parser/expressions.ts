@@ -27,7 +27,7 @@ import {
   setLoc,
   reinterpretToPattern,
   validateIdentifier,
-  nextLiteralExactlyEquals,
+  isValidStrictDirective,
   isStrictReservedWord,
   validateFunctionName
 } from './common';
@@ -2988,7 +2988,7 @@ export function parseFunctionBody(
 
       let expr = parseLiteral(parser, context);
 
-      if (nextLiteralExactlyEquals(parser, index, start, tokenValue)) {
+      if (isValidStrictDirective(parser, index, start, tokenValue)) {
         context |= Context.Strict;
 
         if (parser.flags & Flags.SimpleParameterList) {

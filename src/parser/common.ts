@@ -276,7 +276,7 @@ export interface Label {
   parentLabels: any;
 }
 
-export function nextLiteralExactlyEquals(parser: ParserState, index: number, start: number, value: string): boolean {
+export function isValidStrictDirective(parser: ParserState, index: number, start: number, value: string): boolean {
   // The length of the token is used to make sure the literal equals without
   // taking escape sequences (e.g., "use \x73trict") or line continuations
   // (e.g., "use \(newline) strict") into account.

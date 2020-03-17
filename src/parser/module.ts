@@ -38,6 +38,8 @@ import {
 export function parseModuleItemList(parser: ParserState, context: Context, scope: ScopeState): Types.Statement[] {
   const statements: Types.Statement[] = [];
 
+  // We avoid this to speed things up unless the directive option is enabled, considering the prevalence
+  // of strict mode and the fact modules are already in strict mode.
   if ((context & Context.OptionsDirectives) === Context.OptionsDirectives) {
     while (parser.token === Token.StringLiteral) {
       statements.push(
@@ -58,6 +60,7 @@ export function parseModuleItemList(parser: ParserState, context: Context, scope
     statements.push(parseModuleItem(parser, context, scope));
   }
 
+  // Use a locale variable for 'exportedBindings' to avoid member access on each iteration.
   const exportedBindings = parser.exportedBindings;
 
   for (const key in exportedBindings) {
