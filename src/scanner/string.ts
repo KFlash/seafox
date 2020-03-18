@@ -125,17 +125,14 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
     case Chars.Six:
     case Chars.Seven: {
       const code = first - Chars.Zero;
-
-      if (context & (Context.OptionsDisableWebCompat | Context.Strict)) {
+      if ((context & 1040) > 0) {
         // Verify that it's `\0` if we're in strict mode.
         if (first === Chars.Zero && (ch < Chars.Zero || ch > Chars.Nine)) return code;
-
         return Escape.StrictOctal;
       }
 
-      parser.flags |= Flags.Octals;
-
       if (ch >= Chars.Zero && ch <= Chars.Seven) {
+        parser.flags |= Flags.Octals;
         let index = parser.index;
         const value = source.charCodeAt(index) - Chars.Zero;
         if (first >= Chars.Zero && first <= Chars.Three) {
@@ -148,6 +145,8 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
         parser.index = index + 1;
 
         return code * 8 + value;
+      } else if (code !== 0) {
+        parser.flags |= Flags.Octals;
       }
 
       return code;

@@ -14,6 +14,18 @@ describe('Miscellaneous - Directives', () => {
       "x\\1"
       "use strict";
     }`,
+    `function foo() {
+      "use strict";
+      "use\\040strict";
+      return true;
+    }`,
+    `function foo() {
+      "use\\040strict";
+      "use strict";
+      return true;
+    }`,
+    '"use strict"; "hello\\040world";',
+    '"hello\\040world"; "use strict";',
     `function f(){
       "x\\6";
       "use strict";
@@ -164,6 +176,124 @@ describe('Miscellaneous - Directives', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `"use\\x20strict";
+      with ({}) {};`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            directive: '"use\\x20strict"',
+            end: 16,
+            expression: {
+              end: 15,
+              loc: {
+                end: {
+                  column: 15,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              raw: '"use\\x20strict"',
+              start: 0,
+              type: 'Literal',
+              value: 'use strict'
+            },
+            loc: {
+              end: {
+                column: 16,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          },
+          {
+            body: {
+              body: [],
+              end: 35,
+              loc: {
+                end: {
+                  column: 18,
+                  line: 2
+                },
+                start: {
+                  column: 16,
+                  line: 2
+                }
+              },
+              start: 33,
+              type: 'BlockStatement'
+            },
+            end: 35,
+            loc: {
+              end: {
+                column: 18,
+                line: 2
+              },
+              start: {
+                column: 6,
+                line: 2
+              }
+            },
+            object: {
+              end: 31,
+              loc: {
+                end: {
+                  column: 14,
+                  line: 2
+                },
+                start: {
+                  column: 12,
+                  line: 2
+                }
+              },
+              properties: [],
+              start: 29,
+              type: 'ObjectExpression'
+            },
+            start: 23,
+            type: 'WithStatement'
+          },
+          {
+            end: 36,
+            loc: {
+              end: {
+                column: 19,
+                line: 2
+              },
+              start: {
+                column: 18,
+                line: 2
+              }
+            },
+            start: 35,
+            type: 'EmptyStatement'
+          }
+        ],
+        end: 36,
+        loc: {
+          end: {
+            column: 19,
+            line: 2
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
     [
       `"\\0";"use strict"`,
       Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,

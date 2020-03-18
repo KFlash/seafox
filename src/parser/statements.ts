@@ -61,12 +61,23 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
 
   let expr: Types.Literal | Types.Expression;
 
+  let firstRestricted: 0 | 1 = 0;
+
   while (parser.token === Token.StringLiteral) {
-    const { index, start, line, column, tokenValue } = parser;
+    const { index, flags, start, line, column, tokenValue } = parser;
 
     expr = parseLiteral(parser, context);
-
-    if (isValidStrictDirective(parser, index, start, tokenValue)) context |= Context.Strict;
+    // Directive "use strict"
+    if (isValidStrictDirective(parser, index, start, tokenValue)) {
+      context |= Context.Strict;
+      if (firstRestricted === 1) {
+        report(parser, Errors.StrictOctalLiteral);
+      }
+    } else {
+      if (firstRestricted === 0 && flags & Flags.Octals) {
+        firstRestricted = 1;
+      }
+    }
 
     statements.push(parseDirectiveExpression(parser, context, index, start, line, column, expr));
   }
