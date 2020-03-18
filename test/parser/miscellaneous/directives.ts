@@ -10,6 +10,26 @@ describe('Miscellaneous - Directives', () => {
     }`,
     `"use strict"
 "\\05"`,
+
+    `function f(){
+      "x\\2"
+      "use strict"
+    }`,
+
+    `"You \\077 ok";
+    "use strict"`,
+
+    `"use strict";
+    "You \\077 ok";`,
+    'use strict',
+    `"use strict"; function f() {
+        "You \\077 ok";
+    }`,
+    `function f(){
+  "x\\1"
+  "use strict";
+}`,
+
     `function f(){
       "x\\1"
       "use strict";
@@ -176,6 +196,61 @@ describe('Miscellaneous - Directives', () => {
     });
   }
   for (const [source, ctx, expected] of [
+    [
+      `"You \\077 ok"`,
+      Context.OptionsLoc | Context.OptionsDirectives | Context.OptionsRaw,
+      {
+        body: [
+          {
+            directive: '"You \\077 ok"',
+            end: 13,
+            expression: {
+              end: 13,
+              loc: {
+                end: {
+                  column: 13,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              raw: '"You \\077 ok"',
+              start: 0,
+              type: 'Literal',
+              value: 'You ? ok'
+            },
+            loc: {
+              end: {
+                column: 13,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            start: 0,
+            type: 'ExpressionStatement'
+          }
+        ],
+        end: 13,
+        loc: {
+          end: {
+            column: 13,
+            line: 1
+          },
+          start: {
+            column: 0,
+            line: 1
+          }
+        },
+        sourceType: 'script',
+        start: 0,
+        type: 'Program'
+      }
+    ],
     [
       `"use\\x20strict";
       with ({}) {};`,

@@ -69,12 +69,10 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
     expr = parseLiteral(parser, context);
     // Directive "use strict"
     if (isValidStrictDirective(parser, index, start, tokenValue)) {
+      if (firstRestricted === 1) report(parser, Errors.StrictOctalLiteral);
       context |= Context.Strict;
-      if (firstRestricted === 1) {
-        report(parser, Errors.StrictOctalLiteral);
-      }
     } else {
-      if (firstRestricted === 0 && flags & Flags.Octals) {
+      if (firstRestricted === 0 && (flags & Flags.Octals) === Flags.Octals) {
         firstRestricted = 1;
       }
     }

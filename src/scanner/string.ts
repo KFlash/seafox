@@ -125,7 +125,8 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
     case Chars.Six:
     case Chars.Seven: {
       const code = first - Chars.Zero;
-      if ((context & 1040) > 0) {
+
+      if ((context & 0b00000000000000000000010000010000) > 0) {
         // Verify that it's `\0` if we're in strict mode.
         if (first === Chars.Zero && (ch < Chars.Zero || ch > Chars.Nine)) return code;
         return Escape.StrictOctal;
@@ -133,10 +134,14 @@ export function scanEscapeSequence(parser: ParserState, context: Context, source
 
       if (ch >= Chars.Zero && ch <= Chars.Seven) {
         parser.flags |= Flags.Octals;
+
         let index = parser.index;
+
         const value = source.charCodeAt(index) - Chars.Zero;
+
         if (first >= Chars.Zero && first <= Chars.Three) {
           const ch1 = source.charCodeAt(index + 1);
+
           if (ch1 >= Chars.Zero && ch1 <= Chars.Seven) {
             parser.index = index += 2;
             return code * 64 + value * 8 + ch1 - Chars.Zero;
