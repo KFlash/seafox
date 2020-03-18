@@ -98,7 +98,7 @@ export function scanNumber(parser: ParserState, context: Context, source: string
           char = source.charCodeAt(++parser.index);
         }
 
-        if (char === Chars.Underscore) report(parser, Errors.InvalidBigIntLiteral);
+        if (char === Chars.Underscore) report(parser, Errors.TrailingNumericSeparator);
 
         if (char === Chars.LowerN) report(parser, Errors.InvalidBigIntLiteral);
 
