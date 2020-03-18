@@ -47,7 +47,7 @@ import {
   reinterpretToPattern,
   addLabel,
   parseStatementWithLabelSet,
-  isValidStrictDirective,
+  isValidStrictMode,
   validateIdentifier,
   Label,
   isVarDecl
@@ -67,8 +67,8 @@ export function parseStatementList(parser: ParserState, context: Context, scope:
     const { index, flags, start, line, column, tokenValue } = parser;
 
     expr = parseLiteral(parser, context);
-    // Directive "use strict"
-    if (isValidStrictDirective(parser, index, start, tokenValue)) {
+    // "use strict" must be the exact literal without escape sequences or line continuation.
+    if (isValidStrictMode(parser, index, start, tokenValue)) {
       if (firstRestricted === 1) report(parser, Errors.StrictOctalLiteral);
       context |= Context.Strict;
     } else {

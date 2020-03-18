@@ -27,7 +27,7 @@ import {
   setLoc,
   reinterpretToPattern,
   validateIdentifier,
-  isValidStrictDirective,
+  isValidStrictMode,
   isStrictReservedWord,
   validateFunctionName
 } from './common';
@@ -2988,7 +2988,7 @@ export function parseFunctionBody(
 
       let expr = parseLiteral(parser, context);
 
-      if (isValidStrictDirective(parser, index, start, tokenValue)) {
+      if (isValidStrictMode(parser, index, start, tokenValue)) {
         context |= Context.Strict;
 
         if (parser.flags & Flags.SimpleParameterList) {

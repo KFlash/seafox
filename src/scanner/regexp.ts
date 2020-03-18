@@ -1,5 +1,5 @@
 import { Chars, isIdentifierPart, CharFlags, CharTypes } from './';
-import { ParserState, Context } from '../parser/common';
+import { ParserState } from '../parser/common';
 import { Token } from '../token';
 import { report, Errors } from '../errors';
 

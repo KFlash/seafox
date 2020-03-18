@@ -1,4 +1,4 @@
-import { ParserState, Context, Flags } from '../parser/common';
+import { ParserState, Context } from '../parser/common';
 import { Token } from '../token';
 import {
   Chars,
