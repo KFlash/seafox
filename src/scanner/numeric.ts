@@ -38,12 +38,11 @@ export function scanNumber(parser: ParserState, context: Context, source: string
           if (char === Chars.Underscore) {
             if (allowSeparator === 0) report(parser, Errors.ContinuousNumericSeparator);
             allowSeparator = 0;
-            char = source.charCodeAt(++parser.index);
           } else {
             allowSeparator = 1;
             value = value * 0x10 + toHex(char);
-            char = source.charCodeAt(++parser.index);
           }
+          char = source.charCodeAt(++parser.index);
         }
 
         if (allowSeparator === 0) report(parser, Errors.TrailingNumericSeparator);
@@ -54,15 +53,12 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
         while ((char >= Chars.Zero && char <= Chars.One) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
-            if (allowSeparator === 0) {
-              report(parser, Errors.ContinuousNumericSeparator);
-            }
+            if (allowSeparator === 0) report(parser, Errors.ContinuousNumericSeparator);
             allowSeparator = 0;
-            char = source.charCodeAt(++parser.index);
-            continue;
+          } else {
+            allowSeparator = 1;
+            value = value * 2 + (char - Chars.Zero);
           }
-          allowSeparator = 1;
-          value = value * 2 + (char - Chars.Zero);
           char = source.charCodeAt(++parser.index);
         }
 
@@ -74,15 +70,12 @@ export function scanNumber(parser: ParserState, context: Context, source: string
 
         while ((char >= Chars.Zero && char <= Chars.Seven) || char === Chars.Underscore) {
           if (char === Chars.Underscore) {
-            if (allowSeparator === 0) {
-              report(parser, Errors.ContinuousNumericSeparator);
-            }
+            if (allowSeparator === 0) report(parser, Errors.ContinuousNumericSeparator);
             allowSeparator = 0;
-            char = source.charCodeAt(++parser.index);
-            continue;
+          } else {
+            allowSeparator = 1;
+            value = value * 8 + (char - Chars.Zero);
           }
-          allowSeparator = 1;
-          value = value * 8 + (char - Chars.Zero);
           char = source.charCodeAt(++parser.index);
         }
 
