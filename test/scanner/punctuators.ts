@@ -4,15 +4,6 @@ import { create } from '../../src/parser/core';
 import { Token } from '../../src/token';
 import { scan } from '../../src/scanner/scan';
 
-function convertDecimalToBinary(digit: any, groups: boolean): string {
-  let res = '';
-  for (let i = 0, shifted = digit; i < 32; i++, res += String(shifted >>> 31), shifted <<= 1);
-  // Makes a groups of 8 bits
-  if (groups) res = res.replace(/\B(?=(.{8})+(?!.))/g, '_');
-  return res;
-}
-
-console.log(convertDecimalToBinary(67109002, false));
 describe('Scanner - Punctuator', () => {
   describe('scan()', () => {
     interface Opts {

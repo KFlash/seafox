@@ -342,12 +342,9 @@ export function scan(
 
         if (char === Chars.QuestionMark) {
           parser.index++;
-          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
-            parser.index++;
-            return Token.CoalesceAssign;
-          }
-
-          return Token.Coalesce;
+          if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.Coalesce;
+          parser.index++;
+          return Token.CoalesceAssign;
         }
 
         return Token.QuestionMark;
@@ -456,11 +453,9 @@ export function scan(
 
         if (char === Chars.VerticalBar) {
           parser.index++;
-          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
-            parser.index++;
-            return Token.LogicalOrAssign;
-          }
-          return Token.LogicalOr;
+          if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.LogicalOr;
+          parser.index++;
+          return Token.LogicalOrAssign;
         }
 
         if (char === Chars.EqualSign) {
@@ -476,12 +471,9 @@ export function scan(
 
         if (char === Chars.Ampersand) {
           parser.index++;
-          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
-            parser.index++;
-            return Token.LogicalAndAssign;
-          }
-
-          return Token.LogicalAnd;
+          if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.LogicalAnd;
+          parser.index++;
+          return Token.LogicalAndAssign;
         }
 
         if (char === Chars.EqualSign) {
