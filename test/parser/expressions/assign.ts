@@ -33,6 +33,31 @@ fail('Expressions - Assign (fail)', [
 
 pass('Expressions - Assign (pass)', [
   [
+    `(a) &&= 4;`,
+    Context.Empty,
+    {
+      body: [
+        {
+          expression: {
+            left: {
+              name: 'a',
+              type: 'Identifier'
+            },
+            operator: '&&=',
+            right: {
+              type: 'Literal',
+              value: 4
+            },
+            type: 'AssignmentExpression'
+          },
+          type: 'ExpressionStatement'
+        }
+      ],
+      sourceType: 'script',
+      type: 'Program'
+    }
+  ],
+  [
     `({a:(b) = c})`,
     Context.Empty,
     {

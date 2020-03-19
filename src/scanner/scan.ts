@@ -187,15 +187,6 @@ export function scan(
       }
 
       if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
-        if ((char & 0xfc00) === 0xdc00) {
-          // low surrogate
-          char = ((char & 0x3ff) << 10) | (char & 0x3ff) | 0x10000;
-          if (((unicodeLookup[(char >>> 5) + 0] >>> char) & 31 & 1) === 0) {
-            report(parser, Errors.IllegalCaracter, fromCodePoint(char));
-          }
-          parser.index++;
-        }
-
         return scanIdentifierSlowPath(parser, source, '', /* maybeKeyword */ 0, 0);
       }
       report(parser, Errors.IllegalCaracter, fromCodePoint(char));
@@ -351,6 +342,11 @@ export function scan(
 
         if (char === Chars.QuestionMark) {
           parser.index++;
+          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
+            parser.index++;
+            return Token.CoalesceAssign;
+          }
+
           return Token.Coalesce;
         }
 
@@ -460,6 +456,10 @@ export function scan(
 
         if (char === Chars.VerticalBar) {
           parser.index++;
+          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
+            parser.index++;
+            return Token.LogicalOrAssign;
+          }
           return Token.LogicalOr;
         }
 
@@ -476,6 +476,11 @@ export function scan(
 
         if (char === Chars.Ampersand) {
           parser.index++;
+          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
+            parser.index++;
+            return Token.LogicalAndAssign;
+          }
+
           return Token.LogicalAnd;
         }
 

@@ -64,13 +64,13 @@ export function scanIdentifierSlowPath(
   if (maybeKeyword && length >= 2 && length <= 11) {
     const token: Token | undefined = descKeywordTable[parser.tokenValue];
 
-    if (token === void 0) return Token.Identifier;
+    if (token !== void 0) {
+      if (escaped === 0) return token;
 
-    if (escaped === 0) return token;
+      parser.containsEscapes = 1;
 
-    parser.containsEscapes = 1;
-
-    return (token & Token.Contextual) === Token.Contextual ? token : token | Token.EscapedKeyword;
+      return (token & Token.Contextual) === Token.Contextual ? token : token | Token.EscapedKeyword;
+    }
   }
 
   return Token.Identifier;

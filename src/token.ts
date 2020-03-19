@@ -79,6 +79,10 @@ export const enum Token {
   BitwiseXorAssign        = 0b00000100000000000000000000101010, // ^=
   BitwiseOrAssign         = 0b00000100000000000000000000101011, // |=
   BitwiseAndAssign        = 0b00000100000000000000000000101100, // &=
+  LogicalOrAssign         = 0b00000100000000000000000010001000, // ||=
+  LogicalAndAssign        = 0b00000100000000000000000010001001, // &&=
+  CoalesceAssign          = 0b00000100000000000000000010001010, // ??=
+
 
   /* Unary/binary operators */
   TypeofKeyword      = 0b00000000000100100000000000101101,
@@ -186,6 +190,7 @@ export const enum Token {
   Arguments           = 0b00100000001100010000000010000110,
   Target              = 0b00000000001000010000000010001100,
  }
+
  /**
   * Array for mapping tokens to token values. The indices of the values
   * correspond to the token bits 0-124.
@@ -346,7 +351,20 @@ export const enum Token {
   'whitespace',
   'number',
   '/',
-  'comment'
+  'comment',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '||=',
+  '&&=',
+  '??=',
+
  ];
 
  export const descKeywordTable: { [key: string]: Token } = Object.create(null, {
