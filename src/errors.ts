@@ -75,7 +75,6 @@ export const enum Errors {
   InvalidBindingDestruct,
   InvalidArrowDestructLHS,
   InvalidLHSAsyncArrow,
-  InvalidAssignmentTarget,
   InvalidAsyncArrow,
   UncompleteArrow,
   InvalidExponentationLHS,
@@ -118,7 +117,8 @@ export const enum Errors {
   InvalidObjLitShorthand,
   InvalidCompoundAssign,
   InvalidStaticModifier,
-  InvalidGeneratorMethod
+  InvalidGeneratorMethod,
+  InvalidArrowFunction
 }
 
 /*@internal*/
@@ -185,7 +185,7 @@ export const errorMessages: {
   [Errors.StrictDelete]: 'Calling delete on expression not allowed in strict mode',
   [Errors.UncompleteArrow]: "Expected '=>'",
   [Errors.IllegalReturn]: 'Illegal return statement',
-  [Errors.InvalidAssignmentTarget]: '`=>` is an invalid assignment target',
+  [Errors.InvalidArrowFunction]: 'Illegal assignment to an arrow function',
   [Errors.InvalidAsyncArrow]: 'Async arrow can not be followed by new expression',
   [Errors.InvalidLHSAsyncArrow]: 'Invalid left-hand side in async arrow',
   [Errors.InvalidArrowDestructLHS]: 'The left-hand side of the arrow can only be destructed through assignment',

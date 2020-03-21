@@ -942,7 +942,7 @@ export function parsePrimaryExpression(
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
 
-      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+      if (canAssign === 0) report(parser, Errors.InvalidArrowFunction);
 
       return parseAsyncArrow(parser, context, /* isAsync */ 0, tokenValue, token, expr, start, line, column);
     }
@@ -1059,7 +1059,7 @@ export function parseAsyncExpression(
         report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
       }
 
-      if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+      if (canAssign === 0) report(parser, Errors.InvalidArrowFunction);
 
       return parseAsyncArrow(
         parser,
@@ -1753,14 +1753,14 @@ export function parseArrowFunctionAfterParen(
     report(parser, Errors.YieldInParameter);
   }
 
+  if (canAssign === 0) report(parser, Errors.InvalidArrowFunction);
+
   parser.flags =
     ((parser.flags | 0b00000000000000000000110000011110) ^
       (inGroup === 1 && parser.flags & Flags.SeenAwait
         ? 0b00000000000000000000000000011110
         : 0b00000000000000000000110000011110)) |
     destructible;
-
-  if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
 
   // Reverse while loop is slightly faster than a regular for loop
   let i = params.length;
@@ -1881,7 +1881,7 @@ export function parseParenthesizedExpression(
   let expr: any = [];
 
   if (parser.token === Token.RightParen) {
-    if (canAssign === 0) report(parser, Errors.InvalidAssignmentTarget);
+    if (canAssign === 0) report(parser, Errors.InvalidArrowFunction);
 
     nextToken(parser, context, /* allowRegExp */ 0);
 
