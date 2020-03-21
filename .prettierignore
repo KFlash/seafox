@@ -4,5 +4,5 @@ src/token.ts
 src/common.ts
 src/chars.ts
 src/scanner/charClassifier.ts
-src/unicode.ts
+src/scanner/unicode.ts
 package-lock.json

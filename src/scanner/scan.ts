@@ -173,16 +173,16 @@ export function scan(
     parser.start = parser.index;
 
     if (char > 0b00000000000000000000000001111110) {
-      if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
-        parser.offset = ++parser.index;
-        parser.newLine = 1;
-        parser.curLine++;
-        lastIsCR = 0;
-        continue;
-      }
-
       if (((unicodeLookup[(char >>> 5) + 104448] >>> char) & 31 & 1) !== 0) {
         parser.index++;
+
+        if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
+          parser.offset = parser.index;
+          parser.newLine = 1;
+          parser.curLine++;
+          lastIsCR = 0;
+        }
+
         continue;
       }
 

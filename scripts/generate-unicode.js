@@ -186,6 +186,10 @@ if (require.main === module) {
       isLineTerminator: [[0x0d, 0x0a, 0x2028, 0x2029]],
       isWhiteSpace: [
         [
+          0x0d,
+          0x0a,
+          0x2028,
+          0x2029,
           0x00a0,
           0x1680,
           0x2000,
