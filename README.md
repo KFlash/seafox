@@ -17,10 +17,12 @@
 * Conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification
 * Support for additional ECMAScript features for Web Browsers
 * Optionally track syntactic node locations
-* Emits an ESTree-compatible abstract syntax tree.
+* Emits an ESTree-compatible abstract syntax tree
 * No backtracking
 * Low memory usage
-* Very well tested (~32 000 unit tests with full code coverage)
+* Insane performance both on desktop computers and handheld devices
+* Twice as fast as other Javascript parsers
+* Very well tested (~33 000 unit tests with full code coverage)
 * Lightweight - ~84 KB minified
 
 ## Installation
@@ -81,3 +83,8 @@ parse('({x: [y] = 0} = 1)', { module: true });
 parse('({x: [y] = 0} = 1)');
 
 ```
+
+# Performance
+
+Seafox is developed for performance and low memory usage, and the parser is about 2x - 4x faster than all other javascript parsers. 
+
