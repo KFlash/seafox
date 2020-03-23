@@ -172,26 +172,6 @@ export function scan(
 
     parser.start = parser.index;
 
-    if (char > 0b00000000000000000000000001111110) {
-      if (((unicodeLookup[(char >>> 5) + 104448] >>> char) & 31 & 1) !== 0) {
-        parser.index++;
-
-        if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
-          parser.offset = parser.index;
-          parser.newLine = 1;
-          parser.curLine++;
-          lastIsCR = 0;
-        }
-
-        continue;
-      }
-
-      if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
-        return scanIdentifierSlowPath(parser, source, '', /* maybeKeyword */ 0);
-      }
-      report(parser, Errors.IllegalCaracter, fromCodePoint(char));
-    }
-
     // Jump table used to optimize the switch
     token = firstCharKinds[char];
 
@@ -254,13 +234,22 @@ export function scan(
 
       // `.`, `...`, `.123` (numeric literal)
       case Token.Period:
-        char = source.charCodeAt(++parser.index);
-        // Spec explicitly disallows a digit after `?.`
-        if (char >= Chars.Zero && char <= Chars.Nine) return scanNumber(parser, context, source, char, /* isFloat */ 1);
-        if (char === Chars.Period && source.charCodeAt(parser.index + 1) === Chars.Period) {
-          parser.index += 2;
-          return Token.Ellipsis;
+        parser.index++;
+
+        if (parser.index < length) {
+          char = source.charCodeAt(parser.index);
+
+          if (char >= Chars.Zero && char <= Chars.Nine) {
+            // Spec explicitly disallows a digit after `?.`
+            return scanNumber(parser, context, source, char, /* isFloat */ 1);
+          }
+
+          if (char === Chars.Period && source.charCodeAt(parser.index + 1) === Chars.Period) {
+            parser.index += 2;
+            return Token.Ellipsis;
+          }
         }
+
         return Token.Period;
 
       // `=`, `==`, `===`, `=>`
@@ -484,6 +473,24 @@ export function scan(
         return Token.BitwiseAnd;
 
       default:
+        if (char > 0b00000000000000000000000001111110) {
+          if (((unicodeLookup[(char >>> 5) + 104448] >>> char) & 31 & 1) !== 0) {
+            parser.index++;
+
+            if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
+              parser.offset = parser.index;
+              parser.newLine = 1;
+              parser.curLine++;
+              lastIsCR = 0;
+            }
+
+            continue;
+          }
+
+          if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
+            return scanIdentifierSlowPath(parser, source, '', /* maybeKeyword */ 0);
+          }
+        }
         report(parser, Errors.IllegalCaracter, fromCodePoint(char));
     }
   }
