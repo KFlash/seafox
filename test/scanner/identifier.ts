@@ -29,6 +29,14 @@ describe('scanner - identifiers', () => {
   fail('fails on \\u007', '\\u007', Context.Strict);
   fail('fails on \\u00', '\\u00', Context.Empty);
   fail('fails on \\u044', '\\u044', Context.Empty);
+  fail('fails on \\b', '\\b', Context.Empty);
+  fail('fails on \\v', '\\v', Context.Empty);
+  fail('fails on \\t', '\\t', Context.Empty);
+  fail('fails on \\x72598524u044', '\\x72598524u044', Context.Empty);
+  fail('fails on \\1', '\\1', Context.Empty);
+  fail('fails on @', '@', Context.Empty);
+  fail('fails on €', '€', Context.Empty);
+  fail('fails on £', '£', Context.Empty);
   fail('fails on \\u0', '\\u0', Context.Empty);
   fail('fails on \\u', '\\u', Context.Empty);
   fail('fails on \\', '\\', Context.Empty);

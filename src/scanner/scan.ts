@@ -146,13 +146,137 @@ export const firstCharKinds = [
   /* 124 - |                  */ Token.BitwiseOr,
   /* 125 - }                  */ Token.RightBrace,
   /* 126 - ~                  */ Token.Complement,
-  /* 127 - Delete             */ Token.Error
+  /* 127 - Delete             */ Token.Error,
+  /* 127 - Delete             */ Token.Error,
+  /* 128 - Cc category        */ Token.Error,
+  /* 129 - Cc category        */ Token.Error,
+  /* 130 - Cc category        */ Token.Error,
+  /* 131 - Cc category        */ Token.Error,
+  /* 132 - Cc category        */ Token.Error,
+  /* 133 - Cc category        */ Token.Error,
+  /* 134 - Cc category        */ Token.Error,
+  /* 135 - Cc category        */ Token.Error,
+  /* 136 - Cc category        */ Token.Error,
+  /* 137 - Cc category        */ Token.Error,
+  /* 138 - Cc category        */ Token.Error,
+  /* 139 - Cc category        */ Token.Error,
+  /* 140 - Cc category        */ Token.Error,
+  /* 141 - Cc category        */ Token.Error,
+  /* 142 - Cc category        */ Token.Error,
+  /* 143 - Cc category        */ Token.Error,
+  /* 144 - Cc category        */ Token.Error,
+  /* 145 - Cc category        */ Token.Error,
+  /* 146 - Cc category        */ Token.Error,
+  /* 147 - Cc category        */ Token.Error,
+  /* 148 - Cc category        */ Token.Error,
+  /* 149 - Cc category        */ Token.Error,
+  /* 150 - Cc category        */ Token.Error,
+  /* 151 - Cc category        */ Token.Error,
+  /* 152 - Cc category        */ Token.Error,
+  /* 153 - Cc category        */ Token.Error,
+  /* 154 - Cc category        */ Token.Error,
+  /* 155 - Cc category        */ Token.Error,
+  /* 156 - Cc category        */ Token.Error,
+  /* 157 - Cc category        */ Token.Error,
+  /* 158 - Cc category        */ Token.Error,
+  /* 159 - Cc category        */ Token.Error,
+  /* 160 - Zs category (nbsp) */ Token.WhiteSpace,
+  /* 161 - Po category        */ Token.Error,
+  /* 162 - Sc category        */ Token.Error,
+  /* 163 - Sc category        */ Token.Error,
+  /* 164 - Sc category        */ Token.Error,
+  /* 165 - Sc category        */ Token.Error,
+  /* 166 - So category        */ Token.Error,
+  /* 167 - So category        */ Token.Error,
+  /* 168 - Sk category        */ Token.Error,
+  /* 169 - So category        */ Token.Error,
+  /* 170 - Ll category        */ Token.Identifier,
+  /* 171 - Pi category        */ Token.Error,
+  /* 172 - Sm category        */ Token.Error,
+  /* 173 - Cf category        */ Token.Error,
+  /* 174 - So category        */ Token.Error,
+  /* 175 - Sk category        */ Token.Error,
+  /* 176 - So category        */ Token.Error,
+  /* 177 - Sm category        */ Token.Error,
+  /* 178 - No category        */ Token.Error,
+  /* 179 - No category        */ Token.Error,
+  /* 180 - Sk category        */ Token.Error,
+  /* 181 - Ll category        */ Token.Identifier,
+  /* 182 - So category        */ Token.Error,
+  /* 183 - Po category        */ Token.Error,
+  /* 184 - Sk category        */ Token.Error,
+  /* 185 - No category        */ Token.Error,
+  /* 186 - Ll category        */ Token.Identifier,
+  /* 187 - Pf category        */ Token.Error,
+  /* 188 - No category        */ Token.Error,
+  /* 189 - No category        */ Token.Error,
+  /* 190 - No category        */ Token.Error,
+  /* 191 - Po category        */ Token.Error,
+  /* 192 - Lu category        */ Token.Identifier,
+  /* 193 - Lu category        */ Token.Identifier,
+  /* 194 - Lu category        */ Token.Identifier,
+  /* 195 - Lu category        */ Token.Identifier,
+  /* 196 - Lu category        */ Token.Identifier,
+  /* 197 - Lu category        */ Token.Identifier,
+  /* 198 - Lu category        */ Token.Identifier,
+  /* 199 - Lu category        */ Token.Identifier,
+  /* 200 - Lu category        */ Token.Identifier,
+  /* 201 - Lu category        */ Token.Identifier,
+  /* 202 - Lu category        */ Token.Identifier,
+  /* 203 - Lu category        */ Token.Identifier,
+  /* 204 - Lu category        */ Token.Identifier,
+  /* 205 - Lu category        */ Token.Identifier,
+  /* 206 - Lu category        */ Token.Identifier,
+  /* 207 - Lu category        */ Token.Identifier,
+  /* 208 - Lu category        */ Token.Identifier,
+  /* 209 - Lu category        */ Token.Identifier,
+  /* 210 - Lu category        */ Token.Identifier,
+  /* 211 - Lu category        */ Token.Identifier,
+  /* 212 - Lu category        */ Token.Identifier,
+  /* 213 - Lu category        */ Token.Identifier,
+  /* 214 - Lu category        */ Token.Identifier,
+  /* 215 - Sm category        */ Token.Error,
+  /* 216 - Lu category        */ Token.Identifier,
+  /* 217 - Lu category        */ Token.Identifier,
+  /* 218 - Lu category        */ Token.Identifier,
+  /* 219 - Lu category        */ Token.Identifier,
+  /* 220 - Lu category        */ Token.Identifier,
+  /* 221 - Lu category        */ Token.Identifier,
+  /* 222 - Lu category        */ Token.Identifier,
+  /* 223 - Ll category        */ Token.Identifier,
+  /* 224 - Ll category        */ Token.Identifier,
+  /* 225 - Ll category        */ Token.Identifier,
+  /* 226 - Ll category        */ Token.Identifier,
+  /* 227 - Ll category        */ Token.Identifier,
+  /* 228 - Ll category        */ Token.Identifier,
+  /* 229 - Ll category        */ Token.Identifier,
+  /* 230 - Ll category        */ Token.Identifier,
+  /* 231 - Ll category        */ Token.Identifier,
+  /* 232 - Ll category        */ Token.Identifier,
+  /* 233 - Ll category        */ Token.Identifier,
+  /* 234 - Ll category        */ Token.Identifier,
+  /* 235 - Ll category        */ Token.Identifier,
+  /* 236 - Ll category        */ Token.Identifier,
+  /* 237 - Ll category        */ Token.Identifier,
+  /* 238 - Ll category        */ Token.Identifier,
+  /* 239 - Ll category        */ Token.Identifier,
+  /* 240 - Ll category        */ Token.Identifier,
+  /* 241 - Ll category        */ Token.Identifier,
+  /* 242 - Ll category        */ Token.Identifier,
+  /* 243 - Ll category        */ Token.Identifier,
+  /* 244 - Ll category        */ Token.Identifier,
+  /* 245 - Ll category        */ Token.Identifier,
+  /* 246 - Ll category        */ Token.Identifier,
+  /* 247 - Sm category        */ Token.Error,
+  /* 248 - Ll category        */ Token.Identifier,
+  /* 249 - Ll category        */ Token.Identifier,
+  /* 250 - Ll category        */ Token.Identifier,
+  /* 251 - Ll category        */ Token.Identifier,
+  /* 252 - Ll category        */ Token.Identifier,
+  /* 253 - Ll category        */ Token.Identifier,
+  /* 254 - Ll category        */ Token.Identifier,
+  /* 255 - Ll category        */ Token.Identifier
 ];
-
-// Note: This is a hot path, and the trick here is to assign all "static" vars outside the loop, and avoid
-// to set any vars inside the loop. Example: 'parser.source.charCodeAt' can be shortened to
-// 'source.charCodeAt' where 'parser' is the static part. 'char' is assigned outside the loop
-// to avoid 'var char =' inside the loop - which will reduce the performance by 1.2%.
 
 export function scan(
   parser: ParserState,
@@ -165,15 +289,15 @@ export function scan(
   lineStart: boolean,
   allowRegExp: 0 | 1
 ): Token {
-  let char: number | null;
+  let ch: number | null;
 
   while (parser.index < length) {
-    char = source.charCodeAt(parser.index);
+    ch = source.charCodeAt(parser.index);
 
     parser.start = parser.index;
 
     // Jump table used to optimize the switch
-    token = firstCharKinds[char];
+    token = firstCharKinds[ch];
 
     switch (token) {
       case Token.RightBrace:
@@ -194,21 +318,21 @@ export function scan(
         parser.index++;
         break;
 
-      // `A`...`Z`, `_var`, `$var`
+      // `A`...`Z`, `_var`
       case Token.Identifier:
-        return scanIdentifierOrKeyword(parser, source, char, 0);
+        return scanIdentifierOrKeyword(parser, source, ch, 0);
 
-      // `a`...`z`
+      // `$var`, `a`...`z`
       case Token.IdentifierOrKeyword:
-        return scanIdentifierOrKeyword(parser, source, char, 1);
+        return scanIdentifierOrKeyword(parser, source, ch, 1);
 
       // `1`...`9`
       case Token.NumericLiteral:
-        return scanNumber(parser, context, source, char, /* isFloat */ 0);
+        return scanNumber(parser, context, source, ch, /* isFloat */ 0);
 
       // `string`
       case Token.StringLiteral:
-        return scanStringLiteral(parser, context, source, char);
+        return scanStringLiteral(parser, context, source, ch);
 
       // `'string'`, `"string"`
       case Token.TemplateTail:
@@ -237,14 +361,14 @@ export function scan(
         parser.index++;
 
         if (parser.index < length) {
-          char = source.charCodeAt(parser.index);
+          ch = source.charCodeAt(parser.index);
 
-          if (char >= Chars.Zero && char <= Chars.Nine) {
+          if (ch >= Chars.Zero && ch <= Chars.Nine) {
             // Spec explicitly disallows a digit after `?.`
-            return scanNumber(parser, context, source, char, /* isFloat */ 1);
+            return scanNumber(parser, context, source, ch, /* isFloat */ 1);
           }
 
-          if (char === Chars.Period && source.charCodeAt(parser.index + 1) === Chars.Period) {
+          if (ch === Chars.Period && source.charCodeAt(parser.index + 1) === Chars.Period) {
             parser.index += 2;
             return Token.Ellipsis;
           }
@@ -254,26 +378,26 @@ export function scan(
 
       // `=`, `==`, `===`, `=>`
       case Token.Assign:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.EqualSign) {
+        ch = source.charCodeAt(++parser.index);
+        if (ch === Chars.EqualSign) {
           if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LooseEqual;
           parser.index++;
           return Token.StrictEqual;
         }
 
-        if (char !== Chars.GreaterThan) return Token.Assign;
+        if (ch !== Chars.GreaterThan) return Token.Assign;
         parser.index++;
         return Token.Arrow;
 
       // `*`, `**`, `*=`, `**=`
       case Token.Multiply:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.EqualSign) {
+        ch = source.charCodeAt(++parser.index);
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.MultiplyAssign;
         }
 
-        if (char !== Chars.Asterisk) return Token.Multiply;
+        if (ch !== Chars.Asterisk) return Token.Multiply;
         if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.Exponentiate;
         parser.index++;
 
@@ -281,13 +405,13 @@ export function scan(
 
       // `+`, `++`, `+=`
       case Token.Add:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.Plus) {
+        ch = source.charCodeAt(++parser.index);
+        if (ch === Chars.Plus) {
           parser.index++;
           return Token.Increment;
         }
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.AddAssign;
         }
@@ -297,14 +421,14 @@ export function scan(
       // `/`, `/=`, `/>`, '/*..*/'
       case Token.Divide:
         index = ++parser.index;
-        char = source.charCodeAt(index);
+        ch = source.charCodeAt(index);
 
-        if (char === Chars.Slash) {
+        if (ch === Chars.Slash) {
           parser.index = skipSingleLineComment(parser, source, index);
           continue;
         }
 
-        if (char === Chars.Asterisk) {
+        if (ch === Chars.Asterisk) {
           parser.index = skipMultiLineComment(parser, source, length, ++index) as number;
           continue;
         }
@@ -313,7 +437,7 @@ export function scan(
           return scanRegularExpression(parser, source, index);
         }
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.DivideAssign;
         }
@@ -321,15 +445,15 @@ export function scan(
 
       // `?`, `??`, `?.`
       case Token.QuestionMark:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.Period) {
-          char = source.charCodeAt(parser.index + 1);
-          if (char >= Chars.Zero && char <= Chars.Nine) return Token.QuestionMark;
+        ch = source.charCodeAt(++parser.index);
+        if (ch === Chars.Period) {
+          ch = source.charCodeAt(parser.index + 1);
+          if (ch >= Chars.Zero && ch <= Chars.Nine) return Token.QuestionMark;
           parser.index++;
           return Token.QuestionMarkPeriod;
         }
 
-        if (char === Chars.QuestionMark) {
+        if (ch === Chars.QuestionMark) {
           parser.index++;
           if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.Coalesce;
           parser.index++;
@@ -340,8 +464,8 @@ export function scan(
 
       // `-`, `--`, `-=`, `-->`
       case Token.Subtract:
-        char = source.charCodeAt(++parser.index);
-        if (char === Chars.Hyphen) {
+        ch = source.charCodeAt(++parser.index);
+        if (ch === Chars.Hyphen) {
           if (source.charCodeAt(parser.index + 1) === Chars.GreaterThan && (lineStart || parser.newLine)) {
             parser.index = skipSingleHTMLComment(parser, context, source, parser.index);
             continue;
@@ -350,7 +474,7 @@ export function scan(
           return Token.Decrement;
         }
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.SubtractAssign;
         }
@@ -358,20 +482,20 @@ export function scan(
 
       // `<`, `<=`, `<<`, `<<=`, `</`, `<!--`
       case Token.LessThan:
-        char = source.charCodeAt(++parser.index);
+        ch = source.charCodeAt(++parser.index);
 
-        if (char === Chars.LessThan) {
+        if (ch === Chars.LessThan) {
           if (source.charCodeAt(++parser.index) === Chars.EqualSign) {
             parser.index++;
             return Token.ShiftLeftAssign;
           }
           return Token.ShiftLeft;
         }
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index += 1;
           return Token.LessThanOrEqual;
         }
-        if (char === Chars.Exclamation) {
+        if (ch === Chars.Exclamation) {
           if (
             source.charCodeAt(parser.index + 2) === Chars.Hyphen &&
             source.charCodeAt(parser.index + 1) === Chars.Hyphen
@@ -412,24 +536,24 @@ export function scan(
 
       // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
       case Token.GreaterThan:
-        char = source.charCodeAt(++parser.index);
+        ch = source.charCodeAt(++parser.index);
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.GreaterThanOrEqual;
         }
 
-        if (char !== Chars.GreaterThan) return Token.GreaterThan;
+        if (ch !== Chars.GreaterThan) return Token.GreaterThan;
 
-        char = source.charCodeAt(++parser.index);
+        ch = source.charCodeAt(++parser.index);
 
-        if (char === Chars.GreaterThan) {
+        if (ch === Chars.GreaterThan) {
           if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LogicalShiftRight;
           parser.index++;
           return Token.LogicalShiftRightAssign;
         }
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.ShiftRightAssign;
         }
@@ -438,16 +562,16 @@ export function scan(
 
       // `|`, `||`, `|=`
       case Token.BitwiseOr:
-        char = source.charCodeAt(++parser.index);
+        ch = source.charCodeAt(++parser.index);
 
-        if (char === Chars.VerticalBar) {
+        if (ch === Chars.VerticalBar) {
           parser.index++;
           if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.LogicalOr;
           parser.index++;
           return Token.LogicalOrAssign;
         }
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.BitwiseOrAssign;
         }
@@ -456,16 +580,16 @@ export function scan(
 
       // `&`, `&&`, `&=`
       case Token.BitwiseAnd:
-        char = source.charCodeAt(++parser.index);
+        ch = source.charCodeAt(++parser.index);
 
-        if (char === Chars.Ampersand) {
+        if (ch === Chars.Ampersand) {
           parser.index++;
           if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.LogicalAnd;
           parser.index++;
           return Token.LogicalAndAssign;
         }
 
-        if (char === Chars.EqualSign) {
+        if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.BitwiseAndAssign;
         }
@@ -473,11 +597,11 @@ export function scan(
         return Token.BitwiseAnd;
 
       default:
-        if (char > 0b00000000000000000000000001111110) {
-          if (((unicodeLookup[(char >>> 5) + 104448] >>> char) & 31 & 1) !== 0) {
+        if (ch > 0b00000000000000000000000001111110) {
+          if (((unicodeLookup[(ch >>> 5) + 104448] >>> ch) & 31 & 1) !== 0) {
             parser.index++;
 
-            if ((char & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
+            if ((ch & ~0b00000000000000000000000000000001) === Chars.LineSeparator) {
               parser.offset = parser.index;
               parser.newLine = 1;
               parser.curLine++;
@@ -487,11 +611,11 @@ export function scan(
             continue;
           }
 
-          if ((unicodeLookup[(char >>> 5) + 34816] >>> char) & 31 & 1 || (char & 0xfc00) === 0xd800) {
+          if ((unicodeLookup[(ch >>> 5) + 34816] >>> ch) & 31 & 1 || (ch & 0xfc00) === 0xd800) {
             return scanIdentifierSlowPath(parser, source, '', /* maybeKeyword */ 0);
           }
         }
-        report(parser, Errors.IllegalCaracter, fromCodePoint(char));
+        report(parser, Errors.IllegalCaracter, fromCodePoint(ch));
     }
   }
   return Token.EOF;

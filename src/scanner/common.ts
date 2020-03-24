@@ -1,4 +1,4 @@
-import { Chars, skipSingleLineComment } from './';
+import { Chars, skipSingleLineComment, unicodeLookup } from './';
 import { ParserState } from '../parser/common';
 import { report, Errors } from '../errors';
 
