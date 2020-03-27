@@ -101,10 +101,10 @@ The callback function have 4 arguments.
 | ----------- | ------------------------------------------------------------ |
 | `token`     | The token to be extracted |
 | `value`     | Value of the extracted token |
-| `start`     | Start of extracted token |
-| `number`    | End of extracted token |
+| `start`     | Start position of the extracted token |
+| `number`    | End position of the extracted token |
 
-* The `loc` option needs to be enabled for `start` and `number`. Otherwise this values will be set to `undefined`
+The `loc` option needs to be enabled for `start` and `number`. Otherwise this values will be set to `undefined`
 
 
 # Performance
