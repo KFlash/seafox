@@ -18,6 +18,7 @@
 * Support for additional ECMAScript features for Web Browsers
 * Optionally track syntactic node locations
 * Emits an ESTree-compatible abstract syntax tree
+* Lexical analysis
 * No backtracking
 * Low memory usage
 * Insane performance both on desktop computers and handheld devices
@@ -87,25 +88,25 @@ parse('({x: [y] = 0} = 1)');
 
 ```
 
-# Performance
-
-Seafox is developed for performance and low memory usage, and the parser is about 2x - 4x faster than all other javascript parsers.
-
 # Lexical analysis
 
 Lexical analysis can only be done during parsing and accepts only a function type as the option
 
 ```ts
- parseScript('foo = bar', { onToken: function() {}});
+ parseScript('foo = bar', { onToken: () => {}});
 ```
-The callback function have 4 or 5 arguments - depends if the location tracking is enabled
+The callback function have 4 arguments.
 
-`token` - The token to be extracted
-
-`value` - value of the extracted token
-
-`start` - start of extracted token
-
-`number` - end of the extracted token
+| Arguments   | Description |
+| ----------- | ------------------------------------------------------------ |
+| `token`     | The token to be extracted |
+| `value`     | Value of the extracted token |
+| `start`     | Start of extracted token |
+| `number`    | End of extracted token |
 
 * The `loc` option needs to be enabled for `start` and `number`. Otherwise this values will be set to `undefined`
+
+
+# Performance
+
+Seafox is developed for performance and low memory usage, and the parser is about 2x - 4x faster than all other javascript parsers.
