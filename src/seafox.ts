@@ -1,4 +1,4 @@
-import { Context, OnToken } from './parser/common';
+import { Context, OnToken, isFunction } from './parser/common';
 import * as Types from './parser/types';
 import { nextToken } from './scanner/scan';
 import { skipMeta } from './scanner/';
@@ -32,7 +32,7 @@ export interface Options {
   // Enable non-standard parenthesized expression node
   preserveParens?: boolean;
   // Enable lexical analysis
-  onToken?: any;
+  onToken?: OnToken;
 }
 
 export function parseRoot(source: string, context: Context, options?: Options): Types.Program {
@@ -50,10 +50,8 @@ export function parseRoot(source: string, context: Context, options?: Options): 
 
     // Lexical analysis (tokenization)
     if (options.onToken) {
+      if (!isFunction(options.onToken)) throw 'onToken option can only be a function type';
       onToken = options.onToken;
-      if (!(onToken && onToken.constructor && (onToken as any).call && (onToken as any).apply)) {
-        throw 'onToken option can only be a function';
-      }
       context |= Context.OptionsOnToken;
     }
   }

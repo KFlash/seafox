@@ -33,7 +33,7 @@ npm install seafox --save-dev
 
 ## API
 
-Seafox generates `AST` according to [ESTree AST format](https://github.com/estree/estree), and can be used to perform [syntactic analysis](https://en.wikipedia.org/wiki/Parsing) (parsing) of a JavaScript program, and with `ES2015` and later a JavaScript program can be either [a script or a module](https://tc39.github.io/ecma262/index.html#sec-ecmascript-language-scripts-and-modules).
+Seafox generates `AST` according to [ESTree AST format](https://github.com/estree/estree), and can be used to perform [syntactic analysis](https://en.wikipedia.org/wiki/Parsing) (parsing) or [lexical analysis](https://en.wikipedia.org/wiki/Lexical_analysis) (tokenization) of a JavaScript program, and with `ES2015` and later a JavaScript program can be either [a script or a module](https://tc39.github.io/ecma262/index.html#sec-ecmascript-language-scripts-and-modules).
 
 The `parse` method exposed by `Seafox` takes an optional `options` object which allows you to specify whether to parse in [`script`](https://tc39.github.io/ecma262/#sec-parse-script) mode (the default) or in [`module`](https://tc39.github.io/ecma262/#sec-parsemodule) mode.
 
@@ -65,12 +65,15 @@ This is the available options:
 
 // Enable non-standard parenthesized expression node
   preserveParens: false;
+
+   // Allows token extraction. Accepts only a function
+  onToken: function() {}
 }
 ```
 
 Example usage:
 
-```js
+```ts
 
 import { parseScript, parseModule, parse } from './seafox';
 
@@ -86,5 +89,23 @@ parse('({x: [y] = 0} = 1)');
 
 # Performance
 
-Seafox is developed for performance and low memory usage, and the parser is about 2x - 4x faster than all other javascript parsers. 
+Seafox is developed for performance and low memory usage, and the parser is about 2x - 4x faster than all other javascript parsers.
 
+# Lexical analysis
+
+Lexical analysis can only be done during parsing and accepts only a function type as the option
+
+```ts
+ parseScript('foo = bar', { onToken: function() {}});
+```
+The callback function have 4 or 5 arguments - depends if the location tracking is enabled
+
+`token` - The token to be extracted
+
+`value` - value of the extracted token
+
+`start` - start of extracted token
+
+`number` - end of the extracted token
+
+* The `loc` option needs to be enabled for `start` and `number`. Otherwise this values will be set to `undefined`

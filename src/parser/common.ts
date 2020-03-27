@@ -378,3 +378,7 @@ export function isVarDecl(t: Token): Boolean {
   //      for(let[foo] in x) {}
   return t === Token.VarKeyword || t === Token.LetKeyword || t === Token.ConstKeyword;
 }
+
+export function isFunction(obj: any): boolean {
+  return !!(obj && obj.constructor && obj.call && obj.apply);
+}
