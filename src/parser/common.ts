@@ -3,6 +3,11 @@ import { nextToken } from '../scanner/scan';
 import { report, Errors } from '../errors';
 
 /**
+ * The type of the `onToken` option.
+ */
+export type OnToken = void | Token[] | ((token: string, value: string, start?: number, end?: number) => void);
+
+/**
  * The core context, passed around everywhere as a simple immutable bit set.
  */
 export const enum Context {
@@ -15,6 +20,7 @@ export const enum Context {
   OptionsDirectives = 1 << 5,
   OptionsGlobalReturn = 1 << 6,
   OptionsPreserveParens = 1 << 7,
+  OptionsOnToken = 1 << 29,
   Strict = 1 << 10,
   Module = 1 << 11, // Current code should be parsed as a module body
   DisallowIn = 1 << 13,
@@ -120,6 +126,7 @@ export interface ParserState {
   exportedNames: any;
   exportedBindings: any;
   containsEscapes: 0 | 1;
+  onToken: OnToken | any;
   tokenRegExp: void | {
     pattern: string;
     flags: string;
@@ -144,6 +151,11 @@ export function consumeOpt(parser: ParserState, context: Context, t: Token, allo
   if (parser.token !== t) return 0;
   nextToken(parser, context, allowRegExp);
   return 1;
+}
+
+export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
+  if (parser.token !== t) report(parser, Errors.UnexpectedToken, KeywordDescTable[t & Token.Kind]);
+  nextToken(parser, context, allowRegExp);
 }
 
 export function setLoc(parser: ParserState, line: number, column: number): any {
@@ -284,11 +296,6 @@ export function isValidStrictMode(parser: ParserState, index: number, start: num
   if (index - start !== 12) return false;
   if (value !== 'use strict') return false;
   return (parser.token & Token.IsAutoSemicolon) === Token.IsAutoSemicolon;
-}
-
-export function consume(parser: ParserState, context: Context, t: Token, allowRegExp: 0 | 1): void {
-  if (parser.token !== t) report(parser, Errors.UnexpectedToken, KeywordDescTable[t & Token.Kind]);
-  nextToken(parser, context, allowRegExp);
 }
 
 export function validateFunctionName(parser: ParserState, context: Context, t: Token): void {

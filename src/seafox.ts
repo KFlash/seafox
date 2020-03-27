@@ -1,4 +1,4 @@
-import { Context } from './parser/common';
+import { Context, OnToken } from './parser/common';
 import * as Types from './parser/types';
 import { nextToken } from './scanner/scan';
 import { skipMeta } from './scanner/';
@@ -31,9 +31,12 @@ export interface Options {
   source?: string;
   // Enable non-standard parenthesized expression node
   preserveParens?: boolean;
+  // Enable lexical analysis
+  onToken?: any;
 }
 
 export function parseRoot(source: string, context: Context, options?: Options): Types.Program {
+  let onToken: OnToken = void 0;
   if (options !== undefined) {
     if (options.module) context |= Context.Module | Context.Strict;
     if (options.next) context |= Context.OptionsNext;
@@ -44,15 +47,24 @@ export function parseRoot(source: string, context: Context, options?: Options): 
     if (options.globalReturn) context |= Context.OptionsGlobalReturn;
     if (options.preserveParens) context |= Context.OptionsPreserveParens;
     if (options.impliedStrict) context |= Context.Strict;
+
+    // Lexical analysis (tokenization)
+    if (options.onToken) {
+      onToken = options.onToken;
+      if (!(onToken && onToken.constructor && (onToken as any).call && (onToken as any).apply)) {
+        throw 'onToken option can only be a function';
+      }
+      context |= Context.OptionsOnToken;
+    }
   }
 
   // Initialize parser state
-  const parser = create(source);
+  const parser = create(source, onToken);
 
   // See: https://github.com/tc39/proposal-hashbang
   skipMeta(parser, source);
 
-  nextToken(parser, context, /* allowRegExp */ 1);
+  nextToken(parser, context, /* allowRegExp */ 1, 1);
 
   const scope = createTopLevelScope();
 

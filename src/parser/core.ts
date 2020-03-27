@@ -4,7 +4,7 @@ import { ParserState, Flags } from './common';
 /**
  * Create a new parser instance.
  */
-export function create(source: string): ParserState {
+export function create(source: string, onToken?: any): ParserState {
   return {
     source,
     flags: Flags.Empty,
@@ -20,9 +20,10 @@ export function create(source: string): ParserState {
     lastLine: 1,
     token: Token.EOF,
     newLine: 0,
-    tokenValue: undefined,
+    tokenValue: void 0,
     tokenRaw: '',
-    tokenRegExp: undefined,
+    tokenRegExp: void 0,
+    onToken: onToken,
     lastChar: 0,
     assignable: 1,
     containsEscapes: 0,

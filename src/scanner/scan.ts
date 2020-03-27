@@ -1,5 +1,6 @@
 import { ParserState, Context } from '../parser/common';
 import { Token } from '../token';
+import { convertTokenType } from './tokenization';
 import {
   Chars,
   skipSingleLineComment,
@@ -621,7 +622,7 @@ export function scan(
   return Token.EOF;
 }
 
-export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1): void {
+export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1, _onToken?: 0 | 1): void {
   parser.newLine = 0;
 
   const { source, length, index, offset } = parser;
@@ -629,7 +630,12 @@ export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 
   parser.flags = (parser.flags | 0b00000000000000000001000010000000) ^ 0b00000000000000000001000010000000;
   parser.lastColumn = (parser.endIndex = index) - offset;
   parser.lastLine = parser.curLine;
-  parser.token = scan(parser, context, source, index, length, Token.EOF, /* lastIsCR */ 0, index === 0, allowRegExp);
+  const token = scan(parser, context, source, index, length, Token.EOF, /* lastIsCR */ 0, index === 0, allowRegExp);
   parser.column = parser.start - parser.offset;
   parser.line = parser.curLine;
+  parser.token = token;
+
+  if ((context & Context.OptionsOnToken) === Context.OptionsOnToken && token !== Token.EOF) {
+    convertTokenType(parser, context, token);
+  }
 }
