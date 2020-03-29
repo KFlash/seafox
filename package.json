@@ -1,6 +1,6 @@
 {
   "name": "seafox",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript",
   "main": "dist/seafox.umd.min.js",
   "module": "dist/seafox.esm.min.js",
@@ -86,6 +86,8 @@
     "rollup-plugin-terser": "^5.2.0",
     "rollup-plugin-typescript2": "^0.26.0",
     "source-map-support": "^0.5.13",
+    "test262-parser": "^2.2.0",
+    "test262-parser-tests": "0.0.5",
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.8.3",

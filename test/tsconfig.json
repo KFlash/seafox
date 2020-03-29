@@ -4,5 +4,5 @@
     "types": ["node", "mocha"],
     "module": "umd"
   },
-  "include": ["../src", "."]
+  "include": ["../src", ".", "../test262/run_test262.js"]
 }
