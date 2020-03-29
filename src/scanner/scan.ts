@@ -379,7 +379,12 @@ export function scan(
 
       // `=`, `==`, `===`, `=>`
       case Token.Assign:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.Assign;
+
+        ch = source.charCodeAt(parser.index);
+
         if (ch === Chars.EqualSign) {
           if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LooseEqual;
           parser.index++;
@@ -392,7 +397,12 @@ export function scan(
 
       // `*`, `**`, `*=`, `**=`
       case Token.Multiply:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.Multiply;
+
+        ch = source.charCodeAt(parser.index);
+
         if (ch === Chars.EqualSign) {
           parser.index++;
           return Token.MultiplyAssign;
@@ -406,7 +416,12 @@ export function scan(
 
       // `+`, `++`, `+=`
       case Token.Add:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.Add;
+
+        ch = source.charCodeAt(parser.index);
+
         if (ch === Chars.Plus) {
           parser.index++;
           return Token.Increment;
@@ -446,18 +461,33 @@ export function scan(
 
       // `?`, `??`, `?.`
       case Token.QuestionMark:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.QuestionMark;
+
+        ch = source.charCodeAt(parser.index);
+
         if (ch === Chars.Period) {
           ch = source.charCodeAt(parser.index + 1);
-          if (ch >= Chars.Zero && ch <= Chars.Nine) return Token.QuestionMark;
+
+          if (ch >= Chars.Zero && ch <= Chars.Nine) {
+            return Token.QuestionMark;
+          }
+
           parser.index++;
+
           return Token.QuestionMarkPeriod;
         }
 
         if (ch === Chars.QuestionMark) {
           parser.index++;
-          if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.Coalesce;
+
+          if (source.charCodeAt(parser.index) !== Chars.EqualSign) {
+            return Token.Coalesce;
+          }
+
           parser.index++;
+
           return Token.CoalesceAssign;
         }
 
@@ -483,7 +513,11 @@ export function scan(
 
       // `<`, `<=`, `<<`, `<<=`, `</`, `<!--`
       case Token.LessThan:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.LessThan;
+
+        ch = source.charCodeAt(parser.index);
 
         if (ch === Chars.LessThan) {
           if (source.charCodeAt(++parser.index) === Chars.EqualSign) {
@@ -492,10 +526,12 @@ export function scan(
           }
           return Token.ShiftLeft;
         }
+
         if (ch === Chars.EqualSign) {
           parser.index += 1;
           return Token.LessThanOrEqual;
         }
+
         if (ch === Chars.Exclamation) {
           if (
             source.charCodeAt(parser.index + 2) === Chars.Hyphen &&
@@ -512,15 +548,18 @@ export function scan(
       // `!`, `!=`, `!==`
       case Token.Negate:
         if (source.charCodeAt(parser.index + 1) === Chars.EqualSign) {
-          parser.index++;
-          if (source.charCodeAt(parser.index + 1) === Chars.EqualSign) {
-            parser.index += 2;
+          parser.index += 2;
+
+          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
+            parser.index += 1;
             return Token.StrictNotEqual;
           }
-          parser.index++;
+
           return Token.LooseNotEqual;
         }
+
         parser.index++;
+
         return Token.Negate;
 
       // `%`, `%=`
@@ -537,7 +576,11 @@ export function scan(
 
       // `>`, `>=`, `>>`, `>>>`, `>>=`, `>>>=`
       case Token.GreaterThan:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.GreaterThan;
+
+        ch = source.charCodeAt(parser.index);
 
         if (ch === Chars.EqualSign) {
           parser.index++;
@@ -545,30 +588,45 @@ export function scan(
         }
 
         if (ch !== Chars.GreaterThan) return Token.GreaterThan;
+        parser.index++;
 
-        ch = source.charCodeAt(++parser.index);
+        if (parser.index < length) {
+          ch = source.charCodeAt(parser.index);
 
-        if (ch === Chars.GreaterThan) {
-          if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LogicalShiftRight;
-          parser.index++;
-          return Token.LogicalShiftRightAssign;
+          if (ch === Chars.GreaterThan) {
+            if (source.charCodeAt(++parser.index) !== Chars.EqualSign) {
+              return Token.LogicalShiftRight;
+            }
+
+            parser.index++;
+
+            return Token.LogicalShiftRightAssign;
+          }
+
+          if (ch === Chars.EqualSign) {
+            parser.index++;
+            return Token.ShiftRightAssign;
+          }
         }
-
-        if (ch === Chars.EqualSign) {
-          parser.index++;
-          return Token.ShiftRightAssign;
-        }
-
         return Token.ShiftRight;
 
       // `|`, `||`, `|=`
       case Token.BitwiseOr:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.BitwiseOr;
+
+        ch = source.charCodeAt(parser.index);
 
         if (ch === Chars.VerticalBar) {
           parser.index++;
-          if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.LogicalOr;
+
+          if (source.charCodeAt(parser.index) !== Chars.EqualSign) {
+            return Token.LogicalOr;
+          }
+
           parser.index++;
+
           return Token.LogicalOrAssign;
         }
 
@@ -581,12 +639,21 @@ export function scan(
 
       // `&`, `&&`, `&=`
       case Token.BitwiseAnd:
-        ch = source.charCodeAt(++parser.index);
+        parser.index++;
+
+        if (parser.index >= length) return Token.BitwiseAnd;
+
+        ch = source.charCodeAt(parser.index);
 
         if (ch === Chars.Ampersand) {
           parser.index++;
-          if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.LogicalAnd;
+
+          if (source.charCodeAt(parser.index) !== Chars.EqualSign) {
+            return Token.LogicalAnd;
+          }
+
           parser.index++;
+
           return Token.LogicalAndAssign;
         }
 

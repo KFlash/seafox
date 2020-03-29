@@ -596,16 +596,16 @@ export function parseForStatementWithVariableDeclarations(
         (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'VariableDeclarator',
-              init,
               id,
+              init,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
             }
           : {
               type: 'VariableDeclarator',
-              init,
-              id
+              id,
+              init
             }
       );
 
