@@ -3,20 +3,21 @@ import { ParserState } from '../parser/common';
 import { report, Errors } from '../errors';
 
 export function skipMeta(parser: ParserState, source: string): void {
-  let index = parser.index;
+  let index = 0;
+
   if (index === parser.length) return;
+
   // Absorb any byte order mark at the start
-  if (source.charCodeAt(index) === Chars.ByteOrderMark) {
-    index++;
-    parser.index = index;
-  }
+
+  if (source.charCodeAt(index) === Chars.ByteOrderMark) parser.index = index += 1;
 
   if (index < source.length && source.charCodeAt(index) === Chars.Hash) {
     index++;
+
     if (index < source.length && source.charCodeAt(index) === Chars.Exclamation) {
-      parser.index = skipSingleLineComment(parser, source, index + 1);
+      parser.index = skipSingleLineComment(parser, source, index);
     } else {
-      report(parser, Errors.Unexpected);
+      report(parser, Errors.UnexpectedToken, '#');
     }
   }
 }
@@ -27,11 +28,8 @@ export function readNext(parser: ParserState): number {
   return parser.source.charCodeAt(parser.index);
 }
 
-/**
- * Converts an ASCII alphanumeric digit [0-9a-zA-Z] to number as if in base-36.
- *
- * @param code CodePoint
- */
+// Converts an ASCII alphanumeric digit [0-9a-zA-Z] to number as if in base-36.
+
 export function toHex(code: number): number {
   code -= Chars.Zero;
   if (code <= 9) return code;
@@ -40,12 +38,8 @@ export function toHex(code: number): number {
   return -1;
 }
 
-/**
- * Optimized version of 'fromCodePoint'
- *
- * @param {number} code
- * @returns {string}
- */
+// Optimized version of 'fromCodePoint'
+
 export function fromCodePoint(codePoint: number): string {
   return codePoint <= 65535
     ? String.fromCharCode(codePoint)
