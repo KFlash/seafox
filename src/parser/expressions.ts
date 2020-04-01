@@ -1844,8 +1844,8 @@ export function parseArrowFunction(
   return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ArrowFunctionExpression',
-        body,
         params,
+        body,
         async: isAsync === 1,
         expression,
         start,
@@ -1854,8 +1854,8 @@ export function parseArrowFunction(
       }
     : {
         type: 'ArrowFunctionExpression',
-        body,
         params,
+        body,
         async: isAsync === 1,
         expression
       };
@@ -2945,22 +2945,22 @@ export function parseFunctionLiteral(
   return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type,
+        id,
         params,
         body,
         async: (context & Context.InAwaitContext) === Context.InAwaitContext,
         generator: (context & Context.InYieldContext) === Context.InYieldContext,
-        id,
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
     : {
         type,
+        id,
         params,
         body,
         async: (context & Context.InAwaitContext) === Context.InAwaitContext,
-        generator: (context & Context.InYieldContext) === Context.InYieldContext,
-        id
+        generator: (context & Context.InYieldContext) === Context.InYieldContext
       };
 }
 

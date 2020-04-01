@@ -32,7 +32,7 @@ fail('Miscellaneous - Enum (fail)', [
   ['1 ??= 1;', Context.Strict],
   ['arguments ||= 20;', Context.Strict],
   ['async x => (enum) = 1', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
-  //['({static * enum(){}});', Context.OptionsDisableWebCompat],
+  ['({static * enum(){}});', Context.OptionsDisableWebCompat],
   ['({static set enum(x){}});', Context.OptionsDisableWebCompat | Context.Strict | Context.Module],
   ['class x {enum: x}', Context.OptionsDisableWebCompat],
   ['enum', Context.OptionsDisableWebCompat],

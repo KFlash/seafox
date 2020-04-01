@@ -503,16 +503,16 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
         return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
           ? {
               type: 'ExportNamedDeclaration',
-              source,
               specifiers,
+              source,
               start,
               end: parser.endIndex,
               loc: setLoc(parser, line, column)
             }
           : {
               type: 'ExportNamedDeclaration',
-              source,
-              specifiers
+              specifiers,
+              source
             };
       }
       // 'export' '*' 'from' ModuleSpecifier ';'
@@ -672,17 +672,17 @@ export function parseExportDeclaration(parser: ParserState, context: Context, sc
   return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ExportNamedDeclaration',
-        source,
-        specifiers,
         declaration,
+        specifiers,
+        source,
         start,
         end: parser.endIndex,
         loc: setLoc(parser, line, column)
       }
     : {
         type: 'ExportNamedDeclaration',
-        source,
+        declaration,
         specifiers,
-        declaration
+        source
       };
 }

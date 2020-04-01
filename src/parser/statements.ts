@@ -662,9 +662,9 @@ export function parseForStatementWithVariableDeclarations(
     return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: 'ForOfStatement',
-          body,
           left: init,
           right,
+          body,
           await: false,
           start: curStart,
           end: parser.endIndex,
@@ -672,9 +672,9 @@ export function parseForStatementWithVariableDeclarations(
         }
       : {
           type: 'ForOfStatement',
-          body,
           left: init,
           right,
+          body,
           await: false
         };
   }
@@ -751,20 +751,20 @@ export function parseForStatementWithVariableDeclarations(
   return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ForStatement',
-        body,
         init,
         test,
         update,
+        body,
         start: curStart,
         end: parser.endIndex,
         loc: setLoc(parser, curLine, curColumn)
       }
     : {
         type: 'ForStatement',
-        body,
         init,
         test,
-        update
+        update,
+        body
       };
 }
 
@@ -933,20 +933,20 @@ export function parseForStatement(
   return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ForStatement',
-        body,
         init,
         test,
         update,
+        body,
         start: curStart,
         end: parser.endIndex,
         loc: setLoc(parser, curLine, curColumn)
       }
     : {
         type: 'ForStatement',
-        body,
         init,
         test,
-        update
+        update,
+        body
       };
 }
 
