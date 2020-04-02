@@ -1952,104 +1952,102 @@ pass('Expressions - Arrow', [
     (foo)`,
     Context.OptionsLoc,
     {
-      type: 'Program',
-      sourceType: 'script',
       body: [
         {
-          type: 'ExpressionStatement',
+          end: 6,
           expression: {
-            type: 'CallExpression',
-            callee: {
-              type: 'ArrowFunctionExpression',
-              body: {
-                type: 'BlockStatement',
-                body: [],
-                start: 4,
-                end: 6,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 4
-                  },
-                  end: {
-                    line: 1,
-                    column: 6
-                  }
-                }
-              },
-              params: [],
-              async: false,
-              expression: false,
-              start: 0,
+            async: false,
+            body: {
+              body: [],
               end: 6,
               loc: {
-                start: {
-                  line: 1,
-                  column: 0
-                },
                 end: {
-                  line: 1,
-                  column: 6
+                  column: 6,
+                  line: 1
+                },
+                start: {
+                  column: 4,
+                  line: 1
                 }
+              },
+              start: 4,
+              type: 'BlockStatement'
+            },
+            end: 6,
+            expression: false,
+            loc: {
+              end: {
+                column: 6,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
               }
             },
-            arguments: [
-              {
-                type: 'Identifier',
-                name: 'foo',
-                start: 12,
-                end: 15,
-                loc: {
-                  start: {
-                    line: 2,
-                    column: 5
-                  },
-                  end: {
-                    line: 2,
-                    column: 8
-                  }
-                }
-              }
-            ],
+            params: [],
             start: 0,
-            end: 16,
-            loc: {
-              start: {
-                line: 1,
-                column: 0
-              },
-              end: {
-                line: 2,
-                column: 9
-              }
+            type: 'ArrowFunctionExpression'
+          },
+          loc: {
+            end: {
+              column: 6,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
             }
           },
           start: 0,
+          type: 'ExpressionStatement'
+        },
+        {
           end: 16,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
+          expression: {
+            end: 15,
+            loc: {
+              end: {
+                column: 8,
+                line: 2
+              },
+              start: {
+                column: 5,
+                line: 2
+              }
             },
+            name: 'foo',
+            start: 12,
+            type: 'Identifier'
+          },
+          loc: {
             end: {
-              line: 2,
-              column: 9
+              column: 9,
+              line: 2
+            },
+            start: {
+              column: 4,
+              line: 2
             }
-          }
+          },
+          start: 11,
+          type: 'ExpressionStatement'
         }
       ],
-      start: 0,
       end: 16,
       loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
         end: {
-          line: 2,
-          column: 9
+          column: 9,
+          line: 2
+        },
+        start: {
+          column: 0,
+          line: 1
         }
-      }
+      },
+      sourceType: 'script',
+      start: 0,
+      type: 'Program'
     }
   ],
   [
@@ -2690,324 +2688,6 @@ pass('Expressions - Arrow', [
         end: {
           line: 2,
           column: 7
-        }
-      }
-    }
-  ],
-  [
-    `const a = () => { alert("hi") }
-
-(a && a()) || alert("howdy");`,
-    Context.OptionsLoc,
-    {
-      type: 'Program',
-      sourceType: 'script',
-      body: [
-        {
-          type: 'VariableDeclaration',
-          kind: 'const',
-          declarations: [
-            {
-              type: 'VariableDeclarator',
-              init: {
-                type: 'LogicalExpression',
-                left: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'ArrowFunctionExpression',
-                    body: {
-                      type: 'BlockStatement',
-                      body: [
-                        {
-                          type: 'ExpressionStatement',
-                          expression: {
-                            type: 'CallExpression',
-                            callee: {
-                              type: 'Identifier',
-                              name: 'alert',
-                              start: 18,
-                              end: 23,
-                              loc: {
-                                start: {
-                                  line: 1,
-                                  column: 18
-                                },
-                                end: {
-                                  line: 1,
-                                  column: 23
-                                }
-                              }
-                            },
-                            arguments: [
-                              {
-                                type: 'Literal',
-                                value: 'hi',
-                                start: 24,
-                                end: 28,
-                                loc: {
-                                  start: {
-                                    line: 1,
-                                    column: 24
-                                  },
-                                  end: {
-                                    line: 1,
-                                    column: 28
-                                  }
-                                }
-                              }
-                            ],
-                            start: 18,
-                            end: 29,
-                            loc: {
-                              start: {
-                                line: 1,
-                                column: 18
-                              },
-                              end: {
-                                line: 1,
-                                column: 29
-                              }
-                            }
-                          },
-                          start: 18,
-                          end: 29,
-                          loc: {
-                            start: {
-                              line: 1,
-                              column: 18
-                            },
-                            end: {
-                              line: 1,
-                              column: 29
-                            }
-                          }
-                        }
-                      ],
-                      start: 16,
-                      end: 31,
-                      loc: {
-                        start: {
-                          line: 1,
-                          column: 16
-                        },
-                        end: {
-                          line: 1,
-                          column: 31
-                        }
-                      }
-                    },
-                    params: [],
-                    async: false,
-                    expression: false,
-                    start: 10,
-                    end: 31,
-                    loc: {
-                      start: {
-                        line: 1,
-                        column: 10
-                      },
-                      end: {
-                        line: 1,
-                        column: 31
-                      }
-                    }
-                  },
-                  arguments: [
-                    {
-                      type: 'LogicalExpression',
-                      left: {
-                        type: 'Identifier',
-                        name: 'a',
-                        start: 34,
-                        end: 35,
-                        loc: {
-                          start: {
-                            line: 3,
-                            column: 1
-                          },
-                          end: {
-                            line: 3,
-                            column: 2
-                          }
-                        }
-                      },
-                      right: {
-                        type: 'CallExpression',
-                        callee: {
-                          type: 'Identifier',
-                          name: 'a',
-                          start: 39,
-                          end: 40,
-                          loc: {
-                            start: {
-                              line: 3,
-                              column: 6
-                            },
-                            end: {
-                              line: 3,
-                              column: 7
-                            }
-                          }
-                        },
-                        arguments: [],
-                        start: 39,
-                        end: 42,
-                        loc: {
-                          start: {
-                            line: 3,
-                            column: 6
-                          },
-                          end: {
-                            line: 3,
-                            column: 9
-                          }
-                        }
-                      },
-                      operator: '&&',
-                      start: 34,
-                      end: 42,
-                      loc: {
-                        start: {
-                          line: 3,
-                          column: 1
-                        },
-                        end: {
-                          line: 3,
-                          column: 9
-                        }
-                      }
-                    }
-                  ],
-                  start: 10,
-                  end: 43,
-                  loc: {
-                    start: {
-                      line: 1,
-                      column: 10
-                    },
-                    end: {
-                      line: 3,
-                      column: 10
-                    }
-                  }
-                },
-                right: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'Identifier',
-                    name: 'alert',
-                    start: 47,
-                    end: 52,
-                    loc: {
-                      start: {
-                        line: 3,
-                        column: 14
-                      },
-                      end: {
-                        line: 3,
-                        column: 19
-                      }
-                    }
-                  },
-                  arguments: [
-                    {
-                      type: 'Literal',
-                      value: 'howdy',
-                      start: 53,
-                      end: 60,
-                      loc: {
-                        start: {
-                          line: 3,
-                          column: 20
-                        },
-                        end: {
-                          line: 3,
-                          column: 27
-                        }
-                      }
-                    }
-                  ],
-                  start: 47,
-                  end: 61,
-                  loc: {
-                    start: {
-                      line: 3,
-                      column: 14
-                    },
-                    end: {
-                      line: 3,
-                      column: 28
-                    }
-                  }
-                },
-                operator: '||',
-                start: 10,
-                end: 61,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 10
-                  },
-                  end: {
-                    line: 3,
-                    column: 28
-                  }
-                }
-              },
-              id: {
-                type: 'Identifier',
-                name: 'a',
-                start: 6,
-                end: 7,
-                loc: {
-                  start: {
-                    line: 1,
-                    column: 6
-                  },
-                  end: {
-                    line: 1,
-                    column: 7
-                  }
-                }
-              },
-              start: 6,
-              end: 61,
-              loc: {
-                start: {
-                  line: 1,
-                  column: 6
-                },
-                end: {
-                  line: 3,
-                  column: 28
-                }
-              }
-            }
-          ],
-          start: 0,
-          end: 62,
-          loc: {
-            start: {
-              line: 1,
-              column: 0
-            },
-            end: {
-              line: 3,
-              column: 29
-            }
-          }
-        }
-      ],
-      start: 0,
-      end: 62,
-      loc: {
-        start: {
-          line: 1,
-          column: 0
-        },
-        end: {
-          line: 3,
-          column: 29
         }
       }
     }

@@ -339,6 +339,11 @@ export function parseMemberExpression(
 
     /* Call */
     case Token.LeftParen: {
+      if ((parser.flags & Flags.DisallowCall) === Flags.DisallowCall) {
+        parser.flags = (parser.flags | Flags.DisallowCall) ^ Flags.DisallowCall;
+        return object;
+      }
+
       const args = parseArguments(parser, context, inGroup);
 
       parser.assignable = 0;
@@ -1829,6 +1834,9 @@ export function parseArrowFunction(
       }
     } else {
       switch (parser.token) {
+        case Token.LeftParen:
+          parser.flags |= Flags.DisallowCall;
+          break;
         case Token.Period:
         case Token.QuestionMark:
         case Token.Exponentiate:

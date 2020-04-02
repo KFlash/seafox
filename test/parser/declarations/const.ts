@@ -180,6 +180,289 @@ fail('Declarations - Const (fail)', [
 
 pass('Declarations - Const (pass)', [
   [
+    `const a = (v) => { console.log('hello ' + v) }
+  ('world')`,
+    Context.OptionsLoc,
+    {
+      body: [
+        {
+          declarations: [
+            {
+              end: 46,
+              id: {
+                end: 7,
+                loc: {
+                  end: {
+                    column: 7,
+                    line: 1
+                  },
+                  start: {
+                    column: 6,
+                    line: 1
+                  }
+                },
+                name: 'a',
+                start: 6,
+                type: 'Identifier'
+              },
+              init: {
+                async: false,
+                body: {
+                  body: [
+                    {
+                      end: 44,
+                      expression: {
+                        arguments: [
+                          {
+                            end: 43,
+                            left: {
+                              end: 39,
+                              loc: {
+                                end: {
+                                  column: 39,
+                                  line: 1
+                                },
+                                start: {
+                                  column: 31,
+                                  line: 1
+                                }
+                              },
+                              start: 31,
+                              type: 'Literal',
+                              value: 'hello '
+                            },
+                            loc: {
+                              end: {
+                                column: 43,
+                                line: 1
+                              },
+                              start: {
+                                column: 31,
+                                line: 1
+                              }
+                            },
+                            operator: '+',
+                            right: {
+                              end: 43,
+                              loc: {
+                                end: {
+                                  column: 43,
+                                  line: 1
+                                },
+                                start: {
+                                  column: 42,
+                                  line: 1
+                                }
+                              },
+                              name: 'v',
+                              start: 42,
+                              type: 'Identifier'
+                            },
+                            start: 31,
+                            type: 'BinaryExpression'
+                          }
+                        ],
+                        callee: {
+                          computed: false,
+                          end: 30,
+                          loc: {
+                            end: {
+                              column: 30,
+                              line: 1
+                            },
+                            start: {
+                              column: 19,
+                              line: 1
+                            }
+                          },
+                          object: {
+                            end: 26,
+                            loc: {
+                              end: {
+                                column: 26,
+                                line: 1
+                              },
+                              start: {
+                                column: 19,
+                                line: 1
+                              }
+                            },
+                            name: 'console',
+                            start: 19,
+                            type: 'Identifier'
+                          },
+                          property: {
+                            end: 30,
+                            loc: {
+                              end: {
+                                column: 30,
+                                line: 1
+                              },
+                              start: {
+                                column: 27,
+                                line: 1
+                              }
+                            },
+                            name: 'log',
+                            start: 27,
+                            type: 'Identifier'
+                          },
+                          start: 19,
+                          type: 'MemberExpression'
+                        },
+                        end: 44,
+                        loc: {
+                          end: {
+                            column: 44,
+                            line: 1
+                          },
+                          start: {
+                            column: 19,
+                            line: 1
+                          }
+                        },
+                        start: 19,
+                        type: 'CallExpression'
+                      },
+                      loc: {
+                        end: {
+                          column: 44,
+                          line: 1
+                        },
+                        start: {
+                          column: 19,
+                          line: 1
+                        }
+                      },
+                      start: 19,
+                      type: 'ExpressionStatement'
+                    }
+                  ],
+                  end: 46,
+                  loc: {
+                    end: {
+                      column: 46,
+                      line: 1
+                    },
+                    start: {
+                      column: 17,
+                      line: 1
+                    }
+                  },
+                  start: 17,
+                  type: 'BlockStatement'
+                },
+                end: 46,
+                expression: false,
+                loc: {
+                  end: {
+                    column: 46,
+                    line: 1
+                  },
+                  start: {
+                    column: 10,
+                    line: 1
+                  }
+                },
+                params: [
+                  {
+                    end: 12,
+                    loc: {
+                      end: {
+                        column: 12,
+                        line: 1
+                      },
+                      start: {
+                        column: 11,
+                        line: 1
+                      }
+                    },
+                    name: 'v',
+                    start: 11,
+                    type: 'Identifier'
+                  }
+                ],
+                start: 10,
+                type: 'ArrowFunctionExpression'
+              },
+              loc: {
+                end: {
+                  column: 46,
+                  line: 1
+                },
+                start: {
+                  column: 6,
+                  line: 1
+                }
+              },
+              start: 6,
+              type: 'VariableDeclarator'
+            }
+          ],
+          end: 46,
+          kind: 'const',
+          loc: {
+            end: {
+              column: 46,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
+            }
+          },
+          start: 0,
+          type: 'VariableDeclaration'
+        },
+        {
+          end: 58,
+          expression: {
+            end: 57,
+            loc: {
+              end: {
+                column: 10,
+                line: 2
+              },
+              start: {
+                column: 3,
+                line: 2
+              }
+            },
+            start: 50,
+            type: 'Literal',
+            value: 'world'
+          },
+          loc: {
+            end: {
+              column: 11,
+              line: 2
+            },
+            start: {
+              column: 2,
+              line: 2
+            }
+          },
+          start: 49,
+          type: 'ExpressionStatement'
+        }
+      ],
+      end: 58,
+      loc: {
+        end: {
+          column: 11,
+          line: 2
+        },
+        start: {
+          column: 0,
+          line: 1
+        }
+      },
+      sourceType: 'script',
+      start: 0,
+      type: 'Program'
+    }
+  ],
+  [
     `const obj = {  foo = 123, bar: x = 123, } = { foo: 24, bar: 45 };`,
     Context.OptionsLoc,
     {
