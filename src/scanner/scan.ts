@@ -433,7 +433,6 @@ export function scan(
         }
 
         return Token.Add;
-
       // `/`, `/=`, `/>`, '/*..*/'
       case Token.Divide:
         index = ++parser.index;
@@ -547,14 +546,14 @@ export function scan(
 
       // `!`, `!=`, `!==`
       case Token.Negate:
-        if (source.charCodeAt(parser.index + 1) === Chars.EqualSign) {
-          parser.index += 2;
-
-          if (source.charCodeAt(parser.index) === Chars.EqualSign) {
-            parser.index += 1;
+        index = parser.index + 1;
+        if (source.charCodeAt(index) === Chars.EqualSign) {
+          index++;
+          if (source.charCodeAt(index) === Chars.EqualSign) {
+            parser.index = index + 1;
             return Token.StrictNotEqual;
           }
-
+          parser.index = index;
           return Token.LooseNotEqual;
         }
 
@@ -612,55 +611,57 @@ export function scan(
 
       // `|`, `||`, `|=`
       case Token.BitwiseOr:
-        parser.index++;
+        index = parser.index + 1;
 
-        if (parser.index >= length) return Token.BitwiseOr;
+        if (index < parser.length) {
+          ch = source.charCodeAt(index);
 
-        ch = source.charCodeAt(parser.index);
+          if (ch === Chars.VerticalBar) {
+            index++;
+            if (source.charCodeAt(index) !== Chars.EqualSign) {
+              parser.index = index;
+              return Token.LogicalOr;
+            }
 
-        if (ch === Chars.VerticalBar) {
-          parser.index++;
-
-          if (source.charCodeAt(parser.index) !== Chars.EqualSign) {
-            return Token.LogicalOr;
+            parser.index = index + 1;
+            return Token.LogicalOrAssign;
           }
 
-          parser.index++;
-
-          return Token.LogicalOrAssign;
+          if (ch === Chars.EqualSign) {
+            parser.index = index + 1;
+            return Token.BitwiseOrAssign;
+          }
         }
 
-        if (ch === Chars.EqualSign) {
-          parser.index++;
-          return Token.BitwiseOrAssign;
-        }
-
+        parser.index++;
         return Token.BitwiseOr;
 
       // `&`, `&&`, `&=`
       case Token.BitwiseAnd:
-        parser.index++;
+        index = parser.index + 1;
 
-        if (parser.index >= length) return Token.BitwiseAnd;
+        if (index < parser.length) {
+          ch = source.charCodeAt(index);
 
-        ch = source.charCodeAt(parser.index);
+          if (ch === Chars.Ampersand) {
+            index++;
 
-        if (ch === Chars.Ampersand) {
-          parser.index++;
+            if (source.charCodeAt(index) !== Chars.EqualSign) {
+              parser.index = index;
+              return Token.LogicalAnd;
+            }
 
-          if (source.charCodeAt(parser.index) !== Chars.EqualSign) {
-            return Token.LogicalAnd;
+            parser.index = index + 1;
+            return Token.LogicalAndAssign;
           }
 
-          parser.index++;
-
-          return Token.LogicalAndAssign;
+          if (ch === Chars.EqualSign) {
+            parser.index = index + 1;
+            return Token.BitwiseAndAssign;
+          }
         }
 
-        if (ch === Chars.EqualSign) {
-          parser.index++;
-          return Token.BitwiseAndAssign;
-        }
+        parser.index++;
 
         return Token.BitwiseAnd;
 
