@@ -12,7 +12,7 @@ pass('Expressions - Logical Assignment (pass)', [
         {
           type: 'ExpressionStatement',
           expression: {
-            type: 'AssignmentExpression',
+            type: 'LogicalAssignmentExpression',
             left: {
               type: 'Identifier',
               name: 'x',
@@ -97,7 +97,7 @@ pass('Expressions - Logical Assignment (pass)', [
         {
           type: 'ExpressionStatement',
           expression: {
-            type: 'AssignmentExpression',
+            type: 'LogicalAssignmentExpression',
             left: {
               type: 'Identifier',
               name: 'x',
@@ -182,7 +182,7 @@ pass('Expressions - Logical Assignment (pass)', [
         {
           type: 'ExpressionStatement',
           expression: {
-            type: 'AssignmentExpression',
+            type: 'LogicalAssignmentExpression',
             left: {
               type: 'Identifier',
               name: 'x',

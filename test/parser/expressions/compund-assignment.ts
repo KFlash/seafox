@@ -30,6 +30,91 @@ fail('Expressions - Compound assignment (fail)', [
 
 pass('Expressions - Compound assignment (pass)', [
   [
+    `a ||= b`,
+    Context.OptionsLoc | Context.Strict | Context.Module,
+    {
+      body: [
+        {
+          end: 7,
+          expression: {
+            end: 7,
+            left: {
+              end: 1,
+              loc: {
+                end: {
+                  column: 1,
+                  line: 1
+                },
+                start: {
+                  column: 0,
+                  line: 1
+                }
+              },
+              name: 'a',
+              start: 0,
+              type: 'Identifier'
+            },
+            loc: {
+              end: {
+                column: 7,
+                line: 1
+              },
+              start: {
+                column: 0,
+                line: 1
+              }
+            },
+            operator: '||=',
+            right: {
+              end: 7,
+              loc: {
+                end: {
+                  column: 7,
+                  line: 1
+                },
+                start: {
+                  column: 6,
+                  line: 1
+                }
+              },
+              name: 'b',
+              start: 6,
+              type: 'Identifier'
+            },
+            start: 0,
+            type: 'LogicalAssignmentExpression'
+          },
+          loc: {
+            end: {
+              column: 7,
+              line: 1
+            },
+            start: {
+              column: 0,
+              line: 1
+            }
+          },
+          start: 0,
+          type: 'ExpressionStatement'
+        }
+      ],
+      end: 7,
+      loc: {
+        end: {
+          column: 7,
+          line: 1
+        },
+        start: {
+          column: 0,
+          line: 1
+        }
+      },
+      sourceType: 'module',
+      start: 0,
+      type: 'Program'
+    }
+  ],
+  [
     `[a >>>= a];`,
     Context.OptionsLoc | Context.Strict | Context.Module,
     {

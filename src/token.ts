@@ -7,6 +7,7 @@ export const enum Token {
    Kind  = 0b00000000000000000000000011111111,
 
    /* Attribute names */
+   IsLogicalOp            = 0b00000000000000000001000000000000,
    Contextual             = 0b00000000000000010000000000000000,
    Keyword                = 0b00000000000000100000000000000000,
    FutureReserved         = 0b00000000000001000000000000000000,
@@ -79,9 +80,9 @@ export const enum Token {
   BitwiseXorAssign        = 0b00000100000000000000000000101010, // ^=
   BitwiseOrAssign         = 0b00000100000000000000000000101011, // |=
   BitwiseAndAssign        = 0b00000100000000000000000000101100, // &=
-  LogicalOrAssign         = 0b00000100000000000000000010001000, // ||=
-  LogicalAndAssign        = 0b00000100000000000000000010001001, // &&=
-  CoalesceAssign          = 0b00000100000000000000000010001010, // ??=
+  LogicalOrAssign         = 0b00000100000000000001000010001000, // ||=
+  LogicalAndAssign        = 0b00000100000000000001000010001001, // &&=
+  CoalesceAssign          = 0b00000100000000000001000010001010, // ??=
 
 
   /* Unary/binary operators */

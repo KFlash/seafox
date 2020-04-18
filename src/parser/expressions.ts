@@ -43,26 +43,16 @@ export function parseAssignmentExpression(
   column: number
 ): Types.Expression {
   // Create a 'static' token variable to reduce member access
-  const token = parser.token;
+  const t = parser.token;
 
-  if ((token & Token.IsAssignOp) > 0) {
+  if ((t & Token.IsAssignOp) > 0) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-    return parseAssignmentOrPattern(
-      parser,
-      context,
-      reinterpret,
-      inGroup,
-      left,
-      KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-      start,
-      line,
-      column
-    );
+    return parseAssignmentOrPattern(parser, context, reinterpret, inGroup, left, t, start, line, column);
   }
 
-  if ((token & Token.IsBinaryOp) > 0) {
-    left = parseBinaryExpression(parser, context, inGroup, 4, token, start, line, column, left);
+  if ((t & Token.IsBinaryOp) > 0) {
+    left = parseBinaryExpression(parser, context, inGroup, 4, t, start, line, column, left);
   }
 
   return parser.token === Token.QuestionMark
@@ -1957,17 +1947,7 @@ export function parseParenthesizedExpression(
         if ((token & Token.IsAssignOp) > 0) {
           if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-          expr = parseAssignmentOrPattern(
-            parser,
-            context,
-            0,
-            0,
-            expr,
-            KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-            start,
-            line,
-            column
-          );
+          expr = parseAssignmentOrPattern(parser, context, 0, 0, expr, token, start, line, column);
         } else if ((token & Token.IsBinaryOp) > 0) {
           expr = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, expr as any);
           if ((parser.token as Token) === Token.QuestionMark) {
@@ -2542,7 +2522,7 @@ export function parseAssignmentOrPattern(
   reinterpret: 0 | 1,
   inGroup: 0 | 1,
   left: Types.Expression,
-  operator: any,
+  t: Token,
   start: number,
   line: number,
   column: number
@@ -2556,18 +2536,18 @@ export function parseAssignmentOrPattern(
   if (reinterpret === 0) {
     return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
-          type: 'AssignmentExpression',
+          type: (t & Token.IsLogicalOp) > 0 ? 'LogicalAssignmentExpression' : 'AssignmentExpression',
           left,
-          operator,
+          operator: KeywordDescTable[t & Token.Kind] as Types.AssignmentOperator,
           right,
           start,
           end: parser.endIndex,
           loc: setLoc(parser, line, column)
         }
       : {
-          type: 'AssignmentExpression',
+          type: (t & Token.IsLogicalOp) > 0 ? 'LogicalAssignmentExpression' : 'AssignmentExpression',
           left,
-          operator,
+          operator: KeywordDescTable[t & Token.Kind] as Types.AssignmentOperator,
           right
         };
   }
@@ -2637,7 +2617,7 @@ export function parseArrayExpressionOrPattern(
             reinterpret,
             inGroup,
             left as Types.Expression,
-            '=',
+            parser.token,
             start,
             line,
             column
@@ -2663,17 +2643,7 @@ export function parseArrayExpressionOrPattern(
           if ((token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-            left = parseAssignmentOrPattern(
-              parser,
-              context,
-              reinterpret,
-              0,
-              left,
-              KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-              start,
-              line,
-              column
-            );
+            left = parseAssignmentOrPattern(parser, context, reinterpret, 0, left, token, start, line, column);
           } else if ((token & Token.IsBinaryOp) > 0) {
             destructible |= Flags.NotDestructible;
 
@@ -2724,17 +2694,7 @@ export function parseArrayExpressionOrPattern(
           if ((token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-            left = parseAssignmentOrPattern(
-              parser,
-              context,
-              reinterpret,
-              0,
-              left,
-              KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-              start,
-              line,
-              column
-            );
+            left = parseAssignmentOrPattern(parser, context, reinterpret, 0, left, token, start, line, column);
           } else if ((token & Token.IsBinaryOp) > 0) {
             left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left);
 
@@ -2850,7 +2810,7 @@ export function parseArrayOrObjectAssignmentPattern(
 
   if (reinterpret === 0) reinterpretToPattern(parser, left);
 
-  const node = parseAssignmentOrPattern(parser, context, reinterpret, inGroup, left, '=', start, line, column);
+  const node = parseAssignmentOrPattern(parser, context, reinterpret, inGroup, left, parser.token, start, line, column);
 
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) |
@@ -3467,7 +3427,17 @@ export function parseGetterSetter(parser: ParserState, context: Context, kind: P
       if (parser.token === Token.Assign) {
         isSimpleParameterList = 1;
 
-        left = parseAssignmentOrPattern(parser, context, /* reinterpret */ 1, 0, left, '=', start, line, column);
+        left = parseAssignmentOrPattern(
+          parser,
+          context,
+          /* reinterpret */ 1,
+          0,
+          left,
+          parser.token,
+          start,
+          line,
+          column
+        );
       }
 
       argCount++;
@@ -3602,7 +3572,7 @@ export function parseFormalParams(
 
     if (parser.token === Token.Assign) {
       isSimpleParameterList = 1;
-      left = parseAssignmentOrPattern(parser, context, /* reinterpret */ 1, 0, left, '=', start, line, column);
+      left = parseAssignmentOrPattern(parser, context, /* reinterpret */ 1, 0, left, parser.token, start, line, column);
     }
 
     params.push(left);
@@ -3766,7 +3736,17 @@ export function parseObjectLiteralOrPattern(
 
           if (parser.token === Token.Assign) {
             destructible |= Flags.MustDestruct;
-            value = parseAssignmentOrPattern(parser, context, reinterpret, inGroup, key, '=', start, line, column);
+            value = parseAssignmentOrPattern(
+              parser,
+              context,
+              reinterpret,
+              inGroup,
+              key,
+              parser.token,
+              start,
+              line,
+              column
+            );
           } else {
             destructible |= inGroup === 1 && token === Token.AwaitKeyword ? Flags.SeenAwait : 0;
             value = key;
@@ -3851,17 +3831,7 @@ export function parseObjectLiteralOrPattern(
               const token = parser.token;
 
               if (((token as Token) & Token.IsAssignOp) === Token.IsAssignOp) {
-                value = parseAssignmentOrPattern(
-                  parser,
-                  context,
-                  reinterpret,
-                  0,
-                  value,
-                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-                  start,
-                  line,
-                  column
-                );
+                value = parseAssignmentOrPattern(parser, context, reinterpret, 0, value, token, start, line, column);
               } else {
                 if ((token & Token.IsBinaryOp) > 0) {
                   value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value);
@@ -3886,7 +3856,7 @@ export function parseObjectLiteralOrPattern(
                 reinterpret,
                 inGroup,
                 value,
-                KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
+                token,
                 start,
                 line,
                 column
@@ -4060,7 +4030,7 @@ export function parseObjectLiteralOrPattern(
                   reinterpret,
                   inGroup,
                   value,
-                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
+                  token,
                   start,
                   line,
                   column
@@ -4134,7 +4104,7 @@ export function parseObjectLiteralOrPattern(
                 reinterpret,
                 0,
                 value as any,
-                KeywordDescTable[parser.token & Token.Kind] as Types.AssignmentOperator,
+                parser.token,
                 start,
                 line,
                 column
@@ -4187,17 +4157,7 @@ export function parseObjectLiteralOrPattern(
               if ((token & Token.IsAssignOp) === Token.IsAssignOp) {
                 if (token !== Token.Assign) destructible |= Flags.NotDestructible;
 
-                value = parseAssignmentOrPattern(
-                  parser,
-                  context,
-                  reinterpret,
-                  0,
-                  value,
-                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-                  start,
-                  line,
-                  column
-                );
+                value = parseAssignmentOrPattern(parser, context, reinterpret, 0, value, token, start, line, column);
               } else {
                 if ((token & Token.IsBinaryOp) === Token.IsBinaryOp) {
                   value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
@@ -4304,17 +4264,7 @@ export function parseObjectLiteralOrPattern(
               const token = parser.token;
 
               if ((token & Token.IsAssignOp) > 0) {
-                value = parseAssignmentOrPattern(
-                  parser,
-                  context,
-                  reinterpret,
-                  0,
-                  value,
-                  KeywordDescTable[token & Token.Kind] as Types.AssignmentOperator,
-                  start,
-                  line,
-                  column
-                );
+                value = parseAssignmentOrPattern(parser, context, reinterpret, 0, value, token, start, line, column);
               } else {
                 if ((token & Token.IsBinaryOp) > 0) {
                   value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value);
@@ -4571,7 +4521,17 @@ export function parseSpreadOrRestElement(
     if (parser.token === Token.Assign) {
       if (destructible & Flags.NotDestructible) report(parser, Errors.CantAssignTo);
 
-      argument = parseAssignmentOrPattern(parser, context, reinterpret, 0, argument, '=', curStart, curLine, curColumn);
+      argument = parseAssignmentOrPattern(
+        parser,
+        context,
+        reinterpret,
+        0,
+        argument,
+        parser.token,
+        curStart,
+        curLine,
+        curColumn
+      );
 
       destructible = Flags.NotDestructible;
     } else {
