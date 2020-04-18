@@ -2533,8 +2533,8 @@ export function parseAssignmentOrPattern(
 
   parser.assignable = 0;
 
-  if (reinterpret === 0) {
-    return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+  return reinterpret === 0
+    ? (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
           type: (t & Token.IsLogicalOp) > 0 ? 'LogicalAssignmentExpression' : 'AssignmentExpression',
           left,
@@ -2549,10 +2549,8 @@ export function parseAssignmentOrPattern(
           left,
           operator: KeywordDescTable[t & Token.Kind] as Types.AssignmentOperator,
           right
-        };
-  }
-
-  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+        }
+    : (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'AssignmentPattern',
         left,
@@ -3241,10 +3239,8 @@ export function parseClassElementList(
   }
 
   if ((type & 0b00000000000000000000000110011000) > 0) {
-    if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-      key = parseIdentifier(parser, context);
-    } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
-      key = parseLiteral(parser, context);
+    if ((parser.token & 0b00000000001011110000000000000000) > 0) {
+      key = parseIdentifierOrliteral(parser, context);
     } else if (parser.token === Token.LeftBracket) {
       isComputed = 1;
       key = parseComputedPropertyName(parser, context, 0);
@@ -3929,10 +3925,8 @@ export function parseObjectLiteralOrPattern(
             state |= PropertyKind.Async;
           }
 
-          if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-            key = parseIdentifier(parser, context);
-          } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
-            key = parseLiteral(parser, context);
+          if ((parser.token & 0b00000000001011110000000000000000) > 0) {
+            key = parseIdentifierOrliteral(parser, context);
           } else if ((parser.token as Token) === Token.LeftBracket) {
             state |= PropertyKind.Computed;
             key = parseComputedPropertyName(parser, context, inGroup);
@@ -4086,9 +4080,9 @@ export function parseObjectLiteralOrPattern(
         if ((parser.token as Token) === Token.Colon) {
           nextToken(parser, context, /* allowRegExp */ 1); // skip ':'
 
-          const { start, line, column, tokenValue, token: tokenAfterColon } = parser;
+          const { start, line, column, tokenValue, token: tAC } = parser;
 
-          if ((parser.token & 0b00000000001001110000000000000000) > 0) {
+          if ((tAC & 0b00000000001001110000000000000000) > 0) {
             value = parsePrimaryExpression(parser, context, type, 0, 1, 1, inGroup, start, line, column);
 
             const token = parser.token;
@@ -4103,7 +4097,7 @@ export function parseObjectLiteralOrPattern(
                 context,
                 reinterpret,
                 0,
-                value as any,
+                value,
                 parser.token,
                 start,
                 line,
@@ -4113,7 +4107,7 @@ export function parseObjectLiteralOrPattern(
               if (isAssignRightBraceOrComma(token)) {
                 if (parser.assignable === 0) {
                   destructible |= Flags.NotDestructible;
-                } else if ((tokenAfterColon & Token.IsIdentifier) === Token.IsIdentifier) {
+                } else if ((tAC & Token.IsIdentifier) === Token.IsIdentifier) {
                   addVarOrBlock(parser, context, scope, tokenValue, type, origin);
                 }
               } else {
@@ -4123,7 +4117,7 @@ export function parseObjectLiteralOrPattern(
               destructible |= Flags.NotDestructible;
               value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
-          } else if (((parser.token as Token) & Token.IsPatternStart) === Token.IsPatternStart) {
+          } else if ((tAC & Token.IsPatternStart) === Token.IsPatternStart) {
             value = parsePatternStart(
               parser,
               context,
@@ -4131,7 +4125,7 @@ export function parseObjectLiteralOrPattern(
               0,
               reinterpret,
               0,
-              parser.token,
+              tAC,
               type,
               origin,
               start,
@@ -4152,21 +4146,7 @@ export function parseObjectLiteralOrPattern(
 
               destructible = Flags.Empty;
 
-              const token = parser.token;
-
-              if ((token & Token.IsAssignOp) === Token.IsAssignOp) {
-                if (token !== Token.Assign) destructible |= Flags.NotDestructible;
-
-                value = parseAssignmentOrPattern(parser, context, reinterpret, 0, value, token, start, line, column);
-              } else {
-                if ((token & Token.IsBinaryOp) === Token.IsBinaryOp) {
-                  value = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, value as any);
-                }
-                if (parser.token === Token.QuestionMark) {
-                  value = parseConditionalExpression(parser, context, value, start, line, column);
-                }
-                destructible |= parser.assignable === 0 ? Flags.NotDestructible : Flags.AssignableDestruct;
-              }
+              value = parseAssignmentExpression(parser, context, reinterpret, 0, value, start, line, column);
             }
           } else {
             value = parseLeftHandSideExpressionOrHigher(parser, context, 0, /* allowLHS */ 1, 1, start, line, column);
@@ -4195,10 +4175,8 @@ export function parseObjectLiteralOrPattern(
 
         state |= PropertyKind.Generator | PropertyKind.Method;
 
-        if ((parser.token & 0b00000000001001110000000000000000) > 0) {
-          key = parseIdentifier(parser, context);
-        } else if ((parser.token & 0b00000000000010000000000000000000) > 0) {
-          key = parseLiteral(parser, context);
+        if ((parser.token & 0b00000000001011110000000000000000) > 0) {
+          key = parseIdentifierOrliteral(parser, context);
         } else if (parser.token === Token.LeftBracket) {
           state |= PropertyKind.Computed;
           key = parseComputedPropertyName(parser, context, 0);
@@ -4848,4 +4826,10 @@ export function parsePatternStart(
         line,
         column
       );
+}
+
+function parseIdentifierOrliteral(parser: ParserState, context: Context): any {
+  return (parser.token & 0b00000000001001110000000000000000) > 0
+    ? parseIdentifier(parser, context)
+    : parseLiteral(parser, context);
 }

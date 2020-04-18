@@ -115,6 +115,7 @@ export interface T_Expression {
   ImportExpression: ImportExpression;
   BinaryExpression: BinaryExpression;
   AssignmentExpression: AssignmentExpression;
+  LogicalAssignmentExpression: LogicalAssignmentExpression;
   LogicalExpression: LogicalExpression;
   MemberExpression: MemberExpression;
   ConditionalExpression: ConditionalExpression;
@@ -148,6 +149,7 @@ export type Expression =
   | ImportExpression
   | BinaryExpression
   | AssignmentExpression
+  | LogicalAssignmentExpression
   | LogicalExpression
   | MemberExpression
   | ConditionalExpression
@@ -271,6 +273,12 @@ export type AssignmentOperator =
   | '^='
   | '&='
   | '**=';
+
+export interface LogicalAssignmentExpression extends _Expression<'LogicalAssignmentExpression'> {
+  operator: AssignmentOperator;
+  left: Expression | Identifier | ObjectPattern | ArrayPattern;
+  right: Expression;
+}
 
 export interface AssignmentExpression extends _Expression<'AssignmentExpression'> {
   operator: AssignmentOperator;
