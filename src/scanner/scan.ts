@@ -148,7 +148,6 @@ export const firstCharKinds = [
   /* 125 - }                  */ Token.RightBrace,
   /* 126 - ~                  */ Token.Complement,
   /* 127 - Delete             */ Token.Error,
-  /* 127 - Delete             */ Token.Error,
   /* 128 - Cc category        */ Token.Error,
   /* 129 - Cc category        */ Token.Error,
   /* 130 - Cc category        */ Token.Error,
@@ -379,21 +378,31 @@ export function scan(
 
       // `=`, `==`, `===`, `=>`
       case Token.Assign:
-        parser.index++;
+        index = parser.index + 1;
 
-        if (parser.index >= length) return Token.Assign;
+        if (index < parser.length) {
+          ch = source.charCodeAt(index);
 
-        ch = source.charCodeAt(parser.index);
+          if (ch === Chars.EqualSign) {
+            index++;
+            if (source.charCodeAt(index) !== Chars.EqualSign) {
+              parser.index = index;
+              return Token.LooseEqual;
+            }
+            parser.index = index + 1;
+            return Token.StrictEqual;
+          }
 
-        if (ch === Chars.EqualSign) {
-          if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.LooseEqual;
-          parser.index++;
-          return Token.StrictEqual;
+          if (ch !== Chars.GreaterThan) {
+            parser.index++;
+            return Token.Assign;
+          }
+          parser.index += 2;
+          return Token.Arrow;
         }
-
-        if (ch !== Chars.GreaterThan) return Token.Assign;
         parser.index++;
-        return Token.Arrow;
+
+        return Token.Assign;
 
       // `*`, `**`, `*=`, `**=`
       case Token.Multiply:
@@ -409,7 +418,10 @@ export function scan(
         }
 
         if (ch !== Chars.Asterisk) return Token.Multiply;
-        if (source.charCodeAt(++parser.index) !== Chars.EqualSign) return Token.Exponentiate;
+
+        parser.index++;
+
+        if (source.charCodeAt(parser.index) !== Chars.EqualSign) return Token.Exponentiate;
         parser.index++;
 
         return Token.ExponentiateAssign;
