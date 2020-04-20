@@ -148,7 +148,6 @@ export const firstCharKinds = [
   /* 125 - }                  */ Token.RightBrace,
   /* 126 - ~                  */ Token.Complement,
   /* 127 - Delete             */ Token.Error,
-  /* 127 - Delete             */ Token.Error,
   /* 128 - Cc category        */ Token.Error,
   /* 129 - Cc category        */ Token.Error,
   /* 130 - Cc category        */ Token.Error,
