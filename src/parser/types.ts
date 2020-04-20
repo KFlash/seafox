@@ -272,17 +272,22 @@ export type AssignmentOperator =
   | '|='
   | '^='
   | '&='
-  | '**=';
+  | '**='
+  | '||='
+  | '&&='
+  | '??=';
+
+export type LogicalAssignmentOperator = '||=' | '&&=' | '??=';
 
 export interface LogicalAssignmentExpression extends _Expression<'LogicalAssignmentExpression'> {
-  operator: AssignmentOperator;
-  left: Expression | Identifier | ObjectPattern | ArrayPattern;
+  operator: AssignmentOperator | LogicalAssignmentOperator;
+  left: Expression | Identifier;
   right: Expression;
 }
 
 export interface AssignmentExpression extends _Expression<'AssignmentExpression'> {
   operator: AssignmentOperator;
-  left: Expression | Identifier | ObjectPattern | ArrayPattern;
+  left: Expression | Identifier;
   right: Expression;
 }
 

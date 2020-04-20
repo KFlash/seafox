@@ -48,7 +48,17 @@ export function parseAssignmentExpression(
   if ((t & Token.IsAssignOp) > 0) {
     if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-    return parseAssignmentOrPattern(parser, context, reinterpret, inGroup, left, t, start, line, column);
+    return parseAssignmentOrPattern(
+      parser,
+      context,
+      reinterpret,
+      inGroup,
+      left,
+      t,
+      start,
+      line,
+      column
+    ) as Types.Expression;
   }
 
   if ((t & Token.IsBinaryOp) > 0) {
@@ -2526,7 +2536,7 @@ export function parseAssignmentOrPattern(
   start: number,
   line: number,
   column: number
-): any {
+): Types.AssignmentExpression | Types.LogicalAssignmentExpression | Types.AssignmentPattern {
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const right = parseExpression(parser, context, inGroup);
@@ -2619,7 +2629,7 @@ export function parseArrayExpressionOrPattern(
             start,
             line,
             column
-          );
+          ) as Types.Expression;
         } else if (isRightBraketOrComma(parser.token)) {
           if (parser.assignable === 1) {
             addVarOrBlock(parser, context, scope, tokenValue, kind, origin);
@@ -2641,7 +2651,17 @@ export function parseArrayExpressionOrPattern(
           if ((token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-            left = parseAssignmentOrPattern(parser, context, reinterpret, 0, left, token, start, line, column);
+            left = parseAssignmentOrPattern(
+              parser,
+              context,
+              reinterpret,
+              0,
+              left,
+              token,
+              start,
+              line,
+              column
+            ) as Types.Expression;
           } else if ((token & Token.IsBinaryOp) > 0) {
             destructible |= Flags.NotDestructible;
 
@@ -2692,7 +2712,17 @@ export function parseArrayExpressionOrPattern(
           if ((token & Token.IsAssignOp) > 0) {
             if (parser.assignable === 0) report(parser, Errors.CantAssignTo);
 
-            left = parseAssignmentOrPattern(parser, context, reinterpret, 0, left, token, start, line, column);
+            left = parseAssignmentOrPattern(
+              parser,
+              context,
+              reinterpret,
+              0,
+              left,
+              token,
+              start,
+              line,
+              column
+            ) as Types.Expression;
           } else if ((token & Token.IsBinaryOp) > 0) {
             left = parseBinaryExpression(parser, context, 0, 0, token, start, line, column, left);
 
