@@ -1,4 +1,3 @@
-import { Context } from '../../../src/parser/common';
 import * as t from 'assert';
 import { parseScript } from '../../../src/seafox';
 
@@ -6,7 +5,7 @@ describe('Miscellaneous - OnToken', () => {
   it('false', () => {
     let onTokenCount = 0;
     parseScript('false', {
-      onToken: function(token: string, value: any, start?: number, end?: number) {
+      onToken: function (token: string, value: any, start?: number, end?: number) {
         t.deepEqual(token, 'BooleanLiteral');
         t.deepEqual(value, false);
         t.deepEqual(start, 0);
@@ -21,7 +20,7 @@ describe('Miscellaneous - OnToken', () => {
   it('let', () => {
     let onTokenCount = 0;
     parseScript('let', {
-      onToken: function(token: string, value: any, start?: number, end?: number) {
+      onToken: function (token: string, value: any, start?: number, end?: number) {
         t.deepEqual(token, 'Identifier');
         t.deepEqual(value, 'let');
         t.deepEqual(start, 0);
@@ -36,7 +35,7 @@ describe('Miscellaneous - OnToken', () => {
   it('if(x){} /y/.test(z)', () => {
     let tokenArray: any[] = [];
     parseScript('if(x){} /y/.test(z)', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -81,7 +80,7 @@ describe('Miscellaneous - OnToken', () => {
   it('with (false) /42/', () => {
     let tokenArray: any[] = [];
     parseScript('with (false) /42/', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -134,7 +133,7 @@ describe('Miscellaneous - OnToken', () => {
   it('this / 100;', () => {
     let tokenArray: any[] = [];
     parseScript('this / 100;', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -175,7 +174,7 @@ describe('Miscellaneous - OnToken', () => {
   it('/42/g', () => {
     let tokenArray: any[] = [];
     parseScript('/42/g', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -204,7 +203,7 @@ describe('Miscellaneous - OnToken', () => {
   it('[a] / b', () => {
     let tokenArray: any[] = [];
     parseScript('[a] / b', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -251,7 +250,7 @@ describe('Miscellaneous - OnToken', () => {
   it(';function f(){} /42/', () => {
     let tokenArray: any[] = [];
     parseScript(';function f(){} /42/', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -322,7 +321,7 @@ describe('Miscellaneous - OnToken', () => {
   it('function x(){} /42/', () => {
     let tokenArray: any[] = [];
     parseScript('function x(){} /42/', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -387,7 +386,7 @@ describe('Miscellaneous - OnToken', () => {
   it('let foo = bar;', () => {
     let tokenArray: any[] = [];
     parseScript('let foo = bar;', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
@@ -435,7 +434,7 @@ describe('Miscellaneous - OnToken', () => {
   it('function z() {}; `z`;', () => {
     let tokenArray: any[] = [];
     parseScript('function z() {}; `z`;', {
-      onToken: function(type: string, value: any, start?: number, end?: number) {
+      onToken: function (type: string, value: any, start?: number, end?: number) {
         tokenArray.push({
           type,
           value,
