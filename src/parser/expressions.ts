@@ -2536,7 +2536,7 @@ export function parseAssignmentOrPattern(
   start: number,
   line: number,
   column: number
-): Types.AssignmentExpression | Types.LogicalAssignmentExpression | Types.AssignmentPattern {
+): Types.AssignmentExpression | Types.AssignmentPattern {
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const right = parseExpression(parser, context, inGroup);
@@ -2546,7 +2546,7 @@ export function parseAssignmentOrPattern(
   return reinterpret === 0
     ? (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
       ? {
-          type: (t & Token.IsLogicalOp) > 0 ? 'LogicalAssignmentExpression' : 'AssignmentExpression',
+          type: 'AssignmentExpression',
           left,
           operator: KeywordDescTable[t & Token.Kind] as Types.AssignmentOperator,
           right,
@@ -2555,7 +2555,7 @@ export function parseAssignmentOrPattern(
           loc: setLoc(parser, line, column)
         }
       : {
-          type: (t & Token.IsLogicalOp) > 0 ? 'LogicalAssignmentExpression' : 'AssignmentExpression',
+          type: 'AssignmentExpression',
           left,
           operator: KeywordDescTable[t & Token.Kind] as Types.AssignmentOperator,
           right

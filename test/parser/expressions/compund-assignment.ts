@@ -82,7 +82,7 @@ pass('Expressions - Compound assignment (pass)', [
               type: 'Identifier'
             },
             start: 0,
-            type: 'LogicalAssignmentExpression'
+            type: 'AssignmentExpression'
           },
           loc: {
             end: {

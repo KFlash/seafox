@@ -48,7 +48,7 @@ pass('Expressions - Assign (pass)', [
               type: 'Literal',
               value: 4
             },
-            type: 'LogicalAssignmentExpression'
+            type: 'AssignmentExpression'
           },
           type: 'ExpressionStatement'
         }
