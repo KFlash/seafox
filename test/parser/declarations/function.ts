@@ -4,6 +4,7 @@ import { parseRoot } from '../../../src/seafox';
 import * as t from 'assert';
 
 fail('Declarations - Function (fail)', [
+  ['async function* f([element]) { "use strict"; }', Context.Empty],
   ['async function af() { var a = (x = await 0) => { }; }', Context.Empty],
   ['async function a() { async function b(k = [await 3]) {} }', Context.Empty],
   ['async function a() { var await = 4; }', Context.Empty],
@@ -307,6 +308,10 @@ fail('Declarations - Function (fail)', [
   ['function test({...[]}) {}', Context.Empty],
   ['function test({...x = 1}) {}', Context.Empty],
   ['function test({...{}}) {}', Context.Empty],
+  ['function f() { break }', Context.Empty],
+  ['function f() { break a }', Context.Empty],
+  ['function f() { continue }', Context.Empty],
+  ['function f() { continue a }', Context.Empty],
   ['function f([var]) {}', Context.Empty],
   ['function f([typeof]) {}', Context.Empty],
   ['function f([while]) {}', Context.Empty],

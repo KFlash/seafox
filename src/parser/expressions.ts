@@ -1910,7 +1910,7 @@ export function parseParenthesizedExpression(
   let inSequence: 0 | 1 = 0;
   let destructible: Flags = Flags.Empty;
 
-  const { start: sStart, line: sLine, column: sColumn } = parser;
+  const { start: sequenceStart, line: sequenceLine, column: sequenceColumn } = parser;
 
   const scope = createArrowScope();
 
@@ -2018,9 +2018,9 @@ export function parseParenthesizedExpression(
               ? {
                   type: 'SequenceExpression',
                   expressions,
-                  start: sStart,
+                  start: sequenceStart,
                   end: parser.endIndex,
-                  loc: setLoc(parser, sLine, sColumn)
+                  loc: setLoc(parser, sequenceLine, sequenceColumn)
                 }
               : {
                   type: 'SequenceExpression',
@@ -2063,9 +2063,9 @@ export function parseParenthesizedExpression(
         ? {
             type: 'SequenceExpression',
             expressions,
-            start: sStart,
+            start: sequenceStart,
             end: parser.endIndex,
-            loc: setLoc(parser, sLine, sColumn)
+            loc: setLoc(parser, sequenceLine, sequenceColumn)
           }
         : {
             type: 'SequenceExpression',
@@ -2100,24 +2100,24 @@ export function parseParenthesizedExpression(
       curLine,
       curColumn
     );
-  } else if (destructible & Flags.MustDestruct) {
-    report(parser, Errors.UncompleteArrow);
   }
+
+  if (destructible & Flags.MustDestruct) report(parser, Errors.UncompleteArrow);
 
   if (parser.flags & Flags.SeenProto) report(parser, Errors.DuplicateProto);
 
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
-  if ((context & Context.OptionsPreserveParens) !== Context.OptionsPreserveParens) return expr;
-
-  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+  return (context & Context.OptionsPreserveParens) !== Context.OptionsPreserveParens
+    ? expr
+    : (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
     ? {
         type: 'ParenthesizedExpression',
         expression: expr,
-        start: sStart,
+        start: sequenceStart,
         end: parser.endIndex,
-        loc: setLoc(parser, sLine, sColumn)
+        loc: setLoc(parser, sequenceLine, sequenceColumn)
       }
     : ({
         type: 'ParenthesizedExpression',
@@ -2160,38 +2160,42 @@ export function parseLeftHandSideExpressionOrHigher(
   // LeftHandSideExpression ::
   //   (PrimaryExpression | MemberExpression) ...
 
-  const expr = parsePrimaryExpression(
+  return parseMemberExpression(
     parser,
     context,
-    BindingKind.None,
-    0,
+    parsePrimaryExpression(parser, context, BindingKind.None, 0, allowLHS, canAssign, inGroup, start, line, column),
     allowLHS,
-    canAssign,
     inGroup,
     start,
     line,
     column
   );
-
-  return parseMemberExpression(parser, context, expr, allowLHS, inGroup, start, line, column);
 }
 
 export function parseIdentifier(parser: ParserState, context: Context): Types.Identifier {
-  const { tokenValue: name, start, line, column } = parser;
+  const name = parser.tokenValue;
+
+  if ((context & 0b00000000000000000000000000000010) !== 0b00000000000000000000000000000010) {
+    nextToken(parser, context, /* allowRegExp */ 0);
+
+    return {
+      type: 'Identifier',
+      name
+    };
+  }
+
+  // Avoid member access if not needed
+  const { start, line, column } = parser;
 
   nextToken(parser, context, /* allowRegExp */ 0);
-  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
-    ? {
-        type: 'Identifier',
-        name,
-        start,
-        end: parser.endIndex,
-        loc: setLoc(parser, line, column)
-      }
-    : {
-        type: 'Identifier',
-        name
-      };
+
+  return {
+    type: 'Identifier',
+    name,
+    start,
+    end: parser.endIndex,
+    loc: setLoc(parser, line, column)
+  };
 }
 
 export function parseThisExpression(
@@ -2340,12 +2344,13 @@ export function parseUpdateExpression(
    */
 
   if (parser.assignable === 0) report(parser, Errors.InvalidIncDecTarget);
+
   if (allowLHS === 0) report(parser, Errors.UnexpectedToken, KeywordDescTable[parser.token & Token.Kind]);
+
   const operator = KeywordDescTable[parser.token & Token.Kind] as Types.UpdateOperator;
 
-  if (arg.type !== 'Identifier' && arg.type !== 'MemberExpression') {
-    report(parser, Errors.Unexpected);
-  }
+  if (arg.type !== 'Identifier' && arg.type !== 'MemberExpression') report(parser, Errors.Unexpected);
+
   nextToken(parser, context, /* allowRegExp */ 0);
 
   parser.assignable = 0;
