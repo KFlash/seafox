@@ -2392,12 +2392,10 @@ export function parseUpdateExpressionPrefix(
   nextToken(parser, context, /* allowRegExp */ 1);
 
   const arg = parseLeftHandSideExpression(parser, context, 0, /* allowLHS */ 1, 0);
-  if (arg.type !== 'Identifier' && arg.type !== 'MemberExpression') {
-    report(parser, Errors.Unexpected);
-  }
-  if (parser.assignable === 0) {
-    report(parser, Errors.InvalidIncDecTarget);
-  }
+
+  if (arg.type !== 'Identifier' && arg.type !== 'MemberExpression') report(parser, Errors.Unexpected);
+
+  if (parser.assignable === 0) report(parser, Errors.InvalidIncDecTarget);
 
   parser.assignable = 0;
 
@@ -2456,12 +2454,10 @@ export function parseUnaryExpression(
 
   if (parser.token === Token.Exponentiate) report(parser, Errors.InvalidExponentationLHS);
 
-  if ((context & Context.Strict) === Context.Strict) {
-    if (operator === Token.DeleteKeyword && arg.type === 'Identifier') {
-      // When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
-      // UnaryExpression is a direct reference to a variable, function argument, or function name
-      report(parser, Errors.StrictDelete);
-    }
+  if ((context & Context.Strict) === Context.Strict && operator === Token.DeleteKeyword && arg.type === 'Identifier') {
+    // When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
+    // UnaryExpression is a direct reference to a variable, function argument, or function name
+    report(parser, Errors.StrictDelete);
   }
 
   parser.assignable = 0;
@@ -2792,20 +2788,6 @@ export function parseArrayExpressionOrPattern(
 
   consume(parser, context, Token.RightBracket, /* allowRegExp */ 0);
 
-  const node =
-    (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
-      ? {
-          type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
-          elements,
-          start: curStart,
-          end: parser.endIndex,
-          loc: setLoc(parser, curLine, curColumn)
-        }
-      : {
-          type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
-          elements
-        };
-
   if (isPattern === 0 && parser.token & Token.IsAssignOp) {
     return parseArrayOrObjectAssignmentPattern(
       parser,
@@ -2816,14 +2798,36 @@ export function parseArrayExpressionOrPattern(
       curStart,
       curLine,
       curColumn,
-      node
+      (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+        ? {
+            type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
+            elements,
+            start: curStart,
+            end: parser.endIndex,
+            loc: setLoc(parser, curLine, curColumn)
+          }
+        : {
+            type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
+            elements
+          }
     );
   }
 
   parser.flags =
     ((parser.flags | 0b00000000000000000000000000011110) ^ 0b00000000000000000000000000011110) | destructible;
 
-  return node;
+  return (context & 0b00000000000000000000000000000010) === 0b00000000000000000000000000000010
+    ? {
+        type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
+        elements,
+        start: curStart,
+        end: parser.endIndex,
+        loc: setLoc(parser, curLine, curColumn)
+      }
+    : {
+        type: reinterpret === 1 ? 'ArrayPattern' : 'ArrayExpression',
+        elements
+      };
 }
 
 export function parseArrayOrObjectAssignmentPattern(
