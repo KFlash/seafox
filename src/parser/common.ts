@@ -56,7 +56,7 @@ export const enum Flags {
   SeenYield = 1 << 10,
   SeenAwait = 1 << 11,
   CommentStart = 1 << 12,
-  DisallowCall = 1 << 12
+  DisallowCall = 1 << 13
 }
 
 export const enum Origin {
