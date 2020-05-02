@@ -371,7 +371,7 @@ export function validateIdentifier(parser: ParserState, context: Context, kind: 
   }
 }
 
-export function isVarDecl(t: Token): Boolean {
+export function isVarDecl(t: Token): boolean {
   // If encounter "var", "let" or "const", this is start of an variable declaration
   // except for "let" which in some cases can be an identifier.
   // Examples:

@@ -2991,7 +2991,7 @@ export function parseFunctionBody(
     while (parser.token === Token.StringLiteral) {
       const { index, start, line, column, tokenValue } = parser;
 
-      let expr = parseLiteral(parser, context);
+      const expr = parseLiteral(parser, context);
 
       if (isValidStrictMode(parser, index, start, tokenValue)) {
         context |= Context.Strict;

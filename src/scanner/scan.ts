@@ -702,7 +702,7 @@ export function scan(
   return Token.EOF;
 }
 
-export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1, _onToken?: 0 | 1): void {
+export function nextToken(parser: ParserState, context: Context, allowRegExp: 0 | 1): void {
   parser.newLine = 0;
 
   const { source, length, index, offset } = parser;

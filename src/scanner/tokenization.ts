@@ -4,7 +4,7 @@ import { ParserState, Context } from '../parser/common';
 // https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar
 
 export function convertTokenType(parser: ParserState, context: Context): any {
-  let type: string = 'Punctuator';
+  let type = 'Punctuator';
   let value = parser.tokenValue;
   const t = parser.token;
   switch (t) {
