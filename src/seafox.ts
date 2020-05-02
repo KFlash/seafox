@@ -62,7 +62,7 @@ export function parseRoot(source: string, context: Context, options?: Options): 
   // See: https://github.com/tc39/proposal-hashbang
   skipMeta(parser, source);
 
-  nextToken(parser, context, /* allowRegExp */ 1, 1);
+  nextToken(parser, context, /* allowRegExp */ 1);
 
   const scope = createTopLevelScope();
 
@@ -120,4 +120,4 @@ export function parse(source: string, options?: Options): Types.Program {
   return parseRoot(source, Context.InGlobal, options);
 }
 
-export const version = '1.6.5';
+export const version = '1.6.7';
