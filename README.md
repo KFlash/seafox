@@ -14,7 +14,7 @@
 
 ## Features
 
-* Conforms to the standard ECMAScript® 2020 (ECMA-262 10th Edition) language specification
+* Conforms to the standard ECMAScript® 2021 (ECMA-262 11th Edition) language specification
 * Support for additional ECMAScript features for Web Browsers
 * Optionally track syntactic node locations
 * Emits an ESTree-compatible abstract syntax tree
