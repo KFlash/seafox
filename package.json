@@ -1,6 +1,6 @@
 {
   "name": "seafox",
-  "version": "1.6.8",
+  "version": "1.6.9",
   "description": "A blazing fast 100% spec compliant, self-hosted javascript parser written in Typescript",
   "main": "dist/seafox.umd.min.js",
   "module": "dist/seafox.esm.min.js",
