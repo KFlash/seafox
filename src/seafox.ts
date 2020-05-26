@@ -120,4 +120,4 @@ export function parse(source: string, options?: Options): Types.Program {
   return parseRoot(source, Context.InGlobal, options);
 }
 
-export const version = '1.6.9';
+export const version = '1.7.1';
