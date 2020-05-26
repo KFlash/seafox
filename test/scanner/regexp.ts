@@ -8,7 +8,9 @@ describe('Scanner - Regular expression', () => {
   const tokens: Array<[Context, Token, string, any]> = [
     [Context.OptionsRaw, Token.RegularExpression, '/a/', /a/],
     [Context.OptionsRaw, Token.RegularExpression, '/(\\w+)\\s(\\w+)/g', /(\w+)\s(\w+)/g],
-    [Context.OptionsRaw, Token.RegularExpression, '/[a/]/', /[a/]/]
+    [Context.OptionsRaw, Token.RegularExpression, '/[a/]/', /[a/]/],
+    [Context.OptionsRaw, Token.RegularExpression, '/[\\ufdd0-\\ufdef]/', /[\ufdd0-\ufdef]/],
+    [Context.OptionsRaw, Token.RegularExpression, '/[\\u{FDD0}-\\u{FDEF}]/u', /[\u{FDD0}-\u{FDEF}]/u]
   ];
 
   for (const [ctx, token, op, value] of tokens) {
